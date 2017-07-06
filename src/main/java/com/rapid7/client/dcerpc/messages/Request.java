@@ -89,21 +89,16 @@ import com.rapid7.client.dcerpc.RPCRequest;
  * @see http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm
  */
 public class Request<T extends Response> extends RPCRequest<T> {
-    private final Constructor<T> unmarshallerCtr;
-
-    public Request(final short op, final Class<T> unmarshaller) {
+    public Request(final short op) {
         super(PDUType.REQUEST, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
 
         putInt(0); // --------- 16:04 Allocation hint
         putShort((short) 0); // 20:02 Presentation context, i.e. data representation
         putShort(op); // ------ 22:02 Operation # within the interface
+    }
 
-        try {
-            unmarshallerCtr = unmarshaller.getConstructor(ByteBuffer.class);
-        }
-        catch (final ReflectiveOperationException | SecurityException exception) {
-            throw new RuntimeException(exception);
-        }
+    public short getOpNum() {
+        return getShort(22);
     }
 
     @Override
@@ -111,16 +106,5 @@ public class Request<T extends Response> extends RPCRequest<T> {
         putInt(16, byteCount()); // 16:04 Allocation hint
 
         return super.marshal(callID);
-    }
-
-    @Override
-    protected T parsePDUResponse(final ByteBuffer responseBuffer)
-        throws TransportException {
-        try {
-            return unmarshallerCtr.newInstance(responseBuffer);
-        }
-        catch (final ReflectiveOperationException exception) {
-            throw new RuntimeException(exception);
-        }
     }
 }

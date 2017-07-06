@@ -18,6 +18,9 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
+import java.nio.ByteBuffer;
+
+import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 
@@ -202,7 +205,7 @@ public class BaseRegQueryInfoKeyRequest extends Request<BaseRegQueryInfoKeyRespo
      *        {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
     public BaseRegQueryInfoKeyRequest(final ContextHandle hKey) {
-        super((short) 16, BaseRegQueryInfoKeyResponse.class);
+        super((short) 16);
         // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 64, Call: 37, Ctx: 0, [Resp: #11412]
         //      Version: 5
         //      Version (minor): 0
@@ -235,5 +238,11 @@ public class BaseRegQueryInfoKeyRequest extends Request<BaseRegQueryInfoKeyRespo
         //                  Actual Count: 0
         putBytes(hKey.getBytes());
         putStringBuffer(0);
+    }
+
+    @Override
+    protected BaseRegQueryInfoKeyResponse parsePDUResponse(final ByteBuffer responseBuffer)
+        throws TransportException {
+        return new BaseRegQueryInfoKeyResponse(responseBuffer);
     }
 }

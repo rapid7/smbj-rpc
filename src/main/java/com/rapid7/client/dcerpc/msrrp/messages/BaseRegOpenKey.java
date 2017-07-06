@@ -18,9 +18,11 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
+import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
+import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 
@@ -264,7 +266,7 @@ public class BaseRegOpenKey extends Request<HandleResponse> {
         final String subKey,
         final int options,
         final EnumSet<AccessMask> accessMask) {
-        super((short) 15, HandleResponse.class);
+        super((short) 15);
         // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 164, Call: 9, Ctx: 0, [Resp: #11204]
         //      Version: 5
         //      Version (minor): 0
@@ -306,5 +308,11 @@ public class BaseRegOpenKey extends Request<HandleResponse> {
         putString(subKey, true);
         putInt(options);
         putInt((int) EnumUtils.toLong(accessMask));
+    }
+
+    @Override
+    protected HandleResponse parsePDUResponse(final ByteBuffer responseBuffer)
+        throws TransportException {
+        return new HandleResponse(responseBuffer);
     }
 }

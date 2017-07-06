@@ -18,9 +18,11 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
+import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
+import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 
 /**
@@ -100,7 +102,7 @@ public class HandleRequest extends Request<HandleResponse> {
      * @param accessMask A bit field that describes the requested security access for the key.
      */
     public HandleRequest(final short op, final EnumSet<AccessMask> accessMask) {
-        super(op, HandleResponse.class);
+        super(op);
         // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 32, Call: 1, Ctx: 0, [Resp: #11176]
         //      Version: 5
         //      Version (minor): 0
@@ -126,5 +128,11 @@ public class HandleRequest extends Request<HandleResponse> {
         //          WINREG specific rights: 0x00000000
         putNull();
         putInt((int) EnumUtils.toLong(accessMask));
+    }
+
+    @Override
+    protected HandleResponse parsePDUResponse(final ByteBuffer responseBuffer)
+        throws TransportException {
+        return new HandleResponse(responseBuffer);
     }
 }

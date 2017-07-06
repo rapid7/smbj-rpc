@@ -18,6 +18,9 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
+import java.nio.ByteBuffer;
+
+import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 
@@ -147,7 +150,7 @@ public class BaseRegCloseKey extends Request<HandleResponse> {
      *        BaseRegOpenKey, OpenCurrentConfig, OpenPerformanceText, OpenPerformanceNlsText.
      */
     public BaseRegCloseKey(final ContextHandle hKey) {
-        super((short) 5, HandleResponse.class);
+        super((short) 5);
         // Remote Registry Service, CloseKey
         //      Operation: CloseKey (5)
         //      [Response in frame: 11429]
@@ -157,5 +160,11 @@ public class BaseRegCloseKey extends Request<HandleResponse> {
         //              [Frame handle opened: 11176]
         //              [Frame handle closed: 11424]
         putBytes(hKey.getBytes());
+    }
+
+    @Override
+    protected HandleResponse parsePDUResponse(final ByteBuffer responseBuffer)
+        throws TransportException {
+        return new HandleResponse(responseBuffer);
     }
 }

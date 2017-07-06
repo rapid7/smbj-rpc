@@ -18,6 +18,9 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
+import java.nio.ByteBuffer;
+
+import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 
@@ -197,7 +200,7 @@ public class BaseRegEnumKeyRequest extends Request<BaseRegEnumKeyResponse> {
      * @param classLen The maximum length of the subkey class to retrieve.
      */
     public BaseRegEnumKeyRequest(final ContextHandle hKey, final int index, final int nameLen, final int classLen) {
-        super((short) 9, BaseRegEnumKeyResponse.class);
+        super((short) 9);
         // Remote Registry Service, EnumKey
         //      Operation: EnumKey (9)
         //      [Response in frame: 11178]
@@ -234,5 +237,11 @@ public class BaseRegEnumKeyRequest extends Request<BaseRegEnumKeyResponse> {
         putStringBuffer(nameLen);
         putStringBufferRef(classLen);
         putLongRef(Long.valueOf(0));
+    }
+
+    @Override
+    protected BaseRegEnumKeyResponse parsePDUResponse(final ByteBuffer responseBuffer)
+        throws TransportException {
+        return new BaseRegEnumKeyResponse(responseBuffer);
     }
 }

@@ -18,6 +18,9 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
+import java.nio.ByteBuffer;
+
+import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 
@@ -203,7 +206,7 @@ public class BaseRegEnumValueRequest extends Request<BaseRegEnumValueResponse> {
         final int index,
         final int valueNameLen,
         final int dataLen) {
-        super((short) 10, BaseRegEnumValueResponse.class);
+        super((short) 10);
         // Remote Registry Service, OpenKey
         //      Operation: OpenKey (15)
         //      [Response in frame: 11204]
@@ -235,5 +238,11 @@ public class BaseRegEnumValueRequest extends Request<BaseRegEnumValueResponse> {
         putEmptyArrayRef(dataLen);
         putIntRef(dataLen);
         putIntRef(0);
+    }
+
+    @Override
+    protected BaseRegEnumValueResponse parsePDUResponse(final ByteBuffer responseBuffer)
+        throws TransportException {
+        return new BaseRegEnumValueResponse(responseBuffer);
     }
 }

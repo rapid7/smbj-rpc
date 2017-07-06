@@ -18,6 +18,9 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
+import java.nio.ByteBuffer;
+
+import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 
@@ -209,7 +212,7 @@ public class BaseRegQueryValueRequest extends Request<BaseRegQueryValueResponse>
      * @param dataLen The maximum number of bytes to accept for the value data.
      */
     public BaseRegQueryValueRequest(final ContextHandle hKey, final String valueName, final int dataLen) {
-        super((short) 17, BaseRegQueryValueResponse.class);
+        super((short) 17);
         // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 136, Call: 36, Ctx: 0, [Resp: #11403]
         //      Version: 5
         //      Version (minor): 0
@@ -261,5 +264,11 @@ public class BaseRegQueryValueRequest extends Request<BaseRegQueryValueResponse>
         putEmptyArrayRef(dataLen);
         putIntRef(dataLen);
         putIntRef(0);
+    }
+
+    @Override
+    protected BaseRegQueryValueResponse parsePDUResponse(final ByteBuffer responseBuffer)
+        throws TransportException {
+        return new BaseRegQueryValueResponse(responseBuffer);
     }
 }
