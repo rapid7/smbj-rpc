@@ -57,14 +57,14 @@ public class Test_FileTime {
     public void testToString1() {
         final FileTime fileTime = new FileTime(131420285736730000L);
 
-        assertEquals("2017-06-15T15:29:33.673-0400 (131420285736730000)", fileTime.toString());
+        assertEquals("2017-06-15T19:29:33.673+0000 (131420285736730000)", fileTime.toString());
     }
 
     @Test
     public void testToString2() {
         final FileTime fileTime = new FileTime(131420285736739999L);
 
-        assertEquals("2017-06-15T15:29:33.673-0400 (131420285736739999)", fileTime.toString());
+        assertEquals("2017-06-15T19:29:33.673+0000 (131420285736739999)", fileTime.toString());
     }
 
     @Test

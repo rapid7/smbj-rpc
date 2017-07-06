@@ -21,6 +21,7 @@ package com.rapid7.client.dcerpc.objects;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public class FileTime {
     private final Date date;
@@ -45,6 +46,7 @@ public class FileTime {
     @Override
     public String toString() {
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
         return String.format("%s (%d)", format.format(date), windowsTime);
     }
 
