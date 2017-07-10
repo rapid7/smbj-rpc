@@ -23,8 +23,7 @@ try (final Connection smbConnection = smbClient.connect("aaa.bbb.ccc.ddd")) {
     }
 
     // Read values located in the HKLM\Software\Microsoft\Windows NT\CurrentVersion key.
-    for (final RegistryValue value : registryService.getValues("HKLM",
-        "Software\\Microsoft\\Windows NT\\CurrentVersion")) {
+    for (final RegistryValue value : registryService.getValues("HKLM", "Software\\Microsoft\\Windows NT\\CurrentVersion")) {
         System.out.println(value.getName() + " is " + value.getType() + " = " + value.toString());
     }
 
