@@ -194,8 +194,8 @@ public class BaseRegQueryInfoKeyResponse extends Response {
      *         </tr>
      *         <td>
      *         <td>ERROR_WRITE_PROTECT (0x00000013)</td>
-     *         <td>A read or write operation was attempted to a volume after it was dismounted. The server can no
-     *         longer service registry requests because server shutdown has been initiated.</td>
+     *         <td>A read or write operation was attempted to a volume after it was dismounted. The server can no longer
+     *         service registry requests because server shutdown has been initiated.</td>
      *         </tr>
      *         <td>
      *         <td>ERROR_MORE_DATA (0x000000EA)</td>

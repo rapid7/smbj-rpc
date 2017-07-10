@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.nio.ByteBuffer;
-
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
@@ -51,9 +50,9 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * <br>
  * dwIndex: MUST be the index of the value to be retrieved, as specified in section 3.1.1.5.<br>
  * <br>
- * lpValueNameIn: A pointer to a RRP_UNICODE_STRING structure that contains the value name to be retrieved, as
- * specified in section 3.1.1. This can be used by the server to determine the maximum length for the output name
- * parameter and to allocate space accordingly. The content is ignored, and only the maximum length is significant.<br>
+ * lpValueNameIn: A pointer to a RRP_UNICODE_STRING structure that contains the value name to be retrieved, as specified
+ * in section 3.1.1. This can be used by the server to determine the maximum length for the output name parameter and to
+ * allocate space accordingly. The content is ignored, and only the maximum length is significant.<br>
  * <br>
  * lpValueNameOut: A pointer to a RPC_UNICODE_STRING structure that receives the retrieved value name, as specified in
  * section 3.1.1.<br>
@@ -68,8 +67,8 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * lpcbLen: MUST specify the number of bytes to transmit to the client.<br>
  * <br>
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
- * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error
- * codes are listed in the following table.
+ * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
+ * are listed in the following table.
  * <table border="1">
  * <tr>
  * <td>ERROR_ACCESS_DENIED (0x00000005)</td>
@@ -112,8 +111,8 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * previously using one of the methods specified in section 3.1.5. If the hKey parameter is not an already opened
  * handle, the server MUST return ERROR_INVALID_PARAMETER.<br>
  * <br>
- * In response to this request from the client, for a successful operation, the server MUST return the value and data
- * at the index that is specified by the dwIndex parameter for the key that is specified by the hKey parameter in the
+ * In response to this request from the client, for a successful operation, the server MUST return the value and data at
+ * the index that is specified by the dwIndex parameter for the key that is specified by the hKey parameter in the
  * client request.<br>
  * <br>
  * Only the maximum length field of the lpValueNameIn is used to determine the buffer length to be allocated by the
@@ -141,8 +140,8 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * If the output buffer is too small to contain the value, the server MUST return ERROR_MORE_DATA. The call SHOULD be
  * repeated with a larger output buffer.<br>
  * <br>
- * If the input index is beyond the number of values for a key, the server MUST return ERROR_NO_MORE_ITEMS. This
- * signals the end of enumeration to the caller.<br>
+ * If the input index is beyond the number of values for a key, the server MUST return ERROR_NO_MORE_ITEMS. This signals
+ * the end of enumeration to the caller.<br>
  * <br>
  * <b>Example:</b>
  *

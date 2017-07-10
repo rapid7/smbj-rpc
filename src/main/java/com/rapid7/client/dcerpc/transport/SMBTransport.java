@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.transport;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import com.hierynomus.mssmb2.SMB2Dialect;

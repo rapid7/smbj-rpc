@@ -29,8 +29,8 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 
 public class Test_BaseRegQueryValue {
     private final ContextHandle contextHandle = new ContextHandle("000000000a665393f4666e49a68cd99f269d020f");
-    private final BaseRegQueryValueRequest request =
-        new BaseRegQueryValueRequest(contextHandle, "CurrentVersion", 65536);
+    private final BaseRegQueryValueRequest request = new BaseRegQueryValueRequest(contextHandle, "CurrentVersion",
+        65536);
 
     @Test
     public void request() {
@@ -80,8 +80,7 @@ public class Test_BaseRegQueryValue {
         //          Referent ID: 0x00020010
         //          Data Length: 0
         final byte[] requestBytes = request.marshal(36);
-        final String encodedRequest =
-            Hex.toHexString(requestBytes);
+        final String encodedRequest = Hex.toHexString(requestBytes);
 
         assertEquals(
             "050000031000000088000000240000008800000000001100000000000a665393f4666e49a68cd99f269d020f1e001e00000002000f000000000000000f000000430075007200720065006e007400560065007200730069006f006e00000000000400020000000000080002000000010000000000000000000c000200000001001000020000000000",

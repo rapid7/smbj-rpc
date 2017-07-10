@@ -89,19 +89,19 @@ import com.rapid7.client.dcerpc.RPCResponse;
  * presentation negotiation follows the model of the OSI presentation layer.<br>
  * <br>
  * The PDU contains a priority-ordered list of supported presentation syntaxes, both abstract and transfer, and context
- * identifiers (local handles). (This differs from OSI, which does not specify any order for the list.) The abstract
- * and transfer syntaxes are represented as a record of interface UUID and interface version. (These may map one-to-one
- * into OSI object identifiers by providing suitable prefixes and changing the encoding.) Each supported data
- * representation, such as NDR, will be assigned an interface UUID, and will use that UUID as part of its transfer
- * syntax value. Each stub computes its abstract syntax value given its interface UUID and interface version. The
- * transfer syntax value for NDR is defined in Protocol Identifiers.<br>
+ * identifiers (local handles). (This differs from OSI, which does not specify any order for the list.) The abstract and
+ * transfer syntaxes are represented as a record of interface UUID and interface version. (These may map one-to-one into
+ * OSI object identifiers by providing suitable prefixes and changing the encoding.) Each supported data representation,
+ * such as NDR, will be assigned an interface UUID, and will use that UUID as part of its transfer syntax value. Each
+ * stub computes its abstract syntax value given its interface UUID and interface version. The transfer syntax value for
+ * NDR is defined in Protocol Identifiers.<br>
  * <br>
- * If pfc_flags does not have PFC_LAST_FRAG set and rpc_vers_minor is 1, then the PDU has fragmented auth_verifier
- * data. The server will assemble the data concatenating sequentially each auth_verifier field until a PDU is sent with
+ * If pfc_flags does not have PFC_LAST_FRAG set and rpc_vers_minor is 1, then the PDU has fragmented auth_verifier data.
+ * The server will assemble the data concatenating sequentially each auth_verifier field until a PDU is sent with
  * PFC_LAST_FRAG flag set. This completed buffer is then used as auth_verifier data.<br>
  * <br>
- * The fields max_xmit_frag and max_recv_frag are used for fragment size negotiation as described in
- * Connection-oriented PDU Data Types.<br>
+ * The fields max_xmit_frag and max_recv_frag are used for fragment size negotiation as described in Connection-oriented
+ * PDU Data Types.<br>
  * <br>
  * The assoc_group_id field contains either an association group identifier that was created during a previous bind
  * negotiation or 0 (zero) to indicate a request for a new group.<br>

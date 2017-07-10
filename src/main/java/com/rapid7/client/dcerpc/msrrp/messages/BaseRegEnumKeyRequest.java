@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.nio.ByteBuffer;
-
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
@@ -59,14 +58,14 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * 3.1.1.6. This parameter MAY be NULL. This string is optional, is not used by the registry, is saved, and can be
  * retrieved using BaseRegQueryInfoKey.<br>
  * <br>
- * lplpClassOut: A pointer to a PRPC_UNICODE_STRING structure that receives the class of the retrieved key, as
- * specified in section 3.1.1.6. This parameter MAY be NULL.<br>
+ * lplpClassOut: A pointer to a PRPC_UNICODE_STRING structure that receives the class of the retrieved key, as specified
+ * in section 3.1.1.6. This parameter MAY be NULL.<br>
  * <br>
  * lpftLastWriteTime: MUST be the time when the value was last written (set or created).<br>
  * <br>
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
- * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error
- * codes are listed in the following table.
+ * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
+ * are listed in the following table.
  * <table border="1">
  * <tr>
  * <td>Return value/code</td>
@@ -102,8 +101,8 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * <br>
  * <b>Server Operations</b><br>
  * <br>
- * If the registry server can no longer service registry requests because server shutdown has been initiated, the
- * server MUST return ERROR_WRITE_PROTECT.<br>
+ * If the registry server can no longer service registry requests because server shutdown has been initiated, the server
+ * MUST return ERROR_WRITE_PROTECT.<br>
  * <br>
  * If the dwIndex parameter is beyond the range of subkeys, the server MUST return ERROR_NO_MORE_ITEMS to indicate that
  * enumeration is complete.<br>
@@ -115,24 +114,24 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * previously using one of the methods specified in section 3.1.5. If the hKey parameter is not an already opened
  * handle, the server MUST return ERROR_INVALID_PARAMETER.<br>
  * <br>
- * The lpNameIn parameter specifies (in the MaxmimumLength member of the RRP_UNICODE_STRING structure) the length of
- * the buffer allocated by the RPC client. This string is transferred as an in parameter to the server. Its maximum
- * length is used to allocate the output Unicode string (lpNameOut) that transfers data back to the client.<br>
+ * The lpNameIn parameter specifies (in the MaxmimumLength member of the RRP_UNICODE_STRING structure) the length of the
+ * buffer allocated by the RPC client. This string is transferred as an in parameter to the server. Its maximum length
+ * is used to allocate the output Unicode string (lpNameOut) that transfers data back to the client.<br>
  * <br>
  * In response to this request from the client, for a successful operation, the server MUST return the subkey at the
  * index that is specified by the dwIndex parameter for the key that is specified by the hKey parameter.<br>
  * <br>
  * The server MUST copy the name of the retrieved subkey (as specified in section 3.1.1.1), including the terminating
  * null character, to the buffer that is pointed to by the lpNameOut parameter in the client request. The server MUST
- * not copy the full key hierarchy to the buffer. If a class is associated with the key, the server MUST copy this
- * class to the buffer that is pointed to by the lpClassOut parameter. The server MUST return the time a value was last
+ * not copy the full key hierarchy to the buffer. If a class is associated with the key, the server MUST copy this class
+ * to the buffer that is pointed to by the lpClassOut parameter. The server MUST return the time a value was last
  * modified in the lpftLastWriteTime parameter.<br>
  * <br>
  * The caller MUST have KEY_ENUMERATE_SUB_KEYS access rights to invoke this method. For more information, see section
  * 2.2.4.<br>
  * <br>
- * The server MUST return 0 to indicate success or an appropriate error code (as specified in [MS-ERREF]) to indicate
- * an error.<br>
+ * The server MUST return 0 to indicate success or an appropriate error code (as specified in [MS-ERREF]) to indicate an
+ * error.<br>
  * <br>
  * If the caller does not have access, the server MUST return ERROR_ACCESS_DENIED.<br>
  * <br>
@@ -188,8 +187,8 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  */
 public class BaseRegEnumKeyRequest extends Request<BaseRegEnumKeyResponse> {
     /**
-     * The BaseRegEnumKey method is called by the client in order to enumerate a subkey. In response, the server
-     * returns a requested subkey.
+     * The BaseRegEnumKey method is called by the client in order to enumerate a subkey. In response, the server returns
+     * a requested subkey.
      *
      * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods:
      *        {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},

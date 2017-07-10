@@ -20,7 +20,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import static org.junit.Assert.assertEquals;
 import java.util.EnumSet;
-
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;

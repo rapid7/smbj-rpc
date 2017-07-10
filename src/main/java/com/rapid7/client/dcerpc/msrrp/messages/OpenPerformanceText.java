@@ -59,9 +59,9 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * The server attempts to open the root key, HKEY_PERFORMANCE_TEXT, and return a handle to that key in the phKey
  * parameter.<br>
  * <br>
- * The server MUST create a new valid context handle. The server MUST store the context handle value in the handle
- * table (HANDLETABLE) along with a mapping to the HKEY_PERFORMANCE_TEXT key. The server MUST always return 0, even in
- * case of errors.
+ * The server MUST create a new valid context handle. The server MUST store the context handle value in the handle table
+ * (HANDLETABLE) along with a mapping to the HKEY_PERFORMANCE_TEXT key. The server MUST always return 0, even in case of
+ * errors.
  *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244956">3.1.5.28 OpenPerformanceText (Opnum 32)</a>}
  */

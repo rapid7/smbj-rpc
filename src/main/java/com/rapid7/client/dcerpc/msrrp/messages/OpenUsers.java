@@ -66,18 +66,18 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * If the registry server can no longer service registry requests because server shutdown has been initiated
  * (SHUTDOWNINPROGRESS is set to TRUE), the server MUST return ERROR_WRITE_PROTECT.<br>
  * <br>
- * The server attempts to open the predefined key HKEY_USERS and return a handle to that key in the phKey parameter.
- * The server MUST evaluate the security descriptor that is associated with the key against the access requested in the
+ * The server attempts to open the predefined key HKEY_USERS and return a handle to that key in the phKey parameter. The
+ * server MUST evaluate the security descriptor that is associated with the key against the access requested in the
  * samDesired parameter.<br>
  * <br>
  * If the caller is permitted to open the key, the server MUST return 0 to indicate success, and create a new valid
- * context handle. The server MUST store the context handle value in the handle table (HANDLETABLE) along with a
- * mapping to the HKEY_USERS key. The server MUST place a handle value (see 3.1.1.9) in the phKey parameter. If the
- * caller does not have access, the server MUST return ERROR_ACCESS_DENIED (5). For more information about security
- * descriptors, see 3.1.1.10.<br>
+ * context handle. The server MUST store the context handle value in the handle table (HANDLETABLE) along with a mapping
+ * to the HKEY_USERS key. The server MUST place a handle value (see 3.1.1.9) in the phKey parameter. If the caller does
+ * not have access, the server MUST return ERROR_ACCESS_DENIED (5). For more information about security descriptors, see
+ * 3.1.1.10.<br>
  * <br>
- * The server MUST validate the value of the samDesired parameter set by the client. If the value of samDesired
- * includes flags set which are not listed in section 2.2.4, the server MUST return ERROR_INVALID_PARAMETER.<br>
+ * The server MUST validate the value of the samDesired parameter set by the client. If the value of samDesired includes
+ * flags set which are not listed in section 2.2.4, the server MUST return ERROR_INVALID_PARAMETER.<br>
  * <br>
  * The server MUST disregard the samDesired parameter if the samDesired parameter set by the client has bit 0x2 set,
  * indicating permission to create a subkey. The server MUST not allow subkey creation in certain locations of the

@@ -69,7 +69,8 @@ public class Header extends Packet {
         putInt(0); // ----------------------------- 12:04 Call identifier
     }
 
-    protected Header(final ByteBuffer packet) throws TransportException {
+    protected Header(final ByteBuffer packet)
+        throws TransportException {
         super(packet);
 
         final byte majorVersion = getByte();

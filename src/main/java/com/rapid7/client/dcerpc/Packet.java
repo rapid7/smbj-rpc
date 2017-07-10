@@ -75,8 +75,7 @@ public class Packet {
             putReferentID();
             putInt(value.intValue());
             align();
-        }
-        else {
+        } else {
             putNull();
         }
     }
@@ -90,8 +89,7 @@ public class Packet {
             putReferentID();
             putLong(value.longValue());
             align();
-        }
-        else {
+        } else {
             putNull();
         }
     }
@@ -124,8 +122,7 @@ public class Packet {
 
         try {
             textBytes = text.getBytes("UTF-16LE");
-        }
-        catch (final UnsupportedEncodingException exception) {
+        } catch (final UnsupportedEncodingException exception) {
             throw new RuntimeException();
         }
 
@@ -156,8 +153,7 @@ public class Packet {
         if (string != null) {
             putReferentID();
             putString(string, nullTerminate);
-        }
-        else {
+        } else {
             putNull();
         }
     }
@@ -253,8 +249,7 @@ public class Packet {
         if (0 != getReferentID()) {
             result = getByteArray();
             align();
-        }
-        else {
+        } else {
             result = null;
         }
 
@@ -289,8 +284,7 @@ public class Packet {
             }
 
             align();
-        }
-        else {
+        } else {
             result = null;
         }
 
@@ -302,8 +296,7 @@ public class Packet {
         if (0 != getReferentID()) {
             result = getString(nullTerminated);
             align();
-        }
-        else {
+        } else {
             result = null;
         }
 

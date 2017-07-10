@@ -26,9 +26,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-
 import javax.activation.UnsupportedDataTypeException;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.util.encoders.Hex;
 

@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.transport;
 
 import java.io.IOException;
-
 import com.rapid7.client.dcerpc.RPCRequest;
 import com.rapid7.client.dcerpc.RPCResponse;
 

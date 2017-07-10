@@ -43,8 +43,8 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * handle is found in the handle table (HANDLETABLE).<br>
  * <br>
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
- * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error
- * codes are listed in the following table.
+ * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
+ * are listed in the following table.
  * <table>
  * <tr>
  * <td>Return value/code</td>
@@ -73,16 +73,16 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * The server attempts to open the root key, HKEY_CURRENT_USER, and return a handle to that key in the phKey
  * parameter.<br>
  * <br>
- * The server MUST evaluate the security descriptor that is associated with the key against the requested access that
- * is expressed in the samDesired parameter to determine whether the caller can open this key.<br>
+ * The server MUST evaluate the security descriptor that is associated with the key against the requested access that is
+ * expressed in the samDesired parameter to determine whether the caller can open this key.<br>
  * <br>
  * If the caller is permitted to open the key, the server MUST return 0 to indicate success, and create a new valid
- * context handle. The server MUST store the context handle value in the handle table (HANDLETABLE) along with a
- * mapping to the HKEY_CURRENT_USER key. The server MUST place the context handle in the phKey parameter. If the caller
- * does not have access, the server MUST return ERROR_ACCESS_DENIED (5).<br>
+ * context handle. The server MUST store the context handle value in the handle table (HANDLETABLE) along with a mapping
+ * to the HKEY_CURRENT_USER key. The server MUST place the context handle in the phKey parameter. If the caller does not
+ * have access, the server MUST return ERROR_ACCESS_DENIED (5).<br>
  * <br>
- * The server MUST validate the value of the samDesired parameter set by the client. If the value of samDesired
- * includes flags set which are not listed in section 2.2.4, the server MUST return ERROR_INVALID_PARAMETER.<br>
+ * The server MUST validate the value of the samDesired parameter set by the client. If the value of samDesired includes
+ * flags set which are not listed in section 2.2.4, the server MUST return ERROR_INVALID_PARAMETER.<br>
  * <br>
  * The server MAY return other values depending on other failure cases; other values are implementation-specific.
  *

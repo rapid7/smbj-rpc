@@ -21,8 +21,8 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 /**
  * <b>3.1.5.3 OpenLocalMachine (Opnum 2)</b> <br>
  * <br>
- * The OpenLocalMachine method is called by the client. In response, the server opens a handle to the
- * HKEY_LOCAL_MACHINE predefined key.
+ * The OpenLocalMachine method is called by the client. In response, the server opens a handle to the HKEY_LOCAL_MACHINE
+ * predefined key.
  *
  * <pre>
  * error_status_t OpenLocalMachine(
@@ -71,21 +71,20 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * samDesired parameter. If both the KEY_WOW64_64KEY and KEY_WOW64_32KEY are set, the server SHOULD <8> fail the method
  * and return ERROR_INVALID_PARAMETER.<br>
  * <br>
- * The server attempts to open the root key, HKEY_LOCAL_MACHINE, and return a handle to that key in the phKey
- * parameter. The server MUST evaluate the security descriptor that is associated with the key against the requested
- * access that is expressed in the samDesired parameter to determine if the caller can open this key.<br>
+ * The server attempts to open the root key, HKEY_LOCAL_MACHINE, and return a handle to that key in the phKey parameter.
+ * The server MUST evaluate the security descriptor that is associated with the key against the requested access that is
+ * expressed in the samDesired parameter to determine if the caller can open this key.<br>
  * <br>
  * If the caller is permitted to open the key, the server MUST return 0 to indicate success and create a new valid
- * context handle. The server MUST store the context handle value in the handle table (HANDLETABLE) along with a
- * mapping to the HKEY_LOCAL_MACHINE key. The server MUST place the handle value (see 3.1.1.9) in the phKey
- * parameter.<br>
+ * context handle. The server MUST store the context handle value in the handle table (HANDLETABLE) along with a mapping
+ * to the HKEY_LOCAL_MACHINE key. The server MUST place the handle value (see 3.1.1.9) in the phKey parameter.<br>
  * <br>
  * If the caller does not have access, the server MUST return ERROR_ACCESS_DENIED (5). The server SHOULD return without
- * modification any other error code encountered in servicing the client request in accordance with the Win32Error
- * Codes in [MS-ERREF] section 2.2.<br>
+ * modification any other error code encountered in servicing the client request in accordance with the Win32Error Codes
+ * in [MS-ERREF] section 2.2.<br>
  * <br>
- * The server MUST validate the value of the samDesired parameter set by the client. If the value of samDesired
- * includes flags set which are not listed in section 2.2.4, the server MUST return ERROR_INVALID_PARAMETER.<br>
+ * The server MUST validate the value of the samDesired parameter set by the client. If the value of samDesired includes
+ * flags set which are not listed in section 2.2.4, the server MUST return ERROR_INVALID_PARAMETER.<br>
  * <br>
  * The server MUST disregard the samDesired parameter if the samDesired parameter set by the client has bit 0x2 set,
  * indicating permission to create a subkey. The server MUST not allow subkey creation in certain locations of the

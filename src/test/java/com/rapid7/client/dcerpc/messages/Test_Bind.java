@@ -3,7 +3,6 @@ package com.rapid7.client.dcerpc.messages;
 import static org.junit.Assert.assertEquals;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-
 import com.rapid7.client.dcerpc.Interface;
 
 public class Test_Bind {

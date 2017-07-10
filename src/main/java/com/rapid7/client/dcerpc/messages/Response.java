@@ -54,13 +54,13 @@ import com.rapid7.client.dcerpc.RPCResponse;
  * } rpcconn_response_hdr_t;
  * </pre>
  *
- * The response PDU is used to respond to an active call. The p_cont_id field holds a context identifier that
- * identifies the data representation. The cancel_count field holds a count of cancels received.<br>
+ * The response PDU is used to respond to an active call. The p_cont_id field holds a context identifier that identifies
+ * the data representation. The cancel_count field holds a count of cancels received.<br>
  * <br>
  * The alloc_hint field is optionally used by the transmitter to provide a hint to the receiver of the amount of buffer
- * space to allocate contiguously for fragmented requests. This is only a potential optimisation. The receiver must
- * work correctly regardless of the value passed. The value 0 (zero) is reserved to indicate that the transmitter is
- * not supplying any information.
+ * space to allocate contiguously for fragmented requests. This is only a potential optimisation. The receiver must work
+ * correctly regardless of the value passed. The value 0 (zero) is reserved to indicate that the transmitter is not
+ * supplying any information.
  *
  * @see http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm
  */

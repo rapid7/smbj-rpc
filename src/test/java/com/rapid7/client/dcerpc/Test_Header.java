@@ -1,15 +1,12 @@
 package com.rapid7.client.dcerpc;
 
 import static org.junit.Assert.assertEquals;
-
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
-
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import com.hierynomus.smbj.transport.TransportException;
 
 public class Test_Header {
@@ -33,14 +30,16 @@ public class Test_Header {
     }
 
     @Test
-    public void parsePacket() throws TransportException {
+    public void parsePacket()
+        throws TransportException {
         final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         new Header(testVectorBuffer);
     }
 
     @Test
-    public void parsePacketAndMarshal() throws TransportException {
+    public void parsePacketAndMarshal()
+        throws TransportException {
         final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
@@ -51,7 +50,8 @@ public class Test_Header {
     }
 
     @Test
-    public void parseMajorVersion() throws TransportException {
+    public void parseMajorVersion()
+        throws TransportException {
         final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
@@ -60,7 +60,8 @@ public class Test_Header {
     }
 
     @Test
-    public void parseMinorVersion() throws TransportException {
+    public void parseMinorVersion()
+        throws TransportException {
         final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
@@ -69,7 +70,8 @@ public class Test_Header {
     }
 
     @Test
-    public void parsePDUType() throws TransportException {
+    public void parsePDUType()
+        throws TransportException {
         final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
@@ -78,7 +80,8 @@ public class Test_Header {
     }
 
     @Test
-    public void parsePFCFlags() throws TransportException {
+    public void parsePFCFlags()
+        throws TransportException {
         final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
@@ -87,7 +90,8 @@ public class Test_Header {
     }
 
     @Test
-    public void parseNDR() throws TransportException {
+    public void parseNDR()
+        throws TransportException {
         final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
@@ -96,7 +100,8 @@ public class Test_Header {
     }
 
     @Test
-    public void parseFragmentLength() throws TransportException {
+    public void parseFragmentLength()
+        throws TransportException {
         final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
@@ -105,7 +110,8 @@ public class Test_Header {
     }
 
     @Test
-    public void parseAuthenticationVerifierLength() throws TransportException {
+    public void parseAuthenticationVerifierLength()
+        throws TransportException {
         final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
@@ -114,7 +120,8 @@ public class Test_Header {
     }
 
     @Test
-    public void parseCallID() throws TransportException {
+    public void parseCallID()
+        throws TransportException {
         final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
@@ -123,7 +130,8 @@ public class Test_Header {
     }
 
     @Test
-    public void badMajorVersion() throws TransportException {
+    public void badMajorVersion()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Version mismatch: 1.0 != 5.0");
 
@@ -133,7 +141,8 @@ public class Test_Header {
     }
 
     @Test
-    public void badMinorVersion() throws TransportException {
+    public void badMinorVersion()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Version mismatch: 5.1 != 5.0");
 
@@ -143,7 +152,8 @@ public class Test_Header {
     }
 
     @Test
-    public void badICR() throws TransportException {
+    public void badICR()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Integer and Character representation mismatch: 0");
 
@@ -153,7 +163,8 @@ public class Test_Header {
     }
 
     @Test
-    public void badFPR() throws TransportException {
+    public void badFPR()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Floating-Point representation mismatch: 16");
 
@@ -163,7 +174,8 @@ public class Test_Header {
     }
 
     @Test
-    public void badFragmentLength() throws TransportException {
+    public void badFragmentLength()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Packet incomplete: 17 > 16");
 
@@ -173,7 +185,8 @@ public class Test_Header {
     }
 
     @Test
-    public void badAuthLength() throws TransportException {
+    public void badAuthLength()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Packet incomplete: 16 + 1 > 16");
 

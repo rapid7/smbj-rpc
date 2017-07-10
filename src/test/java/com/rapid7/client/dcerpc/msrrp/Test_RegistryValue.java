@@ -21,11 +21,8 @@ package com.rapid7.client.dcerpc.msrrp;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-
 import java.io.UnsupportedEncodingException;
-
 import javax.activation.UnsupportedDataTypeException;
-
 import org.junit.Test;
 
 public class Test_RegistryValue {

@@ -82,25 +82,25 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * samDesired parameter. If both KEY_WOW64_64KEY and KEY_WOW64_32KEY are set, the server SHOULD fail the method and
  * return ERROR_INVALID_PARAMETER.<br>
  * <br>
- * The server then checks to see if the key specified by the hKEY parameter is a key that can only be operated on in
- * the 64-bit key namespace (KEYS64). See section 3.1.1.4.<br>
+ * The server then checks to see if the key specified by the hKEY parameter is a key that can only be operated on in the
+ * 64-bit key namespace (KEYS64). See section 3.1.1.4.<br>
  * <br>
  * If the key specified by the hKey parameter is a key that can only be operated on in the 64-bit key namespace
- * (KEYS64), the server MUST ignore the KEY_WOW64_64KEY and KEY_WOW64_32KEY bits in the samDesired parameter and
- * operate on and create or open the key in the 64-bit namespace (KEYS64).<br>
+ * (KEYS64), the server MUST ignore the KEY_WOW64_64KEY and KEY_WOW64_32KEY bits in the samDesired parameter and operate
+ * on and create or open the key in the 64-bit namespace (KEYS64).<br>
  * <br>
  * If the key specified by lpSubKey has a KEYTYPE of symbolic link and the client has not set REG_OPTION_OPEN_LINK in
  * the dwOptions parameter, the server MUST return a handle to the key that is the target of the symbolic link (see
- * section 3.1.1.11). The server first checks for a value of the key indicated by lpSubKey named "SymbolicLinkValue".
- * If a value named SymbolicLinkValue is not found, the server MUST fail the method and return ERROR_INVALID_PARAMETER.
- * If the target of the symbolic link does not exist, the server MUST fail the method and return
+ * section 3.1.1.11). The server first checks for a value of the key indicated by lpSubKey named "SymbolicLinkValue". If
+ * a value named SymbolicLinkValue is not found, the server MUST fail the method and return ERROR_INVALID_PARAMETER. If
+ * the target of the symbolic link does not exist, the server MUST fail the method and return
  * ERROR_INVALID_PARAMETER.<br>
  * <br>
  * If the key specified by lpSubKey has a KEYTYPE of symbolic link and the client has set REG_OPTION_OPEN_LINK in the
  * dwOptions parameter, the server returns a handle to the key that is the source of the symbolic link.<br>
  * <br>
- * If the key specified by lpSubKey has a KEYTYPE of not volatile, and the client has not set the dwOptions parameter
- * to 0x0000000o to indicate not volatile, the server MUST ignore this condition.<br>
+ * If the key specified by lpSubKey has a KEYTYPE of not volatile, and the client has not set the dwOptions parameter to
+ * 0x0000000o to indicate not volatile, the server MUST ignore this condition.<br>
  * <br>
  * If the key specified by lpSubKey has a KEYTYPE of volatile, and the client has not set the dwOptions parameter to
  * 0x00000001 to indicate volatile, the server MUST ignore this condition.<br>
@@ -111,9 +111,8 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * If lpSubKey is set to NULL by the client, the server MUST fail this method and return ERROR_INVALID_PARAMETER.<br>
  * <br>
  * Next, the server checks if the KEY_WOW64_32KEY is set in the samDesired parameter. If the KEY_WOW64_32KEY is set in
- * the samDesired parameter, the server MUST create the key in the 32-bit key namespace (KEYS32). If the
- * KEY_WOW64_32KEY is not set in the samDesired parameter, the server MUST create the key in the 64-bit key namespace
- * (KEYS64).<br>
+ * the samDesired parameter, the server MUST create the key in the 32-bit key namespace (KEYS32). If the KEY_WOW64_32KEY
+ * is not set in the samDesired parameter, the server MUST create the key in the 64-bit key namespace (KEYS64).<br>
  * <br>
  * Next, the server MUST determine if the key path indicated by hKey and lpSubKey refer to a path that is within the
  * subset of registry paths that can support both 64-bit and 32-bit key namespaces (section 3.1.1.4). If the key path
@@ -123,9 +122,9 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * server MUST operate on the 32-bit key namespace, then the server MUST open the
  * HKEY_LOCAL_MACHINE\Software\Wow6432Node\TEST_KEY key.<br>
  * <br>
- * The server MUST first validate that the key specified by lpSubKey is a child key of the key specified by hKey. If
- * the key specified by lpSubKey is not a subkey of the key specified by hKey, the server MUST set phkResult to NULL
- * and return ERROR_FILE_NOT_FOUND.<br>
+ * The server MUST first validate that the key specified by lpSubKey is a child key of the key specified by hKey. If the
+ * key specified by lpSubKey is not a subkey of the key specified by hKey, the server MUST set phkResult to NULL and
+ * return ERROR_FILE_NOT_FOUND.<br>
  * <br>
  * The server MUST validate that the client has access to open the key using the security descriptor of the immediate
  * parent key of the key indicated by lpSubKey. The server MUST NOT use the samDesired parameter set by the client to

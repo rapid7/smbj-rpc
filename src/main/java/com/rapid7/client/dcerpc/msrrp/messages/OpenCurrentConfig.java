@@ -61,14 +61,14 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * <br>
  * <b>Server Operations</b><br>
  * <br>
- * If the registry server can no longer service registry requests because server shutdown has been initiated, the
- * server MUST return ERROR_WRITE_PROTECT.<br>
+ * If the registry server can no longer service registry requests because server shutdown has been initiated, the server
+ * MUST return ERROR_WRITE_PROTECT.<br>
  * <br>
- * The server attempts to open the root key, HKEY_CURRENT_CONFIG, and create a new valid context handle. The server
- * MUST store the context handle value in the handle table (HANDLETABLE) along with a mapping to the
- * HKEY_CURRENT_CONFIG key. The server MUST return the handle to that key in the phKey parameter. The server MUST
- * evaluate the security descriptor that is associated with the key against the requested access that is expressed in
- * the samDesired parameter to determine whether the caller has the authority to open this key.<br>
+ * The server attempts to open the root key, HKEY_CURRENT_CONFIG, and create a new valid context handle. The server MUST
+ * store the context handle value in the handle table (HANDLETABLE) along with a mapping to the HKEY_CURRENT_CONFIG key.
+ * The server MUST return the handle to that key in the phKey parameter. The server MUST evaluate the security
+ * descriptor that is associated with the key against the requested access that is expressed in the samDesired parameter
+ * to determine whether the caller has the authority to open this key.<br>
  * <br>
  * If the caller is permitted to open the key, the server MUST return 0 to indicate success and place a valid context
  * handle in the phKey parameter. If the caller does not have access, the server MUST return ERROR_ACCESS_DENIED (5).

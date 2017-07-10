@@ -52,12 +52,9 @@ public class Test_RegistryKey {
         final RegistryKey registryKey2 = new RegistryKey("test", new FileTime(116444736000009999l));
         final RegistryKey registryKey3 = new RegistryKey("test", new FileTime(222222222222222222l));
 
-        assertEquals("test {lastWriteTime=1970-01-01T00:00:00.000+0000 (116444736000000000)}",
-            registryKey1.toString());
-        assertEquals("test {lastWriteTime=1970-01-01T00:00:00.000+0000 (116444736000009999)}",
-            registryKey2.toString());
-        assertEquals("test {lastWriteTime=2305-03-13T15:30:22.222+0000 (222222222222222222)}",
-            registryKey3.toString());
+        assertEquals("test {lastWriteTime=1970-01-01T00:00:00.000+0000 (116444736000000000)}", registryKey1.toString());
+        assertEquals("test {lastWriteTime=1970-01-01T00:00:00.000+0000 (116444736000009999)}", registryKey2.toString());
+        assertEquals("test {lastWriteTime=2305-03-13T15:30:22.222+0000 (222222222222222222)}", registryKey3.toString());
     }
 
     @Test

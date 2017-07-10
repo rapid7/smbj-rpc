@@ -39,8 +39,8 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * <br>
  * samDesired: SHOULD be sent as 0 and MUST be ignored on receipt.<br>
  * <br>
- * phKey: A pointer to an RPC context handle for the root key, HKEY_PERFORMANCE_DATA, as specified in section 3.1.1.
- * The handle is found in the handle table (HANDLETABLE).<br>
+ * phKey: A pointer to an RPC context handle for the root key, HKEY_PERFORMANCE_DATA, as specified in section 3.1.1. The
+ * handle is found in the handle table (HANDLETABLE).<br>
  * <br>
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in Win32Error Codes in [MS-ERREF]. The server SHOULD return without modification any other error code
@@ -69,13 +69,13 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * <br>
  * The server attempts to open the root key, HKEY_PERFORMANCE_DATA, and return a handle to that key in the phKey
  * parameter. The server MUST evaluate the security descriptor that is associated with the key
- * HKEY_LOCAL_MACHINE\SOFTWARE\MICROSOFT\WINDOWS NT\CURRENTVERSION\PERFLIB against a requested access of
- * MAXIMUM_ALLOWED (see [MS-DTYP] (section 2.4.3)) to determine whether the caller can open this key.<br>
+ * HKEY_LOCAL_MACHINE\SOFTWARE\MICROSOFT\WINDOWS NT\CURRENTVERSION\PERFLIB against a requested access of MAXIMUM_ALLOWED
+ * (see [MS-DTYP] (section 2.4.3)) to determine whether the caller can open this key.<br>
  * <br>
  * If the caller is permitted to open the key, the server MUST return 0 to indicate success, and create a new valid
- * context handle. The server MUST store the context handle value in the handle table (HANDLETABLE) along with a
- * mapping to the HKEY_PERFORMANCE_DATA key. The server MUST place the handle value (see 3.1.1.9) in the phKey
- * parameter. If the caller does not have access, the server MUST return ERROR_ACCESS_DENIED (5).
+ * context handle. The server MUST store the context handle value in the handle table (HANDLETABLE) along with a mapping
+ * to the HKEY_PERFORMANCE_DATA key. The server MUST place the handle value (see 3.1.1.9) in the phKey parameter. If the
+ * caller does not have access, the server MUST return ERROR_ACCESS_DENIED (5).
  *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244954">3.1.5.4 OpenPerformanceData (Opnum 3)</a>}
  */

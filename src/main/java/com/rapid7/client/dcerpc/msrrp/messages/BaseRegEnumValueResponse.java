@@ -184,8 +184,7 @@ public class BaseRegEnumValueResponse extends Response {
             this.name = name;
             this.type = RegistryValueType.getRegistryValueType(type);
             this.data = data;
-        }
-        else {
+        } else {
             this.name = null;
             this.type = null;
             this.data = null;
@@ -239,8 +238,8 @@ public class BaseRegEnumValueResponse extends Response {
      *         </tr>
      *         <tr>
      *         <td>ERROR_WRITE_PROTECT (0x00000013)</td>
-     *         <td>A read or write operation was attempted to a volume after it was dismounted. The server can no
-     *         longer service registry requests because server shutdown has been initiated.</td>
+     *         <td>A read or write operation was attempted to a volume after it was dismounted. The server can no longer
+     *         service registry requests because server shutdown has been initiated.</td>
      *         </tr>
      *         </table>
      */

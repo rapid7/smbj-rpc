@@ -28,11 +28,8 @@ import static com.rapid7.client.dcerpc.msrrp.RegistryHive.HKEY_PERFORMANCE_TEXT;
 import static com.rapid7.client.dcerpc.msrrp.RegistryHive.HKEY_USERS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
 import java.util.EnumSet;
-
 import org.junit.Test;
-
 import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
 

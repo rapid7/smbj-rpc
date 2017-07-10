@@ -33,7 +33,6 @@ import static com.rapid7.client.dcerpc.msrrp.RegistryValueType.REG_SZ;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 public class Test_RegistryValueType {

@@ -20,7 +20,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import static org.junit.Assert.assertEquals;
 import java.util.EnumSet;
-
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
@@ -72,8 +71,7 @@ public class Test_BaseRegOpenKey {
         //          Standard rights: 0x00000000
         //          WINREG specific rights: 0x00000000
         final byte[] requestBytes = request.marshal(9);
-        final String encodedRequest =
-            Hex.toHexString(requestBytes);
+        final String encodedRequest = Hex.toHexString(requestBytes);
 
         assertEquals(
             "0500000310000000a400000009000000a400000000000f000000000032daf234b77c86409d29efe60d3266835a005a00000002002d000000000000002d00000053006f006600740077006100720065005c004d006900630072006f0073006f00660074005c00570069006e0064006f007700730020004e0054005c00430075007200720065006e007400560065007200730069006f006e00000000000000000000000002",

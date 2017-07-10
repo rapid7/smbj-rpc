@@ -65,8 +65,8 @@ import com.rapid7.client.dcerpc.RPCResponse;
  * possible for a bind_ack not to contain any mutually supported syntaxes.<br>
  * <br>
  * If the client requested a new association group, assoc_group_id contains the identifier of the new association group
- * created by the server. Otherwise, it contains the identifier of the previously created association group requested
- * by the client.
+ * created by the server. Otherwise, it contains the identifier of the previously created association group requested by
+ * the client.
  *
  * @see http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm
  */

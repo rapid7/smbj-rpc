@@ -77,24 +77,24 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * and return ERROR_INVALID_PARAMETER.<br>
  * <br>
  * Next, the server checks if the KEY_WOW64_32KEY is set in the samDesired parameter. If the KEY_WOW64_32KEY is set in
- * the samDesired parameter, the server MUST open the root key, HKEY_CLASSES_ROOT, in the 32-bit key namespace
- * (KEYS32). If the KEY_WOW64_32KEY is not set in the samDesired parameter, the server MUST open the root key,
- * HKEY_CLASSES_ROOT, in the 64-bit key namespace (KEYS64). If the root key is to be opened in the 32-bit key
- * namespace, the server MUST open the root key in the 32-bit key namespace. The 32-bit key namespace for
- * HKEY_CLASSES_ROOT is stored as a subkey in the 64-bit key namespace in HKEY_CLASSES_ROOT\Wow6432Node.<br>
+ * the samDesired parameter, the server MUST open the root key, HKEY_CLASSES_ROOT, in the 32-bit key namespace (KEYS32).
+ * If the KEY_WOW64_32KEY is not set in the samDesired parameter, the server MUST open the root key, HKEY_CLASSES_ROOT,
+ * in the 64-bit key namespace (KEYS64). If the root key is to be opened in the 32-bit key namespace, the server MUST
+ * open the root key in the 32-bit key namespace. The 32-bit key namespace for HKEY_CLASSES_ROOT is stored as a subkey
+ * in the 64-bit key namespace in HKEY_CLASSES_ROOT\Wow6432Node.<br>
  * <br>
- * The server MUST validate the value of the samDesired parameter set by the client. If the value of samDesired
- * includes flags set that are not listed in section 2.2.4, the server MUST return ERROR_INVALID_PARAMETER.<br>
+ * The server MUST validate the value of the samDesired parameter set by the client. If the value of samDesired includes
+ * flags set that are not listed in section 2.2.4, the server MUST return ERROR_INVALID_PARAMETER.<br>
  * <br>
  * The server attempts to open the root key, HKEY_CLASSES_ROOT, and return a handle to that key in the phKey parameter.
- * The server MUST evaluate the security descriptor that is associated with the key against the requested access that
- * is expressed in the samDesired parameter to determine whether the caller can open this key.<br>
+ * The server MUST evaluate the security descriptor that is associated with the key against the requested access that is
+ * expressed in the samDesired parameter to determine whether the caller can open this key.<br>
  * <br>
  * If the caller is permitted to open the key, the server MUST return 0 to indicate success and create a new valid
- * context handle. The server MUST store the context handle value in the handle table (HANDLETABLE) along with a
- * mapping to the HKEY_CLASSES_ROOT key. The server MUST place the context handle in the phKey parameter. If the caller
- * does not have access, the server MUST return ERROR_ACCESS_DENIED (5). The server MAY return other values, depending
- * on other failure cases; other values are implementation-specific.
+ * context handle. The server MUST store the context handle value in the handle table (HANDLETABLE) along with a mapping
+ * to the HKEY_CLASSES_ROOT key. The server MUST place the context handle in the phKey parameter. If the caller does not
+ * have access, the server MUST return ERROR_ACCESS_DENIED (5). The server MAY return other values, depending on other
+ * failure cases; other values are implementation-specific.
  *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244950">3.1.5.1 OpenClassesRoot (Opnum 0)</a>}
  */

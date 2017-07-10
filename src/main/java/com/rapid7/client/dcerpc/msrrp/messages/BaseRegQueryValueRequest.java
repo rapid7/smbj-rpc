@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.nio.ByteBuffer;
-
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
@@ -66,12 +65,12 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * <br>
  * lpcbLen: A pointer to a variable that contains the number of bytes to transmit to the client. On input, the client
  * MUST allocate the memory for this parameter and the pointer value of this parameter MUST not be NULL. On output, the
- * server MUST set this parameter to the size (in bytes) of the buffer pointed to by the lpData parameter. If the
- * client sets lpcbLen to NULL, the server MUST fail this method and return ERROR_INVALID_PARAMETER.<br>
+ * server MUST set this parameter to the size (in bytes) of the buffer pointed to by the lpData parameter. If the client
+ * sets lpcbLen to NULL, the server MUST fail this method and return ERROR_INVALID_PARAMETER.<br>
  * <br>
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
- * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error
- * codes are listed in the following table.
+ * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
+ * are listed in the following table.
  * <table border="1">
  * <tr>
  * <td>Return value/code</td>
@@ -127,12 +126,12 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * input, the server MUST return ERROR_SUCCESS and return the actual size of the data of the value indicated by
  * lpValueName in the lpcbData parameter.<br>
  * <br>
- * The server MUST return, on output, the data that is associated with the specified value in the buffer that is
- * pointed to by the lpData parameter. If the size, in bytes, of the data that is associated with the specified value
- * is too large to fit in the buffer pointed to by the lpData parameter with size specified by the lpcbData parameter,
- * the server MUST return ERROR_MORE_DATA. The server MUST, on output, update the value of the variable pointed to by
- * the lpcbData parameter to the actual size of the data associated with the specified value. This enables the client
- * to determine the correct size of the lpData parameter in a subsequent call to BaseRegQueryValue.<br>
+ * The server MUST return, on output, the data that is associated with the specified value in the buffer that is pointed
+ * to by the lpData parameter. If the size, in bytes, of the data that is associated with the specified value is too
+ * large to fit in the buffer pointed to by the lpData parameter with size specified by the lpcbData parameter, the
+ * server MUST return ERROR_MORE_DATA. The server MUST, on output, update the value of the variable pointed to by the
+ * lpcbData parameter to the actual size of the data associated with the specified value. This enables the client to
+ * determine the correct size of the lpData parameter in a subsequent call to BaseRegQueryValue.<br>
  * <br>
  * The server, on output, MUST return (in the value that is pointed to by the lpcbData parameter) the size in bytes of
  * the data that is returned in the lpData parameter. If the lpData parameter is NULL, the server SHOULD set the value
@@ -200,9 +199,9 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  */
 public class BaseRegQueryValueRequest extends Request<BaseRegQueryValueResponse> {
     /**
-     * The BaseRegQueryValue method is called by the client. In response, the server returns the data that is
-     * associated with the named value of a specified registry open key. If a value name is not specified, the server
-     * returns the data that is associated with the default value of the specified registry open key.
+     * The BaseRegQueryValue method is called by the client. In response, the server returns the data that is associated
+     * with the named value of a specified registry open key. If a value name is not specified, the server returns the
+     * data that is associated with the default value of the specified registry open key.
      *
      * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods that are
      *        specified in section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},

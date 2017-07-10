@@ -31,8 +31,8 @@ public enum Interface {
     private Interface(final String uuid) {
         final String[] interfaceComponents = uuid.split(":", 2);
         final String[] uuidComponents = interfaceComponents[0].split("-", 5);
-        final String[] uuidBEComponents = {uuidComponents[0], uuidComponents[1], uuidComponents[2]};
-        final String[] uuidLEComponents = {uuidComponents[3], uuidComponents[4]};
+        final String[] uuidBEComponents = { uuidComponents[0], uuidComponents[1], uuidComponents[2] };
+        final String[] uuidLEComponents = { uuidComponents[3], uuidComponents[4] };
 
         int uuidIndex = 0;
         int uuidIndexNibble = 4;
@@ -46,8 +46,7 @@ public enum Interface {
                     if (uuidIndexNibble == 0) {
                         uuidIndexNibble = 4;
                         uuidIndex++;
-                    }
-                    else {
+                    } else {
                         uuidIndexNibble = 0;
                     }
                 }
@@ -60,8 +59,7 @@ public enum Interface {
                 if (uuidIndexNibble == 0) {
                     uuidIndexNibble = 4;
                     uuidIndex++;
-                }
-                else {
+                } else {
                     uuidIndexNibble = 0;
                 }
             }

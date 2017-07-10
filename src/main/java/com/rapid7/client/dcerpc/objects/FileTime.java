@@ -57,7 +57,7 @@ public class FileTime {
 
     @Override
     public boolean equals(final Object anObject) {
-        return anObject instanceof FileTime && Objects.equals(date, ((FileTime) anObject).date) &&
-            Objects.equals(windowsTime, ((FileTime) anObject).windowsTime);
+        return anObject instanceof FileTime && Objects.equals(date, ((FileTime) anObject).date)
+            && Objects.equals(windowsTime, ((FileTime) anObject).windowsTime);
     }
 }

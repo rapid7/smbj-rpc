@@ -94,15 +94,12 @@ public class HandleRequest extends Request<HandleResponse> {
      * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText} is called by the client.
      * In response, the server opens the appropriate predefined key.
      *
-     * @param op
-     *            The operation number for one of {@link OpenClassesRoot}, {@link OpenCurrentUser},
-     *            {@link OpenLocalMachine}, {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey},
-     *            {@link BaseRegOpenKey}, {@link OpenCurrentConfig}, {@link OpenPerformanceText},
-     *            {@link OpenPerformanceNlsText}.
-     * @param serverName
-     *            The server name.
-     * @param accessMask
-     *            A bit field that describes the requested security access for the key.
+     * @param op The operation number for one of {@link OpenClassesRoot}, {@link OpenCurrentUser},
+     *        {@link OpenLocalMachine}, {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey},
+     *        {@link BaseRegOpenKey}, {@link OpenCurrentConfig}, {@link OpenPerformanceText},
+     *        {@link OpenPerformanceNlsText}.
+     * @param serverName The server name.
+     * @param accessMask A bit field that describes the requested security access for the key.
      */
     public HandleRequest(final short op, final EnumSet<AccessMask> accessMask) {
         super(op);

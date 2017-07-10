@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.msrrp.objects;
 
 import java.util.Arrays;
-
 import org.bouncycastle.util.encoders.Hex;
 
 public class ContextHandle {

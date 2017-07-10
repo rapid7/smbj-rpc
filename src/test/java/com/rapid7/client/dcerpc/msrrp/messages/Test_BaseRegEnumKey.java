@@ -77,8 +77,7 @@ public class Test_BaseRegEnumKey {
         //          Referent ID: 0x0002000c
         //          Last Changed Time: No time specified (0)
         final byte[] requestBytes = request1.marshal(2);
-        final String encodedRequest =
-            Hex.toHexString(requestBytes);
+        final String encodedRequest = Hex.toHexString(requestBytes);
 
         assertEquals(
             "0500000310000000680000000200000068000000000009000000000032daf234b77c86409d29efe60d326683000000000000000200000200000100000000000000000000040002000000feff08000200ff7f000000000000000000000c0002000000000000000000",
@@ -132,8 +131,7 @@ public class Test_BaseRegEnumKey {
         //          Referent ID: 0x0002000c
         //          Last Changed Time: No time specified (0)
         final byte[] requestBytes = request2.marshal(3);
-        final String encodedRequest =
-            Hex.toHexString(requestBytes);
+        final String encodedRequest = Hex.toHexString(requestBytes);
 
         assertEquals(
             "0500000310000000680000000300000068000000000009000000000032daf234b77c86409d29efe60d326683010000000000000200000200000100000000000000000000040002000000feff08000200ff7f000000000000000000000c0002000000000000000000",

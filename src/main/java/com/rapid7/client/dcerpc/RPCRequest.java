@@ -35,46 +35,46 @@ public class RPCRequest<T extends RPCResponse> extends Header {
             throw new TransportException(String.format("Call ID mismatch: %d != %d", callID, responseObj.getCallID()));
         }
         switch (responseObj.getPDUType()) {
-            case REQUEST:
-                return parsePDURequest(response);
-            case PING:
-                return parsePDUPing(response);
-            case RESPONSE:
-                return parsePDUResponse(response);
-            case FAULT:
-                return parsePDUFault(response);
-            case WORKING:
-                return parsePDUWorking(response);
-            case NOCALL:
-                return parsePDUNoCall(response);
-            case REJECT:
-                return parsePDUReject(response);
-            case ACK:
-                return parsePDUACK(response);
-            case CL_CANCEL:
-                return parsePDUCLCancel(response);
-            case FACK:
-                return parsePDUFACK(response);
-            case CANCEL_ACK:
-                return parsePDUCancelACK(response);
-            case BIND:
-                return parsePDUBind(response);
-            case BIND_ACK:
-                return parsePDUBindACK(response);
-            case BIND_NAK:
-                return parsePDUBindNAK(response);
-            case ALTER_CONTEXT:
-                return parsePDUAlterContext(response);
-            case ALTER_CONTEXT_RESP:
-                return parsePDUAlterContextResp(response);
-            case SHUTDOWN:
-                return parsePDUShutdown(response);
-            case CO_CANCEL:
-                return parsePDUCOCancel(response);
-            case ORPHANED:
-                return parsePDUOrphaned(response);
-            default:
-                throw new TransportException("Unsupported PDU type in response message: " + responseObj.getPDUType());
+        case REQUEST:
+            return parsePDURequest(response);
+        case PING:
+            return parsePDUPing(response);
+        case RESPONSE:
+            return parsePDUResponse(response);
+        case FAULT:
+            return parsePDUFault(response);
+        case WORKING:
+            return parsePDUWorking(response);
+        case NOCALL:
+            return parsePDUNoCall(response);
+        case REJECT:
+            return parsePDUReject(response);
+        case ACK:
+            return parsePDUACK(response);
+        case CL_CANCEL:
+            return parsePDUCLCancel(response);
+        case FACK:
+            return parsePDUFACK(response);
+        case CANCEL_ACK:
+            return parsePDUCancelACK(response);
+        case BIND:
+            return parsePDUBind(response);
+        case BIND_ACK:
+            return parsePDUBindACK(response);
+        case BIND_NAK:
+            return parsePDUBindNAK(response);
+        case ALTER_CONTEXT:
+            return parsePDUAlterContext(response);
+        case ALTER_CONTEXT_RESP:
+            return parsePDUAlterContextResp(response);
+        case SHUTDOWN:
+            return parsePDUShutdown(response);
+        case CO_CANCEL:
+            return parsePDUCOCancel(response);
+        case ORPHANED:
+            return parsePDUOrphaned(response);
+        default:
+            throw new TransportException("Unsupported PDU type in response message: " + responseObj.getPDUType());
         }
     }
 

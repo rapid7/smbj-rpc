@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc;
 
 import java.io.IOException;
-
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 
 @SuppressWarnings("serial")
@@ -31,7 +30,7 @@ public class RPCException extends IOException {
         super(String.format("%s returned error code: %d (%s)", opName, returnValue,
             SystemErrorCode.getErrorCode(returnValue)));
         this.returnValue = returnValue;
-        this.errorCode = SystemErrorCode.getErrorCode(returnValue);
+        errorCode = SystemErrorCode.getErrorCode(returnValue);
     }
 
     public int getReturnValue() {

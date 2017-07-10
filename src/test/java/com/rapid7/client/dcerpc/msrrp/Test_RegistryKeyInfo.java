@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.msrrp;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 public class Test_RegistryKeyInfo {

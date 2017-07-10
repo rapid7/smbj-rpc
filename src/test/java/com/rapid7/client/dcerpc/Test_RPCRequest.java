@@ -1,14 +1,11 @@
 package com.rapid7.client.dcerpc;
 
 import static org.mockito.Mockito.spy;
-
 import java.util.EnumSet;
-
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import com.hierynomus.smbj.transport.TransportException;
 
 public class Test_RPCRequest {
@@ -16,7 +13,8 @@ public class Test_RPCRequest {
     public final ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void badCallID() throws TransportException {
+    public void badCallID()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Call ID mismatch: 0 != 10");
 
@@ -28,7 +26,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseREQUEST() throws TransportException {
+    public void parseREQUEST()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: REQUEST");
 
@@ -40,7 +39,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parsePING() throws TransportException {
+    public void parsePING()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: PING");
 
@@ -52,7 +52,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseRESPONSE() throws TransportException {
+    public void parseRESPONSE()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: RESPONSE");
 
@@ -64,7 +65,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseFAULT() throws TransportException {
+    public void parseFAULT()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: FAULT");
 
@@ -76,7 +78,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseWORKING() throws TransportException {
+    public void parseWORKING()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: WORKING");
 
@@ -88,7 +91,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseNOCALL() throws TransportException {
+    public void parseNOCALL()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: NOCALL");
 
@@ -100,7 +104,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseREJECT() throws TransportException {
+    public void parseREJECT()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: REJECT");
 
@@ -112,7 +117,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseACK() throws TransportException {
+    public void parseACK()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: ACK");
 
@@ -124,7 +130,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseCL_CANCEL() throws TransportException {
+    public void parseCL_CANCEL()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: CL_CANCEL");
 
@@ -136,7 +143,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseFACK() throws TransportException {
+    public void parseFACK()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: FACK");
 
@@ -148,7 +156,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseCANCEL_ACK() throws TransportException {
+    public void parseCANCEL_ACK()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: CANCEL_ACK");
 
@@ -160,7 +169,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseBIND() throws TransportException {
+    public void parseBIND()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: BIND");
 
@@ -172,7 +182,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseBIND_ACK() throws TransportException {
+    public void parseBIND_ACK()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: BIND_ACK");
 
@@ -184,7 +195,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseBIND_NAK() throws TransportException {
+    public void parseBIND_NAK()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: BIND_NAK");
 
@@ -196,7 +208,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseALTER_CONTEXT() throws TransportException {
+    public void parseALTER_CONTEXT()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: ALTER_CONTEXT");
 
@@ -208,7 +221,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseALTER_CONTEXT_RESP() throws TransportException {
+    public void parseALTER_CONTEXT_RESP()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: ALTER_CONTEXT_RESP");
 
@@ -220,7 +234,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseSHUTDOWN() throws TransportException {
+    public void parseSHUTDOWN()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: SHUTDOWN");
 
@@ -232,7 +247,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseCO_CANCEL() throws TransportException {
+    public void parseCO_CANCEL()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: CO_CANCEL");
 
@@ -244,7 +260,8 @@ public class Test_RPCRequest {
     }
 
     @Test
-    public void parseORPHANED() throws TransportException {
+    public void parseORPHANED()
+        throws TransportException {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Unsupported PDU type in response message: ORPHANED");
 

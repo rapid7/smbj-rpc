@@ -130,8 +130,7 @@ public class BaseRegQueryValueResponse extends Response {
         if (ERROR_SUCCESS.is(returnValue)) {
             this.type = RegistryValueType.getRegistryValueType(type);
             this.data = data;
-        }
-        else {
+        } else {
             this.type = null;
             this.data = null;
         }
@@ -166,13 +165,13 @@ public class BaseRegQueryValueResponse extends Response {
      *         </tr>
      *         <tr>
      *         <td>ERROR_FILE_NOT_FOUND (0x00000002)</td>
-     *         <td>The value specified by lpValueName was not found. If lpValueName was not specified, the default
-     *         value has not been defined.</td>
+     *         <td>The value specified by lpValueName was not found. If lpValueName was not specified, the default value
+     *         has not been defined.</td>
      *         </tr>
      *         <tr>
      *         <td>ERROR_WRITE_PROTECT (0x00000013)</td>
-     *         <td>A read or write operation was attempted to a volume after it was dismounted. The server can no
-     *         longer service registry requests because server shutdown has been initiated.</td>
+     *         <td>A read or write operation was attempted to a volume after it was dismounted. The server can no longer
+     *         service registry requests because server shutdown has been initiated.</td>
      *         </tr>
      *         <tr>
      *         <td>ERROR_MORE_DATA (0x000000EA)</td>

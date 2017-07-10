@@ -15,13 +15,20 @@
  */
 package com.rapid7.client.smb2.messages;
 
-import java.util.EnumSet;
-import com.hierynomus.msfscc.FileAttributes;
-import com.hierynomus.mssmb2.*;
-import com.hierynomus.smbj.common.SMBBuffer;
-import com.rapid7.client.smb2.SMB2ImpersonationLevel;
 import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.ensureNotNull;
 import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.toLong;
+import java.util.EnumSet;
+import com.hierynomus.msfscc.FileAttributes;
+import com.hierynomus.mssmb2.SMB2CreateDisposition;
+import com.hierynomus.mssmb2.SMB2CreateOptions;
+import com.hierynomus.mssmb2.SMB2Dialect;
+import com.hierynomus.mssmb2.SMB2Functions;
+import com.hierynomus.mssmb2.SMB2Header;
+import com.hierynomus.mssmb2.SMB2MessageCommandCode;
+import com.hierynomus.mssmb2.SMB2Packet;
+import com.hierynomus.mssmb2.SMB2ShareAccess;
+import com.hierynomus.smbj.common.SMBBuffer;
+import com.rapid7.client.smb2.SMB2ImpersonationLevel;
 
 /**
  * [MS-SMB2].pdf 2.2.13 SMB2 CREATE Request
@@ -37,13 +44,17 @@ public class SMB2CreateRequest extends SMB2Packet {
     private final EnumSet<SMB2CreateOptions> createOptions;
     private final String fileName; // Null to indicate the root of share
 
-    public SMB2CreateRequest(SMB2Dialect smbDialect,
-                             long sessionId, long treeId,
-                             SMB2ImpersonationLevel impersonationLevel,
-                             long accessMask,
-                             EnumSet<FileAttributes> fileAttributes,
-                             EnumSet<SMB2ShareAccess> shareAccess, SMB2CreateDisposition createDisposition,
-                             EnumSet<SMB2CreateOptions> createOptions, String fileName) {
+    public SMB2CreateRequest(
+        final SMB2Dialect smbDialect,
+        final long sessionId,
+        final long treeId,
+        final SMB2ImpersonationLevel impersonationLevel,
+        final long accessMask,
+        final EnumSet<FileAttributes> fileAttributes,
+        final EnumSet<SMB2ShareAccess> shareAccess,
+        final SMB2CreateDisposition createDisposition,
+        final EnumSet<SMB2CreateOptions> createOptions,
+        final String fileName) {
 
         super(57, smbDialect, SMB2MessageCommandCode.SMB2_CREATE, sessionId, treeId);
         this.impersonationLevel = impersonationLevel;
@@ -57,10 +68,10 @@ public class SMB2CreateRequest extends SMB2Packet {
     }
 
     @Override
-    protected void writeTo(SMBBuffer buffer) {
+    protected void writeTo(final SMBBuffer buffer) {
         buffer.putUInt16(structureSize); // StructureSize (2 bytes)
         buffer.putByte((byte) 0); // SecurityFlags (1 byte) - Reserved
-        buffer.putByte((byte) 0);  // RequestedOpLockLevel (1 byte) - None
+        buffer.putByte((byte) 0); // RequestedOpLockLevel (1 byte) - None
         buffer.putUInt32(impersonationLevel == null ? 1 : impersonationLevel.getValue()); // ImpersonationLevel (4 bytes) - Identification
         buffer.putReserved(8); // SmbCreateFlags (8 bytes)
         buffer.putReserved(8); // Reserved (8 bytes)
@@ -69,7 +80,7 @@ public class SMB2CreateRequest extends SMB2Packet {
         buffer.putUInt32(toLong(shareAccess)); // ShareAccess (4 bytes)
         buffer.putUInt32(createDisposition == null ? 0 : createDisposition.getValue()); // CreateDisposition (4 bytes)
         buffer.putUInt32(toLong(createOptions)); // CreateOptions (4 bytes)
-        int offset = SMB2Header.STRUCTURE_SIZE + structureSize - 1; // The structureSize is including the minimum of 1 byte for the fileName
+        final int offset = SMB2Header.STRUCTURE_SIZE + structureSize - 1; // The structureSize is including the minimum of 1 byte for the fileName
 
         byte[] nameBytes;
         if (fileName == null || fileName.trim().length() == 0) {

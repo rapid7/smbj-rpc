@@ -52,8 +52,7 @@ public class Test_BaseRegCloseKey {
         //              [Frame handle opened: 11176]
         //              [Frame handle closed: 11424]
         final byte[] requestBytes = request.marshal(39);
-        final String encodedRequest =
-            Hex.toHexString(requestBytes);
+        final String encodedRequest = Hex.toHexString(requestBytes);
 
         assertEquals("05000003100000002c000000270000002c000000000005000000000032daf234b77c86409d29efe60d326683",
             encodedRequest);

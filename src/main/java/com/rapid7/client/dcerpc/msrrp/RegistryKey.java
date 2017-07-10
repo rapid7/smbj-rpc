@@ -56,7 +56,7 @@ public class RegistryKey {
 
     @Override
     public boolean equals(final Object anObject) {
-        return anObject instanceof RegistryKey && Objects.equals(name, ((RegistryKey) anObject).name) &&
-            Objects.equals(lastWriteTime, ((RegistryKey) anObject).lastWriteTime);
+        return anObject instanceof RegistryKey && Objects.equals(name, ((RegistryKey) anObject).name)
+            && Objects.equals(lastWriteTime, ((RegistryKey) anObject).lastWriteTime);
     }
 }

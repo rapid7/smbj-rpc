@@ -140,8 +140,7 @@ public class BaseRegEnumKeyResponse extends Response {
         if (ERROR_SUCCESS.is(returnValue)) {
             this.name = name;
             this.lastWriteTime = new FileTime(lastWriteTime);
-        }
-        else {
+        } else {
             this.name = null;
             this.lastWriteTime = null;
         }
@@ -185,8 +184,8 @@ public class BaseRegEnumKeyResponse extends Response {
      *         </tr>
      *         <tr>
      *         <td>ERROR_WRITE_PROTECT (0x00000013)</td>
-     *         <td>A read or write operation was attempted to a volume after it was dismounted. The server can no
-     *         longer service registry requests because server shutdown has been initiated.</td>
+     *         <td>A read or write operation was attempted to a volume after it was dismounted. The server can no longer
+     *         service registry requests because server shutdown has been initiated.</td>
      *         </tr>
      *         <tr>
      *         <td>ERROR_MORE_DATA (0x000000EA)</td>

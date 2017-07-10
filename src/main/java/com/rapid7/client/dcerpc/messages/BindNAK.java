@@ -44,8 +44,8 @@ import com.rapid7.client.dcerpc.RPCResponse;
  * } rpcconn_bind_nak_hdr_t;
  * </pre>
  *
- * The bind_nak PDU is returned by the server when it rejects an association request initiated by the client's bind
- * PDU. The provider_reject_reason field holds the rejection reason code. When the reject reason is
+ * The bind_nak PDU is returned by the server when it rejects an association request initiated by the client's bind PDU.
+ * The provider_reject_reason field holds the rejection reason code. When the reject reason is
  * protocol_version_not_supported, the versions field contains a list of run-time protocol versions supported by the
  * server.<br>
  * <br>

@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.nio.ByteBuffer;
-
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
@@ -59,8 +58,8 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * <br>
  * lpcSubKeys: A pointer to a DWORD that MUST receive the count of the subkeys of the specified key.<br>
  * <br>
- * lpcbMaxSubKeyLen: A pointer to a DWORD that receives the size of the key's subkey with the longest name, or a
- * greater size, as the number of TCHAR elements.<br>
+ * lpcbMaxSubKeyLen: A pointer to a DWORD that receives the size of the key's subkey with the longest name, or a greater
+ * size, as the number of TCHAR elements.<br>
  * <br>
  * TCHAR elements are defined as follows:<br>
  * #ifdef UNICODE<br>
@@ -83,8 +82,8 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * lpftLastWriteTime: A pointer to a FILETIME structure that receives the last write time.<br>
  * <br>
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
- * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error
- * codes are listed in the following table.
+ * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
+ * are listed in the following table.
  * <table border="1">
  * <td>
  * <td>Return value/code</td>
@@ -126,16 +125,15 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * 0.<br>
  * <br>
  * The server MUST return a pointer to the variable that contains the number of values associated with the key in the
- * lpcValues parameter. If there are no values under the key indicated by hKey, the server MUST set this value to
- * 0.<br>
+ * lpcValues parameter. If there are no values under the key indicated by hKey, the server MUST set this value to 0.<br>
  * <br>
  * The server MUST return a pointer to the variable that contains the size (as the number of TCHAR elements) of the
  * key's longest value name in the lpcbMaxValueNameLen parameter. This size MUST NOT include the terminating null
  * character. If there are no values under the key indicated by hKey, the server MUST set this value to 0.<br>
  * <br>
- * The server MUST return a pointer to the variable that contains the size in bytes of the longest data component in
- * the key's values in the lpcbMaxValueLen parameter. If there are no subkeys under the key indicated by hKey, the
- * server MUST set this value to 0.<br>
+ * The server MUST return a pointer to the variable that contains the size in bytes of the longest data component in the
+ * key's values in the lpcbMaxValueLen parameter. If there are no subkeys under the key indicated by hKey, the server
+ * MUST set this value to 0.<br>
  * <br>
  * The server MUST return a pointer to the variable that contains the size in bytes of the key's SECURITY_DESCRIPTOR in
  * the lpcbSecurityDescriptor parameter.<br>
@@ -146,8 +144,8 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * The caller MUST have KEY_QUERY_VALUE access rights to invoke this method. For more information, see section
  * 2.2.4.<br>
  * <br>
- * The server MUST return 0 to indicate success or an appropriate error code (as specified in [MS-ERREF]) to indicate
- * an error.<br>
+ * The server MUST return 0 to indicate success or an appropriate error code (as specified in [MS-ERREF]) to indicate an
+ * error.<br>
  * <br>
  * If the lpClassOut parameter does not contain enough space for the class name, the server MUST return
  * ERROR_MORE_DATA.<br>

@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.msrrp;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.OpenClassesRoot;
@@ -43,7 +42,7 @@ import com.rapid7.client.dcerpc.msrrp.messages.OpenUsers;
  * An application can use handles to these keys as entry points to the registry. These handles are valid for all
  * implementations of the registry, although the use of the handles may vary from platform to platform. In addition,
  * other predefined handles have been defined for specific platforms. The following are handles to the predefined keys.
- * 
+ *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724836(v=vs.85).aspx">Predefined
  *      Keys</a>}
  */

@@ -1,10 +1,8 @@
 package com.rapid7.client.dcerpc.messages;
 
 import static org.junit.Assert.assertTrue;
-
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.Interface;
 import com.rapid7.client.dcerpc.RPCResponse;
@@ -13,7 +11,8 @@ public class Test_BindACK {
     private final Bind request = new Bind(Interface.WINREG_V1_0, Interface.NDR_32BIT_V2);
 
     @Test
-    public void response() throws TransportException {
+    public void response()
+        throws TransportException {
         // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Bind_ack, Fragment: Single, FragLen: 68,
         // Call: 1
         // Version: 5

@@ -61,8 +61,7 @@ public class Test_BaseRegQueryInfoKey {
         //                  Offset: 0
         //                  Actual Count: 0
         final byte[] requestBytes = request.marshal(37);
-        final String encodedRequest =
-            Hex.toHexString(requestBytes);
+        final String encodedRequest = Hex.toHexString(requestBytes);
 
         assertEquals(
             "0500000310000000400000002500000040000000000010000000000032daf234b77c86409d29efe60d3266830000000000000200000000000000000000000000",

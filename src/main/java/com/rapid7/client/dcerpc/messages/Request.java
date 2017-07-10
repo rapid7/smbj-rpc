@@ -18,10 +18,7 @@
  */
 package com.rapid7.client.dcerpc.messages;
 
-import java.lang.reflect.Constructor;
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
-import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.PFCFlag;
 import com.rapid7.client.dcerpc.RPCRequest;
