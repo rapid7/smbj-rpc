@@ -1,8 +1,7 @@
 package com.rapid7.client.dcerpc.messages;
 
 import static org.junit.Assert.assertEquals;
-import java.math.BigInteger;
-
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 
 import com.rapid7.client.dcerpc.Interface;
@@ -28,8 +27,7 @@ public class Test_Bind {
         // Num Ctx Items: 1
         // Ctx Item[1]: Context ID:0, WINREG, 32bit NDR
         final byte[] requestBytes = request.marshal(1);
-        final String encodedRequest = String.format(String.format("%%0%dx", requestBytes.length << 1),
-            new BigInteger(1, requestBytes));
+        final String encodedRequest = Hex.toHexString(requestBytes);
 
         assertEquals(
             "05000b031000000048000000010000000010001000000000010000000000010001d08c334422f131aaaa90003800100301000000045d888aeb1cc9119fe808002b10486002000000",

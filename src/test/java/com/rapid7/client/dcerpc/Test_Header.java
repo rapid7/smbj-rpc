@@ -2,10 +2,10 @@ package com.rapid7.client.dcerpc;
 
 import static org.junit.Assert.assertEquals;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
 
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -34,26 +34,25 @@ public class Test_Header {
 
     @Test
     public void parsePacket() throws TransportException {
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         new Header(testVectorBuffer);
     }
 
     @Test
     public void parsePacketAndMarshal() throws TransportException {
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
         final byte[] headerBytes = header.marshal(10);
-        final String headerHexStr = String.format(String.format("%%0%dx", headerBytes.length << 1),
-            new BigInteger(1, headerBytes));
+        final String headerHexStr = Hex.toHexString(headerBytes);
 
         assertEquals("0500070310000000100000000a000000", headerHexStr);
     }
 
     @Test
     public void parseMajorVersion() throws TransportException {
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
 
@@ -62,7 +61,7 @@ public class Test_Header {
 
     @Test
     public void parseMinorVersion() throws TransportException {
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
 
@@ -71,7 +70,7 @@ public class Test_Header {
 
     @Test
     public void parsePDUType() throws TransportException {
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
 
@@ -80,7 +79,7 @@ public class Test_Header {
 
     @Test
     public void parsePFCFlags() throws TransportException {
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
 
@@ -89,7 +88,7 @@ public class Test_Header {
 
     @Test
     public void parseNDR() throws TransportException {
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
 
@@ -98,7 +97,7 @@ public class Test_Header {
 
     @Test
     public void parseFragmentLength() throws TransportException {
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
 
@@ -107,7 +106,7 @@ public class Test_Header {
 
     @Test
     public void parseAuthenticationVerifierLength() throws TransportException {
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
 
@@ -116,7 +115,7 @@ public class Test_Header {
 
     @Test
     public void parseCallID() throws TransportException {
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         final Header header = new Header(testVectorBuffer);
 
@@ -128,7 +127,7 @@ public class Test_Header {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Version mismatch: 1.0 != 5.0");
 
-        final byte[] testVectorBytes = new BigInteger("0100070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0100070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         new Header(testVectorBuffer);
     }
@@ -138,7 +137,7 @@ public class Test_Header {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Version mismatch: 5.1 != 5.0");
 
-        final byte[] testVectorBytes = new BigInteger("0501070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0501070310000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         new Header(testVectorBuffer);
     }
@@ -148,7 +147,7 @@ public class Test_Header {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Integer and Character representation mismatch: 0");
 
-        final byte[] testVectorBytes = new BigInteger("0500070300000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070300000000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         new Header(testVectorBuffer);
     }
@@ -158,7 +157,7 @@ public class Test_Header {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Floating-Point representation mismatch: 16");
 
-        final byte[] testVectorBytes = new BigInteger("0500070310100000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310100000100000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         new Header(testVectorBuffer);
     }
@@ -168,7 +167,7 @@ public class Test_Header {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Packet incomplete: 17 > 16");
 
-        final byte[] testVectorBytes = new BigInteger("0500070310000000110000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000110000000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         new Header(testVectorBuffer);
     }
@@ -178,7 +177,7 @@ public class Test_Header {
         thrown.expect(TransportException.class);
         thrown.expectMessage("Packet incomplete: 16 + 1 > 16");
 
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100001000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100001000a000000");
         final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
         new Header(testVectorBuffer);
     }
@@ -262,8 +261,7 @@ public class Test_Header {
     public void marshal() {
         final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
         final byte[] headerBytes = header.marshal(10);
-        final String headerHexStr = String.format(String.format("%%0%dx", headerBytes.length << 1),
-            new BigInteger(1, headerBytes));
+        final String headerHexStr = Hex.toHexString(headerBytes);
 
         assertEquals("0500070310000000100000000a000000", headerHexStr);
     }

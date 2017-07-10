@@ -45,10 +45,8 @@ import com.rapid7.client.dcerpc.RPCRequest;
  *    // needed on request, response, fault
  *    u_int32  alloc_hint;        // 16:04 allocation hint
  *    p_context_id_t p_cont_id    // 20:02 pres context, i.e. data rep
- *    u_int16 opnum;              // 22:02 operation #
- *    * within the interface
- *    // optional field for request, only present if the PFC_OBJECT_UUID
- *    * field is non-zero
+ *    u_int16 opnum;              // 22:02 operation # within the interface
+ *    // optional field for request, only present if the PFC_OBJECT_UUID field is non-zero
  *    uuid_t  object;              // 24:16 object UID
  *    // stub data, 8-octet aligned
  *    //     .
@@ -60,15 +58,14 @@ import com.rapid7.client.dcerpc.RPCRequest;
  * } rpcconn_request_hdr_t;
  * </pre>
  *
- * The request PDU is used for an initial call request. The p_cont_id field holds a presentation context identifier
- * that identifies the data representation. The opnum field identifies the operation being invoked within the
- * interface.<br>
+ * The request PDU is used for an initial call request. The p_cont_id field holds a presentation context identifier that
+ * identifies the data representation. The opnum field identifies the operation being invoked within the interface.<br>
  * <br>
  * The PDU may also contain an object UUID. In this case the PFC_OBJECT_UUID flag is set in pfc_flags, and the PDU
  * includes the object field. If the PFC_OBJECT_UUID flag is not set, the PDU does not include the object field.<br>
  * <br>
- * The alloc_hint field is optionally used by the client to provide a hint to the receiver of the amount of buffer
- * space to allocate contiguously for fragmented requests. This is only a potential optimisation. The server must work
+ * The alloc_hint field is optionally used by the client to provide a hint to the receiver of the amount of buffer space
+ * to allocate contiguously for fragmented requests. This is only a potential optimisation. The server must work
  * correctly regardless of the value passed. The value 0 (zero) is reserved to indicate that the transmitter is not
  * supplying any information.<br>
  * <br>
@@ -97,6 +94,7 @@ public class Request<T extends Response> extends RPCRequest<T> {
         putShort(op); // ------ 22:02 Operation # within the interface
     }
 
+    /** @return The operation # within the interface. */
     public short getOpNum() {
         return getShort(22);
     }

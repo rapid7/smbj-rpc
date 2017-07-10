@@ -2,8 +2,7 @@ package com.rapid7.client.dcerpc.messages;
 
 import static org.junit.Assert.assertTrue;
 
-import java.math.BigInteger;
-
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 
 import com.hierynomus.smbj.transport.TransportException;
@@ -32,9 +31,8 @@ public class Test_BindACK {
         // Scndry Addr: \PIPE\winreg
         // Num results: 1
         // Ctx Item[1]: Acceptance, 32bit NDR
-        final byte[] responseBytes = new BigInteger(
-            "05000c0310000000440000000100000000100010a52100000d005c504950455c77696e72656700000100000000000000045d888aeb1cc9119fe808002b10486002000000",
-            16).toByteArray();
+        final byte[] responseBytes = Hex.decode(
+            "05000c0310000000440000000100000000100010a52100000d005c504950455c77696e72656700000100000000000000045d888aeb1cc9119fe808002b10486002000000");
         final RPCResponse response = request.unmarshal(responseBytes, 1);
 
         assertTrue(response instanceof BindACK);

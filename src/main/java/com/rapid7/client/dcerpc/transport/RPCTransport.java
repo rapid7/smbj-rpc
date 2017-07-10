@@ -18,11 +18,12 @@
  */
 package com.rapid7.client.dcerpc.transport;
 
-import com.hierynomus.smbj.transport.TransportException;
+import java.io.IOException;
+
 import com.rapid7.client.dcerpc.RPCRequest;
 import com.rapid7.client.dcerpc.RPCResponse;
 
 public interface RPCTransport {
     public <T extends RPCResponse> T transact(final RPCRequest<T> request)
-        throws TransportException, InterruptedException;
+        throws IOException;
 }

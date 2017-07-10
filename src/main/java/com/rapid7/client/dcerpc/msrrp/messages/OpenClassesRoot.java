@@ -18,9 +18,6 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-
 /**
  * <b>3.1.5.1 OpenClassesRoot (Opnum 0)</b><br>
  * <br>
@@ -101,14 +98,6 @@ import com.hierynomus.msdtyp.AccessMask;
  *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244950">3.1.5.1 OpenClassesRoot (Opnum 0)</a>}
  */
-public class OpenClassesRoot extends HandleRequest {
-    /**
-     * The OpenClassesRoot method is called by the client. In response, the server opens the HKEY_CLASSES_ROOT
-     * predefined key.
-     *
-     * @param accessMask A bit field that describes the requested security access for the key.
-     */
-    public OpenClassesRoot(final EnumSet<AccessMask> accessMask) {
-        super((short) 0, accessMask);
-    }
+public class OpenClassesRoot {
+    public final static short OP_NUM = 0;
 }

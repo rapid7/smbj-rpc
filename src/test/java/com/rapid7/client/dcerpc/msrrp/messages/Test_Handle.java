@@ -19,15 +19,17 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import static org.junit.Assert.assertEquals;
-import java.math.BigInteger;
 import java.util.EnumSet;
+
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 
-public class Test_OpenLocalMachine {
-    private final OpenLocalMachine request = new OpenLocalMachine(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+public class Test_Handle {
+    private final HandleRequest request = new HandleRequest(OpenLocalMachine.OP_NUM,
+        EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
 
     @Test
     public void request() {
@@ -55,8 +57,7 @@ public class Test_OpenLocalMachine {
         //          Standard rights: 0x00000000
         //          WINREG specific rights: 0x00000000
         final byte[] requestBytes = request.marshal(1);
-        final String encodedRequest =
-            String.format(String.format("%%0%dx", requestBytes.length << 1), new BigInteger(1, requestBytes));
+        final String encodedRequest = Hex.toHexString(requestBytes);
 
         assertEquals("0500000310000000200000000100000020000000000002000000000000000002", encodedRequest);
     }
@@ -88,9 +89,8 @@ public class Test_OpenLocalMachine {
         //              [Frame handle opened: 11176]
         //              [Frame handle closed: 11424]
         //      Windows Error: WERR_OK (0x00000000)
-        final byte[] responseBytes = new BigInteger(
-            "0500020310000000300000000100000018000000000000000000000032daf234b77c86409d29efe60d32668300000000",
-            16).toByteArray();
+        final byte[] responseBytes = Hex.decode(
+            "0500020310000000300000000100000018000000000000000000000032daf234b77c86409d29efe60d32668300000000");
         final HandleResponse response = request.unmarshal(responseBytes, 1);
 
         assertEquals(new ContextHandle("0000000032daf234b77c86409d29efe60d326683"), response.getHandle());

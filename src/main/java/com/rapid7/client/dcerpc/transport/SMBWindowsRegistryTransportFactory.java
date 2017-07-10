@@ -18,6 +18,7 @@
  */
 package com.rapid7.client.dcerpc.transport;
 
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -49,7 +50,7 @@ import com.rapid7.client.smb2.messages.SMB2CreateRequest;
 
 public class SMBWindowsRegistryTransportFactory {
     public static RPCTransport getSMBWindowsRegistryTransport(final Session session)
-        throws TransportException, InterruptedException {
+        throws IOException {
         final Connection connection = session.getConnection();
         final NegotiatedProtocol negotiatedProtocol = connection.getNegotiatedProtocol();
         final SMB2Dialect dialect = negotiatedProtocol.getDialect();
@@ -93,8 +94,7 @@ public class SMBWindowsRegistryTransportFactory {
         return open(share.getTreeConnect(), "winreg", SMB2ImpersonationLevel.IMPERSONATION,
             AccessMask.MAXIMUM_ALLOWED.getValue(), null,
             EnumSet.of(SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE),
-            SMB2CreateDisposition.FILE_OPEN, EnumSet.of(SMB2CreateOptions.FILE_NON_DIRECTORY_FILE,
-                SMB2CreateOptions.FILE_OPEN_NO_RECALL, SMB2CreateOptions.FILE_SYNCHRONOUS_IO_NONALERT));
+            SMB2CreateDisposition.FILE_CREATE, null);
     }
 
     private static SMB2FileId open(

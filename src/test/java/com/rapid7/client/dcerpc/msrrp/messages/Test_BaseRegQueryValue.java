@@ -21,7 +21,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
@@ -81,7 +81,7 @@ public class Test_BaseRegQueryValue {
         //          Data Length: 0
         final byte[] requestBytes = request.marshal(36);
         final String encodedRequest =
-            String.format(String.format("%%0%dx", requestBytes.length << 1), new BigInteger(1, requestBytes));
+            Hex.toHexString(requestBytes);
 
         assertEquals(
             "050000031000000088000000240000008800000000001100000000000a665393f4666e49a68cd99f269d020f1e001e00000002000f000000000000000f000000430075007200720065006e007400560065007200730069006f006e00000000000400020000000000080002000000010000000000000000000c000200000001001000020000000000",
@@ -132,9 +132,8 @@ public class Test_BaseRegQueryValue {
         //          Referent ID: 0x0002000c
         //          Data Length: 8
         //      Windows Error: WERR_OK (0x00000000)
-        final byte[] responseBytes = new BigInteger(
-            "05000203100000004c00000024000000340000000000000000000200010000000400020008000000000000000800000036002e003300000008000200080000000c0002000800000000000000",
-            16).toByteArray();
+        final byte[] responseBytes = Hex.decode(
+            "05000203100000004c00000024000000340000000000000000000200010000000400020008000000000000000800000036002e003300000008000200080000000c0002000800000000000000");
         final BaseRegQueryValueResponse response = request.unmarshal(responseBytes, 36);
 
         assertArrayEquals("6.3\0".getBytes("UTF-16LE"), response.getData());

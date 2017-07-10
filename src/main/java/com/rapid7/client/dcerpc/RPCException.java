@@ -16,11 +16,33 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.msrrp;
+package com.rapid7.client.dcerpc;
+
+import java.io.IOException;
+
+import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 
 @SuppressWarnings("serial")
-public class RegistryServiceException extends Exception {
-    public RegistryServiceException(final String reason) {
-        super(reason);
+public class RPCException extends IOException {
+    private final int returnValue;
+    private final SystemErrorCode errorCode;
+
+    public RPCException(final String opName, final int returnValue) {
+        super(String.format("%s returned error code: %d (%s)", opName, returnValue,
+            SystemErrorCode.getErrorCode(returnValue)));
+        this.returnValue = returnValue;
+        this.errorCode = SystemErrorCode.getErrorCode(returnValue);
+    }
+
+    public int getReturnValue() {
+        return returnValue;
+    }
+
+    public SystemErrorCode getErrorCode() {
+        return errorCode;
+    }
+
+    public boolean hasErrorCode() {
+        return errorCode != null;
     }
 }

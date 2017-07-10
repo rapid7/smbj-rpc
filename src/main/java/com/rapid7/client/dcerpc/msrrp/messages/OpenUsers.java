@@ -18,9 +18,6 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-
 /**
  * <b>3.1.5.5 OpenUsers (Opnum 4)</b> <br>
  * <br>
@@ -89,14 +86,6 @@ import com.hierynomus.msdtyp.AccessMask;
  *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244957">3.1.5.5 OpenUsers (Opnum 4)</a>}
  */
-public class OpenUsers extends HandleRequest {
-    /**
-     * The OpenUsers method is called by the client. In response, the server opens a handle to the HKEY_USERS
-     * predefined key.
-     *
-     * @param accessMask The bit field that describes the wanted security access for the key.
-     */
-    public OpenUsers(final EnumSet<AccessMask> accessMask) {
-        super((short) 4, accessMask);
-    }
+public class OpenUsers {
+    public final static short OP_NUM = 4;
 }

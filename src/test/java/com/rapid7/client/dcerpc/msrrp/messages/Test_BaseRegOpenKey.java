@@ -19,8 +19,9 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import static org.junit.Assert.assertEquals;
-import java.math.BigInteger;
 import java.util.EnumSet;
+
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.smbj.transport.TransportException;
@@ -72,7 +73,7 @@ public class Test_BaseRegOpenKey {
         //          WINREG specific rights: 0x00000000
         final byte[] requestBytes = request.marshal(9);
         final String encodedRequest =
-            String.format(String.format("%%0%dx", requestBytes.length << 1), new BigInteger(1, requestBytes));
+            Hex.toHexString(requestBytes);
 
         assertEquals(
             "0500000310000000a400000009000000a400000000000f000000000032daf234b77c86409d29efe60d3266835a005a00000002002d000000000000002d00000053006f006600740077006100720065005c004d006900630072006f0073006f00660074005c00570069006e0064006f007700730020004e0054005c00430075007200720065006e007400560065007200730069006f006e00000000000000000000000002",
@@ -106,9 +107,8 @@ public class Test_BaseRegOpenKey {
         //              [Frame handle opened: 11204]
         //              [Frame handle closed: 11415]
         //      Windows Error: WERR_OK (0x00000000)
-        final byte[] responseBytes = new BigInteger(
-            "050002031000000030000000090000001800000000000000000000000a665393f4666e49a68cd99f269d020f00000000",
-            16).toByteArray();
+        final byte[] responseBytes = Hex.decode(
+            "050002031000000030000000090000001800000000000000000000000a665393f4666e49a68cd99f269d020f00000000");
         final HandleResponse response = request.unmarshal(responseBytes, 9);
 
         assertEquals(new ContextHandle("000000000a665393f4666e49a68cd99f269d020f"), response.getHandle());

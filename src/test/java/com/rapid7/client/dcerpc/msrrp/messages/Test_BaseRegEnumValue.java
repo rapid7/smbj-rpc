@@ -21,7 +21,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
@@ -81,7 +81,7 @@ public class Test_BaseRegEnumValue {
         //          Length: 0
         final byte[] requestBytes = request1.marshal(10);
         final String encodedRequest =
-            String.format(String.format("%%0%dx", requestBytes.length << 1), new BigInteger(1, requestBytes));
+            Hex.toHexString(requestBytes);
 
         assertEquals(
             "05000003100000006c0000000a0000006c00000000000a00000000000a665393f4666e49a68cd99f269d020f000000000000feff00000200ff7f000000000000000000000400020000000000080002000000010000000000000000000c000200000001001000020000000000",
@@ -137,7 +137,7 @@ public class Test_BaseRegEnumValue {
         //          Length: 0
         final byte[] requestBytes = request2.marshal(11);
         final String encodedRequest =
-            String.format(String.format("%%0%dx", requestBytes.length << 1), new BigInteger(1, requestBytes));
+            Hex.toHexString(requestBytes);
 
         assertEquals(
             "05000003100000006c0000000b0000006c00000000000a00000000000a665393f4666e49a68cd99f269d020f010000000000feff00000200ff7f000000000000000000000400020000000000080002000000010000000000000000000c000200000001001000020000000000",
@@ -222,9 +222,8 @@ public class Test_BaseRegEnumValue {
         //          Referent ID: 0x00020010
         //          Length: 22
         //      Windows Error: WERR_OK (0x00000000)
-        final byte[] responseBytes = new BigInteger(
-            "0500020310000000880000000a00000070000000000000001600feff00000200ff7f0000000000000b000000530079007300740065006d0052006f006f0074000000000004000200010000000800020016000000000000001600000043003a005c00570069006e0064006f0077007300000000000c00020016000000100002001600000000000000",
-            16).toByteArray();
+        final byte[] responseBytes = Hex.decode(
+            "0500020310000000880000000a00000070000000000000001600feff00000200ff7f0000000000000b000000530079007300740065006d0052006f006f0074000000000004000200010000000800020016000000000000001600000043003a005c00570069006e0064006f0077007300000000000c00020016000000100002001600000000000000");
         final BaseRegEnumValueResponse response = request1.unmarshal(responseBytes, 10);
 
         assertEquals("SystemRoot", response.getName());
@@ -306,9 +305,8 @@ public class Test_BaseRegEnumValue {
         //          Referent ID: 0x00020010
         //          Length: 16
         //      Windows Error: WERR_OK (0x00000000)
-        final byte[] responseBytes = new BigInteger(
-            "0500020310000000800000000b00000068000000000000001800feff00000200ff7f0000000000000c0000004200750069006c0064004200720061006e006300680000000400020001000000080002001000000000000000100000007400680031005f0073007400310000000c00020010000000100002001000000000000000",
-            16).toByteArray();
+        final byte[] responseBytes = Hex.decode(
+            "0500020310000000800000000b00000068000000000000001800feff00000200ff7f0000000000000c0000004200750069006c0064004200720061006e006300680000000400020001000000080002001000000000000000100000007400680031005f0073007400310000000c00020010000000100002001000000000000000");
         final BaseRegEnumValueResponse response = request2.unmarshal(responseBytes, 11);
 
         assertEquals("BuildBranch", response.getName());

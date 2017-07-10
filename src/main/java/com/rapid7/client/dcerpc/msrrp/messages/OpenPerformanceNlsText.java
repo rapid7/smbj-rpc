@@ -61,14 +61,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244955">3.1.5.29 OpenPerformanceNlsText (Opnum 33)</a>}
  */
-public class OpenPerformanceNlsText extends HandleRequest {
-    /**
-     * The OpenPerformanceNlsText method is called by the client. In response, the server opens a handle to the
-     * HKEY_PERFORMANCE_NLSTEXT predefined key. The HKEY_PERFORMANCE_NLSTEXT predefined key is used to retrieve
-     * performance information from a registry server using only the BaseRegQueryInfoKey, BaseRegQueryValue,
-     * BaseRegEnumValues and BaseRegCloseKey methods.
-     */
-    public OpenPerformanceNlsText() {
-        super((short) 33, null);
-    }
+public class OpenPerformanceNlsText {
+    public final static short OP_NUM = 33;
 }

@@ -18,9 +18,6 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-
 /**
  * <b>3.1.5.2 OpenCurrentUser (Opnum 1)</b><br>
  * <br>
@@ -92,16 +89,6 @@ import com.hierynomus.msdtyp.AccessMask;
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244952">3.1.5.2 OpenCurrentUser (Opnum 1)</a>}
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc941807">3.1.1.8 Current User Root Key</a>}
  */
-public class OpenCurrentUser extends HandleRequest {
-    /**
-     * The OpenCurrentUser method is called by the client. In response, the server opens a handle to the
-     * HKEY_CURRENT_USER key. The server MUST determine which subkey of HKEY_USERS is the correct key to map to
-     * HKEY_CURRENT_USER, as explained in section 3.1.1.8.
-     *
-     * @param accessMask A bit field that describes the wanted security access for the key.
-     * @see {@link <a href="https://msdn.microsoft.com/en-us/cc941807">3.1.1.8 Current User Root Key</a>}
-     */
-    public OpenCurrentUser(final EnumSet<AccessMask> accessMask) {
-        super((short) 1, accessMask);
-    }
+public class OpenCurrentUser {
+    public final static short OP_NUM = 1;
 }

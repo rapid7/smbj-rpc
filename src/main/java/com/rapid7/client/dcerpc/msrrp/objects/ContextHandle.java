@@ -18,8 +18,9 @@
  */
 package com.rapid7.client.dcerpc.msrrp.objects;
 
-import java.math.BigInteger;
 import java.util.Arrays;
+
+import org.bouncycastle.util.encoders.Hex;
 
 public class ContextHandle {
     private final byte[] handle = new byte[20];
@@ -28,8 +29,7 @@ public class ContextHandle {
         if (hKey == null || hKey.length() > 40) {
             throw new IllegalArgumentException("hKey is invalid: " + hKey);
         }
-        final BigInteger hKeyInteger = new BigInteger(hKey, 16);
-        final byte[] handle = hKeyInteger.toByteArray();
+        final byte[] handle = Hex.decode(hKey);
         int srcPos = 0;
         int index = 0;
         while (index < handle.length) {

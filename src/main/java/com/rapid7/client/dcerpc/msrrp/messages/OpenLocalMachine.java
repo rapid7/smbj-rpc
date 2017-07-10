@@ -18,9 +18,6 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-
 /**
  * <b>3.1.5.3 OpenLocalMachine (Opnum 2)</b> <br>
  * <br>
@@ -97,14 +94,6 @@ import com.hierynomus.msdtyp.AccessMask;
  *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244953">3.1.5.3 OpenLocalMachine (Opnum 2)</a>}
  */
-public class OpenLocalMachine extends HandleRequest {
-    /**
-     * The OpenLocalMachine method is called by the client. In response, the server opens a handle to the
-     * HKEY_LOCAL_MACHINE predefined key.
-     *
-     * @param accessMask A bit field that describes the wanted security access for the key.
-     */
-    public OpenLocalMachine(final EnumSet<AccessMask> accessMask) {
-        super((short) 2, accessMask);
-    }
+public class OpenLocalMachine {
+    public final static short OP_NUM = 2;
 }

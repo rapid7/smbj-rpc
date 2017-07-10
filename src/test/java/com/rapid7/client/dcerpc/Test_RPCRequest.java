@@ -2,9 +2,9 @@ package com.rapid7.client.dcerpc;
 
 import static org.mockito.Mockito.spy;
 
-import java.math.BigInteger;
 import java.util.EnumSet;
 
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -22,7 +22,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500000310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500000310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 0);
     }
@@ -34,7 +34,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500000310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500000310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -46,7 +46,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500010310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500010310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -58,7 +58,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500020310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500020310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -70,7 +70,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500030310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500030310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -82,7 +82,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500040310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500040310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -94,7 +94,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500050310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500050310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -106,7 +106,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500060310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500060310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -118,7 +118,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500070310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -130,7 +130,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500080310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500080310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -142,7 +142,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500090310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500090310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -154,7 +154,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("05000a0310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("05000a0310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -166,7 +166,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("05000b0310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("05000b0310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -178,7 +178,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("05000c0310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("05000c0310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -190,7 +190,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("05000d0310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("05000d0310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -202,7 +202,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("05000e0310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("05000e0310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -214,7 +214,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("05000f0310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("05000f0310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -226,7 +226,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500110310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500110310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -238,7 +238,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500120310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500120310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }
@@ -250,7 +250,7 @@ public class Test_RPCRequest {
 
         final RPCRequest<RPCResponse> request = spy(
             new RPCRequest<RPCResponse>(PDUType.ACK, EnumSet.of(PFCFlag.MAYBE)));
-        final byte[] testVectorBytes = new BigInteger("0500130310000000100000000a000000", 16).toByteArray();
+        final byte[] testVectorBytes = Hex.decode("0500130310000000100000000a000000");
 
         request.unmarshal(testVectorBytes, 10);
     }

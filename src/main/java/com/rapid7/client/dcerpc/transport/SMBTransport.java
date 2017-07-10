@@ -18,6 +18,8 @@
  */
 package com.rapid7.client.dcerpc.transport;
 
+import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import com.hierynomus.mssmb2.SMB2Dialect;
@@ -26,7 +28,6 @@ import com.hierynomus.mssmb2.messages.SMB2IoctlRequest;
 import com.hierynomus.mssmb2.messages.SMB2IoctlRequest.ControlCode;
 import com.hierynomus.mssmb2.messages.SMB2IoctlResponse;
 import com.hierynomus.smbj.session.Session;
-import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.RPCRequest;
 import com.rapid7.client.dcerpc.RPCResponse;
 
@@ -53,7 +54,7 @@ public class SMBTransport implements RPCTransport {
 
     @Override
     public <T extends RPCResponse> T transact(final RPCRequest<T> request)
-        throws TransportException, InterruptedException {
+        throws IOException {
         final int callID = this.callID++;
         final byte[] requestBytes = request.marshal(callID);
         final SMB2IoctlRequest ioctlRequest = new SMB2IoctlRequest(negotiatedDialect, sessionId, treeId,
@@ -62,13 +63,10 @@ public class SMBTransport implements RPCTransport {
         final SMB2IoctlResponse response;
         try {
             response = future.get();
-        }
-        catch (final ExecutionException executionException) {
-            final Throwable cause = executionException.getCause();
-            if (cause instanceof TransportException) {
-                throw (TransportException) cause;
-            }
-            throw new TransportException(executionException);
+        } catch (final ExecutionException | InterruptedException exception) {
+            final IOException ioException = new IOException();
+            ioException.addSuppressed(exception);
+            throw ioException;
         }
         final byte[] responseBytes = response.getOutputBuffer();
         return request.unmarshal(responseBytes, callID);

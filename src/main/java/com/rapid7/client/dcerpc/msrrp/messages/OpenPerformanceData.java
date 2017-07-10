@@ -79,14 +79,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244954">3.1.5.4 OpenPerformanceData (Opnum 3)</a>}
  */
-public class OpenPerformanceData extends HandleRequest {
-    /**
-     * The OpenPerformanceData method is called by the client. In response, the server opens a handle to the
-     * HKEY_PERFORMANCE_DATA predefined key. The HKEY_PERFORMANCE_DATA predefined key is used to retrieve performance
-     * information from a registry server using only the BaseRegQueryInfoKey, BaseRegQueryValue, BaseRegEnumValues and
-     * BaseRegCloseKey methods.
-     */
-    public OpenPerformanceData() {
-        super((short) 3, null);
-    }
+public class OpenPerformanceData {
+    public final static short OP_NUM = 3;
 }

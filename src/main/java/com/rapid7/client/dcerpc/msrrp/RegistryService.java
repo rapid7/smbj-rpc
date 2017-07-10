@@ -20,15 +20,18 @@ package com.rapid7.client.dcerpc.msrrp;
 
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.smbj.transport.TransportException;
-import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.msrrp.messages.BaseRegCloseKey;
+import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumValueRequest;
@@ -38,194 +41,183 @@ import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
+import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenClassesRoot;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenCurrentConfig;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenCurrentUser;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenLocalMachine;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenPerformanceData;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenPerformanceNlsText;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenPerformanceText;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenUsers;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class RegistryService {
-    private final int MAX_REGISTRY_KEY_NAME_SIZE = 256;
-    private final int MAX_REGISTRY_KEY_CLASS_SIZE = 32767;
-    private final int MAX_REGISTRY_VALUE_NAME_SIZE = 32767;
-    private final int MAX_REGISTRY_VALUE_DATA_SIZE = 65536;
+    private final static int MAX_REGISTRY_KEY_NAME_SIZE = 256;
+    private final static int MAX_REGISTRY_KEY_CLASS_SIZE = 32767;
+    private final static int MAX_REGISTRY_VALUE_NAME_SIZE = 32767;
+    private final static int MAX_REGISTRY_VALUE_DATA_SIZE = 65536;
+    private final static EnumSet<AccessMask> ACCESS_MASK = EnumSet.of(AccessMask.MAXIMUM_ALLOWED);
+    private final Map<RegistryHive, ContextHandle> hiveCache = new HashMap<>();
+    private final Map<String, ContextHandle> keyPathCache = new HashMap<>();
+    private final RPCTransport transport;
 
     public RegistryService(final RPCTransport transport) {
         this.transport = transport;
     }
 
-    public ContextHandle openClassesRoot()
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final OpenClassesRoot request = new OpenClassesRoot(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final HandleResponse response = transport.transact(request);
-        if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Open classes root returned error: " + response.getReturnValue());
+    public boolean doesKeyExist(final String hiveName, final String keyPath)
+        throws IOException {
+        try {
+            openKey(hiveName, keyPath);
+        } catch (final RPCException exception) {
+            if (exception.hasErrorCode()) {
+                switch (exception.getErrorCode()) {
+                case ERROR_FILE_NOT_FOUND:
+                    return false;
+                default:
+                    throw exception;
+                }
+            }
         }
-        return response.getHandle();
+        return true;
     }
 
-    public ContextHandle openCurrentConfig()
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final OpenCurrentConfig request = new OpenCurrentConfig(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final HandleResponse response = transport.transact(request);
-        if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Open current user returned error: " + response.getReturnValue());
+    public boolean doesValueExist(final String hiveName, final String keyPath, final String valueName)
+        throws IOException {
+        try {
+            getValue(hiveName, keyPath, valueName);
+        } catch (final RPCException exception) {
+            if (exception.hasErrorCode()) {
+                switch (exception.getErrorCode()) {
+                case ERROR_FILE_NOT_FOUND:
+                    return false;
+                default:
+                    throw exception;
+                }
+            }
         }
-        return response.getHandle();
+        return true;
     }
 
-    public ContextHandle openCurrentUser()
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final OpenCurrentUser request = new OpenCurrentUser(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final HandleResponse response = transport.transact(request);
+    public RegistryKeyInfo getKeyInfo(final String hiveName, final String keyPath)
+        throws IOException {
+        final ContextHandle handle = openKey(hiveName, keyPath);
+        final BaseRegQueryInfoKeyRequest request = new BaseRegQueryInfoKeyRequest(handle);
+        final BaseRegQueryInfoKeyResponse response = transport.transact(request);
         if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Open current user returned error: " + response.getReturnValue());
+            throw new RPCException("BaseRegQueryInfoKey", response.getReturnValue());
         }
-        return response.getHandle();
+        return new RegistryKeyInfo(response.getSubKeys(), response.getMaxSubKeyLen(), response.getMaxClassLen(),
+            response.getValues(), response.getMaxValueNameLen(), response.getMaxValueLen(),
+            response.getSecurityDescriptor(), response.getLastWriteTime());
     }
 
-    public ContextHandle openLocalMachine()
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final OpenLocalMachine request = new OpenLocalMachine(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final HandleResponse response = transport.transact(request);
-        if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Open local machine returned error: " + response.getReturnValue());
-        }
-        return response.getHandle();
-    }
-
-    public ContextHandle openPerformanceData()
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final OpenPerformanceData request = new OpenPerformanceData();
-        final HandleResponse response = transport.transact(request);
-        if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Open performance data returned error: " + response.getReturnValue());
-        }
-        return response.getHandle();
-    }
-
-    public ContextHandle openPerformanceNlsText()
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final OpenPerformanceNlsText request = new OpenPerformanceNlsText();
-        final HandleResponse response = transport.transact(request);
-        if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Open performance data returned error: " + response.getReturnValue());
-        }
-        return response.getHandle();
-    }
-
-    public ContextHandle openPerformanceText()
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final OpenPerformanceText request = new OpenPerformanceText();
-        final HandleResponse response = transport.transact(request);
-        if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Open performance data returned error: " + response.getReturnValue());
-        }
-        return response.getHandle();
-    }
-
-    public ContextHandle openUsers()
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final OpenUsers request = new OpenUsers(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final HandleResponse response = transport.transact(request);
-        if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Open users returned error: " + response.getReturnValue());
-        }
-        return response.getHandle();
-    }
-
-    public void baseRegCloseKey(final ContextHandle handle)
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final BaseRegCloseKey request = new BaseRegCloseKey(handle);
-        final HandleResponse response = transport.transact(request);
-        if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Close key returned error: " + response.getReturnValue());
-        }
-    }
-
-    public List<RegistryKey> baseRegEnumKey(final ContextHandle handle)
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final List<RegistryKey> names = new LinkedList<>();
-
+    public List<RegistryKey> getSubKeys(final String hiveName, final String keyPath)
+        throws IOException {
+        final List<RegistryKey> keyNames = new LinkedList<>();
+        final ContextHandle handle = openKey(hiveName, keyPath);
         for (int index = 0;; index++) {
-            final BaseRegEnumKeyRequest request =
-                new BaseRegEnumKeyRequest(handle, index, MAX_REGISTRY_KEY_NAME_SIZE, MAX_REGISTRY_KEY_CLASS_SIZE);
+            final BaseRegEnumKeyRequest request = new BaseRegEnumKeyRequest(handle, index, MAX_REGISTRY_KEY_NAME_SIZE,
+                MAX_REGISTRY_KEY_CLASS_SIZE);
             final BaseRegEnumKeyResponse response = transport.transact(request);
             final int returnCode = response.getReturnValue();
 
             if (ERROR_SUCCESS.is(returnCode)) {
-                names.add(new RegistryKey(response.getName(), response.getLastWriteTime()));
-            }
-            else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
-                return Collections.unmodifiableList(new ArrayList<RegistryKey>(names));
-            }
-            else {
-                throw new RegistryServiceException(
-                    String.format("Unexpected response from BaseRegEnumKey request: %s (%d)",
-                        SystemErrorCode.getErrorCode(returnCode), returnCode));
+                keyNames.add(new RegistryKey(response.getName(), response.getLastWriteTime()));
+            } else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
+                return Collections.unmodifiableList(new ArrayList<RegistryKey>(keyNames));
+            } else {
+                throw new RPCException("BaseRegEnumKey", response.getReturnValue());
             }
         }
     }
 
-    public List<RegistryValue> baseRegEnumValue(final ContextHandle handle)
-        throws RegistryServiceException, TransportException, InterruptedException {
+    public List<RegistryValue> getValues(final String hiveName, final String keyPath)
+        throws IOException {
         final List<RegistryValue> values = new LinkedList<>();
-
+        final ContextHandle handle = openKey(hiveName, keyPath);
         for (int index = 0;; index++) {
-            final BaseRegEnumValueRequest request =
-                new BaseRegEnumValueRequest(handle, index, MAX_REGISTRY_VALUE_NAME_SIZE, MAX_REGISTRY_VALUE_DATA_SIZE);
+            final BaseRegEnumValueRequest request = new BaseRegEnumValueRequest(handle, index,
+                MAX_REGISTRY_VALUE_NAME_SIZE, MAX_REGISTRY_VALUE_DATA_SIZE);
             final BaseRegEnumValueResponse response = transport.transact(request);
             final int returnCode = response.getReturnValue();
 
             if (ERROR_SUCCESS.is(returnCode)) {
                 values.add(new RegistryValue(response.getName(), response.getType(), response.getData()));
-            }
-            else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
+            } else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
                 return Collections.unmodifiableList(new ArrayList<RegistryValue>(values));
-            }
-            else {
-                throw new RegistryServiceException(
-                    String.format("Unexpected response from BaseRegEnumValue request: %s (%d)",
-                        SystemErrorCode.getErrorCode(returnCode), returnCode));
+            } else {
+                throw new RPCException("BaseRegEnumValue", response.getReturnValue());
             }
         }
     }
 
-    public ContextHandle baseRegOpenKey(final ContextHandle handle, final String key)
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final BaseRegOpenKey request = new BaseRegOpenKey(handle, key, 0, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final HandleResponse response = transport.transact(request);
-        if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Open key returned error: " + response.getReturnValue());
-        }
-        return response.getHandle();
-    }
-
-    public void baseRegQueryInfoKey(final ContextHandle handle)
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final BaseRegQueryInfoKeyRequest request = new BaseRegQueryInfoKeyRequest(handle);
-        final BaseRegQueryInfoKeyResponse response = transport.transact(request);
-        if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Query info key returned error: " + response.getReturnValue());
-        }
-    }
-
-    public RegistryValue baseRegQueryValue(final ContextHandle handle, final String name)
-        throws RegistryServiceException, TransportException, InterruptedException {
-        final BaseRegQueryValueRequest request =
-            new BaseRegQueryValueRequest(handle, name, MAX_REGISTRY_VALUE_DATA_SIZE);
+    public RegistryValue getValue(final String hiveName, final String keyPath, final String valueName)
+        throws IOException {
+        final ContextHandle handle = openKey(hiveName, keyPath);
+        final BaseRegQueryValueRequest request = new BaseRegQueryValueRequest(handle, valueName,
+            MAX_REGISTRY_VALUE_DATA_SIZE);
         final BaseRegQueryValueResponse response = transport.transact(request);
         if (0 != response.getReturnValue()) {
-            throw new RegistryServiceException("Query value returned error: " + response.getReturnValue());
+            throw new RPCException("BaseRegQueryValue", response.getReturnValue());
         }
-        return new RegistryValue(name, response.getType(), response.getData());
+        return new RegistryValue(valueName, response.getType(), response.getData());
     }
 
-    private final RPCTransport transport;
+    private String canonicalize(String keyPath) {
+        if (keyPath == null) {
+            throw new IllegalArgumentException("Invalid key: " + keyPath);
+        }
+        keyPath = keyPath.toLowerCase();
+        while (keyPath.contains("\\\\")) {
+            keyPath = keyPath.replace("\\\\", "\\");
+        }
+        if (keyPath.endsWith("\\")) {
+            keyPath = keyPath.substring(0, keyPath.length() - 1);
+        }
+        return keyPath;
+    }
+
+    private ContextHandle openHive(final String hiveName)
+        throws IOException {
+        if (hiveName == null) {
+            throw new IllegalArgumentException("Invalid hive: " + hiveName);
+        }
+        final RegistryHive hive = RegistryHive.getRegistryHiveByName(hiveName);
+        if (hive == null) {
+            throw new IllegalArgumentException("Unknown hive: " + hiveName);
+        }
+        synchronized (hiveCache) {
+            if (hiveCache.containsKey(hive)) {
+                return hiveCache.get(hive);
+            } else {
+                final short opNum = hive.getOpNum();
+                final HandleRequest request = new HandleRequest(opNum, ACCESS_MASK);
+                final HandleResponse response = transport.transact(request);
+                if (0 != response.getReturnValue()) {
+                    throw new RPCException(hive.getOpName(), response.getReturnValue());
+                }
+                final ContextHandle handle = response.getHandle();
+                hiveCache.put(hive, handle);
+                return handle;
+            }
+        }
+    }
+
+    private ContextHandle openKey(final String hiveName, final String keyPath)
+        throws IOException {
+        final String canonicalizedKeyPath = canonicalize(keyPath);
+        if (canonicalizedKeyPath.isEmpty()) {
+            return openHive(hiveName);
+        }
+        synchronized (keyPathCache) {
+            if (keyPathCache.containsKey(canonicalizedKeyPath)) {
+                return keyPathCache.get(canonicalizedKeyPath);
+            }
+            final ContextHandle hiveHandle = openHive(hiveName);
+            final BaseRegOpenKey request = new BaseRegOpenKey(hiveHandle, canonicalizedKeyPath, 0, ACCESS_MASK);
+            final HandleResponse response = transport.transact(request);
+            if (0 != response.getReturnValue()) {
+                throw new RPCException("BaseRegOpenKey", response.getReturnValue());
+            }
+            final ContextHandle keyHandle = response.getHandle();
+            keyPathCache.put(canonicalizedKeyPath, keyHandle);
+            return keyHandle;
+        }
+    }
 }

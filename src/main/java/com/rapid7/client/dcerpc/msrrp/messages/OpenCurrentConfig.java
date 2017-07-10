@@ -18,9 +18,6 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-
 /**
  * <b>3.1.5.25 OpenCurrentConfig (Opnum 27)</b><br>
  * <br>
@@ -83,14 +80,6 @@ import com.hierynomus.msdtyp.AccessMask;
  *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244951">3.1.5.25 OpenCurrentConfig (Opnum 27)</a>}
  */
-public class OpenCurrentConfig extends HandleRequest {
-    /**
-     * The OpenCurrentConfig method is called by the client. In response, the server attempts to open a handle to the
-     * HKEY_CURRENT_CONFIG predefined key.
-     *
-     * @param accessMask A bit field that describes the wanted security access for the key.
-     */
-    public OpenCurrentConfig(final EnumSet<AccessMask> accessMask) {
-        super((short) 27, accessMask);
-    }
+public class OpenCurrentConfig {
+    public final static short OP_NUM = 27;
 }

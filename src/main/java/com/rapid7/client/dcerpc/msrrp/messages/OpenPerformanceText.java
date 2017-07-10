@@ -65,14 +65,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  *
  * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244956">3.1.5.28 OpenPerformanceText (Opnum 32)</a>}
  */
-public class OpenPerformanceText extends HandleRequest {
-    /**
-     * The OpenPerformanceText method is called by the client. In response, the server opens a handle to the
-     * HKEY_PERFORMANCE_TEXT predefined key. The HKEY_PERFORMANCE_TEXT predefined key is used to retrieve performance
-     * information from a registry server using only the BaseRegQueryInfoKey, BaseRegQueryValue, BaseRegEnumValues and
-     * BaseRegCloseKey methods.
-     */
-    public OpenPerformanceText() {
-        super((short) 32, null);
-    }
+public class OpenPerformanceText {
+    public final static short OP_NUM = 32;
 }

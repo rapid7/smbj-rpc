@@ -19,7 +19,7 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import static org.junit.Assert.assertEquals;
-import java.math.BigInteger;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
@@ -62,7 +62,7 @@ public class Test_BaseRegQueryInfoKey {
         //                  Actual Count: 0
         final byte[] requestBytes = request.marshal(37);
         final String encodedRequest =
-            String.format(String.format("%%0%dx", requestBytes.length << 1), new BigInteger(1, requestBytes));
+            Hex.toHexString(requestBytes);
 
         assertEquals(
             "0500000310000000400000002500000040000000000010000000000032daf234b77c86409d29efe60d3266830000000000000200000000000000000000000000",
@@ -112,9 +112,8 @@ public class Test_BaseRegQueryInfoKey {
         //      Pointer to Last Changed Time (NTTIME)
         //          Last Changed Time: Jun 21, 2017 12:50:30.686403000 EDT
         //      Windows Error: WERR_OK (0x00000000)
-        final byte[] responseBytes = new BigInteger(
-            "0500020310000000480000002500000030000000000000000200000000000000060000001600000000000000000000000000000000000000a40000009e8b087eaeead20100000000",
-            16).toByteArray();
+        final byte[] responseBytes = Hex.decode(
+            "0500020310000000480000002500000030000000000000000200000000000000060000001600000000000000000000000000000000000000a40000009e8b087eaeead20100000000");
         final BaseRegQueryInfoKeyResponse response = request.unmarshal(responseBytes, 37);
 
         assertEquals(6, response.getSubKeys());

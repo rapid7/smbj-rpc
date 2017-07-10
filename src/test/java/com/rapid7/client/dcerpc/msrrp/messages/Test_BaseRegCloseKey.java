@@ -19,7 +19,7 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import static org.junit.Assert.assertEquals;
-import java.math.BigInteger;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
@@ -53,7 +53,7 @@ public class Test_BaseRegCloseKey {
         //              [Frame handle closed: 11424]
         final byte[] requestBytes = request.marshal(39);
         final String encodedRequest =
-            String.format(String.format("%%0%dx", requestBytes.length << 1), new BigInteger(1, requestBytes));
+            Hex.toHexString(requestBytes);
 
         assertEquals("05000003100000002c000000270000002c000000000005000000000032daf234b77c86409d29efe60d326683",
             encodedRequest);
@@ -84,9 +84,8 @@ public class Test_BaseRegCloseKey {
         //          Policy Handle
         //              Handle: 0000000000000000000000000000000000000000
         //      Windows Error: WERR_OK (0x00000000)
-        final byte[] responseBytes = new BigInteger(
-            "050002031000000030000000270000001800000000000000000000000000000000000000000000000000000000000000",
-            16).toByteArray();
+        final byte[] responseBytes = Hex.decode(
+            "050002031000000030000000270000001800000000000000000000000000000000000000000000000000000000000000");
         final HandleResponse response = request.unmarshal(responseBytes, 39);
 
         assertEquals(new ContextHandle(), response.getHandle());

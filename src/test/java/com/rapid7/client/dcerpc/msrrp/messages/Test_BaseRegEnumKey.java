@@ -19,7 +19,7 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import static org.junit.Assert.assertEquals;
-import java.math.BigInteger;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
@@ -78,7 +78,7 @@ public class Test_BaseRegEnumKey {
         //          Last Changed Time: No time specified (0)
         final byte[] requestBytes = request1.marshal(2);
         final String encodedRequest =
-            String.format(String.format("%%0%dx", requestBytes.length << 1), new BigInteger(1, requestBytes));
+            Hex.toHexString(requestBytes);
 
         assertEquals(
             "0500000310000000680000000200000068000000000009000000000032daf234b77c86409d29efe60d326683000000000000000200000200000100000000000000000000040002000000feff08000200ff7f000000000000000000000c0002000000000000000000",
@@ -133,7 +133,7 @@ public class Test_BaseRegEnumKey {
         //          Last Changed Time: No time specified (0)
         final byte[] requestBytes = request2.marshal(3);
         final String encodedRequest =
-            String.format(String.format("%%0%dx", requestBytes.length << 1), new BigInteger(1, requestBytes));
+            Hex.toHexString(requestBytes);
 
         assertEquals(
             "0500000310000000680000000300000068000000000009000000000032daf234b77c86409d29efe60d326683010000000000000200000200000100000000000000000000040002000000feff08000200ff7f000000000000000000000c0002000000000000000000",
@@ -197,9 +197,8 @@ public class Test_BaseRegEnumKey {
         //          Referent ID: 0x0002000c
         //          Last Changed Time: Jun 15, 2017 15:29:36.566813400 EDT
         //      Windows Error: WERR_OK (0x00000000)
-        final byte[] responseBytes = new BigInteger(
-            "050002031000000070000000020000005800000000000000180000020000020000010000000000000c000000420043004400300030003000300030003000300030000000040002000200feff08000200ff7f00000000000001000000000000000c00020026cd57b90de6d20100000000",
-            16).toByteArray();
+        final byte[] responseBytes = Hex.decode(
+            "050002031000000070000000020000005800000000000000180000020000020000010000000000000c000000420043004400300030003000300030003000300030000000040002000200feff08000200ff7f00000000000001000000000000000c00020026cd57b90de6d20100000000");
         final BaseRegEnumKeyResponse response = request1.unmarshal(responseBytes, 2);
 
         assertEquals("BCD00000000", response.getName());
@@ -261,9 +260,8 @@ public class Test_BaseRegEnumKey {
         //          Referent ID: 0x0002000c
         //          Last Changed Time: Jun 15, 2017 15:29:33.673089000 EDT
         //      Windows Error: WERR_OK (0x00000000)
-        final byte[] responseBytes = new BigInteger(
-            "05000203100000006c00000003000000540000000000000012000002000002000001000000000000090000004800410052004400570041005200450000000000040002000200feff08000200ff7f00000000000001000000000000000c0002000a419eb70de6d20100000000",
-            16).toByteArray();
+        final byte[] responseBytes = Hex.decode(
+            "05000203100000006c00000003000000540000000000000012000002000002000001000000000000090000004800410052004400570041005200450000000000040002000200feff08000200ff7f00000000000001000000000000000c0002000a419eb70de6d20100000000");
         final BaseRegEnumKeyResponse response = request2.unmarshal(responseBytes, 3);
 
         assertEquals("HARDWARE", response.getName());
