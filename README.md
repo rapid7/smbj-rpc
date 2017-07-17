@@ -8,13 +8,15 @@ Special thank you to Jeroen van Erp for SMBJ (https://github.com/hierynomus/smbj
 
 # Usage Example
 
+## [MS-RRP]: Windows Remote Registry Protocol (https://msdn.microsoft.com/en-us/library/cc244877.aspx)
+
 ```java
 final SMBClient smbClient = new SMBClient();
 try (final Connection smbConnection = smbClient.connect("aaa.bbb.ccc.ddd")) {
     final AuthenticationContext smbAuthenticationContext = new AuthenticationContext("username", "password".toCharArray(), "");
     final Session session = smbConnection.authenticate(smbAuthenticationContext);
 
-    final RPCTransport transport = SMBWindowsRegistryTransportFactory.getSMBWindowsRegistryTransport(session);
+    final RPCTransport transport = SMBTransportFactories.WINREG.getTransport(session);
     final RegistryService registryService = new RegistryService(transport);
 
     // Read sub keys from the HKLM hive.
@@ -39,5 +41,22 @@ try (final Connection smbConnection = smbClient.connect("aaa.bbb.ccc.ddd")) {
     // Read registry values.
     System.out.println(registryService.getValue("HKLM", "SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment", "Path").toString());
     System.out.println(registryService.getValue("HKLM", "SYSTEM\\ControlSet001\\Control\\Lsa", "Authentication Packages").toString());
+}
+```
+
+## [MS-SRVS]: Server Service Remote Protocol (https://msdn.microsoft.com/en-us/library/cc247080.aspx)
+
+```java
+final SMBClient smbClient = new SMBClient();
+try (final Connection smbConnection = smbClient.connect("aaa.bbb.ccc.ddd")) {
+    final AuthenticationContext smbAuthenticationContext = new AuthenticationContext("username", "password".toCharArray(), "");
+    final Session session = smbConnection.authenticate(smbAuthenticationContext);
+
+    final RPCTransport transport = SMBTransportFactories.SRVSVC.getTransport(session);
+    final ServerService serverService = new ServerService(transport);
+    final List<NetShareInfo0> shares = serverService.getShares();
+    for (final NetShareInfo0 share : shares) {
+        System.out.println(share);
+    }
 }
 ```
