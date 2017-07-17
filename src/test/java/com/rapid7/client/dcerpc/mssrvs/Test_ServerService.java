@@ -24,46 +24,141 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.LinkedList;
 import java.util.List;
 import org.bouncycastle.util.encoders.Hex;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import com.google.common.collect.Lists;
+import com.hierynomus.smbj.transport.TransportException;
+import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.RPCRequest;
 import com.rapid7.client.dcerpc.RPCResponse;
+import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetShareInfo0;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetShareInfo1;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class Test_ServerService {
+    @Rule
+    public final ExpectedException thrown = ExpectedException.none();
+
+    @SuppressWarnings("unchecked")
     @Test
     public void getShares()
         throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
-        final String response1Str = "05000203100000009000000001000000780000000000000001000000010000000000020001000000040002000100000008000200000000800c000200070000000000000007000000410044004d0049004e002400000000000d000000000000000d000000520065006d006f00740065002000410064006d0069006e0000000000030000001000020005000000ea000000";
-        final String response2Str = "05000203100000008800000002000000700000000000000001000000010000000000020001000000040002000100000008000200000000800c00020003000000000000000300000043002400000000000e000000000000000e000000440065006600610075006c0074002000730068006100720065000000020000001000020009000000ea000000";
-        final String response3Str = "05000203100000008800000003000000700000000000000001000000010000000000020001000000040002000100000008000200030000800c0002000500000000000000050000004900500043002400000000000b000000000000000b000000520065006d006f007400650020004900500043000000000001000000100002000000000000000000";
-        final RPCResponse response1 = new NetrShareEnumResponse(ByteBuffer.wrap(Hex.decode(response1Str)));
-        final RPCResponse response2 = new NetrShareEnumResponse(ByteBuffer.wrap(Hex.decode(response2Str)));
-        final RPCResponse response3 = new NetrShareEnumResponse(ByteBuffer.wrap(Hex.decode(response3Str)));
-        final RPCRequest<RPCResponse> request = any();
+        final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
 
-        when(transport.transact(request)).thenReturn(response1).thenReturn(response2).thenReturn(response3);
+        when(transport.transact((RPCRequest<NetrShareEnumResponse>) any())).thenReturn(response);
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_SUCCESS.getErrorCode());
+        when(response.getShares()).thenReturn(Lists.newArrayList(new NetShareInfo0("test1")));
 
         final ServerService serverService = new ServerService(transport);
         final List<NetShareInfo0> shares = serverService.getShares();
-        final NetShareInfo1 share0 = (NetShareInfo1) shares.get(0);
-        final NetShareInfo1 share1 = (NetShareInfo1) shares.get(1);
-        final NetShareInfo1 share2 = (NetShareInfo1) shares.get(2);
+        final NetShareInfo0 share0 = shares.get(0);
 
-        assertEquals(3, shares.size());
-        assertEquals("ADMIN$", share0.getName());
-        assertEquals(-2147483648, share0.getType());
-        assertEquals("Remote Admin", share0.getComment());
-        assertEquals("C$", share1.getName());
-        assertEquals(-2147483648, share1.getType());
-        assertEquals("Default share", share1.getComment());
-        assertEquals("IPC$", share2.getName());
-        assertEquals(-2147483645, share2.getType());
-        assertEquals("Remote IPC", share2.getComment());
+        assertEquals(1, shares.size());
+        assertEquals("test1", share0.getName());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getSharesTruncated()
+        throws IOException {
+        final RPCTransport transport = mock(RPCTransport.class);
+        final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
+
+        when(transport.transact((RPCRequest<NetrShareEnumResponse>) any())).thenReturn(response);
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getErrorCode()).thenReturn(
+            SystemErrorCode.ERROR_SUCCESS.getErrorCode());
+        when(response.getResumeHandle()).thenReturn(1);
+        when(response.getShares()).thenReturn(Lists.newArrayList(new NetShareInfo0("test1"))).thenReturn(
+            Lists.newArrayList(new NetShareInfo0("test2")));
+
+        final ServerService serverService = new ServerService(transport);
+        final List<NetShareInfo0> shares = serverService.getShares();
+        final NetShareInfo0 share0 = shares.get(0);
+        final NetShareInfo0 share1 = shares.get(1);
+
+        assertEquals(2, shares.size());
+        assertEquals("test1", share0.getName());
+        assertEquals("test2", share1.getName());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getSharesAccessDenied()
+        throws IOException {
+        thrown.expect(RPCException.class);
+        thrown.expectMessage("NetrShareEnum returned error code: 5 (ERROR_ACCESS_DENIED)");
+
+        final RPCTransport transport = mock(RPCTransport.class);
+        final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
+
+        when(transport.transact((RPCRequest<NetrShareEnumResponse>) any())).thenReturn(response);
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_ACCESS_DENIED.getErrorCode());
+
+        final ServerService serverService = new ServerService(transport);
+        serverService.getShares();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getSharesMoreDataEmptyShares()
+        throws IOException {
+        thrown.expect(TransportException.class);
+        thrown.expectMessage("NetrShareEnum shares empty.");
+
+        final RPCTransport transport = mock(RPCTransport.class);
+        final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
+
+        when(transport.transact((RPCRequest<NetrShareEnumResponse>) any())).thenReturn(response);
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getErrorCode());
+        when(response.getResumeHandle()).thenReturn(0);
+        when(response.getShares()).thenReturn(new LinkedList<NetShareInfo0>());
+
+        final ServerService serverService = new ServerService(transport);
+        serverService.getShares();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getSharesMoreDataBadResume()
+        throws IOException {
+        thrown.expect(TransportException.class);
+        thrown.expectMessage("NetrShareEnum resume handle not updated");
+
+        final RPCTransport transport = mock(RPCTransport.class);
+        final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
+
+        when(transport.transact((RPCRequest<NetrShareEnumResponse>) any())).thenReturn(response);
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getErrorCode());
+        when(response.getResumeHandle()).thenReturn(0).thenReturn(0);
+        when(response.getShares()).thenReturn(Lists.newArrayList(new NetShareInfo0("test")));
+
+        final ServerService serverService = new ServerService(transport);
+        serverService.getShares();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getSharesMoreDataNullResume()
+        throws IOException {
+        thrown.expect(TransportException.class);
+        thrown.expectMessage("NetrShareEnum resume handle null.");
+
+        final RPCTransport transport = mock(RPCTransport.class);
+        final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
+
+        when(transport.transact((RPCRequest<NetrShareEnumResponse>) any())).thenReturn(response);
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getErrorCode());
+        when(response.getResumeHandle()).thenReturn(null);
+        when(response.getShares()).thenReturn(Lists.newArrayList(new NetShareInfo0("test")));
+
+        final ServerService serverService = new ServerService(transport);
+        serverService.getShares();
     }
 }

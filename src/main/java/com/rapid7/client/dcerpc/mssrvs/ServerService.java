@@ -54,24 +54,28 @@ public class ServerService {
             final NetrShareEnumRequest request = new NetrShareEnumRequest(1, resumeHandle.getValue());
             final NetrShareEnumResponse response = transport.transact(request);
             final int returnCode = response.getReturnValue();
-            if (!SystemErrorCode.ERROR_SUCCESS.is(returnCode) && !SystemErrorCode.ERROR_MORE_DATA.is(returnCode)) {
+            if (SystemErrorCode.ERROR_SUCCESS.is(returnCode) || SystemErrorCode.ERROR_MORE_DATA.is(returnCode)) {
+                final List<NetShareInfo0> responseShares = response.getShares();
+                if (SystemErrorCode.ERROR_SUCCESS.is(returnCode)) {
+                    shares.addAll(responseShares);
+                    break;
+                } else {
+                    if (responseShares.isEmpty()) {
+                        throw new TransportException("NetrShareEnum shares empty.");
+                    }
+                    final Integer responseResumeHandle = response.getResumeHandle();
+                    if (responseResumeHandle == resumeHandle.getValue()) {
+                        throw new TransportException("NetrShareEnum resume handle not updated.");
+                    }
+                    if (responseResumeHandle == null) {
+                        throw new TransportException("NetrShareEnum resume handle null.");
+                    }
+                    shares.addAll(responseShares);
+                    resumeHandle.setValue(responseResumeHandle);
+                }
+            } else {
                 throw new RPCException("NetrShareEnum", response.getReturnValue());
             }
-            final List<NetShareInfo0> responseShares = response.getShares();
-            if (responseShares.isEmpty()) {
-                throw new TransportException(String.format("NetrShareEnum response has no shares: %d (%s)", returnCode,
-                    SystemErrorCode.getErrorCode(returnCode)));
-            }
-            final int responseResumeHandle = response.getResumeHandle();
-            if (responseResumeHandle == resumeHandle.getValue()) {
-                throw new TransportException(
-                    String.format("NetrShareEnum resume handle did not change: %d", responseResumeHandle));
-            }
-            shares.addAll(responseShares);
-            if (SystemErrorCode.ERROR_SUCCESS.is(returnCode)) {
-                break;
-            }
-            resumeHandle.setValue(responseResumeHandle);
         }
         return Collections.unmodifiableList(new ArrayList<>(shares));
     }
