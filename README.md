@@ -8,7 +8,7 @@ Special thank you to Jeroen van Erp for SMBJ (https://github.com/hierynomus/smbj
 
 # Usage Example
 
-## [MS-RRP]: Windows Remote Registry Protocol (https://msdn.microsoft.com/en-us/library/cc244877.aspx)
+#### [MS-RRP]: Windows Remote Registry Protocol (https://msdn.microsoft.com/en-us/library/cc244877.aspx)
 
 ```java
 final SMBClient smbClient = new SMBClient();
@@ -44,7 +44,7 @@ try (final Connection smbConnection = smbClient.connect("aaa.bbb.ccc.ddd")) {
 }
 ```
 
-## [MS-SRVS]: Server Service Remote Protocol (https://msdn.microsoft.com/en-us/library/cc247080.aspx)
+#### [MS-SRVS]: Server Service Remote Protocol (https://msdn.microsoft.com/en-us/library/cc247080.aspx)
 
 ```java
 final SMBClient smbClient = new SMBClient();
