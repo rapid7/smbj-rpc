@@ -19,16 +19,20 @@
 package com.rapid7.client.dcerpc;
 
 public enum Interface {
-    /** */
-    WINREG_V1_0("338cd001-2244-31f1-aaaa-900038001003:v1.0"),
-    /** */
-    NDR_32BIT_V2("8a885d04-1ceb-11c9-9fe8-08002b104860:v2.0");
+    WINREG_V1_0("winreg interface", "338cd001-2244-31f1-aaaa-900038001003:v1.0"),
+    SRVSVC_V3_0("srvsvc interface", "4b324fc8-1670-01d3-1278-5a47bf6ee188:v3.0"),
+    NDR_32BIT_V2("NDR transfer syntax identifier", "8a885d04-1ceb-11c9-9fe8-08002b104860:v2.0");
 
+    private final String name;
+    private final String repr;
     private final byte[] uuid = new byte[16];
     private final short majorVersion;
     private final short minorVersion;
 
-    private Interface(final String uuid) {
+    private Interface(final String name, final String uuid) {
+        this.name = name;
+        this.repr = uuid;
+
         final String[] interfaceComponents = uuid.split(":", 2);
         final String[] uuidComponents = interfaceComponents[0].split("-", 5);
         final String[] uuidBEComponents = { uuidComponents[0], uuidComponents[1], uuidComponents[2] };
@@ -68,6 +72,14 @@ public enum Interface {
         final String[] versionComponents = interfaceComponents[1].split("\\.", 2);
         majorVersion = Short.valueOf(versionComponents[0].substring(1));
         minorVersion = Short.valueOf(versionComponents[1]);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getRepr() {
+        return repr;
     }
 
     public byte[] getUUID() {

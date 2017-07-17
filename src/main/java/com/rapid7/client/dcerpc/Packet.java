@@ -259,30 +259,36 @@ public class Packet {
     protected String getString(final boolean nullTerminated) {
         final StringBuffer result;
 
-        getShort(); // Current byte length
-        getShort(); // Maximum byte length
+        getInt();
+        final int initialOffset = getInt();
+        final int currentChars = getInt();
+
+        result = new StringBuffer(currentChars);
+        result.setLength(initialOffset);
+
+        int currentOffset = initialOffset;
+        while (currentOffset++ < currentChars) {
+            final char currentChar = (char) getShort();
+            if (nullTerminated && currentChar == 0) {
+                break;
+            }
+            result.append(currentChar);
+        }
+
+        while (currentOffset++ < currentChars) {
+            getShort();
+        }
+
+        align();
+
+        return result.toString();
+    }
+
+    protected String getStringRef(final boolean nullTerminated) {
+        final String result;
 
         if (0 != getReferentID()) {
-            getInt();
-            final int initialOffset = getInt();
-            final int currentChars = getInt();
-
-            result = new StringBuffer(currentChars);
-            result.setLength(initialOffset);
-
-            int currentOffset = initialOffset;
-            while (currentOffset++ < currentChars) {
-                final char currentChar = (char) getShort();
-                if (nullTerminated && currentChar == 0) {
-                    break;
-                }
-                result.append(currentChar);
-            }
-
-            while (currentOffset++ < currentChars) {
-                getShort();
-            }
-
+            result = getString(nullTerminated);
             align();
         } else {
             result = null;
@@ -291,10 +297,17 @@ public class Packet {
         return result != null ? result.toString() : null;
     }
 
-    protected String getStringRef(final boolean nullTerminated) {
+    protected String getStringBuf(final boolean nullTerminated) {
+        getShort(); // Current byte length
+        getShort(); // Maximum byte length
+
+        return getStringRef(nullTerminated);
+    }
+
+    protected String getStringBufRef(final boolean nullTerminated) {
         final String result;
         if (0 != getReferentID()) {
-            result = getString(nullTerminated);
+            result = getStringBuf(nullTerminated);
             align();
         } else {
             result = null;

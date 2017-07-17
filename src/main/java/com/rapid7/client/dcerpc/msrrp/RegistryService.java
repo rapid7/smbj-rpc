@@ -44,6 +44,13 @@ import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
+/**
+ * This class implements a partial registry service in accordance with [MS-RRP]: Windows Remote Registry Protocol which
+ * specifies the Windows Remote Registry Protocol, a remote procedure call (RPC)-based client/server protocol that is
+ * used to remotely manage a hierarchical data store such as the Windows registry.
+ * 
+ * @see <a href="https://msdn.microsoft.com/en-us/library/cc244877.aspx">[MS-RRP]: Windows Remote Registry Protocol</a>
+ */
 public class RegistryService {
     private final static int MAX_REGISTRY_KEY_NAME_SIZE = 256;
     private final static int MAX_REGISTRY_KEY_CLASS_SIZE = 32767;

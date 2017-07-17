@@ -131,8 +131,8 @@ public class BaseRegEnumKeyResponse extends Response {
         //          Referent ID: 0x0002000c
         //          Last Changed Time: Jun 15, 2017 15:29:36.566813400 EDT
         //      Windows Error: WERR_OK (0x00000000)
-        final String name = getString(true);
-        getStringRef(true);
+        final String name = getStringBuf(true);
+        getStringBufRef(true);
         final long lastWriteTime = getLongRef();
 
         returnValue = getInt();

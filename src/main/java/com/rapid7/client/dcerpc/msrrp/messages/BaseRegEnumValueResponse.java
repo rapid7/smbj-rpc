@@ -171,7 +171,7 @@ public class BaseRegEnumValueResponse extends Response {
         //          Referent ID: 0x00020010
         //          Length: 22
         //      Windows Error: WERR_OK (0x00000000)
-        final String name = getString(true);
+        final String name = getStringBuf(true);
         final int type = getIntRef();
         final byte[] data = getByteArrayRef();
 

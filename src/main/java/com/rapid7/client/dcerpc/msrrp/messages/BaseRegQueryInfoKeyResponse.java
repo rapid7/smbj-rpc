@@ -122,7 +122,7 @@ public class BaseRegQueryInfoKeyResponse extends Response {
         //      Pointer to Last Changed Time (NTTIME)
         //          Last Changed Time: Jun 21, 2017 12:50:30.686403000 EDT
         //      Windows Error: WERR_OK (0x00000000)
-        getString(true);
+        getStringBuf(true);
 
         subKeys = getInt();
         maxSubKeyLen = getInt();

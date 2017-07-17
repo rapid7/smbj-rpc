@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.transport;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -34,6 +35,7 @@ import com.hierynomus.mssmb2.SMB2ShareAccess;
 import com.hierynomus.mssmb2.messages.SMB2CreateResponse;
 import com.hierynomus.protocol.commons.concurrent.Futures;
 import com.hierynomus.smbj.common.SMBApiException;
+import com.hierynomus.smbj.common.SMBException;
 import com.hierynomus.smbj.common.SMBRuntimeException;
 import com.hierynomus.smbj.connection.Connection;
 import com.hierynomus.smbj.connection.NegotiatedProtocol;
@@ -48,8 +50,23 @@ import com.rapid7.client.dcerpc.messages.BindACK;
 import com.rapid7.client.smb2.SMB2ImpersonationLevel;
 import com.rapid7.client.smb2.messages.SMB2CreateRequest;
 
-public class SMBWindowsRegistryTransportFactory {
-    public static RPCTransport getSMBWindowsRegistryTransport(final Session session)
+public enum SMBTransportFactories {
+    WINREG("winreg", Interface.WINREG_V1_0, Interface.NDR_32BIT_V2),
+    SRVSVC("srvsvc", Interface.SRVSVC_V3_0, Interface.NDR_32BIT_V2);
+
+    private final static int STATUS_PIPE_NOT_AVAILABLE_BACKOFF_TIME_MS = 3000;
+    private final static int STATUS_PIPE_NOT_AVAILABLE_RETRIES = 1;
+    private final String path;
+    private final Interface abstractSyntax;
+    private final Interface transferSyntax;
+
+    private SMBTransportFactories(final String path, final Interface abstractSyntax, final Interface transferSyntax) {
+        this.path = path;
+        this.abstractSyntax = abstractSyntax;
+        this.transferSyntax = transferSyntax;
+    }
+
+    public RPCTransport getTransport(final Session session)
         throws IOException {
         final Connection connection = session.getConnection();
         final NegotiatedProtocol negotiatedProtocol = connection.getNegotiatedProtocol();
@@ -58,43 +75,52 @@ public class SMBWindowsRegistryTransportFactory {
         final Share share = session.connectShare("IPC$");
         final TreeConnect tree = share.getTreeConnect();
         final long treeID = tree.getTreeId();
-        final SMB2FileId fileID = openWinRegLoop(share, 2);
+        final SMB2FileId fileID = openNamedPipe(share, path, STATUS_PIPE_NOT_AVAILABLE_RETRIES);
         final SMBTransport transport = new SMBTransport(session, dialect, fileID, sessionID, treeID);
 
-        final Bind bind = new Bind(Interface.WINREG_V1_0, Interface.NDR_32BIT_V2);
+        final Bind bind = new Bind(abstractSyntax, transferSyntax);
         final RPCResponse response = transport.transact(bind);
 
         if (response instanceof BindACK) {
             return new SMBTransport(session, dialect, fileID, sessionID, treeID);
         }
 
-        throw new TransportException("Registry service is not available.");
+        throw new TransportException(
+            String.format("BIND %s (%s -> %s) failed.", abstractSyntax.getName(), path, abstractSyntax.getRepr()));
     }
 
-    private static SMB2FileId openWinRegLoop(final Share share, final int attemptLimit) {
+    private static SMB2FileId openNamedPipe(final Share share, final String path, final int retryLimit)
+        throws IOException {
         final Queue<SMBApiException> exceptions = new LinkedList<>();
-        for (int attempt = 0; attempt < attemptLimit; attempt++) {
+        for (int retry = -1; retry < retryLimit; retry++) {
             try {
-                return openWinReg(share);
+                return openNamedPipe(share, path);
             } catch (final SMBApiException exception) {
                 exceptions.add(exception);
                 switch (exception.getStatus()) {
                 case STATUS_PIPE_NOT_AVAILABLE:
+                    // XXX: There has to be a better way to do this...
+                    try {
+                        Thread.sleep(STATUS_PIPE_NOT_AVAILABLE_BACKOFF_TIME_MS);
+                    } catch (final InterruptedException iException) {
+                        final InterruptedIOException iioException = new InterruptedIOException();
+                        iioException.addSuppressed(iException);
+                        throw iioException;
+                    }
                     break;
                 default:
-                    System.out.println("??? " + exception.getStatus() + " " + exception.getStatusCode());
-                    throw exceptions.poll();
+                    throw new SMBException(exceptions.poll());
                 }
             }
         }
-        throw exceptions.poll();
+        throw new SMBException(exceptions.poll());
     }
 
-    private static SMB2FileId openWinReg(final Share share) {
-        return open(share.getTreeConnect(), "winreg", SMB2ImpersonationLevel.IMPERSONATION,
+    private static SMB2FileId openNamedPipe(final Share share, final String namedPipe) {
+        return open(share.getTreeConnect(), namedPipe, SMB2ImpersonationLevel.IMPERSONATION,
             AccessMask.MAXIMUM_ALLOWED.getValue(), null,
             EnumSet.of(SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE),
-            SMB2CreateDisposition.FILE_CREATE, null);
+            SMB2CreateDisposition.FILE_OPEN_IF, null);
     }
 
     private static SMB2FileId open(
@@ -133,7 +159,6 @@ public class SMBWindowsRegistryTransportFactory {
         final EnumSet<FileAttributes> fileAttributes,
         final SMB2CreateDisposition createDisposition,
         final EnumSet<SMB2CreateOptions> createOptions) {
-
         final Session session = treeConnect.getSession();
         final SMB2CreateRequest createRequest = new SMB2CreateRequest(
             session.getConnection().getNegotiatedProtocol().getDialect(), session.getSessionId(),
