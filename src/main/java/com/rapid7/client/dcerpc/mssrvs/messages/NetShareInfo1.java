@@ -26,9 +26,6 @@ public class NetShareInfo1 extends NetShareInfo0 {
 
     public NetShareInfo1(final String name, final int type, final String comment) {
         super(name);
-        if (comment == null) {
-            throw new IllegalArgumentException("comment is invalid: " + name);
-        }
         this.type = type;
         this.comment = comment;
     }

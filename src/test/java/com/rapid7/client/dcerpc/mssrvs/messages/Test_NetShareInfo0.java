@@ -29,9 +29,15 @@ public class Test_NetShareInfo0 {
     }
 
     @Test
-    public void name() {
+    public void getName() {
         final NetShareInfo0 share = new NetShareInfo0("test");
         assertEquals("test", share.getName());
+    }
+
+    @Test
+    public void testToString() {
+        final NetShareInfo0 share = new NetShareInfo0("test");
+        assertEquals("name=test", share.toString());
     }
 
     @Test

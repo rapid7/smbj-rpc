@@ -129,7 +129,7 @@ public class NetrShareEnumResponse extends Response {
                     final List<Integer> nameRefs = new LinkedList<>();
                     final List<Integer> types = new LinkedList<>();
                     final List<Integer> commentRefs = new LinkedList<>();
-                    getInt();
+                    getInt(); // Maximum count
                     for (int index = 0; index < count; index++) {
                         nameRefs.add(getReferentID());
                         types.add(getInt());
@@ -140,6 +140,45 @@ public class NetrShareEnumResponse extends Response {
                         final int type = types.get(index);
                         final String comment = commentRefs.get(index) == 0 ? null : getString(true);
                         shares.add(new NetShareInfo1(name, type, comment));
+                    }
+                }
+            }
+            break;
+        case 2:
+            if (0 != getReferentID()) {
+                final int count = getInt();
+                if (0 != getReferentID()) {
+                    final List<Integer> nameRefs = new LinkedList<>();
+                    final List<Integer> types = new LinkedList<>();
+                    final List<Integer> commentRefs = new LinkedList<>();
+                    final List<Integer> permissions = new LinkedList<>();
+                    final List<Integer> maximumUsers = new LinkedList<>();
+                    final List<Integer> currentUsers = new LinkedList<>();
+                    final List<Integer> pathRefs = new LinkedList<>();
+                    final List<Integer> passwordRefs = new LinkedList<>();
+                    getInt(); // Maximum count
+                    for (int index = 0; index < count; index++) {
+                        nameRefs.add(getReferentID());
+                        types.add(getInt());
+                        commentRefs.add(getReferentID());
+                        permissions.add(getInt());
+                        maximumUsers.add(getInt());
+                        currentUsers.add(getInt());
+                        pathRefs.add(getReferentID());
+                        passwordRefs.add(getReferentID());
+                    }
+                    for (int index = 0; index < count; index++) {
+                        final String name = nameRefs.get(index) == 0 ? null : getString(true);
+                        final int type = types.get(index);
+                        final String comment = commentRefs.get(index) == 0 ? null : getString(true);
+                        final int permission = permissions.get(index);
+                        final int maximumUser = maximumUsers.get(index);
+                        final int currentUser = currentUsers.get(index);
+                        final String path = pathRefs.get(index) == 0 ? null : getString(true);
+                        final String password = passwordRefs.get(index) == 0 ? null : getString(true);
+                        final NetShareInfo2 shareInfo = new NetShareInfo2(name, type, comment, permission, maximumUser,
+                            currentUser, path, password);
+                        shares.add(shareInfo);
                     }
                 }
             }

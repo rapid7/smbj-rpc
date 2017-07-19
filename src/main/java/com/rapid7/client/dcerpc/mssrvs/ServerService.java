@@ -51,7 +51,7 @@ public class ServerService {
         final List<NetShareInfo0> shares = new LinkedList<>();
         final MutableInt resumeHandle = new MutableInt();
         for (;;) {
-            final NetrShareEnumRequest request = new NetrShareEnumRequest(1, resumeHandle.getValue());
+            final NetrShareEnumRequest request = new NetrShareEnumRequest(2, resumeHandle.getValue());
             final NetrShareEnumResponse response = transport.transact(request);
             final int returnCode = response.getReturnValue();
             if (SystemErrorCode.ERROR_SUCCESS.is(returnCode) || SystemErrorCode.ERROR_MORE_DATA.is(returnCode)) {
