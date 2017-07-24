@@ -19,11 +19,16 @@
 package com.rapid7.client.dcerpc.transport;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.mssmb2.SMB2CreateDisposition;
 import com.hierynomus.mssmb2.SMB2ImpersonationLevel;
 import com.hierynomus.mssmb2.SMB2ShareAccess;
+import com.hierynomus.smbj.common.SMBApiException;
+import com.hierynomus.smbj.common.SMBException;
 import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.NamedPipe;
 import com.hierynomus.smbj.share.PipeShare;
@@ -55,10 +60,7 @@ public enum SMBTransportFactories {
         final Share share = session.connectShare("IPC$");
         if (share instanceof PipeShare) {
             final PipeShare pipeShare = (PipeShare) share;
-            final NamedPipe namedPipe = pipeShare.open(name, SMB2ImpersonationLevel.Impersonation,
-                EnumSet.of(AccessMask.MAXIMUM_ALLOWED), null,
-                EnumSet.of(SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE),
-                SMB2CreateDisposition.FILE_OPEN_IF, null);
+            final NamedPipe namedPipe = openAndHandleStatusPipeNotAvailable(pipeShare);
             final SMBTransport transport = new SMBTransport(namedPipe);
             final Bind bind = new Bind(abstractSyntax, transferSyntax);
             final RPCResponse response = transport.transact(bind);
@@ -72,5 +74,35 @@ public enum SMBTransportFactories {
         }
 
         throw new TransportException(String.format("%s not a named pipe.", name));
+    }
+
+    private NamedPipe openAndHandleStatusPipeNotAvailable(final PipeShare pipeShare)
+        throws IOException {
+        final Queue<SMBApiException> exceptions = new LinkedList<>();
+        for (int retry = -1; retry < STATUS_PIPE_NOT_AVAILABLE_RETRIES; retry++) {
+            try {
+                return pipeShare.open(name, SMB2ImpersonationLevel.Impersonation,
+                    EnumSet.of(AccessMask.MAXIMUM_ALLOWED), null,
+                    EnumSet.of(SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE),
+                    SMB2CreateDisposition.FILE_OPEN_IF, null);
+            } catch (final SMBApiException exception) {
+                exceptions.add(exception);
+                switch (exception.getStatus()) {
+                case STATUS_PIPE_NOT_AVAILABLE:
+                    // XXX: There has to be a better way to do this...
+                    try {
+                        Thread.sleep(STATUS_PIPE_NOT_AVAILABLE_BACKOFF_TIME_MS);
+                    } catch (final InterruptedException iException) {
+                        final InterruptedIOException iioException = new InterruptedIOException();
+                        iioException.addSuppressed(iException);
+                        throw iioException;
+                    }
+                    break;
+                default:
+                    throw new SMBException(exceptions.poll());
+                }
+            }
+        }
+        throw new SMBException(exceptions.poll());
     }
 }
