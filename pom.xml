@@ -2,8 +2,40 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>com.rapid7.client</groupId>
    <artifactId>dcerpc</artifactId>
+   <packaging>jar</packaging>
    <version>0.0.2-SNAPSHOT</version>
    <name>dcerpc</name>
+   <url>https://www.rapid7.com</url>
+   <description>DCE-RPC implementation capable of using SMBv2 via SMBJ to invoke remote procedure calls (RPC) over the IPC$ named pipe.</description>
+
+   <developers>
+      <developer>
+         <id>pmiseiko</id>
+         <name>Paul-Andrew Joseph Miseiko</name>
+         <email>pmiseiko@rapid7.com</email>
+         <url>https://www.rapid7.com</url>
+      </developer>
+   </developers>
+
+   <license>
+      <license>
+         <name>BSD-3-Clause</name>
+         <url>https://opensource.org/licenses/BSD-3-Clause</url>
+         <distribution>repo</distribution>
+      </license>
+   </license>
+
+   <distributionManagement>
+      <snapshotRepository>
+         <id>ossrh</id>
+         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      </snapshotRepository>
+      <repository>
+         <id>ossrh</id>
+         <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      </repository>
+   </distributionManagement>
+
    <properties>
       <thirdparty.commons-io.version>2.5</thirdparty.commons-io.version>
       <thirdparty.commons-lang3.version>3.4</thirdparty.commons-lang3.version>
@@ -15,6 +47,7 @@
       <maven.compiler.target>1.7</maven.compiler.target>
       <maven.compiler.source>1.7</maven.compiler.source>
    </properties>
+
    <dependencies>
       <!-- 3rdparty dependencies. -->
       <dependency>
@@ -59,4 +92,65 @@
          <scope>test</scope>
       </dependency>
    </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.3</version>
+         </plugin>
+         <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.3</version>
+            <extensions>true</extensions>
+            <configuration>
+               <serverId>ossrh</serverId>
+               <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+               <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.2.1</version>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <goals>
+                     <goal>jar-no-fork</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.9.1</version>
+            <executions>
+               <execution>
+                  <id>attach-javadocs</id>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+               <execution>
+                  <id>sign-artifacts</id>
+                  <phase>verify</phase>
+                  <goals>
+                     <goal>sign</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
 </project>
