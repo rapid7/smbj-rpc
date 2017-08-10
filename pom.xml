@@ -17,13 +17,13 @@
       </developer>
    </developers>
 
-   <license>
+   <licenses>
       <license>
          <name>BSD-3-Clause</name>
          <url>https://opensource.org/licenses/BSD-3-Clause</url>
          <distribution>repo</distribution>
       </license>
-   </license>
+   </licenses>
 
    <distributionManagement>
       <snapshotRepository>
