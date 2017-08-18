@@ -44,7 +44,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in Win32Error Codes in [MS-ERREF]. The server SHOULD return without modification any error code
  * encountered in servicing the client request. The most common error codes are listed in the following table.
- * <table>
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -84,7 +84,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * registry hierarchy. These restrictions are detailed within the Server Operations section of the BaseRegCreateKey
  * method.
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244957">3.1.5.5 OpenUsers (Opnum 4)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244957">3.1.5.5 OpenUsers (Opnum 4)</a>
  */
 public class OpenUsers {
     public final static short OP_NUM = 4;

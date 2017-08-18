@@ -211,7 +211,7 @@ public class BaseRegEnumValueResponse extends Response {
      *         specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common
      *         error codes are listed in the following table.<br>
      *         <br>
-     *         <table border="1">
+     *         <table border="1" summary="">
      *         <tr>
      *         <td>ERROR_ACCESS_DENIED (0x00000005)</td>
      *         <td>The caller does not have KEY_QUERY_VALUE access rights.</td>

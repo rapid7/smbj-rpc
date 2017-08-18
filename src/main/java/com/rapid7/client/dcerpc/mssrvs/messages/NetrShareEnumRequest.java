@@ -56,14 +56,14 @@ import com.rapid7.client.dcerpc.messages.Request;
  * ERROR_MORE_DATA, this parameter receives a nonzero value that can be passed in subsequent calls to this method to
  * continue with the enumeration in ShareList.<br>
  * <br>
- * <li>If this parameter is NULL or points to 0x00000000, the enumeration starts from the beginning of the
- * ShareList.</li><br>
+ * <ul><li>If this parameter is NULL or points to 0x00000000, the enumeration starts from the beginning of the
+ * ShareList.</li></ul>
  * <br>
  * Return Values: The method returns 0x00000000 (NERR_Success) to indicate success; otherwise, it returns a nonzero
  * error code. The method can take any specific error code value, as specified in [MS-ERREF] section 2.2. The most
  * common error codes are listed in the following table.<br>
  * <br>
- * <table border="1">
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -92,7 +92,7 @@ import com.rapid7.client.dcerpc.messages.Request;
  * In response to a NetrShareEnum request, the server MUST enumerate the Share entries in ShareList based on the value
  * of the ResumeHandle parameter and query share properties by invoking the underlying server events as specified in
  * [MS-CIFS] section 3.3.4.12 or [MS-SMB] section 3.3.4.7, and [MS-SMB2] section 3.3.4.16, providing the tuple
- * <normalized server name, Share.ShareName> as the input parameter. When the server receives STATUS_SUCCESS for a
+ * &lt;normalized server name, Share.ShareName&gt; as the input parameter. When the server receives STATUS_SUCCESS for a
  * share, it MUST consider the received SHARE_INFO_503_I and SHARE_INFO_1005 structures as valid. The server MUST return
  * information about each shared resource on a server.<br>
  * <br>
@@ -111,21 +111,22 @@ import com.rapid7.client.dcerpc.messages.Request;
  * SHARE_INFO_0_CONTAINER structure in the ShareInfo member of the InfoStruct parameter. The SHARE_INFO_0_CONTAINER
  * structure contains an array of SHARE_INFO_0 structures. <br>
  * <br>
- * <li>shi0_netname MUST be set to share.shi503_netname.</li><br>
+ * <ul><li>shi0_netname MUST be set to share.shi503_netname.</li></ul>
  * <br>
  * If the Level member is 1, the server MUST return the information about share resources by filling the
  * SHARE_INFO_1_CONTAINER structure in the ShareInfo member of the InfoStruct parameter. The SHARE_INFO_1_CONTAINER
  * structure contains an array of SHARE_INFO_1 structures. <br>
  * <br>
+ * <ul>
  * <li>shi1_netname MUST be set to share.shi503_netname.</li>
  * <li>shi1_type MUST be set to share.shi503_type.</li>
- * <li>shi1_remark MUST be set to share.shi503_remark.</li><br>
+ * <li>shi1_remark MUST be set to share.shi503_remark.</li></ul>
  * <br>
  * If the Level member is 2, the server MUST return the information about share resources by filling the
  * SHARE_INFO_2_CONTAINER structure in the ShareInfo member of the InfoStruct parameter. The SHARE_INFO_2_CONTAINER
  * structure contains an array of SHARE_INFO_2 structures. <br>
  * <br>
- * <li>shi2_netname MUST be set to share.shi503_netname.</li>
+ * <ul><li>shi2_netname MUST be set to share.shi503_netname.</li>
  * <li>shi2_type MUST be set to share.shi503_type.</li>
  * <li>shi2_remark MUST be set to share.shi503_remark.</li>
  * <li>shi2_permissions MUST be set to share.shi503_permissions.</li>
@@ -133,22 +134,22 @@ import com.rapid7.client.dcerpc.messages.Request;
  * <li>shi2_current_uses MUST be set to the sum of share.shi503_current_uses values retrieved from both CIFS and SMB2
  * servers.</li>
  * <li>shi2_path MUST be set to share.shi503_path.</li>
- * <li>shi2_passwd MUST be set to share.shi503_passwd.</li> <br>
+ * <li>shi2_passwd MUST be set to share.shi503_passwd.</li></ul>
  * <br>
  * If the Level member is 501, the server MUST return the information about share resources by filling the
  * SHARE_INFO_501_CONTAINER structure in the ShareInfo member of the InfoStruct parameter. The SHARE_INFO_501_CONTAINER
  * structure contains an array of SHARE_INFO_501 structures. <br>
  * <br>
- * <li>shi501_netname MUST be set to share.shi503_netname.</li>
+ * <ul><li>shi501_netname MUST be set to share.shi503_netname.</li>
  * <li>shi501_type MUST be set to share.shi503_type.</li>
  * <li>shi501_remark MUST be set to share.shi503_remark.</li>
- * <li>shi501_flags MUST be set to share.ShareFlags.</li> <br>
+ * <li>shi501_flags MUST be set to share.ShareFlags.</li></ul>
  * <br>
  * If the Level member is 502, the server MUST return the information about Share resources by filling the
  * SHARE_INFO_502_CONTAINER structure in the ShareInfo member of the InfoStruct parameter. The SHARE_INFO_502_CONTAINER
  * structure contains an array of SHARE_INFO_502_I structures. <br>
  * <br>
- * <li>shi502_netname MUST be set to share.shi503_netname.</li>
+ * <ul><li>shi502_netname MUST be set to share.shi503_netname.</li>
  * <li>shi502_type MUST be set to share.shi503_type.</li>
  * <li>shi502_remark MUST be set to share.shi503_remark.</li>
  * <li>shi502_permissions MUST be set to share.shi503_permissions.</li>
@@ -157,7 +158,7 @@ import com.rapid7.client.dcerpc.messages.Request;
  * servers.</li>
  * <li>shi502_path MUST be set to share.shi503_path.</li>
  * <li>shi502_passwd MUST be set to share.shi503_passwd.</li>
- * <li>shi502_security_descriptor MUST be set to share.shi503_security_descriptor</li> <br>
+ * <li>shi502_security_descriptor MUST be set to share.shi503_security_descriptor</li></ul>
  * <br>
  * If the Level member is 503, the server MUST return the information about share resources in the SHARE_INFO_503_I
  * structure by filling the SHARE_INFO_503_CONTAINER structure in the ShareInfo member of the InfoStruct parameter,
@@ -186,25 +187,23 @@ import com.rapid7.client.dcerpc.messages.Request;
  * <ul>
  * <li>If the ResumeHandle parameter is either NULL or points to 0x00000000, the enumeration MUST start from the
  * beginning of the ShareList.</li>
- * <li>If the ResumeHandle parameter points to a nonzero value, the server MUST validate the ResumeHandle.</li>
- * <ul>
+ * <li>If the ResumeHandle parameter points to a nonzero value, the server MUST validate the ResumeHandle.<ul>
  * <li>If the value of the ResumeHandle is less than the size of the ShareList, the server MUST continue enumeration
  * based on the value of ResumeHandle. The value of ResumeHandle specifies the index into the ShareList after which
  * enumeration is to begin.</li>
  * <li>If the value of the ResumeHandle is greater than or equal to the size of the ShareList, the server MUST return
  * NERR_Success and zero entries.</li>
- * </ul>
+ * </ul></li>
  * <li>If the client specified a ResumeHandle and if the server returns ERROR_MORE_DATA (0x000000EA), the server MUST
  * set ResumeHandle to the index of the last enumerated share in the ShareList.</li>
  * </ul>
- * <br>
  * <br>
  * Because the ResumeHandle specifies the index into the ShareList, and the ShareList can be modified between multiple
  * requests, the results of a query spanning multiple requests using the ResumeHandle can be unreliable, offering either
  * duplicate or unavailable shares.<br>
  * <br>
- * The server SHOULD<57> enforce security measures to verify that the caller has the required permissions to execute
- * this routine. If the caller does not have the required credentials, the server SHOULD<58> fail the call.
+ * The server SHOULD enforce security measures to verify that the caller has the required permissions to execute
+ * this routine. If the caller does not have the required credentials, the server SHOULD fail the call.
  *
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc247276.aspx">3.1.4.8 NetrShareEnum (Opnum 15)</a>
  */

@@ -161,7 +161,7 @@ public class BaseRegEnumKeyResponse extends Response {
      *         specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common
      *         error codes are listed in the following table.<br>
      *         <br>
-     *         <table border="1">
+     *         <table border="1" summary="">
      *         <tr>
      *         <td>Return value/code</td>
      *         <td>Description</td>

@@ -43,7 +43,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
  * are listed in the following table.<br>
  * <br>
- * <table border="1">
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -130,13 +130,13 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *     Operation: CloseKey (5)
  *     [Response in frame: 11429]
  *     Pointer to Handle (policy_handle)
- *         Policy Handle: OpenHKLM(<...>)
+ *         Policy Handle: OpenHKLM(&lt;...&gt;)
  *             Handle: 0000000032daf234b77c86409d29efe60d326683
  *             [Frame handle opened: 11176]
  *             [Frame handle closed: 11424]
  * </pre>
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244928">3.1.5.6 BaseRegCloseKey (Opnum 5)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244928">3.1.5.6 BaseRegCloseKey (Opnum 5)</a>
  */
 public class BaseRegCloseKey extends Request<HandleResponse> {
     /**

@@ -44,7 +44,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *
  * hKey: A handle to a key that MUST have been opened previously by using one of the open methods that are specified in
  * section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
- * {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey},
+ * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
  * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
  * <br>
  * lpSubKey: A pointer to a RRP_UNICODE_STRING structure that MUST contain the name of a key to open. This parameter is
@@ -158,7 +158,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *     Operation: OpenKey (15)
  *     [Response in frame: 11204]
  *     Pointer to Parent Handle (policy_handle)
- *         Policy Handle: OpenHKLM(<...>)
+ *         Policy Handle: OpenHKLM(&lt;...&gt;)
  *             Parent Handle: 0000000032daf234b77c86409d29efe60d326683
  *             [Frame handle opened: 11176]
  *             [Frame handle closed: 11424]
@@ -180,7 +180,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *         WINREG specific rights: 0x00000000
  * </pre>
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244939">3.1.5.15 BaseRegOpenKey (Opnum 15)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244939">3.1.5.15 BaseRegOpenKey (Opnum 15)</a>
  */
 public class BaseRegOpenKey extends Request<HandleResponse> {
     /**
@@ -189,13 +189,13 @@ public class BaseRegOpenKey extends Request<HandleResponse> {
      *
      * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods:
      *        {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
-     *        {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+     *        {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
      *        {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      * @param subKey The name of a key to open.
      * @param options Registry key options. The user rights are represented as a bit field. In addition to the standard
      *        user rights, as specified in [MS-DTYP] section 2.4.3, the Windows Remote Registry Protocol SHOULD support
      *        the following user rights.
-     *        <table>
+     *        <table border="1" summary="">
      *        <tr>
      *        <td>Value</td>
      *        <td>Meaning</td>
@@ -219,7 +219,7 @@ public class BaseRegOpenKey extends Request<HandleResponse> {
      *        </table>
      * @param accessMask A bit field that describes the requested security access for the handle to the key that is
      *        being opened.
-     *        <table>
+     *        <table border="1" summary="">
      *        <tr>
      *        <td>Value</td>
      *        <td>Meaning</td>
@@ -256,9 +256,9 @@ public class BaseRegOpenKey extends Request<HandleResponse> {
      *        namespace.</td>
      *        </tr>
      *        </table>
-     * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244922">2.2.4 REGSAM</a>}
-     * @see {@link <a href="https://msdn.microsoft.com/en-us/cc230294">2.4.3 ACCESS_MASK</a>}
-     * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244886">3.1.1.2 Key Types</a>}
+     * @see <a href="https://msdn.microsoft.com/en-us/cc244922">2.2.4 REGSAM</a>
+     * @see <a href="https://msdn.microsoft.com/en-us/cc230294">2.4.3 ACCESS_MASK</a>
+     * @see <a href="https://msdn.microsoft.com/en-us/cc244886">3.1.1.2 Key Types</a>
      */
     public BaseRegOpenKey(
         final ContextHandle hKey,

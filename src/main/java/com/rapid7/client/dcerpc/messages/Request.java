@@ -73,14 +73,14 @@ import com.rapid7.client.dcerpc.RPCRequest;
  *
  * <pre>
  * stub_data_length = frag_length - fixed_header_length - auth_length;
- * if pfc_flags & PFC_OBJECT_UUID {
+ * if (pfc_flags &amp; PFC_OBJECT_UUID) {
  *    stub_data_length = stub_data_length - sizeof(uuid_t);
  * }
  * </pre>
  *
  * where the current value of fixed_header_length is 24 octets.
  *
- * @see http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm
+ * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
 public class Request<T extends Response> extends RPCRequest<T> {
     public Request(final short op) {
