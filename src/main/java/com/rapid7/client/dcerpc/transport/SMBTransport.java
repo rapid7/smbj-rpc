@@ -42,8 +42,10 @@ public class SMBTransport implements RPCTransport {
             callID = this.callID++;
         }
         final byte[] requestBytes = request.marshal(callID);
-        final InputStream responseStream = namedPipe.transactFully(requestBytes);
-        final byte[] responseBytes = ByteStreams.toByteArray(responseStream);
+        final byte[] responseBytes;
+        try (final InputStream responseStream = namedPipe.transactFully(requestBytes)) {
+            responseBytes = ByteStreams.toByteArray(responseStream);
+        }
         return request.unmarshal(responseBytes, callID);
     }
 }
