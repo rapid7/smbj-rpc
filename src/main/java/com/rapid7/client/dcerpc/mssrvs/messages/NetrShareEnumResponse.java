@@ -18,11 +18,11 @@
  */
 package com.rapid7.client.dcerpc.mssrvs.messages;
 
+import com.rapid7.client.dcerpc.messages.Response;
+import com.hierynomus.protocol.transport.TransportException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
-import com.hierynomus.smbj.transport.TransportException;
-import com.rapid7.client.dcerpc.messages.Response;
 
 /**
  * <br>

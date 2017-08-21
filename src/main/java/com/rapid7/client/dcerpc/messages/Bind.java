@@ -18,14 +18,14 @@
  */
 package com.rapid7.client.dcerpc.messages;
 
-import java.nio.ByteBuffer;
-import java.util.EnumSet;
-import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.Interface;
 import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.PFCFlag;
 import com.rapid7.client.dcerpc.RPCRequest;
 import com.rapid7.client.dcerpc.RPCResponse;
+import com.hierynomus.protocol.transport.TransportException;
+import java.nio.ByteBuffer;
+import java.util.EnumSet;
 
 /**
  * The IDL declaration of the bind PDU is as follows:<br>

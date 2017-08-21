@@ -18,13 +18,13 @@
  */
 package com.rapid7.client.dcerpc.mssrvs.messages;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import com.hierynomus.protocol.transport.TransportException;
 import java.util.List;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import com.hierynomus.smbj.transport.TransportException;
-import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class Test_NetrShareEnum {
     @Test

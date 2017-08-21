@@ -18,14 +18,14 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
+import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.hierynomus.protocol.transport.TransportException;
 import java.io.UnsupportedEncodingException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import com.hierynomus.smbj.transport.TransportException;
-import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class Test_BaseRegEnumValue {
     private final ContextHandle contextHandle = new ContextHandle("000000000a665393f4666e49a68cd99f269d020f");

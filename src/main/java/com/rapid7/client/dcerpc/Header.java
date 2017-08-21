@@ -23,7 +23,7 @@ import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.toLong;
 import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.valueOf;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
-import com.hierynomus.smbj.transport.TransportException;
+import com.hierynomus.protocol.transport.TransportException;
 
 /**
  * The common header fields, which appear in all PDU types, are as follows. The comment fields show the exact octet

@@ -18,9 +18,9 @@
  */
 package com.rapid7.client.dcerpc.mssrvs.messages;
 
-import java.nio.ByteBuffer;
-import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
+import com.hierynomus.protocol.transport.TransportException;
+import java.nio.ByteBuffer;
 
 /**
  * <b>3.1.4.8 NetrShareEnum (Opnum 15)</b><br>

@@ -18,9 +18,9 @@
  */
 package com.rapid7.client.dcerpc.messages;
 
-import java.nio.ByteBuffer;
-import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.RPCResponse;
+import com.hierynomus.protocol.transport.TransportException;
+import java.nio.ByteBuffer;
 
 /**
  * The IDL declaration of the bind_ack PDU is as follows:<br>

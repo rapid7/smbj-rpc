@@ -18,28 +18,24 @@
  */
 package com.rapid7.client.dcerpc.mssrvs;
 
+import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.RPCRequest;
+import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import com.rapid7.client.dcerpc.mssrvs.messages.NetShareInfo0;
+import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
+import com.rapid7.client.dcerpc.transport.RPCTransport;
+import com.google.common.collect.Lists;
+import com.hierynomus.protocol.transport.TransportException;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.LinkedList;
-import java.util.List;
-import org.bouncycastle.util.encoders.Hex;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import com.google.common.collect.Lists;
-import com.hierynomus.smbj.transport.TransportException;
-import com.rapid7.client.dcerpc.RPCException;
-import com.rapid7.client.dcerpc.RPCRequest;
-import com.rapid7.client.dcerpc.RPCResponse;
-import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.mssrvs.messages.NetShareInfo0;
-import com.rapid7.client.dcerpc.mssrvs.messages.NetShareInfo1;
-import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
-import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class Test_ServerService {
     @Rule

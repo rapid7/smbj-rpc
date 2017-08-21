@@ -18,10 +18,10 @@
  */
 package com.rapid7.client.dcerpc.transport;
 
-import java.io.IOException;
-import com.hierynomus.smbj.share.NamedPipe;
 import com.rapid7.client.dcerpc.RPCRequest;
 import com.rapid7.client.dcerpc.RPCResponse;
+import com.hierynomus.smbj.share.NamedPipe;
+import java.io.IOException;
 
 public class SMBTransport implements RPCTransport {
     private final NamedPipe namedPipe;

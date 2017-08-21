@@ -18,13 +18,13 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import java.nio.ByteBuffer;
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
-import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Request;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.hierynomus.msdtyp.AccessMask;
+import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
+import com.hierynomus.protocol.transport.TransportException;
+import java.nio.ByteBuffer;
+import java.util.EnumSet;
 
 /**
  * <b>3.1.5.15 BaseRegOpenKey (Opnum 15)</b><br>

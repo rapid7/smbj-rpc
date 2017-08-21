@@ -18,12 +18,12 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import static org.junit.Assert.assertEquals;
-import org.bouncycastle.util.encoders.Hex;
-import org.junit.Test;
-import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.FileTime;
+import com.hierynomus.protocol.transport.TransportException;
+import org.bouncycastle.util.encoders.Hex;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class Test_BaseRegEnumKey {
     private final ContextHandle contextHandle = new ContextHandle("0000000032daf234b77c86409d29efe60d326683");
