@@ -24,7 +24,6 @@ import com.rapid7.client.dcerpc.RPCRequest;
 import com.rapid7.client.dcerpc.RPCResponse;
 
 public class SMBTransport implements RPCTransport {
-    private final static int MAXIMUM_TRANSACT_SIZE = 262144;
     private final NamedPipe namedPipe;
     private int callID = 1;
 
@@ -40,8 +39,7 @@ public class SMBTransport implements RPCTransport {
             callID = this.callID++;
         }
         final byte[] requestBytes = request.marshal(callID);
-        final byte[] responseBytes = new byte[MAXIMUM_TRANSACT_SIZE];
-        namedPipe.transact(requestBytes, responseBytes);
+        final byte[] responseBytes = namedPipe.transact(requestBytes);
         return request.unmarshal(responseBytes, callID);
     }
 }
