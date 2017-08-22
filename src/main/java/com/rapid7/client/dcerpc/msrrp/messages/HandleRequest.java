@@ -18,12 +18,12 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import java.nio.ByteBuffer;
-import java.util.EnumSet;
+import com.rapid7.client.dcerpc.messages.Request;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
-import com.hierynomus.smbj.transport.TransportException;
-import com.rapid7.client.dcerpc.messages.Request;
+import com.hierynomus.protocol.transport.TransportException;
+import java.nio.ByteBuffer;
+import java.util.EnumSet;
 
 /**
  * One of the following method(s) {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},

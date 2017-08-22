@@ -18,26 +18,26 @@
  */
 package com.rapid7.client.dcerpc.transport;
 
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.Queue;
+import com.rapid7.client.dcerpc.Interface;
+import com.rapid7.client.dcerpc.RPCResponse;
+import com.rapid7.client.dcerpc.messages.Bind;
+import com.rapid7.client.dcerpc.messages.BindACK;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.mssmb2.SMB2CreateDisposition;
 import com.hierynomus.mssmb2.SMB2ImpersonationLevel;
 import com.hierynomus.mssmb2.SMB2ShareAccess;
-import com.hierynomus.smbj.common.SMBApiException;
+import com.hierynomus.mssmb2.SMBApiException;
+import com.hierynomus.protocol.transport.TransportException;
 import com.hierynomus.smbj.common.SMBException;
 import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.NamedPipe;
 import com.hierynomus.smbj.share.PipeShare;
 import com.hierynomus.smbj.share.Share;
-import com.hierynomus.smbj.transport.TransportException;
-import com.rapid7.client.dcerpc.Interface;
-import com.rapid7.client.dcerpc.RPCResponse;
-import com.rapid7.client.dcerpc.messages.Bind;
-import com.rapid7.client.dcerpc.messages.BindACK;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public enum SMBTransportFactories {
     WINREG("winreg", Interface.WINREG_V1_0, Interface.NDR_32BIT_V2),

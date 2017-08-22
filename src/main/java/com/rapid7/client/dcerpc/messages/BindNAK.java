@@ -19,7 +19,7 @@
 package com.rapid7.client.dcerpc.messages;
 
 import java.nio.ByteBuffer;
-import com.hierynomus.smbj.transport.TransportException;
+import com.hierynomus.protocol.transport.TransportException;
 import com.rapid7.client.dcerpc.RPCResponse;
 
 /**

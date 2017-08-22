@@ -1,12 +1,12 @@
 package com.rapid7.client.dcerpc;
 
-import static org.mockito.Mockito.spy;
+import com.hierynomus.protocol.transport.TransportException;
 import java.util.EnumSet;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import com.hierynomus.smbj.transport.TransportException;
+import static org.mockito.Mockito.spy;
 
 public class Test_RPCRequest {
     @Rule

@@ -19,7 +19,7 @@
 package com.rapid7.client.dcerpc;
 
 import java.nio.ByteBuffer;
-import com.hierynomus.smbj.transport.TransportException;
+import com.hierynomus.protocol.transport.TransportException;
 
 public class RPCResponse extends Header {
     protected RPCResponse(final ByteBuffer packet)

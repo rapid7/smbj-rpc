@@ -18,9 +18,9 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import java.nio.ByteBuffer;
-import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Response;
+import com.hierynomus.protocol.transport.TransportException;
+import java.nio.ByteBuffer;
 
 /**
  * <b>Example:</b>

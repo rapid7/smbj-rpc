@@ -1,9 +1,9 @@
 package com.rapid7.client.dcerpc;
 
+import com.hierynomus.protocol.transport.TransportException;
 import java.nio.ByteBuffer;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import com.hierynomus.smbj.transport.TransportException;
 
 public class Test_RPCResponse {
     @Test

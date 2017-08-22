@@ -18,11 +18,11 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
-import java.nio.ByteBuffer;
-import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.messages.Response;
 import com.rapid7.client.dcerpc.objects.FileTime;
+import com.hierynomus.protocol.transport.TransportException;
+import java.nio.ByteBuffer;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 
 /**
  * <b>Example:</b>

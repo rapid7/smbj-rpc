@@ -18,19 +18,19 @@
  */
 package com.rapid7.client.dcerpc.mssrvs;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import org.apache.commons.lang3.mutable.MutableInt;
-import com.hierynomus.smbj.transport.TransportException;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetShareInfo0;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumRequest;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
+import com.hierynomus.protocol.transport.TransportException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 /**
  * This class implements a partial service service in accordance with [MS-SRVS]: Server Service Remote Protocol which

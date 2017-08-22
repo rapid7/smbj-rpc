@@ -18,9 +18,9 @@
  */
 package com.rapid7.client.dcerpc;
 
+import com.hierynomus.protocol.transport.TransportException;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
-import com.hierynomus.smbj.transport.TransportException;
 
 public class RPCRequest<T extends RPCResponse> extends Header {
     protected RPCRequest(final PDUType pduType, final EnumSet<PFCFlag> pfcFlags) {

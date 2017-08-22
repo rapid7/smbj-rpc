@@ -1,13 +1,13 @@
 package com.rapid7.client.dcerpc;
 
-import static org.junit.Assert.assertEquals;
+import com.hierynomus.protocol.transport.TransportException;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import com.hierynomus.smbj.transport.TransportException;
+import static org.junit.Assert.assertEquals;
 
 public class Test_Header {
     @Rule
