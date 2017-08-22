@@ -24,7 +24,7 @@ import com.hierynomus.protocol.transport.TransportException;
 import java.nio.ByteBuffer;
 
 /**
- * <b>3.1.5.11 BaseRegEnumValue (Opnum 10)<b><br>
+ * <b>3.1.5.11 BaseRegEnumValue (Opnum 10)</b><br>
  * <br>
  * The BaseRegEnumValue method is called by the client. In response, the server enumerates the value at the specified
  * index for the specified registry key.
@@ -45,7 +45,7 @@ import java.nio.ByteBuffer;
  *
  * hKey: A handle to a key that MUST have been opened previously by using one of the open methods that are specified in
  * section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
- * {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey},
+ * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
  * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
  * <br>
  * dwIndex: MUST be the index of the value to be retrieved, as specified in section 3.1.1.5.<br>
@@ -69,7 +69,7 @@ import java.nio.ByteBuffer;
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
  * are listed in the following table.
- * <table border="1">
+ * <table border="1" summary="">
  * <tr>
  * <td>ERROR_ACCESS_DENIED (0x00000005)</td>
  * <td>The caller does not have KEY_QUERY_VALUE access rights.</td>
@@ -185,7 +185,7 @@ import java.nio.ByteBuffer;
  *         Length: 0
  * </pre>
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244934">3.1.5.11 BaseRegEnumValue (Opnum 10)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244934">3.1.5.11 BaseRegEnumValue (Opnum 10)</a>
  */
 public class BaseRegEnumValueRequest extends Request<BaseRegEnumValueResponse> {
     /**
@@ -194,7 +194,7 @@ public class BaseRegEnumValueRequest extends Request<BaseRegEnumValueResponse> {
      *
      * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods:
      *        {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
-     *        {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+     *        {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
      *        {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      * @param index The index of the value to be retrieved.
      * @param valueNameLen The maximum length of the value name to be retrieved.

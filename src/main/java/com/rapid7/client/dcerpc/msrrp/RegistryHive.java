@@ -43,8 +43,7 @@ import com.rapid7.client.dcerpc.msrrp.messages.OpenUsers;
  * implementations of the registry, although the use of the handles may vary from platform to platform. In addition,
  * other predefined handles have been defined for specific platforms. The following are handles to the predefined keys.
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724836(v=vs.85).aspx">Predefined
- *      Keys</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724836(v=vs.85).aspx">Predefined Keys</a>
  */
 public enum RegistryHive {
     /**

@@ -27,7 +27,7 @@ import java.util.EnumSet;
 
 /**
  * One of the following method(s) {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
- * {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey},
+ * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
  * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText} is called by the client. In
  * response, the server opens the appropriate predefined key.<br>
  * <br>
@@ -68,37 +68,26 @@ import java.util.EnumSet;
  *         WINREG specific rights: 0x00000000
  * </pre>
  *
- * @see {@link OpenClassesRoot}
- * @see {@link OpenCurrentUser}
- * @see {@link OpenLocalMachine}
- * @see {@link OpenPerformanceData}
- * @see {@link OpenUsers}
- * @see {@link BaseRegCreateKey}
- * @see {@link BaseRegOpenKey}
- * @see {@link OpenCurrentConfig}
- * @see {@link OpenPerformanceText}
- * @see {@link OpenPerformanceNlsText}
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244950">3.1.5.1 OpenClassesRoot (Opnum 0)</a>}
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244952">3.1.5.2 OpenCurrentUser (Opnum 1)</a>}
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244953">3.1.5.3 OpenLocalMachine (Opnum 2)</a>}
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244954">3.1.5.4 OpenPerformanceData (Opnum 3)</a>}
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244957">3.1.5.5 OpenUsers (Opnum 4)</a>}
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244951">3.1.5.25 OpenCurrentConfig (Opnum 27)</a>}
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244956">3.1.5.28 OpenPerformanceText (Opnum 32)</a>}
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244955">3.1.5.29 OpenPerformanceNlsText (Opnum 33)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244950">3.1.5.1 OpenClassesRoot (Opnum 0)</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244952">3.1.5.2 OpenCurrentUser (Opnum 1)</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244953">3.1.5.3 OpenLocalMachine (Opnum 2)</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244954">3.1.5.4 OpenPerformanceData (Opnum 3)</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244957">3.1.5.5 OpenUsers (Opnum 4)</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244951">3.1.5.25 OpenCurrentConfig (Opnum 27)</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244956">3.1.5.28 OpenPerformanceText (Opnum 32)</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244955">3.1.5.29 OpenPerformanceNlsText (Opnum 33)</a>
  */
 public class HandleRequest extends Request<HandleResponse> {
     /**
      * One of the following method(s) {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
-     * {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey},
+     * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
      * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText} is called by the client.
      * In response, the server opens the appropriate predefined key.
      *
      * @param op The operation number for one of {@link OpenClassesRoot}, {@link OpenCurrentUser},
-     *        {@link OpenLocalMachine}, {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey},
+     *        {@link OpenLocalMachine}, {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey,
      *        {@link BaseRegOpenKey}, {@link OpenCurrentConfig}, {@link OpenPerformanceText},
      *        {@link OpenPerformanceNlsText}.
-     * @param serverName The server name.
      * @param accessMask A bit field that describes the requested security access for the key.
      */
     public HandleRequest(final short op, final EnumSet<AccessMask> accessMask) {

@@ -43,7 +43,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * <br>
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in [MS-ERREF] section 2.2. The most common error codes are listed in the following table.
- * <table border="1">
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -73,7 +73,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * <br>
  * If the server is a 64-bit registry server and supports both the 32-bit and 64-bit key namespaces, as defined in
  * section 3.1.1.4, the server MUST first check if both the KEY_WOW64_64KEY and KEY_WOW64_32KEY bits are set in the
- * samDesired parameter. If both the KEY_WOW64_64KEY and KEY_WOW64_32KEY are set, the server SHOULD <7> fail the method
+ * samDesired parameter. If both the KEY_WOW64_64KEY and KEY_WOW64_32KEY are set, the server SHOULD fail the method
  * and return ERROR_INVALID_PARAMETER.<br>
  * <br>
  * Next, the server checks if the KEY_WOW64_32KEY is set in the samDesired parameter. If the KEY_WOW64_32KEY is set in
@@ -96,7 +96,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * have access, the server MUST return ERROR_ACCESS_DENIED (5). The server MAY return other values, depending on other
  * failure cases; other values are implementation-specific.
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244950">3.1.5.1 OpenClassesRoot (Opnum 0)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244950">3.1.5.1 OpenClassesRoot (Opnum 0)</a>
  */
 public class OpenClassesRoot {
     public final static short OP_NUM = 0;

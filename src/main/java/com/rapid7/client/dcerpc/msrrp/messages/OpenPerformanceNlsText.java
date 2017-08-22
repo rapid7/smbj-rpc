@@ -43,7 +43,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * section 3.1.1.9.<br>
  * <br>
  * Return Values: This method MUST always return a 0 (ERROR_SUCCESS), even in case of errors.
- * <table>
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -59,7 +59,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * <br>
  * The server MUST always return 0, even in case of errors.
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244955">3.1.5.29 OpenPerformanceNlsText (Opnum 33)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244955">3.1.5.29 OpenPerformanceNlsText (Opnum 33)</a>
  */
 public class OpenPerformanceNlsText {
     public final static short OP_NUM = 33;

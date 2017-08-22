@@ -110,7 +110,7 @@ import java.util.EnumSet;
  * too long, the leading subset should be transmitted, and additional presentation context negotiation can occur in
  * subsequent alter_context PDUs, as needed, after a successful bind_ack.
  *
- * @see http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm
+ * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
 public class Bind extends RPCRequest<RPCResponse> {
     public Bind(final Interface abstractSyntax, final Interface transferSyntax) {

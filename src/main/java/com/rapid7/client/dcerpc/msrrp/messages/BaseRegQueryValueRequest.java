@@ -44,7 +44,7 @@ import java.nio.ByteBuffer;
  *
  * hKey: On input, a handle to a key that MUST have been opened previously by using one of the open methods that are
  * specified in section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
- * {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey},
+ * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
  * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
  * <br>
  * lpValueName: On input, the client sets lpValueName to a pointer to a RRP_UNICODE_STRING structure that MUST contain
@@ -71,7 +71,7 @@ import java.nio.ByteBuffer;
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
  * are listed in the following table.
- * <table border="1">
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -195,7 +195,7 @@ import java.nio.ByteBuffer;
  *         Data Length: 0
  * </pre>
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244942">3.1.5.17 BaseRegQueryValue (Opnum 17)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244942">3.1.5.17 BaseRegQueryValue (Opnum 17)</a>
  */
 public class BaseRegQueryValueRequest extends Request<BaseRegQueryValueResponse> {
     /**
@@ -205,7 +205,7 @@ public class BaseRegQueryValueRequest extends Request<BaseRegQueryValueResponse>
      *
      * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods that are
      *        specified in section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
-     *        {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey},
+     *        {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
      *        {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}
      * @param valueName The name of the value to be queried.
      * @param dataLen The maximum number of bytes to accept for the value data.

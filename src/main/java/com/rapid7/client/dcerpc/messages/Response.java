@@ -62,7 +62,7 @@ import java.nio.ByteBuffer;
  * correctly regardless of the value passed. The value 0 (zero) is reserved to indicate that the transmitter is not
  * supplying any information.
  *
- * @see http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm
+ * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
 public class Response extends RPCResponse {
     public Response(final ByteBuffer packet)
