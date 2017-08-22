@@ -44,7 +44,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in the Win32Error Codes in [MS-ERREF] section 2.2. The most common error codes are listed in the
  * following table.
- * <table>
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -68,7 +68,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * <br>
  * If the server is a 64-bit registry server and supports both the 32-bit and 64-bit key namespaces, as defined in
  * section 3.1.1.4, the server MUST first check if both the KEY_WOW64_64KEY and KEY_WOW64_32KEY bits are set in the
- * samDesired parameter. If both the KEY_WOW64_64KEY and KEY_WOW64_32KEY are set, the server SHOULD <8> fail the method
+ * samDesired parameter. If both the KEY_WOW64_64KEY and KEY_WOW64_32KEY are set, the server SHOULD fail the method
  * and return ERROR_INVALID_PARAMETER.<br>
  * <br>
  * The server attempts to open the root key, HKEY_LOCAL_MACHINE, and return a handle to that key in the phKey parameter.
@@ -91,7 +91,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * registry hierarchy. These restrictions are detailed within the Server Operations section of the BaseRegCreateKey
  * method.
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244953">3.1.5.3 OpenLocalMachine (Opnum 2)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244953">3.1.5.3 OpenLocalMachine (Opnum 2)</a>
  */
 public class OpenLocalMachine {
     public final static short OP_NUM = 2;

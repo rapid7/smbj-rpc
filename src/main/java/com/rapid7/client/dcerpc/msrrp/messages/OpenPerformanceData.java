@@ -45,7 +45,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in Win32Error Codes in [MS-ERREF]. The server SHOULD return without modification any other error code
  * encountered in servicing the client request. The most common error codes are listed in the following table.
- * <table>
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -77,7 +77,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * to the HKEY_PERFORMANCE_DATA key. The server MUST place the handle value (see 3.1.1.9) in the phKey parameter. If the
  * caller does not have access, the server MUST return ERROR_ACCESS_DENIED (5).
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244954">3.1.5.4 OpenPerformanceData (Opnum 3)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244954">3.1.5.4 OpenPerformanceData (Opnum 3)</a>
  */
 public class OpenPerformanceData {
     public final static short OP_NUM = 3;

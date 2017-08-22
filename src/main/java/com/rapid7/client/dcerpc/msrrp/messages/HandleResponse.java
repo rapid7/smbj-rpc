@@ -46,7 +46,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *     Operation: OpenHKLM (2)
  *     [Request in frame: 11174]
  *     Pointer to Handle (policy_handle)
- *         Policy Handle: OpenHKLM(<...>)
+ *         Policy Handle: OpenHKLM(&lt;...&gt;)
  *             Handle: 0000000032daf234b77c86409d29efe60d326683
  *             [Frame handle opened: 11176]
  *             [Frame handle closed: 11424]

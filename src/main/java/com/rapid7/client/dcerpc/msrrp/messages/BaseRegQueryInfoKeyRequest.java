@@ -47,7 +47,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *
  * hKey: A handle to a key that MUST have been opened previously by using one of the open methods that are specified in
  * section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
- * {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey},
+ * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
  * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
  * <br>
  * lpClassIn: A pointer to a RRP_UNICODE_STRING structure that contains the class of the key to be retrieved, as
@@ -84,25 +84,25 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
  * are listed in the following table.
- * <table border="1">
- * <td>
+ * <table border="1" summary="">
+ * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
  * </tr>
- * <td>
+ * <tr>
  * <td>ERROR_ACCESS_DENIED (0x00000005)</td>
  * <td>The caller does not have KEY_QUERY_VALUE access rights.</td>
  * </tr>
- * <td>
+ * <tr>
  * <td>ERROR_INVALID_PARAMETER (0x00000057)</td>
  * <td>A parameter is incorrect.</td>
  * </tr>
- * <td>
+ * <tr>
  * <td>ERROR_WRITE_PROTECT (0x00000013)</td>
  * <td>A read or write operation was attempted to a volume after it was dismounted. The server can no longer service
  * registry requests because server shutdown has been initiated.</td>
  * </tr>
- * <td>
+ * <tr>
  * <td>ERROR_MORE_DATA (0x000000EA)</td>
  * <td>The size of the buffer is not large enough to hold the requested data.</td>
  * </tr>
@@ -175,7 +175,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *     Operation: QueryInfoKey (16)
  *     [Response in frame: 11412]
  *     Pointer to Handle (policy_handle)
- *         Policy Handle: OpenHKLM(<...>)
+ *         Policy Handle: OpenHKLM(&lt;...&gt;)
  *             Handle: 0000000032daf234b77c86409d29efe60d326683
  *             [Frame handle opened: 11176]
  *             [Frame handle closed: 11424]
@@ -190,7 +190,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *                 Actual Count: 0
  * </pre>
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244940">3.1.5.16 BaseRegQueryInfoKey (Opnum 16)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244940">3.1.5.16 BaseRegQueryInfoKey (Opnum 16)</a>
  */
 public class BaseRegQueryInfoKeyRequest extends Request<BaseRegQueryInfoKeyResponse> {
     /**
@@ -199,7 +199,7 @@ public class BaseRegQueryInfoKeyRequest extends Request<BaseRegQueryInfoKeyRespo
      *
      * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods that are
      *        specified in section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
-     *        {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey},
+     *        {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
      *        {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
     public BaseRegQueryInfoKeyRequest(final ContextHandle hKey) {

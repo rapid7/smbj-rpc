@@ -51,7 +51,7 @@ import com.rapid7.client.dcerpc.RPCResponse;
  * <br>
  * The bind_nak PDU never contains an authentication verifier.
  *
- * @see http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm
+ * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
 public class BindNAK extends RPCResponse {
     public BindNAK(final ByteBuffer responseBuffer)

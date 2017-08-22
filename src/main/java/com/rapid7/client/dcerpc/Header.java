@@ -41,7 +41,7 @@ import com.hierynomus.smbj.transport.TransportException;
  * u_int32 call_id;             // 12:04 call identifier
  * </pre>
  *
- * @see http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm
+ * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
 public class Header extends Packet {
     protected Header(final PDUType pduType, final EnumSet<PFCFlag> pfcFlags) {

@@ -68,7 +68,7 @@ import com.rapid7.client.dcerpc.RPCResponse;
  * created by the server. Otherwise, it contains the identifier of the previously created association group requested by
  * the client.
  *
- * @see http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm
+ * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
 public class BindACK extends RPCResponse {
     public BindACK(final ByteBuffer responseBuffer)

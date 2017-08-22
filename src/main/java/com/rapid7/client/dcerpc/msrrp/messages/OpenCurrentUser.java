@@ -45,7 +45,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
  * are listed in the following table.
- * <table>
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -86,8 +86,8 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * <br>
  * The server MAY return other values depending on other failure cases; other values are implementation-specific.
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244952">3.1.5.2 OpenCurrentUser (Opnum 1)</a>}
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc941807">3.1.1.8 Current User Root Key</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244952">3.1.5.2 OpenCurrentUser (Opnum 1)</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/cc941807">3.1.1.8 Current User Root Key</a>
  */
 public class OpenCurrentUser {
     public final static short OP_NUM = 1;

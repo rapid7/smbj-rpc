@@ -42,7 +42,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * phKey: A pointer to a variable that receives a handle to the root key HKEY_PERFORMANCE_TEXT.<br>
  * <br>
  * Return Values: This method MUST always return a 0 (ERROR_SUCCESS), even in case of errors.
- * <table>
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -63,7 +63,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * (HANDLETABLE) along with a mapping to the HKEY_PERFORMANCE_TEXT key. The server MUST always return 0, even in case of
  * errors.
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244956">3.1.5.28 OpenPerformanceText (Opnum 32)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244956">3.1.5.28 OpenPerformanceText (Opnum 32)</a>
  */
 public class OpenPerformanceText {
     public final static short OP_NUM = 32;

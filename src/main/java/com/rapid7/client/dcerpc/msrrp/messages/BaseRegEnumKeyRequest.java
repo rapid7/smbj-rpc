@@ -43,7 +43,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *
  * hKey: A handle to a key that MUST have been opened previously by using one of the open methods that are specified in
  * section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
- * {@link OpenPerformanceData}, {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey},
+ * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
  * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
  * <br>
  * dwIndex: The index of the subkey to retrieve, as specified in section 3.1.1.1.<br>
@@ -66,7 +66,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common error codes
  * are listed in the following table.
- * <table border="1">
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -155,7 +155,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *     Operation: EnumKey (9)
  *     [Response in frame: 8852]
  *     Pointer to Handle (policy_handle)
- *         Policy Handle: OpenHKLM(<...>)
+ *         Policy Handle: OpenHKLM(&lt;...&gt;)
  *             Handle: 000000004c3bf85db467534fb14529ea2e918e65
  *             [Frame handle opened: 8850]
  *     Enum Index: 0
@@ -183,7 +183,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  *         Last Changed Time: No time specified (0)
  * </pre>
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244933">3.1.5.10 BaseRegEnumKey (Opnum 9)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244933">3.1.5.10 BaseRegEnumKey (Opnum 9)</a>
  */
 public class BaseRegEnumKeyRequest extends Request<BaseRegEnumKeyResponse> {
     /**
@@ -192,7 +192,7 @@ public class BaseRegEnumKeyRequest extends Request<BaseRegEnumKeyResponse> {
      *
      * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods:
      *        {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
-     *        {@link OpenUsers}, {@link BaseRegCreateKey}, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+     *        {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
      *        {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      * @param index The index of the subkey to retrieve.
      * @param nameLen The maximum length of the subkey name to retrieve.

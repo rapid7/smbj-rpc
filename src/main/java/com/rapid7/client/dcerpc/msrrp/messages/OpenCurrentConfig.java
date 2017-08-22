@@ -42,7 +42,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * <br>
  * Return Values: The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code,
  * as specified in [MS-ERREF] section 2.2. The most common error codes are listed in the following table.
- * <table border="1">
+ * <table border="1" summary="">
  * <tr>
  * <td>Return value/code</td>
  * <td>Description</td>
@@ -78,7 +78,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
  * flags set which are not listed in section 2.2.4, the server MUST return ERROR_INVALID_PARAMETER.<br>
  * <br>
  *
- * @see {@link <a href="https://msdn.microsoft.com/en-us/cc244951">3.1.5.25 OpenCurrentConfig (Opnum 27)</a>}
+ * @see <a href="https://msdn.microsoft.com/en-us/cc244951">3.1.5.25 OpenCurrentConfig (Opnum 27)</a>
  */
 public class OpenCurrentConfig {
     public final static short OP_NUM = 27;

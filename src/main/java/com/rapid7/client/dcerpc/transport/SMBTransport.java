@@ -19,6 +19,9 @@
 package com.rapid7.client.dcerpc.transport;
 
 import java.io.IOException;
+import java.io.InputStream;
+
+import com.google.common.io.ByteStreams;
 import com.hierynomus.smbj.share.NamedPipe;
 import com.rapid7.client.dcerpc.RPCRequest;
 import com.rapid7.client.dcerpc.RPCResponse;
