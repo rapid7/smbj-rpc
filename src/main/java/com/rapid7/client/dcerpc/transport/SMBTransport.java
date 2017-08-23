@@ -34,7 +34,7 @@ public class SMBTransport implements RPCTransport {
     }
 
     @Override
-    public <T extends RPCResponse> T transact(final RPCRequest<T> request)
+    public synchronized <T extends RPCResponse> T transact(final RPCRequest<T> request)
         throws IOException {
         final int callID;
         synchronized (this) {
