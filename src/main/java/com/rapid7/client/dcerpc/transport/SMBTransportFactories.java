@@ -22,20 +22,15 @@ import com.rapid7.client.dcerpc.Interface;
 import com.rapid7.client.dcerpc.RPCResponse;
 import com.rapid7.client.dcerpc.messages.Bind;
 import com.rapid7.client.dcerpc.messages.BindACK;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.mssmb2.SMB2CreateDisposition;
-import com.hierynomus.mssmb2.SMB2ImpersonationLevel;
-import com.hierynomus.mssmb2.SMB2ShareAccess;
+import com.rapid7.helper.smbj.share.NamedPipe;
 import com.hierynomus.mssmb2.SMBApiException;
 import com.hierynomus.protocol.transport.TransportException;
 import com.hierynomus.smbj.common.SMBException;
 import com.hierynomus.smbj.session.Session;
-import com.hierynomus.smbj.share.NamedPipe;
 import com.hierynomus.smbj.share.PipeShare;
 import com.hierynomus.smbj.share.Share;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -60,7 +55,7 @@ public enum SMBTransportFactories {
         final Share share = session.connectShare("IPC$");
         if (share instanceof PipeShare) {
             final PipeShare pipeShare = (PipeShare) share;
-            final NamedPipe namedPipe = openAndHandleStatusPipeNotAvailable(pipeShare);
+            final NamedPipe namedPipe = openAndHandleStatusPipeNotAvailable(session, pipeShare);
             final SMBTransport transport = new SMBTransport(namedPipe);
             final Bind bind = new Bind(abstractSyntax, transferSyntax);
             final RPCResponse response = transport.transact(bind);
@@ -76,15 +71,12 @@ public enum SMBTransportFactories {
         throw new TransportException(String.format("%s not a named pipe.", name));
     }
 
-    private NamedPipe openAndHandleStatusPipeNotAvailable(final PipeShare pipeShare)
+    private NamedPipe openAndHandleStatusPipeNotAvailable(final Session session, final PipeShare pipeShare)
         throws IOException {
         final Queue<SMBApiException> exceptions = new LinkedList<>();
         for (int retry = -1; retry < STATUS_PIPE_NOT_AVAILABLE_RETRIES; retry++) {
             try {
-                return pipeShare.open(name, SMB2ImpersonationLevel.Impersonation,
-                    EnumSet.of(AccessMask.MAXIMUM_ALLOWED), null,
-                    EnumSet.of(SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE),
-                    SMB2CreateDisposition.FILE_OPEN_IF, null);
+                return openPipe(session, pipeShare);
             } catch (final SMBApiException exception) {
                 exceptions.add(exception);
                 switch (exception.getStatus()) {
@@ -104,5 +96,10 @@ public enum SMBTransportFactories {
             }
         }
         throw new SMBException(exceptions.poll());
+    }
+
+    private NamedPipe openPipe(final Session session, final PipeShare pipeShare)
+        throws IOException {
+        return new NamedPipe(session, pipeShare, name);
     }
 }

@@ -19,11 +19,11 @@
 package com.rapid7.client.dcerpc.transport;
 
 import java.io.IOException;
-import com.hierynomus.smbj.share.NamedPipe;
+import java.io.InputStream;
+import com.google.common.io.ByteStreams;
 import com.rapid7.client.dcerpc.RPCRequest;
 import com.rapid7.client.dcerpc.RPCResponse;
-import com.hierynomus.smbj.share.NamedPipe;
-import java.io.IOException;
+import com.rapid7.helper.smbj.share.NamedPipe;
 
 public class SMBTransport implements RPCTransport {
     private final NamedPipe namedPipe;
@@ -41,7 +41,10 @@ public class SMBTransport implements RPCTransport {
             callID = this.callID++;
         }
         final byte[] requestBytes = request.marshal(callID);
-        final byte[] responseBytes = namedPipe.transact(requestBytes);
+        final byte[] responseBytes;
+        try (final InputStream responseStream = namedPipe.transact(requestBytes)) {
+            responseBytes = ByteStreams.toByteArray(responseStream);
+        }
         return request.unmarshal(responseBytes, callID);
     }
 }
