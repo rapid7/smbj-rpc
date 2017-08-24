@@ -22,6 +22,7 @@ import com.rapid7.client.dcerpc.Interface;
 import com.rapid7.client.dcerpc.RPCResponse;
 import com.rapid7.client.dcerpc.messages.Bind;
 import com.rapid7.client.dcerpc.messages.BindACK;
+import com.rapid7.helper.smbj.io.SMB2Exception;
 import com.rapid7.helper.smbj.share.NamedPipe;
 import com.hierynomus.mssmb2.SMBApiException;
 import com.hierynomus.protocol.transport.TransportException;
@@ -39,7 +40,7 @@ public enum SMBTransportFactories {
     SRVSVC("srvsvc", Interface.SRVSVC_V3_0, Interface.NDR_32BIT_V2);
 
     private final static int STATUS_PIPE_NOT_AVAILABLE_BACKOFF_TIME_MS = 3000;
-    private final static int STATUS_PIPE_NOT_AVAILABLE_RETRIES = 2;
+    private final static int STATUS_PIPE_NOT_AVAILABLE_RETRIES = 1;
     private final String name;
     private final Interface abstractSyntax;
     private final Interface transferSyntax;
@@ -77,8 +78,7 @@ public enum SMBTransportFactories {
         for (int retry = -1; retry < STATUS_PIPE_NOT_AVAILABLE_RETRIES; retry++) {
             try {
                 return openPipe(session, pipeShare);
-            } catch (final SMBApiException exception) {
-                exceptions.add(exception);
+            } catch (final SMB2Exception exception) {
                 switch (exception.getStatus()) {
                 case STATUS_PIPE_NOT_AVAILABLE:
                     // XXX: There has to be a better way to do this...
@@ -93,6 +93,9 @@ public enum SMBTransportFactories {
                 default:
                     throw new SMBException(exceptions.poll());
                 }
+            } catch (final SMBApiException exception) {
+                exceptions.add(exception);
+                throw new SMBException(exceptions.poll());
             }
         }
         throw new SMBException(exceptions.poll());
