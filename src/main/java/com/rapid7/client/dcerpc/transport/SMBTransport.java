@@ -82,8 +82,8 @@ public class SMBTransport implements RPCTransport {
                 throw new TransportException(
                     String.format("Floating-Point representation mismatch: %d", response.get(5)));
             }
-            if (response.get(12) != callID) {
-                throw new TransportException(String.format("Call ID mismatch: %d != %d", callID, response.get(12)));
+            if (response.getInt(12) != callID) {
+                throw new TransportException(String.format("Call ID mismatch: %d != %d", callID, response.getInt(12)));
             }
 
             // Write the stub.
@@ -100,6 +100,7 @@ public class SMBTransport implements RPCTransport {
             // That is not handled right now, but it also has not been observed to happen.
             responseBytes = namedPipe.read();
             response = ByteBuffer.wrap(responseBytes);
+            response.order(ByteOrder.LITTLE_ENDIAN);
         }
 
         return request.unmarshal(completeMessage.toByteArray(), callID);
