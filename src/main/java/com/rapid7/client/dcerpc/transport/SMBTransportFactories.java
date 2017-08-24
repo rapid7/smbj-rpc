@@ -22,6 +22,7 @@ import com.rapid7.client.dcerpc.Interface;
 import com.rapid7.client.dcerpc.RPCResponse;
 import com.rapid7.client.dcerpc.messages.Bind;
 import com.rapid7.client.dcerpc.messages.BindACK;
+import com.rapid7.helper.smbj.io.SMB2Exception;
 import com.rapid7.helper.smbj.share.NamedPipe;
 import com.hierynomus.mssmb2.SMBApiException;
 import com.hierynomus.protocol.transport.TransportException;
@@ -77,8 +78,7 @@ public enum SMBTransportFactories {
         for (int retry = -1; retry < STATUS_PIPE_NOT_AVAILABLE_RETRIES; retry++) {
             try {
                 return openPipe(session, pipeShare);
-            } catch (final SMBApiException exception) {
-                exceptions.add(exception);
+            } catch (final SMB2Exception exception) {
                 switch (exception.getStatus()) {
                 case STATUS_PIPE_NOT_AVAILABLE:
                     // XXX: There has to be a better way to do this...
