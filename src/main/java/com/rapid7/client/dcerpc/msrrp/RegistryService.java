@@ -52,10 +52,10 @@ import com.rapid7.client.dcerpc.transport.RPCTransport;
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc244877.aspx">[MS-RRP]: Windows Remote Registry Protocol</a>
  */
 public class RegistryService {
-    private final static int MAX_REGISTRY_KEY_NAME_SIZE = 256;
+    private final static int MAX_REGISTRY_KEY_NAME_SIZE = 32767;
     private final static int MAX_REGISTRY_KEY_CLASS_SIZE = 32767;
     private final static int MAX_REGISTRY_VALUE_NAME_SIZE = 32767;
-    private final static int MAX_REGISTRY_VALUE_DATA_SIZE = 65536;
+    private final static int MAX_REGISTRY_VALUE_DATA_SIZE = 1048576;
     private final static EnumSet<AccessMask> ACCESS_MASK = EnumSet.of(AccessMask.MAXIMUM_ALLOWED);
     private final Map<RegistryHive, ContextHandle> hiveCache = new HashMap<>();
     private final Map<String, ContextHandle> keyPathCache = new HashMap<>();
