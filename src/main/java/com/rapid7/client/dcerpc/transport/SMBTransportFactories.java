@@ -39,7 +39,7 @@ public enum SMBTransportFactories {
     SRVSVC("srvsvc", Interface.SRVSVC_V3_0, Interface.NDR_32BIT_V2);
 
     private final static int STATUS_PIPE_NOT_AVAILABLE_BACKOFF_TIME_MS = 3000;
-    private final static int STATUS_PIPE_NOT_AVAILABLE_RETRIES = 1;
+    private final static int STATUS_PIPE_NOT_AVAILABLE_RETRIES = 2;
     private final String name;
     private final Interface abstractSyntax;
     private final Interface transferSyntax;
