@@ -93,9 +93,6 @@ public enum SMBTransportFactories {
                 default:
                     throw new SMBException(exceptions.poll());
                 }
-            } catch (final SMBApiException exception) {
-                exceptions.add(exception);
-                throw new SMBException(exceptions.poll());
             }
         }
         throw new SMBException(exceptions.poll());
