@@ -24,14 +24,12 @@ import com.rapid7.client.dcerpc.messages.Bind;
 import com.rapid7.client.dcerpc.messages.BindACK;
 import com.rapid7.helper.smbj.io.SMB2Exception;
 import com.rapid7.helper.smbj.share.NamedPipe;
-
 import com.hierynomus.mssmb2.SMBApiException;
 import com.hierynomus.protocol.transport.TransportException;
 import com.hierynomus.smbj.common.SMBException;
 import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.PipeShare;
 import com.hierynomus.smbj.share.Share;
-
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.LinkedList;
