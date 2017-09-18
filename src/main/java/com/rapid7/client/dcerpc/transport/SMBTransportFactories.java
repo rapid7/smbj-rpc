@@ -24,12 +24,14 @@ import com.rapid7.client.dcerpc.messages.Bind;
 import com.rapid7.client.dcerpc.messages.BindACK;
 import com.rapid7.helper.smbj.io.SMB2Exception;
 import com.rapid7.helper.smbj.share.NamedPipe;
+
 import com.hierynomus.mssmb2.SMBApiException;
 import com.hierynomus.protocol.transport.TransportException;
 import com.hierynomus.smbj.common.SMBException;
 import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.PipeShare;
 import com.hierynomus.smbj.share.Share;
+
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.LinkedList;
@@ -37,7 +39,9 @@ import java.util.Queue;
 
 public enum SMBTransportFactories {
     WINREG("winreg", Interface.WINREG_V1_0, Interface.NDR_32BIT_V2),
-    SRVSVC("srvsvc", Interface.SRVSVC_V3_0, Interface.NDR_32BIT_V2);
+    SRVSVC("srvsvc", Interface.SRVSVC_V3_0, Interface.NDR_32BIT_V2),
+    LSASVC("lsarpc", Interface.LSASVC_V0_0, Interface.NDR_32BIT_V2),
+    SAMSVC("samr", Interface.SAMSVC_V1_0, Interface.NDR_32BIT_V2);
 
     private final static int STATUS_PIPE_NOT_AVAILABLE_BACKOFF_TIME_MS = 3000;
     private final static int STATUS_PIPE_NOT_AVAILABLE_RETRIES = 1;
