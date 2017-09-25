@@ -72,9 +72,9 @@ import java.nio.ByteBuffer;
  * 
  * <dl>
  * <dd>
- * <table responsive="true" summary="table">
+ * <table summary="table">
  * <tbody>
- * <tr class="thead" responsive="true">
+ * <tr>
  * <th scope="col">
  * <p>
  * Return value/code
@@ -87,7 +87,7 @@ import java.nio.ByteBuffer;
  * </th>
  * </tr>
  * <tr>
- * <td data-th=" Return value/code ">
+ * <td>
  * <p>
  * 0x00000000
  * </p>
@@ -95,14 +95,14 @@ import java.nio.ByteBuffer;
  * STATUS_SUCCESS
  * </p>
  * </td>
- * <td data-th=" Description ">
+ * <td>
  * <p>
  * The request was successfully completed.
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" Return value/code ">
+ * <td>
  * <p>
  * 0xC000009A
  * </p>
@@ -110,14 +110,14 @@ import java.nio.ByteBuffer;
  * STATUS_INSUFFICIENT_RESOURCES
  * </p>
  * </td>
- * <td data-th=" Description ">
+ * <td>
  * <p>
  * There are insufficient resources to complete the request.
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" Return value/code ">
+ * <td>
  * <p>
  * 0xC0000022
  * </p>
@@ -125,14 +125,14 @@ import java.nio.ByteBuffer;
  * STATUS_ACCESS_DENIED
  * </p>
  * </td>
- * <td data-th=" Description ">
+ * <td>
  * <p>
  * The caller does not have the permissions to perform the operation.
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" Return value/code ">
+ * <td>
  * <p>
  * 0xC000000D
  * </p>
@@ -140,7 +140,7 @@ import java.nio.ByteBuffer;
  * STATUS_INVALID_PARAMETER
  * </p>
  * </td>
- * <td data-th=" Description ">
+ * <td>
  * <p>
  * One of the parameters is incorrect. For instance, this can happen if
  * <em>InformationClass</em> is out of range or if <em>PolicyInformation</em> is
@@ -149,7 +149,7 @@ import java.nio.ByteBuffer;
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" Return value/code ">
+ * <td>
  * <p>
  * 0xC0000008
  * </p>
@@ -157,7 +157,7 @@ import java.nio.ByteBuffer;
  * STATUS_INVALID_HANDLE
  * </p>
  * </td>
- * <td data-th=" Description ">
+ * <td>
  * <p>
  * <em>PolicyHandle</em> is not a valid handle.
  * </p>

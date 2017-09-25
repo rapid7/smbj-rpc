@@ -26,9 +26,9 @@ package com.rapid7.client.dcerpc.mslsad.objects;
  *
  * TODO: Implements more information class as needed.
  * 
- * <table responsive="true" summary="table">
+ * <table summary="table">
  * <tbody>
- * <tr class="thead" responsive="true">
+ * <tr>
  * <th scope="col">
  * <p>
  * &nbsp;Value of InformationClass parameter
@@ -41,52 +41,48 @@ package com.rapid7.client.dcerpc.mslsad.objects;
  * </th>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyAuditLogInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * Auditing Log Information
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyAuditEventsInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * Event Auditing Options
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyPrimaryDomainInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * Primary Domain Information
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyPdAccountInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * MUST return an <a href=
  * "https://msdn.microsoft.com/en-us/library/cc234267.aspx">LSAPR_POLICY_PD_ACCOUNT_INFO</a>
@@ -97,13 +93,12 @@ package com.rapid7.client.dcerpc.mslsad.objects;
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyAccountDomainInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * On non–<a href=
  * "https://msdn.microsoft.com/en-us/library/cc234227.aspx#gt_76a05049-3531-4abd-aec8-30e19954b4bd">domain
@@ -115,108 +110,98 @@ package com.rapid7.client.dcerpc.mslsad.objects;
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyLsaServerRoleInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * Server Role Information
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyReplicaSourceInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * Replica Source Information
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyModificationInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * MUST return STATUS_INVALID_PARAMETER
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyAuditFullSetInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * MUST return STATUS_INVALID_PARAMETER
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyAuditFullQueryInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * Audit Full Information<a id="Appendix_A_Target_56"></a><a href=
- * "https://msdn.microsoft.com/en-us/library/cc234419.aspx#Appendix_A_56"
- * aria-label="Product behavior note 56">&lt;56&gt;</a>
+ * "https://msdn.microsoft.com/en-us/library/cc234419.aspx#Appendix_A_56">&lt;56&gt;</a>
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyDnsDomainInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * DNS Domain Information<a id="Appendix_A_Target_57"></a><a href=
- * "https://msdn.microsoft.com/en-us/library/cc234419.aspx#Appendix_A_57"
- * aria-label="Product behavior note 57">&lt;57&gt;</a>
+ * "https://msdn.microsoft.com/en-us/library/cc234419.aspx#Appendix_A_57">&lt;57&gt;</a>
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyDnsDomainInformationInt
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * DNS Domain Information
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" &nbsp;Value of InformationClass parameter ">
+ * <td>
  * <p>
  * PolicyLocalAccountDomainInformation
  * </p>
  * </td>
- * <td data-th=" &nbsp;Information returned to caller from abstract data model
- * ">
+ * <td>
  * <p>
  * AccountDomainInformation
  * </p>

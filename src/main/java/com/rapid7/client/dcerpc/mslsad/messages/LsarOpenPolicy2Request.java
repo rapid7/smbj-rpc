@@ -58,8 +58,8 @@ import java.util.EnumSet;
  * <strong>ObjectAttributes: </strong>This parameter does not have any effect on
  * message processing in any environment. All fields
  * MUST<a id="Appendix_A_Target_54"></a><a href=
- * "https://msdn.microsoft.com/en-us/library/cc234419.aspx#Appendix_A_54"
- * aria-label="Product behavior note 54">&lt;54&gt;</a> be ignored except
+ * "https://msdn.microsoft.com/en-us/library/cc234419.aspx#Appendix_A_54">
+ * &lt;54&gt;</a> be ignored except
  * <strong>RootDirectory</strong> which MUST be NULL.
  * </p>
  * 
@@ -88,9 +88,9 @@ import java.util.EnumSet;
  * 
  * <dl>
  * <dd>
- * <table responsive="true" summary="table">
+ * <table summary="table">
  * <tbody>
- * <tr class="thead" responsive="true">
+ * <tr>
  * <th scope="col">
  * <p>
  * Return value/code
@@ -103,7 +103,7 @@ import java.util.EnumSet;
  * </th>
  * </tr>
  * <tr>
- * <td data-th=" Return value/code ">
+ * <td>
  * <p>
  * 0x00000000
  * </p>
@@ -111,14 +111,14 @@ import java.util.EnumSet;
  * STATUS_SUCCESS
  * </p>
  * </td>
- * <td data-th=" Description ">
+ * <td>
  * <p>
  * The request was successfully completed.
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" Return value/code ">
+ * <td>
  * <p>
  * 0xC0000022
  * </p>
@@ -126,14 +126,14 @@ import java.util.EnumSet;
  * STATUS_ACCESS_DENIED
  * </p>
  * </td>
- * <td data-th=" Description ">
+ * <td>
  * <p>
  * The caller does not have the permissions to perform this operation.
  * </p>
  * </td>
  * </tr>
  * <tr>
- * <td data-th=" Return value/code ">
+ * <td>
  * <p>
  * 0xC000000D
  * </p>
@@ -141,7 +141,7 @@ import java.util.EnumSet;
  * STATUS_INVALID_PARAMETER
  * </p>
  * </td>
- * <td data-th=" Description ">
+ * <td>
  * <p>
  * One of the supplied parameters is incorrect. For example, this can happen
  * when <em>ObjectAttributes</em> is NULL or <em>DesiredAccess</em> is zero.
@@ -211,19 +211,19 @@ import java.util.EnumSet;
  * <ul>
  * <li>
  * <p>
- * <span><span> </span></span>LsaContextHandle.HandleType = "Policy"
+ *  LsaContextHandle.HandleType = "Policy"
  * </p>
  * 
  * </li>
  * <li>
  * <p>
- * <span><span> </span></span>LsaContextHandle.Object = the policy object
+ *  LsaContextHandle.Object = the policy object
  * </p>
  * 
  * </li>
  * <li>
  * <p>
- * <span><span> </span></span>LsaContextHandle.GrantedAccess = as specified in
+ *  LsaContextHandle.GrantedAccess = as specified in
  * section 3.1.4.2.1
  * </p>
  * 
