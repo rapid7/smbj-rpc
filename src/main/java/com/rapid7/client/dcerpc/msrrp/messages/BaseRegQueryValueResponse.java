@@ -18,31 +18,16 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import com.rapid7.client.dcerpc.messages.Response;
-import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
 
 /**
  * <b>Example:</b>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Response, Fragment: Single, FragLen: 76, Call: 36, Ctx: 0, [Req: #11394]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Response (2)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000
- *     Frag Length: 76
- *     Auth Length: 0
- *     Call ID: 36
- *     Alloc hint: 52
- *     Context ID: 0
- *     Cancel count: 0
- *     Opnum: 17
- *     [Request in frame: 11394]
- *     [Time from request: 0.092484557 seconds]
  * Remote Registry Service, QueryValue
  *     Operation: QueryValue (17)
  *     [Request in frame: 11394]
@@ -71,70 +56,10 @@ import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
  *     Windows Error: WERR_OK (0x00000000)
  * </pre>
  */
-public class BaseRegQueryValueResponse extends Response {
-    private final RegistryValueType type;
-    private final byte[] data;
-    private final int returnValue;
-
-    public BaseRegQueryValueResponse(final ByteBuffer packet)
-        throws TransportException {
-        super(packet);
-        // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Response, Fragment: Single, FragLen: 76, Call: 36, Ctx: 0, [Req: #11394]
-        //      Version: 5
-        //      Version (minor): 0
-        //      Packet type: Response (2)
-        //      Packet Flags: 0x03
-        //      Data Representation: 10000000
-        //      Frag Length: 76
-        //      Auth Length: 0
-        //      Call ID: 36
-        //      Alloc hint: 52
-        //      Context ID: 0
-        //      Cancel count: 0
-        //      Opnum: 17
-        //      [Request in frame: 11394]
-        //      [Time from request: 0.092484557 seconds]
-        // Remote Registry Service, QueryValue
-        //      Operation: QueryValue (17)
-        //      [Request in frame: 11394]
-        //      Pointer to Type (winreg_Type)
-        //          Referent ID: 0x00020000
-        //          Type
-        //      Pointer to Data (uint8)
-        //          Referent ID: 0x00020004
-        //          Max Count: 8
-        //          Offset: 0
-        //          Actual Count: 8
-        //          Data: 54
-        //          Data: 0
-        //          Data: 46
-        //          Data: 0
-        //          Data: 51
-        //          Data: 0
-        //          Data: 0
-        //          Data: 0
-        //      Pointer to Data Size (uint32)
-        //          Referent ID: 0x00020008
-        //          Data Size: 8
-        //      Pointer to Data Length (uint32)
-        //          Referent ID: 0x0002000c
-        //          Data Length: 8
-        //      Windows Error: WERR_OK (0x00000000)
-        final int type = getIntRef();
-        final byte[] data = getByteArrayRef();
-        getIntRef();
-        getIntRef();
-
-        returnValue = getInt();
-
-        if (ERROR_SUCCESS.is(returnValue)) {
-            this.type = RegistryValueType.getRegistryValueType(type);
-            this.data = data;
-        } else {
-            this.type = null;
-            this.data = null;
-        }
-    }
+public class BaseRegQueryValueResponse extends RequestResponse {
+    private RegistryValueType type;
+    private byte[] data;
+    private int returnValue;
 
     /** @return The {@link RegistryValueType} of the value. */
     public RegistryValueType getType() {
@@ -181,5 +106,50 @@ public class BaseRegQueryValueResponse extends Response {
      */
     public int getReturnValue() {
         return returnValue;
+    }
+
+    @Override
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException {
+        // Remote Registry Service, QueryValue
+        //      Operation: QueryValue (17)
+        //      [Request in frame: 11394]
+        //      Pointer to Type (winreg_Type)
+        //          Referent ID: 0x00020000
+        //          Type
+        //      Pointer to Data (uint8)
+        //          Referent ID: 0x00020004
+        //          Max Count: 8
+        //          Offset: 0
+        //          Actual Count: 8
+        //          Data: 54
+        //          Data: 0
+        //          Data: 46
+        //          Data: 0
+        //          Data: 51
+        //          Data: 0
+        //          Data: 0
+        //          Data: 0
+        //      Pointer to Data Size (uint32)
+        //          Referent ID: 0x00020008
+        //          Data Size: 8
+        //      Pointer to Data Length (uint32)
+        //          Referent ID: 0x0002000c
+        //          Data Length: 8
+        //      Windows Error: WERR_OK (0x00000000)
+        final int type = packetIn.readIntRef();
+        final byte[] data = packetIn.readByteArrayRef();
+        packetIn.readIntRef();
+        packetIn.readIntRef();
+
+        returnValue = packetIn.readInt();
+
+        if (ERROR_SUCCESS.is(returnValue)) {
+            this.type = RegistryValueType.getRegistryValueType(type);
+            this.data = data;
+        } else {
+            this.type = null;
+            this.data = null;
+        }
     }
 }

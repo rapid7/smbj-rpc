@@ -18,10 +18,10 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import com.rapid7.client.dcerpc.messages.Request;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
 
 /**
  * <b>3.1.5.16 BaseRegQueryInfoKey (Opnum 16)</b><br>
@@ -47,8 +47,8 @@ import java.nio.ByteBuffer;
  *
  * hKey: A handle to a key that MUST have been opened previously by using one of the open methods that are specified in
  * section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
- * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
- * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
+ * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+ * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
  * <br>
  * lpClassIn: A pointer to a RRP_UNICODE_STRING structure that contains the class of the key to be retrieved, as
  * specified in section 3.1.1.6. This string is optional; it is saved but is not used by the registry.<br>
@@ -158,19 +158,6 @@ import java.nio.ByteBuffer;
  * <b>Example:</b>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 64, Call: 37, Ctx: 0, [Resp: #11412]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Request (0)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000
- *     Frag Length: 64
- *     Auth Length: 0
- *     Call ID: 37
- *     Alloc hint: 64
- *     Context ID: 0
- *     Opnum: 16
- *     [Response in frame: 11412]
  * Remote Registry Service, QueryInfoKey
  *     Operation: QueryInfoKey (16)
  *     [Response in frame: 11412]
@@ -192,7 +179,15 @@ import java.nio.ByteBuffer;
  *
  * @see <a href="https://msdn.microsoft.com/en-us/cc244940">3.1.5.16 BaseRegQueryInfoKey (Opnum 16)</a>
  */
-public class BaseRegQueryInfoKeyRequest extends Request<BaseRegQueryInfoKeyResponse> {
+public class BaseRegQueryInfoKeyRequest extends RequestCall<BaseRegQueryInfoKeyResponse> {
+    /**
+     * A handle to a key that MUST have been opened previously by using one of the open methods that are specified in
+     * section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
+     * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
+     * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
+     */
+    private final ContextHandle hKey;
+
     /**
      * The BaseRegQueryInfoKey method is called by the client. In response, the server returns relevant information on
      * the key that corresponds to the specified key handle.
@@ -204,19 +199,18 @@ public class BaseRegQueryInfoKeyRequest extends Request<BaseRegQueryInfoKeyRespo
      */
     public BaseRegQueryInfoKeyRequest(final ContextHandle hKey) {
         super((short) 16);
-        // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 64, Call: 37, Ctx: 0, [Resp: #11412]
-        //      Version: 5
-        //      Version (minor): 0
-        //      Packet type: Request (0)
-        //      Packet Flags: 0x03
-        //      Data Representation: 10000000
-        //      Frag Length: 64
-        //      Auth Length: 0
-        //      Call ID: 37
-        //      Alloc hint: 64
-        //      Context ID: 0
-        //      Opnum: 16
-        //      [Response in frame: 11412]
+
+        this.hKey = hKey;
+    }
+
+    @Override
+    public BaseRegQueryInfoKeyResponse getResponseObject() {
+        return new BaseRegQueryInfoKeyResponse();
+    }
+
+    @Override
+    public void marshal(final PacketOutput packetOut)
+        throws IOException {
         // Remote Registry Service, QueryInfoKey
         //      Operation: QueryInfoKey (16)
         //      [Response in frame: 11412]
@@ -234,13 +228,7 @@ public class BaseRegQueryInfoKeyRequest extends Request<BaseRegQueryInfoKeyRespo
         //                  Max Count: 0
         //                  Offset: 0
         //                  Actual Count: 0
-        putBytes(hKey.getBytes());
-        putStringBuffer(0);
-    }
-
-    @Override
-    protected BaseRegQueryInfoKeyResponse parsePDUResponse(final ByteBuffer responseBuffer)
-        throws TransportException {
-        return new BaseRegQueryInfoKeyResponse(responseBuffer);
+        packetOut.write(hKey.getBytes());
+        packetOut.writeStringBuffer(0);
     }
 }

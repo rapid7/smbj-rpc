@@ -21,53 +21,61 @@ package com.rapid7.client.dcerpc.msrrp;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import javax.activation.UnsupportedDataTypeException;
 import org.junit.Test;
 
 public class Test_RegistryValue {
     @Test(expected = IllegalArgumentException.class)
-    public void constructorNullName() {
+    public void constructorNullName()
+        throws IOException {
         new RegistryValue(null, RegistryValueType.REG_SZ, new byte[] {});
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructorNullType() {
+    public void constructorNullType()
+        throws IOException {
         new RegistryValue("test", null, new byte[] {});
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructorNullData() {
+    public void constructorNullData()
+        throws IOException {
         new RegistryValue("test", RegistryValueType.REG_SZ, null);
     }
 
     @Test
-    public void getName() {
+    public void getName()
+        throws IOException {
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, new byte[] {});
         assertEquals("test", value.getName());
     }
 
     @Test
-    public void getType() {
+    public void getType()
+        throws IOException {
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, new byte[] {});
         assertEquals(RegistryValueType.REG_SZ, value.getType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_SZ_badLength1() {
+    @Test(expected = IOException.class)
+    public void REG_SZ_badLength1()
+        throws IOException {
         final byte[] data = new byte[] { '?' };
         new RegistryValue("test", RegistryValueType.REG_SZ, data);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_SZ_badLength2() {
+    @Test(expected = IOException.class)
+    public void REG_SZ_badLength2()
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0 };
         new RegistryValue("test", RegistryValueType.REG_SZ, data);
     }
 
     @Test
     public void REG_SZ_getData()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         assertArrayEquals(data, value.getData());
@@ -75,7 +83,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_SZ_getDataAsInt()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         value.getDataAsInt();
@@ -83,7 +91,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_SZ_getDataAsLong()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         value.getDataAsLong();
@@ -91,7 +99,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_SZ_getDataAsBinaryStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         assertEquals("00111111000000000000000000000000", value.getDataAsBinaryStr());
@@ -99,7 +107,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_SZ_getDataAsHexStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         assertEquals("3F000000", value.getDataAsHexStr());
@@ -107,7 +115,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_SZ_getDataAsMultiStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         value.getDataAsMultiStr();
@@ -115,7 +123,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_SZ_getDataAsStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         assertEquals("?", value.getDataAsStr());
@@ -123,48 +131,53 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_SZ_toString()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         assertEquals("test (REG_SZ) = ? (0x3F000000)", value.toString());
     }
 
     @Test
-    public void REG_SZ_toString_empty() {
+    public void REG_SZ_toString_empty()
+        throws IOException {
         final byte[] data = new byte[] {};
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         assertEquals("test (REG_SZ)", value.toString());
     }
 
     @Test
-    public void REG_SZ_toString_null1() {
+    public void REG_SZ_toString_null1()
+        throws IOException {
         final byte[] data = new byte[] { 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         assertEquals("test (REG_SZ)", value.toString());
     }
 
     @Test
-    public void REG_SZ_toString_null2() {
+    public void REG_SZ_toString_null2()
+        throws IOException {
         final byte[] data = new byte[] { 0, 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_SZ, data);
         assertEquals("test (REG_SZ)", value.toString());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_EXPAND_SZ_badLength1() {
+    @Test(expected = IOException.class)
+    public void REG_EXPAND_SZ_badLength1()
+        throws IOException {
         final byte[] data = new byte[] { '?' };
         new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_EXPAND_SZ_badLength2() {
+    @Test(expected = IOException.class)
+    public void REG_EXPAND_SZ_badLength2()
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0 };
         new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
     }
 
     @Test
     public void REG_EXPAND_SZ_getData()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         assertArrayEquals(data, value.getData());
@@ -172,7 +185,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_EXPAND_SZ_getDataAsInt()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         value.getDataAsInt();
@@ -180,7 +193,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_EXPAND_SZ_getDataAsLong()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         value.getDataAsLong();
@@ -188,7 +201,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_EXPAND_SZ_getDataAsBinaryStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         assertEquals("00111111000000000000000000000000", value.getDataAsBinaryStr());
@@ -196,7 +209,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_EXPAND_SZ_getDataAsHexStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         assertEquals("3F000000", value.getDataAsHexStr());
@@ -204,7 +217,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_EXPAND_SZ_getDataAsMultiStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         value.getDataAsMultiStr();
@@ -212,7 +225,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_EXPAND_SZ_getDataAsStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         assertEquals("?", value.getDataAsStr());
@@ -220,48 +233,53 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_EXPAND_SZ_toString()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         assertEquals("test (REG_EXPAND_SZ) = ? (0x3F000000)", value.toString());
     }
 
     @Test
-    public void REG_EXPAND_SZ_toString_empty() {
+    public void REG_EXPAND_SZ_toString_empty()
+        throws IOException {
         final byte[] data = new byte[] {};
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         assertEquals("test (REG_EXPAND_SZ)", value.toString());
     }
 
     @Test
-    public void REG_EXPAND_SZ_toString_null1() {
+    public void REG_EXPAND_SZ_toString_null1()
+        throws IOException {
         final byte[] data = new byte[] { 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         assertEquals("test (REG_EXPAND_SZ)", value.toString());
     }
 
     @Test
-    public void REG_EXPAND_SZ_toString_null2() {
+    public void REG_EXPAND_SZ_toString_null2()
+        throws IOException {
         final byte[] data = new byte[] { 0, 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_EXPAND_SZ, data);
         assertEquals("test (REG_EXPAND_SZ)", value.toString());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_LINK_badLength1() {
+    @Test(expected = IOException.class)
+    public void REG_LINK_badLength1()
+        throws IOException {
         final byte[] data = new byte[] { '?' };
         new RegistryValue("test", RegistryValueType.REG_LINK, data);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_LINK_badLength2() {
+    @Test(expected = IOException.class)
+    public void REG_LINK_badLength2()
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0 };
         new RegistryValue("test", RegistryValueType.REG_LINK, data);
     }
 
     @Test
     public void REG_LINK_getData()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         assertArrayEquals(data, value.getData());
@@ -269,7 +287,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_LINK_getDataAsInt()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         value.getDataAsInt();
@@ -277,7 +295,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_LINK_getDataAsLong()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         value.getDataAsLong();
@@ -285,7 +303,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_LINK_getDataAsBinaryStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         assertEquals("00111111000000000000000000000000", value.getDataAsBinaryStr());
@@ -293,7 +311,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_LINK_getDataAsHexStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         assertEquals("3F000000", value.getDataAsHexStr());
@@ -301,7 +319,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_LINK_getDataAsMultiStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         value.getDataAsMultiStr();
@@ -309,7 +327,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_LINK_getDataAsStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         assertEquals("?", value.getDataAsStr());
@@ -317,48 +335,53 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_LINK_toString()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         assertEquals("test (REG_LINK) = ? (0x3F000000)", value.toString());
     }
 
     @Test
-    public void REG_LINK_toString_empty() {
+    public void REG_LINK_toString_empty()
+        throws IOException {
         final byte[] data = new byte[] {};
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         assertEquals("test (REG_LINK)", value.toString());
     }
 
     @Test
-    public void REG_LINK_toString_null1() {
+    public void REG_LINK_toString_null1()
+        throws IOException {
         final byte[] data = new byte[] { 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         assertEquals("test (REG_LINK)", value.toString());
     }
 
     @Test
-    public void REG_LINK_toString_null2() {
+    public void REG_LINK_toString_null2()
+        throws IOException {
         final byte[] data = new byte[] { 0, 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_LINK, data);
         assertEquals("test (REG_LINK)", value.toString());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_MULTI_SZ_badLength1() {
+    @Test(expected = IOException.class)
+    public void REG_MULTI_SZ_badLength1()
+        throws IOException {
         final byte[] data = new byte[] { '?' };
         new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_MULTI_SZ_badLength2() {
+    @Test(expected = IOException.class)
+    public void REG_MULTI_SZ_badLength2()
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0 };
         new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
     }
 
     @Test
     public void REG_MULTI_SZ_getData()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertArrayEquals(data, value.getData());
@@ -366,7 +389,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_MULTI_SZ_getDataAsInt()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         value.getDataAsInt();
@@ -374,7 +397,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_MULTI_SZ_getDataAsLong()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         value.getDataAsLong();
@@ -382,7 +405,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_MULTI_SZ_getDataAsBinaryStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertEquals("00111111000000000000000000000000", value.getDataAsBinaryStr());
@@ -390,7 +413,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_MULTI_SZ_getDataAsHexStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertEquals("3F000000", value.getDataAsHexStr());
@@ -398,7 +421,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_MULTI_SZ_getDataAsMultiStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertArrayEquals(new String[] { "?" }, value.getDataAsMultiStr());
@@ -406,7 +429,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_MULTI_SZ_getDataAsStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertEquals("{\"?\"}", value.getDataAsStr());
@@ -414,28 +437,31 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_MULTI_SZ_toString()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertEquals("test (REG_MULTI_SZ) = {\"?\"} (0x3F000000)", value.toString());
     }
 
     @Test
-    public void REG_MULTI_SZ_toString_empty() {
+    public void REG_MULTI_SZ_toString_empty()
+        throws IOException {
         final byte[] data = new byte[] {};
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertEquals("test (REG_MULTI_SZ)", value.toString());
     }
 
     @Test
-    public void REG_MULTI_SZ_toString_null1() {
+    public void REG_MULTI_SZ_toString_null1()
+        throws IOException {
         final byte[] data = new byte[] { 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertEquals("test (REG_MULTI_SZ)", value.toString());
     }
 
     @Test
-    public void REG_MULTI_SZ_toString_null2() {
+    public void REG_MULTI_SZ_toString_null2()
+        throws IOException {
         final byte[] data = new byte[] { 0, 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertEquals("test (REG_MULTI_SZ) = {\"\"} (0x00000000)", value.toString());
@@ -443,7 +469,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_MULTI_SZ_toString_multiple()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0, '?', 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertEquals("test (REG_MULTI_SZ) = {\"?\", \"?\"} (0x3F0000003F000000)", value.toString());
@@ -451,27 +477,29 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_MULTI_SZ_toString_multipleWithNull()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { '?', 0, 0, 0, '?', 0, 0, 0, 0, 0 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_MULTI_SZ, data);
         assertEquals("test (REG_MULTI_SZ) = {\"?\", \"?\"} (0x3F0000003F0000000000)", value.toString());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_DWORD_badLengt1() {
+    @Test(expected = IOException.class)
+    public void REG_DWORD_badLength1()
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xff, (byte) 0xff };
         new RegistryValue("test", RegistryValueType.REG_DWORD, data);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_DWORD_badLength2() {
+    @Test(expected = IOException.class)
+    public void REG_DWORD_badLength2()
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff };
         new RegistryValue("test", RegistryValueType.REG_DWORD, data);
     }
 
     @Test
     public void REG_DWORD_getData()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] originalData = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final byte[] modifiedData = new byte[] { (byte) 0x12, (byte) 0x34, (byte) 0x56, (byte) 0x78 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD, originalData);
@@ -480,7 +508,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_getDataAsInt()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD, data);
         assertEquals(0x12345678, value.getDataAsInt());
@@ -488,7 +516,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_getDataAsLong()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD, data);
         assertEquals(0x12345678, value.getDataAsLong());
@@ -496,7 +524,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_getDataAsBinaryStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD, data);
         assertEquals("00010010001101000101011001111000", value.getDataAsBinaryStr());
@@ -504,7 +532,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_getDataAsHexStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD, data);
         assertEquals("12345678", value.getDataAsHexStr());
@@ -512,7 +540,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_DWORD_getDataAsMultiStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD, data);
         value.getDataAsMultiStr();
@@ -520,7 +548,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_getDataAsStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD, data);
         assertEquals("305419896", value.getDataAsStr());
@@ -528,27 +556,29 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_toString()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD, data);
         assertEquals("test (REG_DWORD) = 305419896 (0x12345678)", value.toString());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_DWORD_BIG_ENDIAN_badLengt1() {
+    @Test(expected = IOException.class)
+    public void REG_DWORD_BIG_ENDIAN_badLengt1()
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xff, (byte) 0xff };
         new RegistryValue("test", RegistryValueType.REG_DWORD_BIG_ENDIAN, data);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_DWORD_BIG_ENDIAN_badLength2() {
+    @Test(expected = IOException.class)
+    public void REG_DWORD_BIG_ENDIAN_badLength2()
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff };
         new RegistryValue("test", RegistryValueType.REG_DWORD_BIG_ENDIAN, data);
     }
 
     @Test
     public void REG_DWORD_BIG_ENDIAN_getData()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] originalData = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final byte[] modifiedData = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD_BIG_ENDIAN, originalData);
@@ -557,7 +587,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_BIG_ENDIAN_getDataAsInt()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD_BIG_ENDIAN, data);
         assertEquals(0x78563412, value.getDataAsInt());
@@ -565,7 +595,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_BIG_ENDIAN_getDataAsLong()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD_BIG_ENDIAN, data);
         assertEquals(0x78563412, value.getDataAsLong());
@@ -573,7 +603,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_BIG_ENDIAN_getDataAsBinaryStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD_BIG_ENDIAN, data);
         assertEquals("01111000010101100011010000010010", value.getDataAsBinaryStr());
@@ -581,7 +611,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_BIG_ENDIAN_getDataAsHexStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD_BIG_ENDIAN, data);
         assertEquals("78563412", value.getDataAsHexStr());
@@ -589,7 +619,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_DWORD_BIG_ENDIAN_getDataAsMultiStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD_BIG_ENDIAN, data);
         value.getDataAsMultiStr();
@@ -597,7 +627,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_BIG_ENDIAN_getDataAsStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD_BIG_ENDIAN, data);
         assertEquals("2018915346", value.getDataAsStr());
@@ -605,21 +635,23 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_DWORD_BIG_ENDIAN_toString()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0x78, (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_DWORD_BIG_ENDIAN, data);
         assertEquals("test (REG_DWORD_BIG_ENDIAN) = 2018915346 (0x78563412)", value.toString());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_QWORD_badLengt1() {
-        final byte[] data = new byte[] { (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
-            (byte) 0xff };
+    @Test(expected = IOException.class)
+    public void REG_QWORD_badLengt1()
+        throws IOException {
+        final byte[] data =
+            new byte[] { (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff };
         new RegistryValue("test", RegistryValueType.REG_QWORD, data);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void REG_QWORD_badLength2() {
+    @Test(expected = IOException.class)
+    public void REG_QWORD_badLength2()
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
             (byte) 0xff, (byte) 0xff, (byte) 0xff };
         new RegistryValue("test", RegistryValueType.REG_QWORD, data);
@@ -627,7 +659,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_QWORD_getData()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] originalData = new byte[] { (byte) 0xff, (byte) 0xde, (byte) 0xbc, (byte) 0x9a, (byte) 0x78,
             (byte) 0x56, (byte) 0x34, (byte) 0x12 };
         final byte[] modifiedData = new byte[] { (byte) 0x12, (byte) 0x34, (byte) 0x56, (byte) 0x78, (byte) 0x9a,
@@ -638,7 +670,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_QWORD_getDataAsInt()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xde, (byte) 0xbc, (byte) 0x9a, (byte) 0x78, (byte) 0x56,
             (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_QWORD, data);
@@ -647,7 +679,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_QWORD_getDataAsLong()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xde, (byte) 0xbc, (byte) 0x9a, (byte) 0x78, (byte) 0x56,
             (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_QWORD, data);
@@ -656,7 +688,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_QWORD_getDataAsBinaryStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xde, (byte) 0xbc, (byte) 0x9a, (byte) 0x78, (byte) 0x56,
             (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_QWORD, data);
@@ -665,7 +697,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_QWORD_getDataAsHexStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xde, (byte) 0xbc, (byte) 0x9a, (byte) 0x78, (byte) 0x56,
             (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_QWORD, data);
@@ -674,7 +706,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_QWORD_getDataAsMultiStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xde, (byte) 0xbc, (byte) 0x9a, (byte) 0x78, (byte) 0x56,
             (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_QWORD, data);
@@ -683,7 +715,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_QWORD_getDataAsStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xde, (byte) 0xbc, (byte) 0x9a, (byte) 0x78, (byte) 0x56,
             (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_QWORD, data);
@@ -692,7 +724,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_QWORD_toString()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff, (byte) 0xde, (byte) 0xbc, (byte) 0x9a, (byte) 0x78, (byte) 0x56,
             (byte) 0x34, (byte) 0x12 };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_QWORD, data);
@@ -701,7 +733,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_BINARY_getData()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_BINARY, data);
         assertArrayEquals(data, value.getData());
@@ -709,7 +741,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_BINARY_getDataAsInt()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_BINARY, data);
         value.getDataAsInt();
@@ -717,7 +749,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_BINARY_getDataAsLong()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_BINARY, data);
         value.getDataAsLong();
@@ -725,7 +757,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_BINARY_getDataAsBinaryStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_BINARY, data);
         assertEquals("11111111", value.getDataAsBinaryStr());
@@ -733,7 +765,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_BINARY_getDataAsHexStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_BINARY, data);
         assertEquals("FF", value.getDataAsHexStr());
@@ -741,7 +773,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_BINARY_getDataAsMultiStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_BINARY, data);
         value.getDataAsMultiStr();
@@ -749,7 +781,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_BINARY_getDataAsStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_BINARY, data);
         assertEquals("11111111", value.getDataAsStr());
@@ -757,7 +789,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_BINARY_toString()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_BINARY, data);
         assertEquals("test (REG_BINARY) = 11111111 (0xFF)", value.toString());
@@ -765,7 +797,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_NONE_getData()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_NONE, data);
         assertArrayEquals(data, value.getData());
@@ -773,7 +805,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_NONE_getDataAsInt()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_NONE, data);
         value.getDataAsInt();
@@ -781,7 +813,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_NONE_getDataAsLong()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_NONE, data);
         value.getDataAsLong();
@@ -789,7 +821,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_NONE_getDataAsBinaryStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_NONE, data);
         assertEquals("11111111", value.getDataAsBinaryStr());
@@ -797,7 +829,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_NONE_getDataAsHexStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_NONE, data);
         assertEquals("FF", value.getDataAsHexStr());
@@ -805,7 +837,7 @@ public class Test_RegistryValue {
 
     @Test(expected = IllegalStateException.class)
     public void REG_NONE_getDataAsMultiStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_NONE, data);
         value.getDataAsMultiStr();
@@ -813,7 +845,7 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_NONE_getDataAsStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_NONE, data);
         assertEquals("11111111", value.getDataAsStr());
@@ -821,14 +853,15 @@ public class Test_RegistryValue {
 
     @Test
     public void REG_NONE_toString()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+        throws IOException {
         final byte[] data = new byte[] { (byte) 0xff };
         final RegistryValue value = new RegistryValue("test", RegistryValueType.REG_NONE, data);
         assertEquals("test (REG_NONE) = 11111111 (0xFF)", value.toString());
     }
 
     @Test
-    public void testHashCode() {
+    public void testHashCode()
+        throws IOException {
         final RegistryValue value1 = new RegistryValue("test1", RegistryValueType.REG_NONE, new byte[] { 0 });
         final RegistryValue value2 = new RegistryValue("test1", RegistryValueType.REG_NONE, new byte[] { 1 });
         final RegistryValue value3 = new RegistryValue("test2", RegistryValueType.REG_NONE, new byte[] { 0 });
@@ -841,7 +874,8 @@ public class Test_RegistryValue {
     }
 
     @Test
-    public void testEquals() {
+    public void testEquals()
+        throws IOException {
         final RegistryValue value1 = new RegistryValue("test1", RegistryValueType.REG_NONE, new byte[] { 0 });
         final RegistryValue value2 = new RegistryValue("test1", RegistryValueType.REG_NONE, new byte[] { 1 });
         final RegistryValue value3 = new RegistryValue("test2", RegistryValueType.REG_NONE, new byte[] { 0 });

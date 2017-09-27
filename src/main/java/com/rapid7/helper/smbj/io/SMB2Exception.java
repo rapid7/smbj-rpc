@@ -1,7 +1,6 @@
 package com.rapid7.helper.smbj.io;
 
 import java.io.IOException;
-
 import com.hierynomus.mserref.NtStatus;
 import com.hierynomus.mssmb2.SMB2Header;
 import com.hierynomus.mssmb2.SMB2MessageCommandCode;
@@ -13,16 +12,11 @@ public class SMB2Exception extends IOException {
     private final long statusCode;
 
     public SMB2Exception(final SMB2Header header, final String message) {
-        super(String.format(
-            "%s returned %s (%d/%d): %s",
-            header.getMessage(),
-            header.getStatus(),
-            header.getStatus().getValue(),
-            header.getStatusCode(),
-            message));
-        this.status = header.getStatus();
-        this.statusCode = header.getStatusCode();
-        this.failedCommand = header.getMessage();
+        super(String.format("%s returned %s (%d/%d): %s", header.getMessage(), header.getStatus(),
+            header.getStatus().getValue(), header.getStatusCode(), message));
+        status = header.getStatus();
+        statusCode = header.getStatusCode();
+        failedCommand = header.getMessage();
     }
 
     public NtStatus getStatus() {

@@ -18,9 +18,9 @@
  */
 package com.rapid7.client.dcerpc.mssrvs.messages;
 
-import com.rapid7.client.dcerpc.messages.Request;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.RequestCall;
 
 /**
  * <b>3.1.4.8 NetrShareEnum (Opnum 15)</b><br>
@@ -56,8 +56,10 @@ import java.nio.ByteBuffer;
  * ERROR_MORE_DATA, this parameter receives a nonzero value that can be passed in subsequent calls to this method to
  * continue with the enumeration in ShareList.<br>
  * <br>
- * <ul><li>If this parameter is NULL or points to 0x00000000, the enumeration starts from the beginning of the
- * ShareList.</li></ul>
+ * <ul>
+ * <li>If this parameter is NULL or points to 0x00000000, the enumeration starts from the beginning of the
+ * ShareList.</li>
+ * </ul>
  * <br>
  * Return Values: The method returns 0x00000000 (NERR_Success) to indicate success; otherwise, it returns a nonzero
  * error code. The method can take any specific error code value, as specified in [MS-ERREF] section 2.2. The most
@@ -111,7 +113,9 @@ import java.nio.ByteBuffer;
  * SHARE_INFO_0_CONTAINER structure in the ShareInfo member of the InfoStruct parameter. The SHARE_INFO_0_CONTAINER
  * structure contains an array of SHARE_INFO_0 structures. <br>
  * <br>
- * <ul><li>shi0_netname MUST be set to share.shi503_netname.</li></ul>
+ * <ul>
+ * <li>shi0_netname MUST be set to share.shi503_netname.</li>
+ * </ul>
  * <br>
  * If the Level member is 1, the server MUST return the information about share resources by filling the
  * SHARE_INFO_1_CONTAINER structure in the ShareInfo member of the InfoStruct parameter. The SHARE_INFO_1_CONTAINER
@@ -120,13 +124,15 @@ import java.nio.ByteBuffer;
  * <ul>
  * <li>shi1_netname MUST be set to share.shi503_netname.</li>
  * <li>shi1_type MUST be set to share.shi503_type.</li>
- * <li>shi1_remark MUST be set to share.shi503_remark.</li></ul>
+ * <li>shi1_remark MUST be set to share.shi503_remark.</li>
+ * </ul>
  * <br>
  * If the Level member is 2, the server MUST return the information about share resources by filling the
  * SHARE_INFO_2_CONTAINER structure in the ShareInfo member of the InfoStruct parameter. The SHARE_INFO_2_CONTAINER
  * structure contains an array of SHARE_INFO_2 structures. <br>
  * <br>
- * <ul><li>shi2_netname MUST be set to share.shi503_netname.</li>
+ * <ul>
+ * <li>shi2_netname MUST be set to share.shi503_netname.</li>
  * <li>shi2_type MUST be set to share.shi503_type.</li>
  * <li>shi2_remark MUST be set to share.shi503_remark.</li>
  * <li>shi2_permissions MUST be set to share.shi503_permissions.</li>
@@ -134,22 +140,26 @@ import java.nio.ByteBuffer;
  * <li>shi2_current_uses MUST be set to the sum of share.shi503_current_uses values retrieved from both CIFS and SMB2
  * servers.</li>
  * <li>shi2_path MUST be set to share.shi503_path.</li>
- * <li>shi2_passwd MUST be set to share.shi503_passwd.</li></ul>
+ * <li>shi2_passwd MUST be set to share.shi503_passwd.</li>
+ * </ul>
  * <br>
  * If the Level member is 501, the server MUST return the information about share resources by filling the
  * SHARE_INFO_501_CONTAINER structure in the ShareInfo member of the InfoStruct parameter. The SHARE_INFO_501_CONTAINER
  * structure contains an array of SHARE_INFO_501 structures. <br>
  * <br>
- * <ul><li>shi501_netname MUST be set to share.shi503_netname.</li>
+ * <ul>
+ * <li>shi501_netname MUST be set to share.shi503_netname.</li>
  * <li>shi501_type MUST be set to share.shi503_type.</li>
  * <li>shi501_remark MUST be set to share.shi503_remark.</li>
- * <li>shi501_flags MUST be set to share.ShareFlags.</li></ul>
+ * <li>shi501_flags MUST be set to share.ShareFlags.</li>
+ * </ul>
  * <br>
  * If the Level member is 502, the server MUST return the information about Share resources by filling the
  * SHARE_INFO_502_CONTAINER structure in the ShareInfo member of the InfoStruct parameter. The SHARE_INFO_502_CONTAINER
  * structure contains an array of SHARE_INFO_502_I structures. <br>
  * <br>
- * <ul><li>shi502_netname MUST be set to share.shi503_netname.</li>
+ * <ul>
+ * <li>shi502_netname MUST be set to share.shi503_netname.</li>
  * <li>shi502_type MUST be set to share.shi503_type.</li>
  * <li>shi502_remark MUST be set to share.shi503_remark.</li>
  * <li>shi502_permissions MUST be set to share.shi503_permissions.</li>
@@ -158,7 +168,8 @@ import java.nio.ByteBuffer;
  * servers.</li>
  * <li>shi502_path MUST be set to share.shi503_path.</li>
  * <li>shi502_passwd MUST be set to share.shi503_passwd.</li>
- * <li>shi502_security_descriptor MUST be set to share.shi503_security_descriptor</li></ul>
+ * <li>shi502_security_descriptor MUST be set to share.shi503_security_descriptor</li>
+ * </ul>
  * <br>
  * If the Level member is 503, the server MUST return the information about share resources in the SHARE_INFO_503_I
  * structure by filling the SHARE_INFO_503_CONTAINER structure in the ShareInfo member of the InfoStruct parameter,
@@ -187,13 +198,15 @@ import java.nio.ByteBuffer;
  * <ul>
  * <li>If the ResumeHandle parameter is either NULL or points to 0x00000000, the enumeration MUST start from the
  * beginning of the ShareList.</li>
- * <li>If the ResumeHandle parameter points to a nonzero value, the server MUST validate the ResumeHandle.<ul>
+ * <li>If the ResumeHandle parameter points to a nonzero value, the server MUST validate the ResumeHandle.
+ * <ul>
  * <li>If the value of the ResumeHandle is less than the size of the ShareList, the server MUST continue enumeration
  * based on the value of ResumeHandle. The value of ResumeHandle specifies the index into the ShareList after which
  * enumeration is to begin.</li>
  * <li>If the value of the ResumeHandle is greater than or equal to the size of the ShareList, the server MUST return
  * NERR_Success and zero entries.</li>
- * </ul></li>
+ * </ul>
+ * </li>
  * <li>If the client specified a ResumeHandle and if the server returns ERROR_MORE_DATA (0x000000EA), the server MUST
  * set ResumeHandle to the index of the last enumerated share in the ShareList.</li>
  * </ul>
@@ -202,30 +215,74 @@ import java.nio.ByteBuffer;
  * requests, the results of a query spanning multiple requests using the ResumeHandle can be unreliable, offering either
  * duplicate or unavailable shares.<br>
  * <br>
- * The server SHOULD enforce security measures to verify that the caller has the required permissions to execute
- * this routine. If the caller does not have the required credentials, the server SHOULD fail the call.
+ * The server SHOULD enforce security measures to verify that the caller has the required permissions to execute this
+ * routine. If the caller does not have the required credentials, the server SHOULD fail the call.
  *
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc247276.aspx">3.1.4.8 NetrShareEnum (Opnum 15)</a>
  */
-public class NetrShareEnumRequest extends Request<NetrShareEnumResponse> {
+public class NetrShareEnumRequest extends RequestCall<NetrShareEnumResponse> {
+    /**
+     * A constant of type DWORD that is set to -1. This value is valid as an input parameter to any method in section
+     * 3.1.4 that takes a PreferedMaximumLength parameter. When specified as an input parameter, this value indicates
+     * that the method MUST allocate as much space as the data requires.
+     */
+    public final static int MAX_PREFERRED_LENGTH = -1;
+
+    /**
+     * Specifies the preferred maximum length, in bytes, of the returned data. If the specified value is
+     * MAX_PREFERRED_LENGTH, the method MUST attempt to return all entries.
+     */
     private final static int MAX_BUFFER_SIZE = 1048576;
 
+    /**
+     * The InfoStruct parameter has a Level member. The valid values of Level are 0, 1, 2, 501, 502, and 503. If the
+     * Level member is not equal to one of the valid values, the server MUST fail the call with an ERROR_INVALID_LEVEL
+     * error code.
+     */
+    private final int level;
+
+    /**
+     * A pointer to a value that contains a handle, which is used to continue an existing share search in ShareList. The
+     * handle MUST be zero on the first call and remain unchanged for subsequent calls. If the ResumeHandle parameter is
+     * NULL, no resume handle MUST be stored. If this parameter is not NULL and the method returns ERROR_MORE_DATA, this
+     * parameter receives a nonzero value that can be passed in subsequent calls to this method to continue with the
+     * enumeration in ShareList.
+     */
+    private final Integer resumeHandle;
+
+    /**
+     * The NetrShareEnum method retrieves information about each shared resource on a server.
+     *
+     * @param level The InfoStruct parameter has a Level member. The valid values of Level are 0, 1, 2, 501, 502, and
+     *        503. If the Level member is not equal to one of the valid values, the server MUST fail the call with an
+     *        ERROR_INVALID_LEVEL error code.
+     * @param resumeHandle A pointer to a value that contains a handle, which is used to continue an existing share
+     *        search in ShareList. The handle MUST be zero on the first call and remain unchanged for subsequent calls.
+     *        If the ResumeHandle parameter is NULL, no resume handle MUST be stored. If this parameter is not NULL and
+     *        the method returns ERROR_MORE_DATA, this parameter receives a nonzero value that can be passed in
+     *        subsequent calls to this method to continue with the enumeration in ShareList.
+     */
     public NetrShareEnumRequest(final int level, final Integer resumeHandle) {
         super((short) 15);
-
-        putNull();
-        putInt(level);
-        putInt(level);
-        putReferentID();
-        putInt(0);
-        putNull();
-        putInt(MAX_BUFFER_SIZE);
-        putIntRef(resumeHandle);
+        this.level = level;
+        this.resumeHandle = resumeHandle;
     }
 
     @Override
-    protected NetrShareEnumResponse parsePDUResponse(final ByteBuffer responseBuffer)
-        throws TransportException {
-        return new NetrShareEnumResponse(responseBuffer);
+    public NetrShareEnumResponse getResponseObject() {
+        return new NetrShareEnumResponse();
+    }
+
+    @Override
+    public void marshal(final PacketOutput stubOut)
+        throws IOException {
+        stubOut.writeNull();
+        stubOut.writeInt(level);
+        stubOut.writeInt(level);
+        stubOut.writeReferentID();
+        stubOut.writeInt(0);
+        stubOut.writeNull();
+        stubOut.writeInt(MAX_BUFFER_SIZE);
+        stubOut.writeIntRef(resumeHandle);
     }
 }

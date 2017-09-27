@@ -18,22 +18,19 @@
  */
 package com.rapid7.client.dcerpc.transport;
 
-import com.rapid7.client.dcerpc.Interface;
-import com.rapid7.client.dcerpc.RPCResponse;
-import com.rapid7.client.dcerpc.messages.Bind;
-import com.rapid7.client.dcerpc.messages.BindACK;
-import com.rapid7.helper.smbj.io.SMB2Exception;
-import com.rapid7.helper.smbj.share.NamedPipe;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.LinkedList;
+import java.util.Queue;
 import com.hierynomus.mssmb2.SMBApiException;
 import com.hierynomus.protocol.transport.TransportException;
 import com.hierynomus.smbj.common.SMBException;
 import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.PipeShare;
 import com.hierynomus.smbj.share.Share;
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.util.LinkedList;
-import java.util.Queue;
+import com.rapid7.client.dcerpc.Interface;
+import com.rapid7.helper.smbj.io.SMB2Exception;
+import com.rapid7.helper.smbj.share.NamedPipe;
 
 public enum SMBTransportFactories {
     WINREG("winreg", Interface.WINREG_V1_0, Interface.NDR_32BIT_V2),
@@ -46,7 +43,7 @@ public enum SMBTransportFactories {
     private final Interface transferSyntax;
 
     private SMBTransportFactories(final String path, final Interface abstractSyntax, final Interface transferSyntax) {
-        this.name = path;
+        name = path;
         this.abstractSyntax = abstractSyntax;
         this.transferSyntax = transferSyntax;
     }
@@ -58,15 +55,10 @@ public enum SMBTransportFactories {
             final PipeShare pipeShare = (PipeShare) share;
             final NamedPipe namedPipe = openAndHandleStatusPipeNotAvailable(session, pipeShare);
             final SMBTransport transport = new SMBTransport(namedPipe);
-            final Bind bind = new Bind(abstractSyntax, transferSyntax);
-            final RPCResponse response = transport.transact(bind);
 
-            if (response instanceof BindACK) {
-                return transport;
-            }
+            transport.bind(abstractSyntax, transferSyntax);
 
-            throw new TransportException(
-                String.format("BIND %s (%s -> %s) failed.", abstractSyntax.getName(), name, abstractSyntax.getRepr()));
+            return transport;
         }
 
         throw new TransportException(String.format("%s not a named pipe.", name));

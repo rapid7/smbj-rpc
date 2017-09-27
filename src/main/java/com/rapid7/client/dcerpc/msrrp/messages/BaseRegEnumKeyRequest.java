@@ -18,10 +18,10 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import com.rapid7.client.dcerpc.messages.Request;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
 
 /**
  * <b>3.1.5.10 BaseRegEnumKey (Opnum 9)</b><br>
@@ -43,8 +43,8 @@ import java.nio.ByteBuffer;
  *
  * hKey: A handle to a key that MUST have been opened previously by using one of the open methods that are specified in
  * section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
- * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
- * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
+ * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+ * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
  * <br>
  * dwIndex: The index of the subkey to retrieve, as specified in section 3.1.1.1.<br>
  * <br>
@@ -138,19 +138,6 @@ import java.nio.ByteBuffer;
  * <b>Example:</b>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 104, Call: 2, Ctx: 0, [Resp: #8852]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Request (0)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000
- *     Frag Length: 104
- *     Auth Length: 0
- *     Call ID: 2
- *     Alloc hint: 104
- *     Context ID: 0
- *     Opnum: 9
- *     [Response in frame: 8852]
  * Remote Registry Service, EnumKey
  *     Operation: EnumKey (9)
  *     [Response in frame: 8852]
@@ -185,7 +172,21 @@ import java.nio.ByteBuffer;
  *
  * @see <a href="https://msdn.microsoft.com/en-us/cc244933">3.1.5.10 BaseRegEnumKey (Opnum 9)</a>
  */
-public class BaseRegEnumKeyRequest extends Request<BaseRegEnumKeyResponse> {
+public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
+    /**
+     * A handle to a key that MUST have been opened previously by using one of the open methods:
+     * {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
+     * {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+     * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
+     */
+    private final ContextHandle hKey;
+    /** The index of the subkey to retrieve. */
+    private final int index;
+    /** The maximum length of the subkey name to retrieve. */
+    private final int nameLen;
+    /** The maximum length of the subkey class to retrieve. */
+    private final int classLen;
+
     /**
      * The BaseRegEnumKey method is called by the client in order to enumerate a subkey. In response, the server returns
      * a requested subkey.
@@ -200,6 +201,20 @@ public class BaseRegEnumKeyRequest extends Request<BaseRegEnumKeyResponse> {
      */
     public BaseRegEnumKeyRequest(final ContextHandle hKey, final int index, final int nameLen, final int classLen) {
         super((short) 9);
+        this.hKey = hKey;
+        this.index = index;
+        this.nameLen = nameLen;
+        this.classLen = classLen;
+    }
+
+    @Override
+    public BaseRegEnumKeyResponse getResponseObject() {
+        return new BaseRegEnumKeyResponse();
+    }
+
+    @Override
+    public void marshal(final PacketOutput packetOut)
+        throws IOException {
         // Remote Registry Service, EnumKey
         //      Operation: EnumKey (9)
         //      [Response in frame: 11178]
@@ -231,16 +246,10 @@ public class BaseRegEnumKeyRequest extends Request<BaseRegEnumKeyResponse> {
         //      Pointer to Last Changed Time (NTTIME)
         //          Referent ID: 0x0002000c
         //          Last Changed Time: No time specified (0)
-        putBytes(hKey.getBytes());
-        putInt(index);
-        putStringBuffer(nameLen);
-        putStringBufferRef(classLen);
-        putLongRef(Long.valueOf(0));
-    }
-
-    @Override
-    protected BaseRegEnumKeyResponse parsePDUResponse(final ByteBuffer responseBuffer)
-        throws TransportException {
-        return new BaseRegEnumKeyResponse(responseBuffer);
+        packetOut.write(hKey.getBytes());
+        packetOut.writeInt(index);
+        packetOut.writeStringBuffer(nameLen);
+        packetOut.writeStringBufferRef(classLen);
+        packetOut.writeLongRef(Long.valueOf(0));
     }
 }

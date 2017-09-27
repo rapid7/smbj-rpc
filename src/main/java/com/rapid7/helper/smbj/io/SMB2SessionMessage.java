@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 import com.hierynomus.mserref.NtStatus;
 import com.hierynomus.mssmb2.SMB2Dialect;
 import com.hierynomus.mssmb2.SMB2Header;
@@ -22,10 +21,10 @@ public abstract class SMB2SessionMessage {
     private final long timeout;
 
     public SMB2SessionMessage(final Session session) {
-        this.timeout = session.getConnection().getConfig().getTransactTimeout();
-        this.dialect = session.getConnection().getNegotiatedProtocol().getDialect();
+        dialect = session.getConnection().getNegotiatedProtocol().getDialect();
         this.session = session;
-        this.sessionID = session.getSessionId();
+        sessionID = session.getSessionId();
+        timeout = session.getConnection().getConfig().getTransactTimeout();
     }
 
     public SMB2Dialect getDialect() {
@@ -41,7 +40,7 @@ public abstract class SMB2SessionMessage {
     }
 
     public <T extends SMB2Packet> Future<T> send(final SMB2Packet packet)
-            throws IOException {
+        throws IOException {
         try {
             return getSession().send(packet);
         } catch (final IOException exception) {
@@ -52,7 +51,8 @@ public abstract class SMB2SessionMessage {
         }
     }
 
-    public <T extends SMB2Packet> T read(final Future<T> future) throws IOException {
+    public <T extends SMB2Packet> T read(final Future<T> future)
+        throws IOException {
         try {
             return future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (final InterruptedException exception) {
@@ -63,17 +63,19 @@ public abstract class SMB2SessionMessage {
             final InterruptedByTimeoutException innerException = new InterruptedByTimeoutException();
             innerException.initCause(exception);
             throw innerException;
-        } catch (ExecutionException exception) {
+        } catch (final ExecutionException exception) {
             throw new IOException(exception);
         }
     }
 
-    public <T extends SMB2Packet> T sendAndRead(final SMB2Packet packet) throws IOException {
+    public <T extends SMB2Packet> T sendAndRead(final SMB2Packet packet)
+        throws IOException {
         final Future<T> future = send(packet);
         return read(future);
     }
 
-    public <T extends SMB2Packet> T sendAndRead(final SMB2Packet packet, final EnumSet<NtStatus> ok) throws IOException {
+    public <T extends SMB2Packet> T sendAndRead(final SMB2Packet packet, final EnumSet<NtStatus> ok)
+        throws IOException {
         final Future<T> future = send(packet);
         final T responsePacket = read(future);
         final SMB2Header responseHeader = responsePacket.getHeader();

@@ -18,13 +18,13 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import com.rapid7.client.dcerpc.messages.Request;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import java.io.IOException;
+import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
-import java.util.EnumSet;
+import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 
 /**
  * <b>3.1.5.15 BaseRegOpenKey (Opnum 15)</b><br>
@@ -44,8 +44,8 @@ import java.util.EnumSet;
  *
  * hKey: A handle to a key that MUST have been opened previously by using one of the open methods that are specified in
  * section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
- * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
- * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
+ * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+ * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
  * <br>
  * lpSubKey: A pointer to a RRP_UNICODE_STRING structure that MUST contain the name of a key to open. This parameter is
  * always relative to the key that is specified by the hKey parameter and is a pointer to a null-terminated string that
@@ -141,19 +141,6 @@ import java.util.EnumSet;
  * <b>Example:</b>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 164, Call: 9, Ctx: 0, [Resp: #11204]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Request (0)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000
- *     Frag Length: 164
- *     Auth Length: 0
- *     Call ID: 9
- *     Alloc hint: 164
- *     Context ID: 0
- *     Opnum: 15
- *     [Response in frame: 11204]
  * Remote Registry Service, OpenKey
  *     Operation: OpenKey (15)
  *     [Response in frame: 11204]
@@ -182,7 +169,85 @@ import java.util.EnumSet;
  *
  * @see <a href="https://msdn.microsoft.com/en-us/cc244939">3.1.5.15 BaseRegOpenKey (Opnum 15)</a>
  */
-public class BaseRegOpenKey extends Request<HandleResponse> {
+public class BaseRegOpenKey extends RequestCall<HandleResponse> {
+    /**
+     * A handle to a key that MUST have been opened previously by using one of the open methods:
+     * {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
+     * {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+     * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
+     */
+    private final ContextHandle hKey;
+    /** The name of a key to open. */
+    private final String subKey;
+    /**
+     * Registry key options. The user rights are represented as a bit field. In addition to the standard user rights, as
+     * specified in [MS-DTYP] section 2.4.3, the Windows Remote Registry Protocol SHOULD support the following user
+     * rights.
+     * <table border="1" summary="">
+     * <tr>
+     * <td>Value</td>
+     * <td>Meaning</td>
+     * </tr>
+     * <tr>
+     * <td>0x00000000</td>
+     * <td>This key is not volatile. The key and all its values MUST be persisted to the backing store and is preserved
+     * when the registry server loses context due to a system restart, reboot, or shut down process.</td>
+     * </tr>
+     * <tr>
+     * <td>0x00000001</td>
+     * <td>This key is volatile. The key with all its subkeys and values MUST NOT be preserved when the registry server
+     * loses context due to a system restart, reboot, or shut down process.</td>
+     * </tr>
+     * <tr>
+     * <td>0x00000002</td>
+     * <td>This key is a symbolic link to another key. The server stores the target of the symbolic link in an
+     * implementation-specific format.</td>
+     * </tr>
+     * </table>
+     */
+    private final int options;
+    /**
+     * A bit field that describes the requested security access for the handle to the key that is being opened.
+     * <table border="1" summary="">
+     * <tr>
+     * <td>Value</td>
+     * <td>Meaning</td>
+     * </tr>
+     * <tr>
+     * <td>KEY_QUERY_VALUE (0x00000001)</td>
+     * <td>When set, specifies access to query the values of a registry key.</td>
+     * </tr>
+     * <tr>
+     * <td>KEY_SET_VALUE (0x00000002)</td>
+     * <td>When set, specifies access to create, delete, or set a registry value.</td>
+     * </tr>
+     * <tr>
+     * <td>KEY_CREATE_SUB_KEY (0x00000004)</td>
+     * <td>When set, specifies access to create a subkey of a registry key. Subkeys directly underneath the
+     * HKEY_LOCAL_MACHINE and HKEY_USERS predefined keys cannot be created even if this bit is set.</td>
+     * </tr>
+     * <tr>
+     * <td>KEY_ENUMERATE_SUB_KEYS (0x00000008)</td>
+     * <td>When set, specifies access to enumerate the subkeys of a registry key.</td>
+     * </tr>
+     * <tr>
+     * <td>KEY_CREATE_LINK (0x00000020)</td>
+     * <td>When set, specifies access to create a symbolic link to another key.</td>
+     * </tr>
+     * <tr>
+     * <td>KEY_WOW64_64KEY (0x00000100)</td>
+     * <td>When set, indicates that a registry server on a 64-bit operating system operates on the 64-bit key
+     * namespace.</td>
+     * </tr>
+     * <tr>
+     * <td>KEY_WOW64_32KEY (0x00000200)</td>
+     * <td>When set, indicates that a registry server on a 64-bit operating system operates on the 32-bit key
+     * namespace.</td>
+     * </tr>
+     * </table>
+     */
+    private final EnumSet<AccessMask> accessMask;
+
     /**
      * The BaseRegOpenKey method is called by the client. In response, the server opens a specified key for access and
      * returns a handle to it.
@@ -266,19 +331,20 @@ public class BaseRegOpenKey extends Request<HandleResponse> {
         final int options,
         final EnumSet<AccessMask> accessMask) {
         super((short) 15);
-        // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 164, Call: 9, Ctx: 0, [Resp: #11204]
-        //      Version: 5
-        //      Version (minor): 0
-        //      Packet type: Request (0)
-        //      Packet Flags: 0x03
-        //      Data Representation: 10000000
-        //      Frag Length: 164
-        //      Auth Length: 0
-        //      Call ID: 9
-        //      Alloc hint: 164
-        //      Context ID: 0
-        //      Opnum: 15
-        //      [Response in frame: 11204]
+        this.hKey = hKey;
+        this.subKey = subKey;
+        this.options = options;
+        this.accessMask = accessMask;
+    }
+
+    @Override
+    public HandleResponse getResponseObject() {
+        return new HandleResponse();
+    }
+
+    @Override
+    public void marshal(final PacketOutput packetOut)
+        throws IOException {
         // Remote Registry Service, OpenKey
         //      Operation: OpenKey (15)
         //      [Response in frame: 11204]
@@ -303,15 +369,9 @@ public class BaseRegOpenKey extends Request<HandleResponse> {
         //          .... .... 0... .... .... .... .... .... = Access SACL: Not set
         //          Standard rights: 0x00000000
         //          WINREG specific rights: 0x00000000
-        putBytes(hKey.getBytes());
-        putString(subKey, true);
-        putInt(options);
-        putInt((int) EnumUtils.toLong(accessMask));
-    }
-
-    @Override
-    protected HandleResponse parsePDUResponse(final ByteBuffer responseBuffer)
-        throws TransportException {
-        return new HandleResponse(responseBuffer);
+        packetOut.write(hKey.getBytes());
+        packetOut.writeString(subKey, true);
+        packetOut.writeInt(options);
+        packetOut.writeInt((int) EnumUtils.toLong(accessMask));
     }
 }

@@ -31,7 +31,8 @@ public enum Interface {
 
     private Interface(final String name, final String uuid) {
         this.name = name;
-        this.repr = uuid;
+
+        repr = uuid;
 
         final String[] interfaceComponents = uuid.split(":", 2);
         final String[] uuidComponents = interfaceComponents[0].split("-", 5);

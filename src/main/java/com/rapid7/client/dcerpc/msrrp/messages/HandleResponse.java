@@ -18,30 +18,15 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import com.rapid7.client.dcerpc.messages.Response;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
 
 /**
  * <b>Example:</b>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Response, Fragment: Single, FragLen: 48, Call: 1, Ctx: 0, [Req: #11174]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Response (2)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000
- *     Frag Length: 48
- *     Auth Length: 0
- *     Call ID: 1
- *     Alloc hint: 24
- *     Context ID: 0
- *     Cancel count: 0
- *     Opnum: 2
- *     [Request in frame: 11174]
- *     [Time from request: 0.095388051 seconds]
  * Remote Registry Service, OpenHKLM
  *     Operation: OpenHKLM (2)
  *     [Request in frame: 11174]
@@ -53,40 +38,9 @@ import java.nio.ByteBuffer;
  *     Windows Error: WERR_OK (0x00000000)
  * </pre>
  */
-public class HandleResponse extends Response {
+public class HandleResponse extends RequestResponse {
     private final ContextHandle handle = new ContextHandle();
-    private final int returnValue;
-
-    public HandleResponse(final ByteBuffer packet)
-        throws TransportException {
-        super(packet);
-        // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Response, Fragment: Single, FragLen: 48, Call: 1, Ctx: 0, [Req: #11174]
-        //      Version: 5
-        //      Version (minor): 0
-        //      Packet type: Response (2)
-        //      Packet Flags: 0x03
-        //      Data Representation: 10000000
-        //      Frag Length: 48
-        //      Auth Length: 0
-        //      Call ID: 1
-        //      Alloc hint: 24
-        //      Context ID: 0
-        //      Cancel count: 0
-        //      Opnum: 2
-        //      [Request in frame: 11174]
-        //      [Time from request: 0.095388051 seconds]
-        // Remote Registry Service, OpenHKLM
-        //      Operation: OpenHKLM (2)
-        //      [Request in frame: 11174]
-        //      Pointer to Handle (policy_handle)
-        //          Policy Handle: OpenHKLM(<...>)
-        //              Handle: 0000000032daf234b77c86409d29efe60d326683
-        //              [Frame handle opened: 11176]
-        //              [Frame handle closed: 11424]
-        //      Windows Error: WERR_OK (0x00000000)
-        handle.setBytes(getBytes(handle.getLength()));
-        returnValue = getInt();
-    }
+    private int returnValue;
 
     /** @return The handle to a opened key. */
     public ContextHandle getHandle() {
@@ -99,5 +53,23 @@ public class HandleResponse extends Response {
      */
     public int getReturnValue() {
         return returnValue;
+    }
+
+    @Override
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException {
+        // Remote Registry Service, OpenHKLM
+        //      Operation: OpenHKLM (2)
+        //      [Request in frame: 11174]
+        //      Pointer to Handle (policy_handle)
+        //          Policy Handle: OpenHKLM(<...>)
+        //              Handle: 0000000032daf234b77c86409d29efe60d326683
+        //              [Frame handle opened: 11176]
+        //              [Frame handle closed: 11424]
+        //      Windows Error: WERR_OK (0x00000000)
+        final byte[] handleBytes = new byte[handle.getLength()];
+        packetIn.readFully(handleBytes);
+        handle.setBytes(handleBytes);
+        returnValue = packetIn.readInt();
     }
 }

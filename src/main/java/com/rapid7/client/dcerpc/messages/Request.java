@@ -18,10 +18,13 @@
  */
 package com.rapid7.client.dcerpc.messages;
 
-import java.util.EnumSet;
+import java.io.IOException;
+import java.util.Set;
+import com.rapid7.client.dcerpc.Header;
 import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.PFCFlag;
-import com.rapid7.client.dcerpc.RPCRequest;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 
 /**
  * The IDL declaration of the request PDU is as follows:<br>
@@ -74,7 +77,7 @@ import com.rapid7.client.dcerpc.RPCRequest;
  * <pre>
  * stub_data_length = frag_length - fixed_header_length - auth_length;
  * if (pfc_flags &amp; PFC_OBJECT_UUID) {
- *    stub_data_length = stub_data_length - sizeof(uuid_t);
+ *     stub_data_length = stub_data_length - sizeof(uuid_t);
  * }
  * </pre>
  *
@@ -82,24 +85,51 @@ import com.rapid7.client.dcerpc.RPCRequest;
  *
  * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
-public class Request<T extends Response> extends RPCRequest<T> {
-    public Request(final short op) {
-        super(PDUType.REQUEST, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
+public final class Request extends Header {
+    private short opNum;
+    private byte[] stub;
 
-        putInt(0); // --------- 16:04 Allocation hint
-        putShort((short) 0); // 20:02 Presentation context, i.e. data representation
-        putShort(op); // ------ 22:02 Operation # within the interface
+    public Request() {
+        setPDUType(PDUType.REQUEST);
     }
 
     /** @return The operation # within the interface. */
     public short getOpNum() {
-        return getShort(22);
+        return opNum;
+    }
+
+    /** @return The stub data. */
+    public byte[] getStub() {
+        return stub;
+    }
+
+    public void setOpNum(final short opNum) {
+        this.opNum = opNum;
+    }
+
+    public void setStub(final byte[] stub) {
+        this.stub = stub;
     }
 
     @Override
-    public byte[] marshal(final int callID) {
-        putInt(16, byteCount()); // 16:04 Allocation hint
+    public void marshal(final PacketOutput packetOut)
+        throws IOException {
+        if (null == getStub()) {
+            throw new IllegalStateException("Invalid stub: " + getStub());
+        }
+        final Set<PFCFlag> pfcFlags = getPFCFlags();
+        setFragLength((short) ((pfcFlags.contains(PFCFlag.OBJECT_UUID) ? 40 : 24) + stub.length));
+        super.marshal(packetOut);
+        final byte[] stub = getStub();
+        packetOut.writeInt(stub.length); // 16:04 Allocation hint
+        packetOut.writeShort(0); // 20:02 Presentation context, i.e. data representation
+        packetOut.writeShort(getOpNum()); // 22:02 Operation # within the interface
+        packetOut.write(stub);
+    }
 
-        return super.marshal(callID);
+    @Override
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException {
+        throw new UnsupportedOperationException("Unmarshal Not Implemented.");
     }
 }

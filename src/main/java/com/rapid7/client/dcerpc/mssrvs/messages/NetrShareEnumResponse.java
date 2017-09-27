@@ -18,33 +18,18 @@
  */
 package com.rapid7.client.dcerpc.mssrvs.messages;
 
-import com.rapid7.client.dcerpc.messages.Response;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import com.hierynomus.protocol.transport.TransportException;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.messages.RequestResponse;
 
 /**
  * <br>
  * Example:<br>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Response, Fragment: Single, FragLen: 284, Call: 1, Ctx: 0, [Req: #17]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Response (2)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000 (Order: Little-endian, Char: ASCII, Float: IEEE)
- *     Frag Length: 284
- *     Auth Length: 0
- *     Call ID: 1
- *     Alloc hint: 260
- *     Context ID: 0
- *     Cancel count: 0
- *     Opnum: 15
- *     [Request in frame: 17]
- *     [Time from request: 0.007913000 seconds]
- *     Complete stub data (260 bytes)
  * Server Service, NetShareEnumAll
  *     Operation: NetShareEnumAll (15)
  *     [Request in frame: 17]
@@ -108,89 +93,12 @@ import java.util.List;
  *     Windows Error: WERR_OK (0x00000000)
  * </pre>
  */
-public class NetrShareEnumResponse extends Response {
-    private final int level;
-    private final List<NetShareInfo0> shares = new LinkedList<>();
-    private final int shareCount;
-    private final Integer resumeHandle;
-    private final int returnValue;
-
-    public NetrShareEnumResponse(final ByteBuffer packet)
-        throws TransportException {
-        super(packet);
-        level = getInt();
-        getInt();
-
-        switch (level) {
-        case 1:
-            if (0 != getReferentID()) {
-                final int count = getInt();
-                if (0 != getReferentID()) {
-                    final List<Integer> nameRefs = new LinkedList<>();
-                    final List<Integer> types = new LinkedList<>();
-                    final List<Integer> commentRefs = new LinkedList<>();
-                    getInt(); // Maximum count
-                    for (int index = 0; index < count; index++) {
-                        nameRefs.add(getReferentID());
-                        types.add(getInt());
-                        commentRefs.add(getReferentID());
-                    }
-                    for (int index = 0; index < count; index++) {
-                        final String name = nameRefs.get(index) == 0 ? null : getString(true);
-                        final int type = types.get(index);
-                        final String comment = commentRefs.get(index) == 0 ? null : getString(true);
-                        shares.add(new NetShareInfo1(name, type, comment));
-                    }
-                }
-            }
-            break;
-        case 2:
-            if (0 != getReferentID()) {
-                final int count = getInt();
-                if (0 != getReferentID()) {
-                    final List<Integer> nameRefs = new LinkedList<>();
-                    final List<Integer> types = new LinkedList<>();
-                    final List<Integer> commentRefs = new LinkedList<>();
-                    final List<Integer> permissions = new LinkedList<>();
-                    final List<Integer> maximumUsers = new LinkedList<>();
-                    final List<Integer> currentUsers = new LinkedList<>();
-                    final List<Integer> pathRefs = new LinkedList<>();
-                    final List<Integer> passwordRefs = new LinkedList<>();
-                    getInt(); // Maximum count
-                    for (int index = 0; index < count; index++) {
-                        nameRefs.add(getReferentID());
-                        types.add(getInt());
-                        commentRefs.add(getReferentID());
-                        permissions.add(getInt());
-                        maximumUsers.add(getInt());
-                        currentUsers.add(getInt());
-                        pathRefs.add(getReferentID());
-                        passwordRefs.add(getReferentID());
-                    }
-                    for (int index = 0; index < count; index++) {
-                        final String name = nameRefs.get(index) == 0 ? null : getString(true);
-                        final int type = types.get(index);
-                        final String comment = commentRefs.get(index) == 0 ? null : getString(true);
-                        final int permission = permissions.get(index);
-                        final int maximumUser = maximumUsers.get(index);
-                        final int currentUser = currentUsers.get(index);
-                        final String path = pathRefs.get(index) == 0 ? null : getString(true);
-                        final String password = passwordRefs.get(index) == 0 ? null : getString(true);
-                        final NetShareInfo2 shareInfo = new NetShareInfo2(name, type, comment, permission, maximumUser,
-                            currentUser, path, password);
-                        shares.add(shareInfo);
-                    }
-                }
-            }
-            break;
-        default:
-            throw new TransportException("Unsupported share info container.");
-        }
-
-        shareCount = getInt();
-        resumeHandle = getIntRef();
-        returnValue = getInt();
-    }
+public class NetrShareEnumResponse extends RequestResponse {
+    private int level;
+    private List<NetShareInfo0> shares;
+    private int shareCount;
+    private Integer resumeHandle;
+    private int returnValue;
 
     public int getLevel() {
         return level;
@@ -210,5 +118,83 @@ public class NetrShareEnumResponse extends Response {
 
     public int getReturnValue() {
         return returnValue;
+    }
+
+    @Override
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException {
+        shares = new LinkedList<>();
+        level = packetIn.readInt();
+        packetIn.readInt();
+
+        switch (level) {
+        case 1:
+            if (0 != packetIn.readReferentID()) {
+                final int count = packetIn.readInt();
+                if (0 != packetIn.readReferentID()) {
+                    final List<Integer> nameRefs = new LinkedList<>();
+                    final List<Integer> types = new LinkedList<>();
+                    final List<Integer> commentRefs = new LinkedList<>();
+                    packetIn.readInt(); // Maximum count
+                    for (int index = 0; index < count; index++) {
+                        nameRefs.add(packetIn.readReferentID());
+                        types.add(packetIn.readInt());
+                        commentRefs.add(packetIn.readReferentID());
+                    }
+                    for (int index = 0; index < count; index++) {
+                        final String name = nameRefs.get(index) == 0 ? null : packetIn.readString(true);
+                        final int type = types.get(index);
+                        final String comment = commentRefs.get(index) == 0 ? null : packetIn.readString(true);
+                        shares.add(new NetShareInfo1(name, type, comment));
+                    }
+                }
+            }
+            break;
+        case 2:
+            if (0 != packetIn.readReferentID()) {
+                final int count = packetIn.readInt();
+                if (0 != packetIn.readReferentID()) {
+                    final List<Integer> nameRefs = new LinkedList<>();
+                    final List<Integer> types = new LinkedList<>();
+                    final List<Integer> commentRefs = new LinkedList<>();
+                    final List<Integer> permissions = new LinkedList<>();
+                    final List<Integer> maximumUsers = new LinkedList<>();
+                    final List<Integer> currentUsers = new LinkedList<>();
+                    final List<Integer> pathRefs = new LinkedList<>();
+                    final List<Integer> passwordRefs = new LinkedList<>();
+                    packetIn.readInt(); // Maximum count
+                    for (int index = 0; index < count; index++) {
+                        nameRefs.add(packetIn.readReferentID());
+                        types.add(packetIn.readInt());
+                        commentRefs.add(packetIn.readReferentID());
+                        permissions.add(packetIn.readInt());
+                        maximumUsers.add(packetIn.readInt());
+                        currentUsers.add(packetIn.readInt());
+                        pathRefs.add(packetIn.readReferentID());
+                        passwordRefs.add(packetIn.readReferentID());
+                    }
+                    for (int index = 0; index < count; index++) {
+                        final String name = nameRefs.get(index) == 0 ? null : packetIn.readString(true);
+                        final int type = types.get(index);
+                        final String comment = commentRefs.get(index) == 0 ? null : packetIn.readString(true);
+                        final int permission = permissions.get(index);
+                        final int maximumUser = maximumUsers.get(index);
+                        final int currentUser = currentUsers.get(index);
+                        final String path = pathRefs.get(index) == 0 ? null : packetIn.readString(true);
+                        final String password = passwordRefs.get(index) == 0 ? null : packetIn.readString(true);
+                        final NetShareInfo2 shareInfo = new NetShareInfo2(name, type, comment, permission, maximumUser,
+                            currentUser, path, password);
+                        shares.add(shareInfo);
+                    }
+                }
+            }
+            break;
+        default:
+            throw new TransportException("Unsupported share info container.");
+        }
+
+        shareCount = packetIn.readInt();
+        resumeHandle = packetIn.readIntRef();
+        returnValue = packetIn.readInt();
     }
 }

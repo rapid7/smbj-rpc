@@ -18,6 +18,7 @@
  */
 package com.rapid7.client.dcerpc.msrrp;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -35,7 +36,8 @@ public class RegistryValue {
     private final RegistryValueType type;
     private final byte[] data;
 
-    public RegistryValue(final String name, final RegistryValueType type, final byte[] data) {
+    public RegistryValue(final String name, final RegistryValueType type, final byte[] data)
+        throws IOException {
         if (name == null) {
             throw new IllegalArgumentException("Name is invalid: " + name);
         }
@@ -55,14 +57,14 @@ public class RegistryValue {
         case REG_DWORD:
         case REG_DWORD_BIG_ENDIAN:
             if (data.length != 4) {
-                throw new IllegalArgumentException(String.format("Data type %s is invalid with length %d: 0x%s,", type,
-                    data.length, Hex.toHexString(data).toUpperCase()));
+                throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length,
+                    Hex.toHexString(data).toUpperCase()));
             }
             break;
         case REG_QWORD:
             if (data.length != 8) {
-                throw new IllegalArgumentException(String.format("Data type %s is invalid with length %d: 0x%s,", type,
-                    data.length, Hex.toHexString(data).toUpperCase()));
+                throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length,
+                    Hex.toHexString(data).toUpperCase()));
             }
             break;
         case REG_EXPAND_SZ:
@@ -70,8 +72,8 @@ public class RegistryValue {
         case REG_SZ:
         case REG_MULTI_SZ:
             if ((data.length & 1) != 0) {
-                throw new IllegalArgumentException(String.format("Data type %s is invalid with length %d: 0x%s,", type,
-                    data.length, Hex.toHexString(data).toUpperCase()));
+                throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length,
+                    Hex.toHexString(data).toUpperCase()));
             }
         default:
         }

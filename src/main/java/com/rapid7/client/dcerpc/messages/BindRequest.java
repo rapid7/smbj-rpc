@@ -18,14 +18,14 @@
  */
 package com.rapid7.client.dcerpc.messages;
 
+import java.io.IOException;
+import java.util.EnumSet;
+import com.rapid7.client.dcerpc.Header;
 import com.rapid7.client.dcerpc.Interface;
 import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.PFCFlag;
-import com.rapid7.client.dcerpc.RPCRequest;
-import com.rapid7.client.dcerpc.RPCResponse;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
-import java.util.EnumSet;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 
 /**
  * The IDL declaration of the bind PDU is as follows:<br>
@@ -112,38 +112,52 @@ import java.util.EnumSet;
  *
  * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
-public class Bind extends RPCRequest<RPCResponse> {
-    public Bind(final Interface abstractSyntax, final Interface transferSyntax) {
-        super(PDUType.BIND, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
+public final class BindRequest extends Header {
+    private final int maxXmitFrag;
+    private final int maxRecvFrag;
+    private final Interface abstractSyntax;
+    private final Interface transferSyntax;
 
-        putShort((short) 4096); // ------------------- 16:02 max transmit frag size, bytes
-        putShort((short) 4096); // ------------------- 18:02 max receive frag size, bytes
-        putInt(0); // -------------------------------- 20:04 Incarnation of client-server assoc group
-        // ------------------------------------------- 24:<variable size> Presentation context list
-        putByte((byte) 1); // ------------------------ 24:01 Number of items
-        putByte((byte) 0); // ------------------------ 25:01 Alignment pad, m.b.z.
-        putShort((short) 0); // ---------------------- 26:02 Alignment pad, m.b.z.
-        // ------------------------------------------- 28:20 Presentation syntax
-        putShort((short) 0); // ---------------------- 28:02 Context ID
-        putByte((byte) 1); // ------------------------ 30:01 Number of item(s)
-        putByte((byte) 0); // ------------------------ 31:01 Alignment pad, m.b.z.
-        putBytes(abstractSyntax.getUUID()); // ------- 28:16 UUID
-        putShort(abstractSyntax.getMajorVersion()); // 44:02 Major version
-        putShort(abstractSyntax.getMinorVersion()); // 46:02 Minor version
-        putBytes(transferSyntax.getUUID()); // ------- 48:16 UUID
-        putShort(transferSyntax.getMajorVersion()); // 64:02 Major version
-        putShort(transferSyntax.getMinorVersion()); // 66:02 Minor version
+    public BindRequest(
+        final int maxXmitFrag,
+        final int maxRecvFrag,
+        final Interface abstractSyntax,
+        final Interface transferSyntax) {
+        setPDUType(PDUType.BIND);
+        setPFCFlags(EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
+        setFragLength((short) 72);
+        this.maxXmitFrag = maxXmitFrag;
+        this.maxRecvFrag = maxRecvFrag;
+        this.abstractSyntax = abstractSyntax;
+        this.transferSyntax = transferSyntax;
     }
 
     @Override
-    public RPCResponse parsePDUBindACK(final ByteBuffer responseBuffer)
-        throws TransportException {
-        return new BindACK(responseBuffer);
+    public void marshal(final PacketOutput packetOut)
+        throws IOException {
+        super.marshal(packetOut);
+        packetOut.writeShort(maxXmitFrag); // 16:02 max transmit fragsize, bytes
+        packetOut.writeShort(maxRecvFrag); // 18:02 max receive fragsize, bytes
+        packetOut.writeInt(0); // 20:04 Incarnation of client-server assoc group
+        // 24:<variable size> Presentation context list
+        packetOut.writeByte(1); // 24:01 Number of items
+        packetOut.writeByte(0); // 25:01 Alignment pad, m.b.z.
+        packetOut.writeShort(0); // 26:02 Alignment pad, m.b.z.
+        // 28:20 Presentation syntax
+        packetOut.writeShort(0); // 28:02 Context ID
+        packetOut.writeByte(1); // 30:01 Number of item(s)
+        packetOut.writeByte(0); // 31:01 Alignment pad, m.b.z.
+        packetOut.write(abstractSyntax.getUUID()); // 32:16 UUID
+        packetOut.writeShort(abstractSyntax.getMajorVersion()); // 48:02 Major version
+        packetOut.writeShort(abstractSyntax.getMinorVersion()); // 50:02 Minor version
+        packetOut.write(transferSyntax.getUUID()); // 52:16 UUID
+        packetOut.writeShort(transferSyntax.getMajorVersion()); // 68:02 Major version
+        packetOut.writeShort(transferSyntax.getMinorVersion()); // 70:02 Minor version
     }
 
     @Override
-    public RPCResponse parsePDUBindNAK(final ByteBuffer responseBuffer)
-        throws TransportException {
-        return new BindNAK(responseBuffer);
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException {
+        throw new UnsupportedOperationException("Unmarshal Not Implemented.");
     }
 }

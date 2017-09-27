@@ -18,31 +18,16 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import com.rapid7.client.dcerpc.messages.Response;
-import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
 
 /**
  * <b>Example:</b>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Response, Fragment: Single, FragLen: 136, Call: 10, Ctx: 0, [Req: #8871]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Response (2)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000
- *     Frag Length: 136
- *     Auth Length: 0
- *     Call ID: 10
- *     Alloc hint: 112
- *     Context ID: 0
- *     Cancel count: 0
- *     Opnum: 10
- *     [Request in frame: 8871]
- *     [Time from request: 0.092454264 seconds]
  * Remote Registry Service, EnumValue
  *     Operation: EnumValue (10)
  *     [Request in frame: 8871]
@@ -87,30 +72,71 @@ import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
  *     Windows Error: WERR_OK (0x00000000)
  * </pre>
  */
-public class BaseRegEnumValueResponse extends Response {
-    private final String name;
-    private final RegistryValueType type;
-    private final byte[] data;
-    private final int returnValue;
+public class BaseRegEnumValueResponse extends RequestResponse {
+    private String name;
+    private RegistryValueType type;
+    private byte[] data;
+    private int returnValue;
 
-    public BaseRegEnumValueResponse(final ByteBuffer packet)
-        throws TransportException {
-        super(packet);
-        // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Response, Fragment: Single, FragLen: 136, Call: 10, Ctx: 0, [Req: #11206]
-        //      Version: 5
-        //      Version (minor): 0
-        //      Packet type: Response (2)
-        //      Packet Flags: 0x03
-        //      Data Representation: 10000000
-        //      Frag Length: 136
-        //      Auth Length: 0
-        //      Call ID: 10
-        //      Alloc hint: 112
-        //      Context ID: 0
-        //      Cancel count: 0
-        //      Opnum: 10
-        //      [Request in frame: 11206]
-        //      [Time from request: 0.092563019 seconds]
+    /** @return The retrieved value name. */
+    public String getName() {
+        return name;
+    }
+
+    /** @return The {@link RegistryValueType} of the value. */
+    public RegistryValueType getType() {
+        return type;
+    }
+
+    /** @return The data of the value entry. */
+    public byte[] getData() {
+        return data;
+    }
+
+    /**
+     * @return The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code, as
+     *         specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common
+     *         error codes are listed in the following table.<br>
+     *         <br>
+     *         <table border="1" summary="">
+     *         <tr>
+     *         <td>ERROR_ACCESS_DENIED (0x00000005)</td>
+     *         <td>The caller does not have KEY_QUERY_VALUE access rights.</td>
+     *         </tr>
+     *         <tr>
+     *         <td>ERROR_OUTOFMEMORY (0x0000000E)</td>
+     *         <td>Not enough storage is available to complete this operation.</td>
+     *         </tr>
+     *         <tr>
+     *         <td>ERROR_INVALID_PARAMETER (0x00000057)</td>
+     *         <td>A parameter is incorrect.</td>
+     *         </tr>
+     *         <tr>
+     *         <td>ERROR_INSUFFICIENT_BUFFER (0x0000007A)</td>
+     *         <td>The data area passed to a system call is too small.</td>
+     *         </tr>
+     *         <tr>
+     *         <td>ERROR_MORE_DATA (0x000000EA)</td>
+     *         <td>More data is available.</td>
+     *         </tr>
+     *         <tr>
+     *         <td>ERROR_NO_MORE_ITEMS (0x00000103)</td>
+     *         <td>No more data is available.</td>
+     *         </tr>
+     *         <tr>
+     *         <td>ERROR_WRITE_PROTECT (0x00000013)</td>
+     *         <td>A read or write operation was attempted to a volume after it was dismounted. The server can no longer
+     *         service registry requests because server shutdown has been initiated.</td>
+     *         </tr>
+     *         </table>
+     */
+    public int getReturnValue() {
+        return returnValue;
+    }
+
+    @Override
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException {
         // Remote Registry Service, EnumValue
         //      Operation: EnumValue (10)
         //      [Request in frame: 11206]
@@ -171,14 +197,14 @@ public class BaseRegEnumValueResponse extends Response {
         //          Referent ID: 0x00020010
         //          Length: 22
         //      Windows Error: WERR_OK (0x00000000)
-        final String name = getStringBuf(true);
-        final int type = getIntRef();
-        final byte[] data = getByteArrayRef();
+        final String name = packetIn.readStringBuf(true);
+        final int type = packetIn.readIntRef();
+        final byte[] data = packetIn.readByteArrayRef();
 
-        getIntRef();
-        getIntRef();
+        packetIn.readIntRef();
+        packetIn.readIntRef();
 
-        returnValue = getInt();
+        returnValue = packetIn.readInt();
 
         if (ERROR_SUCCESS.is(returnValue)) {
             this.name = name;
@@ -189,61 +215,5 @@ public class BaseRegEnumValueResponse extends Response {
             this.type = null;
             this.data = null;
         }
-    }
-
-    /** @return The retrieved value name. */
-    public String getName() {
-        return name;
-    }
-
-    /** @return The {@link RegistryValueType} of the value. */
-    public RegistryValueType getType() {
-        return type;
-    }
-
-    /** @return The data of the value entry. */
-    public byte[] getData() {
-        return data;
-    }
-
-    /**
-     * @return The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code, as
-     *         specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common
-     *         error codes are listed in the following table.<br>
-     *         <br>
-     *         <table border="1" summary="">
-     *         <tr>
-     *         <td>ERROR_ACCESS_DENIED (0x00000005)</td>
-     *         <td>The caller does not have KEY_QUERY_VALUE access rights.</td>
-     *         </tr>
-     *         <tr>
-     *         <td>ERROR_OUTOFMEMORY (0x0000000E)</td>
-     *         <td>Not enough storage is available to complete this operation.</td>
-     *         </tr>
-     *         <tr>
-     *         <td>ERROR_INVALID_PARAMETER (0x00000057)</td>
-     *         <td>A parameter is incorrect.</td>
-     *         </tr>
-     *         <tr>
-     *         <td>ERROR_INSUFFICIENT_BUFFER (0x0000007A)</td>
-     *         <td>The data area passed to a system call is too small.</td>
-     *         </tr>
-     *         <tr>
-     *         <td>ERROR_MORE_DATA (0x000000EA)</td>
-     *         <td>More data is available.</td>
-     *         </tr>
-     *         <tr>
-     *         <td>ERROR_NO_MORE_ITEMS (0x00000103)</td>
-     *         <td>No more data is available.</td>
-     *         </tr>
-     *         <tr>
-     *         <td>ERROR_WRITE_PROTECT (0x00000013)</td>
-     *         <td>A read or write operation was attempted to a volume after it was dismounted. The server can no longer
-     *         service registry requests because server shutdown has been initiated.</td>
-     *         </tr>
-     *         </table>
-     */
-    public int getReturnValue() {
-        return returnValue;
     }
 }

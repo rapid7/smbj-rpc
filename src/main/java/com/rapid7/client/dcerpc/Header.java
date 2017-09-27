@@ -21,9 +21,15 @@ package com.rapid7.client.dcerpc;
 import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.toEnumSet;
 import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.toLong;
 import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.valueOf;
-import java.nio.ByteBuffer;
-import java.util.EnumSet;
-import com.hierynomus.protocol.transport.TransportException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Set;
+import org.bouncycastle.util.encoders.Hex;
+import com.rapid7.client.dcerpc.io.Packet;
+import com.rapid7.client.dcerpc.io.Hexify;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 
 /**
  * The common header fields, which appear in all PDU types, are as follows. The comment fields show the exact octet
@@ -43,107 +49,134 @@ import com.hierynomus.protocol.transport.TransportException;
  *
  * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
-public class Header extends Packet {
-    protected Header(final PDUType pduType, final EnumSet<PFCFlag> pfcFlags) {
-        super();
+public class Header implements Packet, Hexify {
+    private byte majorVersion = 5;
+    private byte minorVersion = 0;
+    private PDUType pduType;
+    private Set<PFCFlag> pfcFlags;
+    private byte[] ndr = { 0x10, 0x00, 0x00, 0x00 };
+    private short fragLength = 16;
+    private short authLength = 0;
+    private int callID = 0;
 
+    public byte getMajorVersion() {
+        return majorVersion;
+    }
+
+    public byte getMinorVersion() {
+        return minorVersion;
+    }
+
+    public PDUType getPDUType() {
+        return pduType;
+    }
+
+    public Set<PFCFlag> getPFCFlags() {
+        return pfcFlags;
+    }
+
+    public byte[] getNDR() {
+        return ndr;
+    }
+
+    public int getFragLength() {
+        return fragLength;
+    }
+
+    public int getAuthLength() {
+        return authLength;
+    }
+
+    public int getCallID() {
+        return callID;
+    }
+
+    public void setMajorVersion(final byte majorVersion) {
+        this.majorVersion = majorVersion;
+    }
+
+    public void setMinorVersion(final byte minorVersion) {
+        this.minorVersion = minorVersion;
+    }
+
+    public void setPDUType(final PDUType pduType) {
+        this.pduType = pduType;
+    }
+
+    public void setPFCFlags(final Set<PFCFlag> pfcFlags) {
+        this.pfcFlags = pfcFlags;
+    }
+
+    public void setNDR(final byte[] ndr) {
+        this.ndr = ndr;
+    }
+
+    public void setFragLength(final short fragLength) {
+        this.fragLength = fragLength;
+    }
+
+    public void setAuthLength(final short authLength) {
+        this.authLength = authLength;
+    }
+
+    public void setCallID(final int callID) {
+        this.callID = callID;
+    }
+
+    @Override
+    public void marshal(final PacketOutput packetOut)
+        throws IOException {
+        if (null == getPDUType()) {
+            throw new IllegalStateException("Invalid PDU type: " + getPDUType());
+        }
+        if (null == getPFCFlags()) {
+            throw new IllegalStateException("Invalid PFC flag(s): " + getPFCFlags());
+        }
+        packetOut.writeByte(getMajorVersion());
+        packetOut.writeByte(getMinorVersion());
+        packetOut.writeByte((byte) getPDUType().getValue());
+        packetOut.writeByte((byte) toLong(getPFCFlags()));
+        packetOut.write(getNDR());
+        packetOut.writeShort(getFragLength());
+        packetOut.writeShort(0);
+        packetOut.writeInt(getCallID());
+    }
+
+    @Override
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException {
+        setMajorVersion(packetIn.readByte());
+        setMinorVersion(packetIn.readByte());
+
+        if (5 != getMajorVersion() || 0 != getMinorVersion()) {
+            throw new IOException(
+                String.format("Version mismatch: %d.%d != 5.0", getMajorVersion(), getMinorVersion()));
+        }
+
+        final byte pduTypePrimitive = packetIn.readByte();
+        final PDUType pduType = valueOf(pduTypePrimitive, PDUType.class, null);
         if (pduType == null) {
-            throw new IllegalArgumentException("pduType invalid: " + pduType);
+            throw new IOException(String.format("PDU type invalid: %d", pduType));
         }
 
-        if (pfcFlags == null) {
-            throw new IllegalArgumentException("pfcFlags invalid: " + pfcFlags);
+        setPDUType(pduType);
+        setPFCFlags(toEnumSet(packetIn.readByte(), PFCFlag.class));
+
+        final byte[] ndr = new byte[4];
+
+        packetIn.readFully(ndr);
+
+        if (ndr[0] != 0x10) {
+            throw new IOException(String.format("Integer and Character representation mismatch: %d", ndr[0]));
         }
 
-        // The common header fields, which appear in all PDU types, are as follows.
-        putByte((byte) 5); // --------------------- 00:01 Major version
-        putByte((byte) 0); // --------------------- 01:01 Minor version
-        putByte((byte) pduType.getValue()); // ---- 02:01 PDU type
-        putByte((byte) toLong(pfcFlags)); // ------ 03:01 PFC flags
-        // ---------------------------------------- 04:04 NDR data representation format label
-        putByte((byte) 0x10); // ------------------ 04:01 Integer representation and Character representation
-        putByte((byte) 0); // --------------------- 05:01 Floating-Point representation
-        putShort((short) 0); // ------------------- 06:02 Reserved for Future Use
-        putShort((short) 0); // ------------------- 08:02 Total length of fragment
-        putShort((short) 0); // ------------------- 10:02 Length of auth_value
-        putInt(0); // ----------------------------- 12:04 Call identifier
-    }
-
-    protected Header(final ByteBuffer packet)
-        throws TransportException {
-        super(packet);
-
-        final byte majorVersion = getByte();
-        final byte minorVersion = getByte();
-        if (5 != majorVersion || 0 != minorVersion) {
-            throw new TransportException(String.format("Version mismatch: %d.%d != 5.0", majorVersion, minorVersion));
+        if (ndr[1] != 0) {
+            throw new IOException(String.format("Floating-Point representation mismatch: %d", ndr[1]));
         }
 
-        skipBytes(2);
-
-        final byte icRepr = getByte();
-        if (icRepr != 0x10) {
-            throw new TransportException(String.format("Integer and Character representation mismatch: %d", icRepr));
-        }
-
-        final byte fRepr = getByte();
-        if (fRepr != 0) {
-            throw new TransportException(String.format("Floating-Point representation mismatch: %d", icRepr));
-        }
-
-        skipBytes(2);
-
-        final short fragmentLength = getShort();
-        if (fragmentLength > packet.remaining()) {
-            throw new TransportException(
-                String.format("Packet incomplete: %d > %d", fragmentLength, packet.remaining()));
-        }
-
-        final short authLength = getShort();
-        if (fragmentLength + authLength > packet.remaining()) {
-            throw new TransportException(
-                String.format("Packet incomplete: %d + %d > %d", fragmentLength, authLength, packet.remaining()));
-        }
-
-        skipBytes(4);
-    }
-
-    protected byte getMajorVersion() {
-        return getByte(0);
-    }
-
-    protected byte getMinorVersion() {
-        return getByte(1);
-    }
-
-    protected PDUType getPDUType() {
-        return valueOf(getByte(2), PDUType.class, null);
-    }
-
-    protected EnumSet<PFCFlag> getPFCFlags() {
-        return toEnumSet(getByte(3), PFCFlag.class);
-    }
-
-    protected int getNDR() {
-        return getInt(4);
-    }
-
-    protected short getFragmentLength() {
-        return getShort(8);
-    }
-
-    protected short getAuthenticationVerifierLength() {
-        return getShort(10);
-    }
-
-    protected int getCallID() {
-        return getInt(12);
-    }
-
-    public byte[] marshal(final int callID) {
-        putShort(8, (short) byteCount()); // 08:02 Total length of fragment
-        putInt(12, callID); // 12:04 Call identifier
-
-        return super.serialize();
+        setNDR(ndr);
+        setFragLength(packetIn.readShort());
+        setAuthLength(packetIn.readShort());
+        setCallID(packetIn.readInt());
     }
 }

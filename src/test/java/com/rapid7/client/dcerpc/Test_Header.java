@@ -1,281 +1,228 @@
 package com.rapid7.client.dcerpc;
 
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.EnumSet;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static org.junit.Assert.assertEquals;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 
 public class Test_Header {
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void constructorNullPDUType() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("pduType invalid: null");
-
-        new Header(null, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-    }
-
-    @Test
-    public void constructorNullPFCFlags() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("pfcFlags invalid: null");
-
-        new Header(PDUType.ACK, null);
-    }
-
-    @Test
-    public void parsePacket()
-        throws TransportException {
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        new Header(testVectorBuffer);
-    }
-
-    @Test
-    public void parsePacketAndMarshal()
-        throws TransportException {
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        final Header header = new Header(testVectorBuffer);
-        final byte[] headerBytes = header.marshal(10);
-        final String headerHexStr = Hex.toHexString(headerBytes);
-
-        assertEquals("0500070310000000100000000a000000", headerHexStr);
-    }
-
-    @Test
-    public void parseMajorVersion()
-        throws TransportException {
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        final Header header = new Header(testVectorBuffer);
-
+    public void getMajorVersion()
+        throws IOException {
+        final Header header = unmarshalHeader(HEADER_HEX_STRING);
         assertEquals(5, header.getMajorVersion());
     }
 
     @Test
-    public void parseMinorVersion()
-        throws TransportException {
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        final Header header = new Header(testVectorBuffer);
-
+    public void getMinorVersion()
+        throws IOException {
+        final Header header = unmarshalHeader(HEADER_HEX_STRING);
         assertEquals(0, header.getMinorVersion());
     }
 
     @Test
-    public void parsePDUType()
-        throws TransportException {
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        final Header header = new Header(testVectorBuffer);
-
+    public void getPDUType()
+        throws IOException {
+        final Header header = unmarshalHeader(HEADER_HEX_STRING);
         assertEquals(PDUType.ACK, header.getPDUType());
     }
 
     @Test
-    public void parsePFCFlags()
-        throws TransportException {
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        final Header header = new Header(testVectorBuffer);
-
+    public void getPFCFlags()
+        throws IOException {
+        final Header header = unmarshalHeader(HEADER_HEX_STRING);
         assertEquals(EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT), header.getPFCFlags());
     }
 
     @Test
-    public void parseNDR()
-        throws TransportException {
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        final Header header = new Header(testVectorBuffer);
-
-        assertEquals(0x10, header.getNDR());
+    public void getNDR()
+        throws IOException {
+        final Header header = unmarshalHeader(HEADER_HEX_STRING);
+        assertArrayEquals(new byte[] { 0x10, 0x00, 0x00, 0x00 }, header.getNDR());
     }
 
     @Test
-    public void parseFragmentLength()
-        throws TransportException {
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        final Header header = new Header(testVectorBuffer);
-
-        assertEquals(testVectorBytes.length, header.getFragmentLength());
+    public void getFragLength()
+        throws IOException {
+        final Header header = unmarshalHeader(HEADER_HEX_STRING);
+        assertEquals(16, header.getFragLength());
     }
 
     @Test
-    public void parseAuthenticationVerifierLength()
-        throws TransportException {
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        final Header header = new Header(testVectorBuffer);
-
-        assertEquals(0, header.getAuthenticationVerifierLength());
+    public void getAuthLength()
+        throws IOException {
+        final Header header = unmarshalHeader(HEADER_HEX_STRING);
+        assertEquals(0, header.getAuthLength());
     }
 
     @Test
-    public void parseCallID()
-        throws TransportException {
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        final Header header = new Header(testVectorBuffer);
-
+    public void getCallID()
+        throws IOException {
+        final Header header = unmarshalHeader(HEADER_HEX_STRING);
         assertEquals(10, header.getCallID());
     }
 
     @Test
-    public void badMajorVersion()
-        throws TransportException {
-        thrown.expect(TransportException.class);
-        thrown.expectMessage("Version mismatch: 1.0 != 5.0");
-
-        final byte[] testVectorBytes = Hex.decode("0100070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        new Header(testVectorBuffer);
+    public void setMajorVersion()
+        throws IOException {
+        final Header header = new Header();
+        header.setMajorVersion((byte) 0);
+        assertEquals(0, header.getMajorVersion());
     }
 
     @Test
-    public void badMinorVersion()
-        throws TransportException {
-        thrown.expect(TransportException.class);
-        thrown.expectMessage("Version mismatch: 5.1 != 5.0");
-
-        final byte[] testVectorBytes = Hex.decode("0501070310000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        new Header(testVectorBuffer);
+    public void setMinorVersion()
+        throws IOException {
+        final Header header = new Header();
+        header.setMinorVersion((byte) 5);
+        assertEquals(5, header.getMinorVersion());
     }
 
     @Test
-    public void badICR()
-        throws TransportException {
-        thrown.expect(TransportException.class);
-        thrown.expectMessage("Integer and Character representation mismatch: 0");
-
-        final byte[] testVectorBytes = Hex.decode("0500070300000000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        new Header(testVectorBuffer);
+    public void setPDUType()
+        throws IOException {
+        final Header header = new Header();
+        header.setPDUType(PDUType.BIND);
+        assertEquals(PDUType.BIND, header.getPDUType());
     }
 
     @Test
-    public void badFPR()
-        throws TransportException {
-        thrown.expect(TransportException.class);
-        thrown.expectMessage("Floating-Point representation mismatch: 16");
-
-        final byte[] testVectorBytes = Hex.decode("0500070310100000100000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        new Header(testVectorBuffer);
+    public void setPFCFlags()
+        throws IOException {
+        final Header header = new Header();
+        header.setPFCFlags(EnumSet.of(PFCFlag.MAYBE));
+        assertEquals(EnumSet.of(PFCFlag.MAYBE), header.getPFCFlags());
     }
 
     @Test
-    public void badFragmentLength()
-        throws TransportException {
-        thrown.expect(TransportException.class);
-        thrown.expectMessage("Packet incomplete: 17 > 16");
-
-        final byte[] testVectorBytes = Hex.decode("0500070310000000110000000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        new Header(testVectorBuffer);
+    public void setNDR()
+        throws IOException {
+        final Header header = new Header();
+        header.setNDR(new byte[] { 0x00, 0x00, 0x00, 0x10 });
+        assertArrayEquals(new byte[] { 0x00, 0x00, 0x00, 0x10 }, header.getNDR());
     }
 
     @Test
-    public void badAuthLength()
-        throws TransportException {
-        thrown.expect(TransportException.class);
-        thrown.expectMessage("Packet incomplete: 16 + 1 > 16");
-
-        final byte[] testVectorBytes = Hex.decode("0500070310000000100001000a000000");
-        final ByteBuffer testVectorBuffer = ByteBuffer.wrap(testVectorBytes);
-        new Header(testVectorBuffer);
+    public void setFragLength()
+        throws IOException {
+        final Header header = new Header();
+        header.setFragLength((short) 32);
+        assertEquals(32, header.getFragLength());
     }
 
     @Test
-    public void getMajorVersion() {
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        assertEquals(5, header.getMajorVersion());
+    public void setAuthLength()
+        throws IOException {
+        final Header header = new Header();
+        header.setAuthLength((short) 16);
+        assertEquals(16, header.getAuthLength());
     }
 
     @Test
-    public void getMinorVersion() {
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        assertEquals(0, header.getMinorVersion());
-    }
-
-    @Test
-    public void getPDUType() {
-        for (final PDUType pduType : PDUType.values()) {
-            final Header header = new Header(pduType, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-            assertEquals(pduType, header.getPDUType());
-        }
-
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        assertEquals(PDUType.ACK, header.getPDUType());
-    }
-
-    @Test
-    public void getPFCFlags() {
-        for (final PFCFlag pfcFlags : PFCFlag.values()) {
-            final Header header = new Header(PDUType.ACK, EnumSet.of(pfcFlags));
-            assertEquals(EnumSet.of(pfcFlags), header.getPFCFlags());
-        }
-
-        final Header allOfHeader = new Header(PDUType.ACK, EnumSet.allOf(PFCFlag.class));
-        assertEquals(EnumSet.allOf(PFCFlag.class), allOfHeader.getPFCFlags());
-
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        assertEquals(EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT), header.getPFCFlags());
-    }
-
-    @Test
-    public void getNDR() {
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        assertEquals(0x10, header.getNDR());
-    }
-
-    @Test
-    public void getFragmentLength() {
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        assertEquals(0, header.getFragmentLength());
-    }
-
-    @Test
-    public void getFragmentLengthAfterMarshal() {
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        header.marshal(0);
-        assertEquals(16, header.getFragmentLength());
-    }
-
-    @Test
-    public void getAuthenticationVerifierLength() {
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        assertEquals(0, header.getAuthenticationVerifierLength());
-    }
-
-    @Test
-    public void getCallID() {
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        assertEquals(0, header.getCallID());
-    }
-
-    @Test
-    public void getCallIDAfterMarshal() {
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        header.marshal(20);
+    public void setCallID()
+        throws IOException {
+        final Header header = new Header();
+        header.setCallID(20);
         assertEquals(20, header.getCallID());
     }
 
     @Test
-    public void marshal() {
-        final Header header = new Header(PDUType.ACK, EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        final byte[] headerBytes = header.marshal(10);
-        final String headerHexStr = Hex.toHexString(headerBytes);
+    public void unmarshalMarshal()
+        throws IOException {
+        final Header header = unmarshalHeader(HEADER_HEX_STRING);
+        final ByteArrayOutputStream packetOutputStream = new ByteArrayOutputStream();
+        final PacketOutput packetOut = new PacketOutput(packetOutputStream);
 
-        assertEquals("0500070310000000100000000a000000", headerHexStr);
+        header.marshal(packetOut);
+
+        final byte[] packetOutputBytes = packetOutputStream.toByteArray();
+        final String packetOutputHexString = Hex.toHexString(packetOutputBytes);
+
+        assertEquals(HEADER_HEX_STRING, packetOutputHexString);
     }
+
+    @Test
+    public void unmarshal()
+        throws IOException {
+        final Header header = unmarshalHeader(HEADER_HEX_STRING);
+
+        assertEquals(5, header.getMajorVersion());
+        assertEquals(0, header.getMinorVersion());
+        assertEquals(PDUType.ACK, header.getPDUType());
+        assertEquals(EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT), header.getPFCFlags());
+        assertArrayEquals(new byte[] { 0x10, 0x00, 0x00, 0x00 }, header.getNDR());
+        assertEquals(16, header.getFragLength());
+        assertEquals(0, header.getAuthLength());
+        assertEquals(10, header.getCallID());
+    }
+
+    @Test
+    public void marshal()
+        throws IOException {
+        final Header header = new Header();
+        final ByteArrayOutputStream packetOutputStream = new ByteArrayOutputStream();
+        final PacketOutput packetOut = new PacketOutput(packetOutputStream);
+
+        header.setPDUType(PDUType.ACK);
+        header.setPFCFlags(EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
+        header.setCallID(10);
+        header.marshal(packetOut);
+
+        final byte[] packetOutputBytes = packetOutputStream.toByteArray();
+        final String packetOutputHexString = Hex.toHexString(packetOutputBytes);
+
+        assertEquals(HEADER_HEX_STRING, packetOutputHexString);
+    }
+
+    @Test
+    public void marshalNoPDUType()
+        throws IOException {
+        thrown.expect(IllegalStateException.class);
+        thrown.expectMessage("Invalid PDU type: null");
+
+        final Header header = new Header();
+        final ByteArrayOutputStream packetOutputStream = new ByteArrayOutputStream();
+        final PacketOutput packetOut = new PacketOutput(packetOutputStream);
+
+        header.marshal(packetOut);
+    }
+
+    @Test
+    public void marshalNoPFCFlags()
+        throws IOException {
+        thrown.expect(IllegalStateException.class);
+        thrown.expectMessage("Invalid PFC flag(s): null");
+
+        final Header header = new Header();
+        final ByteArrayOutputStream packetOutputStream = new ByteArrayOutputStream();
+        final PacketOutput packetOut = new PacketOutput(packetOutputStream);
+
+        header.setPDUType(PDUType.ACK);
+        header.marshal(packetOut);
+    }
+
+    private Header unmarshalHeader(final String hexString)
+        throws IOException {
+        final byte[] inputStreamBytes = Hex.decode(hexString);
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(inputStreamBytes);
+        final PacketInput packetIn = new PacketInput(inputStream);
+        final Header header = new Header();
+
+        header.unmarshal(packetIn);
+
+        return header;
+    }
+
+    private final static String HEADER_HEX_STRING = "0500070310000000100000000a000000";
 }

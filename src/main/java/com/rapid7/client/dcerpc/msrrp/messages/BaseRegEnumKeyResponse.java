@@ -18,31 +18,16 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import com.rapid7.client.dcerpc.messages.Response;
-import com.rapid7.client.dcerpc.objects.FileTime;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.objects.FileTime;
 
 /**
  * <b>Example:</b>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Response, Fragment: Single, FragLen: 112, Call: 2, Ctx: 0, [Req: #8851]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Response (2)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000
- *     Frag Length: 112
- *     Auth Length: 0
- *     Call ID: 2
- *     Alloc hint: 88
- *     Context ID: 0
- *     Cancel count: 0
- *     Opnum: 9
- *     [Request in frame: 8851]
- *     [Time from request: 0.092662007 seconds]
  * Remote Registry Service, EnumKey
  *     Operation: EnumKey (9)
  *     [Request in frame: 8851]
@@ -84,67 +69,10 @@ import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
  *     Windows Error: WERR_OK (0x00000000)
  * </pre>
  */
-public class BaseRegEnumKeyResponse extends Response {
-    private final String name;
-    private final FileTime lastWriteTime;
-    private final int returnValue;
-
-    public BaseRegEnumKeyResponse(final ByteBuffer packet)
-        throws TransportException {
-        super(packet);
-        // Remote Registry Service, EnumKey
-        //      Operation: EnumKey (9)
-        //      [Request in frame: 11177]
-        //      Pointer to Name (winreg_StringBuf)
-        //          Name
-        //              Length: 24
-        //              Size: 512
-        //              Pointer to Name (uint16)
-        //                  Referent ID: 0x00020000
-        //                  Max Count: 256
-        //                  Offset: 0
-        //                  Actual Count: 12
-        //                  Name: 66
-        //                  Name: 67
-        //                  Name: 68
-        //                  Name: 48
-        //                  Name: 48
-        //                  Name: 48
-        //                  Name: 48
-        //                  Name: 48
-        //                  Name: 48
-        //                  Name: 48
-        //                  Name: 48
-        //                  Name: 0
-        //      Pointer to Keyclass (winreg_StringBuf)
-        //          Referent ID: 0x00020004
-        //          Keyclass
-        //              Length: 2
-        //              Size: 65534
-        //              Pointer to Name (uint16)
-        //                  Referent ID: 0x00020008
-        //                  Max Count: 32767
-        //                  Offset: 0
-        //                  Actual Count: 1
-        //                  Name: 0
-        //      Pointer to Last Changed Time (NTTIME)
-        //          Referent ID: 0x0002000c
-        //          Last Changed Time: Jun 15, 2017 15:29:36.566813400 EDT
-        //      Windows Error: WERR_OK (0x00000000)
-        final String name = getStringBuf(true);
-        getStringBufRef(true);
-        final long lastWriteTime = getLongRef();
-
-        returnValue = getInt();
-
-        if (ERROR_SUCCESS.is(returnValue)) {
-            this.name = name;
-            this.lastWriteTime = new FileTime(lastWriteTime);
-        } else {
-            this.name = null;
-            this.lastWriteTime = null;
-        }
-    }
+public class BaseRegEnumKeyResponse extends RequestResponse {
+    private String name;
+    private FileTime lastWriteTime;
+    private int returnValue;
 
     /** @return The name of the retrieved key. */
     public String getName() {
@@ -195,5 +123,62 @@ public class BaseRegEnumKeyResponse extends Response {
      */
     public int getReturnValue() {
         return returnValue;
+    }
+
+    @Override
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException {
+        // Remote Registry Service, EnumKey
+        //      Operation: EnumKey (9)
+        //      [Request in frame: 11177]
+        //      Pointer to Name (winreg_StringBuf)
+        //          Name
+        //              Length: 24
+        //              Size: 512
+        //              Pointer to Name (uint16)
+        //                  Referent ID: 0x00020000
+        //                  Max Count: 256
+        //                  Offset: 0
+        //                  Actual Count: 12
+        //                  Name: 66
+        //                  Name: 67
+        //                  Name: 68
+        //                  Name: 48
+        //                  Name: 48
+        //                  Name: 48
+        //                  Name: 48
+        //                  Name: 48
+        //                  Name: 48
+        //                  Name: 48
+        //                  Name: 48
+        //                  Name: 0
+        //      Pointer to Keyclass (winreg_StringBuf)
+        //          Referent ID: 0x00020004
+        //          Keyclass
+        //              Length: 2
+        //              Size: 65534
+        //              Pointer to Name (uint16)
+        //                  Referent ID: 0x00020008
+        //                  Max Count: 32767
+        //                  Offset: 0
+        //                  Actual Count: 1
+        //                  Name: 0
+        //      Pointer to Last Changed Time (NTTIME)
+        //          Referent ID: 0x0002000c
+        //          Last Changed Time: Jun 15, 2017 15:29:36.566813400 EDT
+        //      Windows Error: WERR_OK (0x00000000)
+        final String name = packetIn.readStringBuf(true);
+        packetIn.readStringBufRef(true);
+        final long lastWriteTime = packetIn.readLongRef();
+
+        returnValue = packetIn.readInt();
+
+        if (ERROR_SUCCESS.is(returnValue)) {
+            this.name = name;
+            this.lastWriteTime = new FileTime(lastWriteTime);
+        } else {
+            this.name = null;
+            this.lastWriteTime = null;
+        }
     }
 }

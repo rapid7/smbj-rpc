@@ -16,14 +16,14 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc;
+package com.rapid7.client.dcerpc.io;
 
-import java.nio.ByteBuffer;
-import com.hierynomus.protocol.transport.TransportException;
+import java.io.IOException;
 
-public class RPCResponse extends Header {
-    protected RPCResponse(final ByteBuffer packet)
-        throws TransportException {
-        super(packet);
-    }
+public interface Packet {
+    public void marshal(final PacketOutput packetOut)
+        throws IOException;
+
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException;
 }

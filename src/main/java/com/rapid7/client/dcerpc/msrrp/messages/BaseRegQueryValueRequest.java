@@ -18,10 +18,10 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import com.rapid7.client.dcerpc.messages.Request;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
 
 /**
  * <b>3.1.5.17 BaseRegQueryValue (Opnum 17)</b> <br>
@@ -44,8 +44,8 @@ import java.nio.ByteBuffer;
  *
  * hKey: On input, a handle to a key that MUST have been opened previously by using one of the open methods that are
  * specified in section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
- * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
- * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
+ * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+ * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.<br>
  * <br>
  * lpValueName: On input, the client sets lpValueName to a pointer to a RRP_UNICODE_STRING structure that MUST contain
  * the name of the value, as specified in section 3.1.1. If the client sets lpValueName to NULL, the server MUST fail
@@ -148,19 +148,6 @@ import java.nio.ByteBuffer;
  * <b>Example:</b>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 136, Call: 36, Ctx: 0, [Resp: #11403]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Request (0)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000
- *     Frag Length: 136
- *     Auth Length: 0
- *     Call ID: 36
- *     Alloc hint: 136
- *     Context ID: 0
- *     Opnum: 17
- *     [Response in frame: 11403]
  * Remote Registry Service, QueryValue
  *     Operation: QueryValue (17)
  *     [Response in frame: 11403]
@@ -197,7 +184,19 @@ import java.nio.ByteBuffer;
  *
  * @see <a href="https://msdn.microsoft.com/en-us/cc244942">3.1.5.17 BaseRegQueryValue (Opnum 17)</a>
  */
-public class BaseRegQueryValueRequest extends Request<BaseRegQueryValueResponse> {
+public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueResponse> {
+    /**
+     * A handle to a key that MUST have been opened previously by using one of the open methods that are specified in
+     * section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
+     * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
+     * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
+     */
+    private final ContextHandle hKey;
+    /** The name of the value to be queried. */
+    private final String valueName;
+    /** The maximum number of bytes to accept for the value data. */
+    private final int dataLen;
+
     /**
      * The BaseRegQueryValue method is called by the client. In response, the server returns the data that is associated
      * with the named value of a specified registry open key. If a value name is not specified, the server returns the
@@ -206,25 +205,25 @@ public class BaseRegQueryValueRequest extends Request<BaseRegQueryValueResponse>
      * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods that are
      *        specified in section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
      *        {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
-     *        {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}
+     *        {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      * @param valueName The name of the value to be queried.
      * @param dataLen The maximum number of bytes to accept for the value data.
      */
     public BaseRegQueryValueRequest(final ContextHandle hKey, final String valueName, final int dataLen) {
         super((short) 17);
-        // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 136, Call: 36, Ctx: 0, [Resp: #11403]
-        //      Version: 5
-        //      Version (minor): 0
-        //      Packet type: Request (0)
-        //      Packet Flags: 0x03
-        //      Data Representation: 10000000
-        //      Frag Length: 136
-        //      Auth Length: 0
-        //      Call ID: 36
-        //      Alloc hint: 136
-        //      Context ID: 0
-        //      Opnum: 17
-        //      [Response in frame: 11403]
+        this.hKey = hKey;
+        this.valueName = valueName;
+        this.dataLen = dataLen;
+    }
+
+    @Override
+    public BaseRegQueryValueResponse getResponseObject() {
+        return new BaseRegQueryValueResponse();
+    }
+
+    @Override
+    public void marshal(final PacketOutput packetOut)
+        throws IOException {
         // Remote Registry Service, QueryValue
         //      Operation: QueryValue (17)
         //      [Response in frame: 11403]
@@ -257,17 +256,11 @@ public class BaseRegQueryValueRequest extends Request<BaseRegQueryValueResponse>
         //      Pointer to Data Length (uint32)
         //          Referent ID: 0x00020010
         //          Data Length: 0
-        putBytes(hKey.getBytes());
-        putString(valueName, true);
-        putIntRef(0);
-        putEmptyArrayRef(dataLen);
-        putIntRef(dataLen);
-        putIntRef(0);
-    }
-
-    @Override
-    protected BaseRegQueryValueResponse parsePDUResponse(final ByteBuffer responseBuffer)
-        throws TransportException {
-        return new BaseRegQueryValueResponse(responseBuffer);
+        packetOut.write(hKey.getBytes());
+        packetOut.writeString(valueName, true);
+        packetOut.writeIntRef(0);
+        packetOut.writeEmptyArrayRef(dataLen);
+        packetOut.writeIntRef(dataLen);
+        packetOut.writeIntRef(0);
     }
 }

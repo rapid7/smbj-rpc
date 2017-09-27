@@ -18,29 +18,14 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import com.rapid7.client.dcerpc.messages.Response;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.messages.RequestResponse;
 
 /**
  * <b>Example:</b>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Response, Fragment: Single, FragLen: 72, Call: 37, Ctx: 0, [Req: #11405]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Response (2)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000
- *     Frag Length: 72
- *     Auth Length: 0
- *     Call ID: 37
- *     Alloc hint: 48
- *     Context ID: 0
- *     Cancel count: 0
- *     Opnum: 16
- *     [Request in frame: 11405]
- *     [Time from request: 0.094128491 seconds]
  * Remote Registry Service, QueryInfoKey
  *     Operation: QueryInfoKey (16)
  *     [Request in frame: 11405]
@@ -68,72 +53,16 @@ import java.nio.ByteBuffer;
  *     Windows Error: WERR_OK (0x00000000)
  * </pre>
  */
-public class BaseRegQueryInfoKeyResponse extends Response {
-    private final int subKeys;
-    private final int maxSubKeyLen;
-    private final int maxClassLen;
-    private final int values;
-    private final int maxValueNameLen;
-    private final int maxValueLen;
-    private final int securityDescriptor;
-    private final long lastWriteTime;
-    private final int returnValue;
-
-    public BaseRegQueryInfoKeyResponse(final ByteBuffer packet)
-        throws TransportException {
-        super(packet);
-        // Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Response, Fragment: Single, FragLen: 72, Call: 37, Ctx: 0, [Req: #11405]
-        //      Version: 5
-        //      Version (minor): 0
-        //      Packet type: Response (2)
-        //      Packet Flags: 0x03
-        //      Data Representation: 10000000
-        //      Frag Length: 72
-        //      Auth Length: 0
-        //      Call ID: 37
-        //      Alloc hint: 48
-        //      Context ID: 0
-        //      Cancel count: 0
-        //      Opnum: 16
-        //      [Request in frame: 11405]
-        //      [Time from request: 0.094128491 seconds]
-        // Remote Registry Service, QueryInfoKey
-        //      Operation: QueryInfoKey (16)
-        //      [Request in frame: 11405]
-        //      Pointer to Classname (winreg_String)
-        //          Classname:
-        //              Name Len: 2
-        //              Name Size: 0
-        //              NULL Pointer: Classname
-        //      Pointer to Num Subkeys (uint32)
-        //          Num Subkeys: 6
-        //      Pointer to Max Subkeylen (uint32)
-        //          Max Subkeylen: 22
-        //      Pointer to Max Classlen (uint32)
-        //          Max Classlen: 0
-        //      Pointer to Num Values (uint32)
-        //          Num Values: 0
-        //      Pointer to Max Valnamelen (uint32)
-        //          Max Valnamelen: 0
-        //      Pointer to Max Valbufsize (uint32)
-        //          Max Valbufsize: 0
-        //      Pointer to Secdescsize (uint32)
-        //          Secdescsize: 164
-        //      Pointer to Last Changed Time (NTTIME)
-        //          Last Changed Time: Jun 21, 2017 12:50:30.686403000 EDT
-        //      Windows Error: WERR_OK (0x00000000)
-        getStringBuf(true);
-
-        subKeys = getInt();
-        maxSubKeyLen = getInt();
-        maxClassLen = getInt();
-        values = getInt();
-        maxValueNameLen = getInt();
-        maxValueLen = getInt();
-        securityDescriptor = getInt();
-        lastWriteTime = getLong();
-        returnValue = getInt();
-    }
+public class BaseRegQueryInfoKeyResponse extends RequestResponse {
+    private int subKeys;
+    private int maxSubKeyLen;
+    private int maxClassLen;
+    private int values;
+    private int maxValueNameLen;
+    private int maxValueLen;
+    private int securityDescriptor;
+    private long lastWriteTime;
+    private int returnValue;
 
     /** @return The count of the subkeys of the specified key. */
     public int getSubKeys() {
@@ -205,5 +134,46 @@ public class BaseRegQueryInfoKeyResponse extends Response {
      */
     public int getReturnValue() {
         return returnValue;
+    }
+
+    @Override
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException {
+        // Remote Registry Service, QueryInfoKey
+        //      Operation: QueryInfoKey (16)
+        //      [Request in frame: 11405]
+        //      Pointer to Classname (winreg_String)
+        //          Classname:
+        //              Name Len: 2
+        //              Name Size: 0
+        //              NULL Pointer: Classname
+        //      Pointer to Num Subkeys (uint32)
+        //          Num Subkeys: 6
+        //      Pointer to Max Subkeylen (uint32)
+        //          Max Subkeylen: 22
+        //      Pointer to Max Classlen (uint32)
+        //          Max Classlen: 0
+        //      Pointer to Num Values (uint32)
+        //          Num Values: 0
+        //      Pointer to Max Valnamelen (uint32)
+        //          Max Valnamelen: 0
+        //      Pointer to Max Valbufsize (uint32)
+        //          Max Valbufsize: 0
+        //      Pointer to Secdescsize (uint32)
+        //          Secdescsize: 164
+        //      Pointer to Last Changed Time (NTTIME)
+        //          Last Changed Time: Jun 21, 2017 12:50:30.686403000 EDT
+        //      Windows Error: WERR_OK (0x00000000)
+        packetIn.readStringBuf(true);
+
+        subKeys = packetIn.readInt();
+        maxSubKeyLen = packetIn.readInt();
+        maxClassLen = packetIn.readInt();
+        values = packetIn.readInt();
+        maxValueNameLen = packetIn.readInt();
+        maxValueLen = packetIn.readInt();
+        securityDescriptor = packetIn.readInt();
+        lastWriteTime = packetIn.readLong();
+        returnValue = packetIn.readInt();
     }
 }
