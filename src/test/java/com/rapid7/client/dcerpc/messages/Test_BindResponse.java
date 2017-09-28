@@ -21,11 +21,8 @@ package com.rapid7.client.dcerpc.messages;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.io.PacketInput;
 
 public class Test_BindResponse {
     @Test

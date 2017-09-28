@@ -19,12 +19,9 @@
 package com.rapid7.client.dcerpc.messages;
 
 import static org.junit.Assert.assertEquals;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.Interface;
-import com.rapid7.client.dcerpc.io.PacketOutput;
 
 public class Test_BindRequest {
     @Test

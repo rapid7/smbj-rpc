@@ -16,29 +16,26 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.lsarpc;
+package com.rapid7.client.dcerpc.mslsad;
 
+import static com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass.POLICY_AUDIT_EVENTS_INFORMATION;
+import java.io.IOException;
+import java.util.EnumSet;
+import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarOpenPolicy2Request;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.PolicyAuditEventsInformationResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.PolicyAuditEventsInfo;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
-import com.hierynomus.msdtyp.AccessMask;
-import java.io.IOException;
-import java.util.EnumSet;
-import static com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass.POLICY_AUDIT_EVENTS_INFORMATION;
 
 /**
- * This class implements a partial Local Security Authority service in according
- * with [MS-LSAD] and [MS-LSAT].
+ * This class implements a partial Local Security Authority service in according with [MS-LSAD] and [MS-LSAT].
  *
  * TODO: Add more functionalities.
  *
- * @see <a href=
- *      "https://msdn.microsoft.com/en-us/library/cc234225.aspx">[MS-LSAD]</a>
- * @see <a href=
- *      "https://msdn.microsoft.com/en-us/library/cc234420.aspx">[MS-LSAT]</a>
+ * @see <a href= "https://msdn.microsoft.com/en-us/library/cc234225.aspx">[MS-LSAD]</a>
+ * @see <a href= "https://msdn.microsoft.com/en-us/library/cc234420.aspx">[MS-LSAT]</a>
  */
 public class LocalSecurityAuthorityService {
 
@@ -46,13 +43,14 @@ public class LocalSecurityAuthorityService {
         this.transport = transport;
     }
 
-    public PolicyAuditEventsInfo getAuditPolicy() throws IOException {
-        final LsarOpenPolicy2Request openRequest = new LsarOpenPolicy2Request("",
-            EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final HandleResponse openResponse = transport.transact(openRequest);
-        final LsarQueryInformationPolicyRequest<PolicyAuditEventsInformationResponse> queryRequest = new LsarQueryInformationPolicyRequest<>(
-            openResponse.getHandle(), POLICY_AUDIT_EVENTS_INFORMATION);
-        final PolicyAuditEventsInformationResponse queryResponse = transport.transact(queryRequest);
+    public PolicyAuditEventsInfo getAuditPolicy()
+        throws IOException {
+        final LsarOpenPolicy2Request openRequest =
+            new LsarOpenPolicy2Request("", EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final HandleResponse openResponse = transport.call(openRequest);
+        final LsarQueryInformationPolicyRequest queryRequest =
+            new LsarQueryInformationPolicyRequest(openResponse.getHandle(), POLICY_AUDIT_EVENTS_INFORMATION);
+        final PolicyAuditEventsInformationResponse queryResponse = transport.call(queryRequest);
         return queryResponse.getPolicyAuditInformation();
     }
 

@@ -26,7 +26,7 @@ import org.bouncycastle.util.encoders.Hex;
 public interface Hexify extends Packet {
     public default String toHexString()
         throws IOException {
-        final ByteArrayOutputStream packetOutputStream = new ByteArrayOutputStream(); 
+        final ByteArrayOutputStream packetOutputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(packetOutputStream);
         marshal(packetOut);
         final byte[] packetOutBytes = packetOutputStream.toByteArray();

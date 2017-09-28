@@ -21,16 +21,13 @@ package com.rapid7.client.dcerpc.messages;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.EnumSet;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.PFCFlag;
-import com.rapid7.client.dcerpc.io.PacketOutput;
 
 public class Test_Request {
     @Rule

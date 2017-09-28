@@ -18,6 +18,10 @@
  */
 package com.rapid7.client.dcerpc.msrrp;
 
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_FILE_NOT_FOUND;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_INVALID_FUNCTION;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -42,10 +46,6 @@ import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_FILE_NOT_FOUND;
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_INVALID_FUNCTION;
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
 
 public class Test_RegistryService {
     @Rule

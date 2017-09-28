@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.transport;
 
 import java.io.IOException;
-import com.rapid7.client.dcerpc.io.Transport;
 import com.rapid7.helper.smbj.share.NamedPipe;
 
 public class SMBTransport extends RPCTransport {

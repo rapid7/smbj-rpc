@@ -18,13 +18,9 @@
  */
 package com.rapid7.client.dcerpc.messages;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.bouncycastle.util.encoders.Hex;
 import com.rapid7.client.dcerpc.io.Hexify;
 import com.rapid7.client.dcerpc.io.Packet;
-import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 
 public abstract class RequestResponse implements Packet, Hexify {

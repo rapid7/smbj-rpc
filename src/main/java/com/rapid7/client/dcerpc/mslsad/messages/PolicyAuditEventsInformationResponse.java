@@ -18,15 +18,15 @@
  */
 package com.rapid7.client.dcerpc.mslsad.messages;
 
+import static com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass.POLICY_AUDIT_EVENTS_INFORMATION;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.PolicyAuditEventsInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
-import static com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass.POLICY_AUDIT_EVENTS_INFORMATION;
 
 /**
- * The response class for LsarQueryInformationPolicyResponse policy formation
- * class POLICY_AUDIT_EVENTS_INFORMATION.
+ * The response class for LsarQueryInformationPolicyResponse policy formation class POLICY_AUDIT_EVENTS_INFORMATION.
  *
  * <pre>
     Local Security Authority, lsa_QueryInfoPolicy
@@ -36,7 +36,7 @@ import static com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass.POL
             Referent ID: 0x00020000
             lsa_PolicyInformation
                 Info
-                Audit Events 
+                Audit Events
                     Auditing Mode: 1
                     Pointer to Settings (lsa_PolicyAuditPolicy)
                         Referent ID: 0x00020004
@@ -54,38 +54,34 @@ import static com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass.POL
         NT Error: STATUS_SUCCESS (0x00000000)
  * </pre>
  */
-public class PolicyAuditEventsInformationResponse extends LsarQueryInformationPolicyResponse {
-
-    public PolicyAuditEventsInformationResponse(final ByteBuffer packet) throws TransportException {
-        super(packet);
-        getReferentID();
-        int info = getInt();
-        if (info != infoLevel.getInfoLevel())
-            throw new IllegalArgumentException("Unexpected information level");
-
-        final boolean auditMode = getInt() != 0;
-        getReferentID();
-        final int count1 = getInt();
-        final int count2 = getInt();
-        final int count = Math.min(count1, count2);
-        final int[] auditFlags = new int[count];
-        if (count != 0) {
-            for (int i = 0; i < count; i++) {
-                auditFlags[i] = getInt();
-            }
-        }
-        auditInfo = new PolicyAuditEventsInfo(auditMode, auditFlags, count);
-    }
+public class PolicyAuditEventsInformationResponse extends RequestResponse {
+    private final static PolicyInformationClass infoLevel = POLICY_AUDIT_EVENTS_INFORMATION;
+    private PolicyAuditEventsInfo auditInfo;
 
     public PolicyAuditEventsInfo getPolicyAuditInformation() {
         return auditInfo;
     }
 
     @Override
-    public PolicyInformationClass getInfoLevel() {
-        return POLICY_AUDIT_EVENTS_INFORMATION;
-    }
+    public void unmarshal(final PacketInput packetIn)
+        throws IOException {
+        packetIn.readReferentID();
+        final int info = packetIn.readInt();
+        if (info != infoLevel.getInfoLevel()) {
+            throw new IllegalArgumentException("Unexpected information level");
+        }
 
-    private final static PolicyInformationClass infoLevel = POLICY_AUDIT_EVENTS_INFORMATION;
-    private final PolicyAuditEventsInfo auditInfo;
+        final boolean auditMode = packetIn.readInt() != 0;
+        packetIn.readReferentID();
+        final int count1 = packetIn.readInt();
+        final int count2 = packetIn.readInt();
+        final int count = Math.min(count1, count2);
+        final int[] auditFlags = new int[count];
+        if (count != 0) {
+            for (int i = 0; i < count; i++) {
+                auditFlags[i] = packetIn.readInt();
+            }
+        }
+        auditInfo = new PolicyAuditEventsInfo(auditMode, auditFlags, count);
+    }
 }

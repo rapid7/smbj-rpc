@@ -22,7 +22,6 @@ import static com.rapid7.client.dcerpc.PDUType.BIND_ACK;
 import static com.rapid7.client.dcerpc.PDUType.BIND_NAK;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.Header;
-import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 

@@ -21,13 +21,10 @@ package com.rapid7.client.dcerpc;
 import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.toEnumSet;
 import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.toLong;
 import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.valueOf;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Set;
-import org.bouncycastle.util.encoders.Hex;
-import com.rapid7.client.dcerpc.io.Packet;
 import com.rapid7.client.dcerpc.io.Hexify;
+import com.rapid7.client.dcerpc.io.Packet;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 
