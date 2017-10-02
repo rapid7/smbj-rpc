@@ -111,7 +111,6 @@ public class PacketOutput extends PrimitiveOutput {
         if (string != null) {
             writeReferentID();
             writeString(string, maximumChars, currentChars, nullTerminate);
-            align();
         } else {
             writeNull();
         }
@@ -121,7 +120,6 @@ public class PacketOutput extends PrimitiveOutput {
         throws IOException {
         writeReferentID();
         writeString(string, nullTerminate);
-        align();
     }
 
     public void writeString(final String string, final boolean nullTerminate)
@@ -130,18 +128,14 @@ public class PacketOutput extends PrimitiveOutput {
         final int currentChars;
 
         if (string == null) {
-            maximumChars = 0;
-            currentChars = 0;
+            maximumChars = 1;
+            currentChars = 1;
         } else {
             maximumChars = string.length() + (nullTerminate ? 1 : 0);
             currentChars = string.length() + (nullTerminate ? 1 : 0);
         }
 
-        if (string != null) {
-            writeString(string, maximumChars, currentChars, nullTerminate);
-        } else {
-            writeNull();
-        }
+        writeString(string, maximumChars, currentChars, nullTerminate);
     }
 
     private void writeString(final String string, final int maximumChars, final int currentChars, final boolean nullTerminate)
@@ -149,10 +143,15 @@ public class PacketOutput extends PrimitiveOutput {
         writeInt(maximumChars); //max_is (max size)
         writeInt(0); //min_is (offset)
         writeInt(currentChars); //size_is (actual size)
-        writeChars(string);
+        if (string == null) {
+            writeShort(0);
+        } else {
+            writeChars(string);
+        }
         if (nullTerminate) {
             writeShort((short) 0);
         }
+        align();
     }
 
     public void writeStringBuffer(final int maximumChars)

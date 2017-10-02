@@ -47,6 +47,12 @@ public class NetrPathCanonicalizeRequest extends RequestCall<NetrPathCanonicaliz
     public void marshal(final PacketOutput stubOut)
         throws IOException
     {
+        stubOut.writeStringRef(serverName, true);
+        stubOut.writeString(pathName, true);
+        stubOut.writeInt(outBufLen);
+        stubOut.writeString(prefix, true);
+        stubOut.writeInt(pathType);
+        stubOut.writeInt(flags);
 
     }
 

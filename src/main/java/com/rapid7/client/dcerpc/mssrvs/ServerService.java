@@ -82,11 +82,11 @@ public class ServerService {
         return Collections.unmodifiableList(new ArrayList<>(shares));
     }
 
-    public String getCanonicalizedName(String pathName, String prefix)
+    public String getCanonicalizedName(String serverName, String pathName, String prefix, int outBufLength, int pathType, int flags)
         throws IOException
     {
         final NetrPathCanonicalizeRequest
-            request = new NetrPathCanonicalizeRequest("a", pathName, pathName.length(), prefix, 0, 0);
+            request = new NetrPathCanonicalizeRequest(serverName, pathName, outBufLength, prefix, pathType, flags);
         NetrPathCanonicalizeResponse response = transport.call(request);
         return response.getCanonicalizedPath();
     }
