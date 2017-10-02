@@ -68,6 +68,33 @@ public class PacketInput extends PrimitiveInput {
         return result;
     }
 
+    /*
+       Similar to readString, except all that is offered by the byte stream is the number of bytes
+       String itself is null terminated
+     */
+    public String readChars()
+            throws IOException {
+        final StringBuffer result;
+        int currentOffset = 0;
+        int lengthInBytes = readInt();
+        int lengthOfChars = lengthInBytes / 2;
+        result = new StringBuffer(lengthOfChars);
+
+        while (currentOffset++ < lengthOfChars){
+            final char currentChar = (char) readShort();
+            if (currentChar == 0) {
+                break;
+            }
+            result.append(currentChar);
+        }
+        while (currentOffset++ < lengthOfChars) {
+            readShort();
+        }
+        align();
+
+        return result.toString();
+    }
+
     public String readString(final boolean nullTerminated)
         throws IOException {
         final StringBuffer result;
