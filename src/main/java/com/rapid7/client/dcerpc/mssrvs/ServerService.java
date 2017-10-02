@@ -21,8 +21,8 @@ package com.rapid7.client.dcerpc.mssrvs;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetShareInfo0;
-import com.rapid7.client.dcerpc.mssrvs.messages.NetrPathCanonicalizeRequest;
-import com.rapid7.client.dcerpc.mssrvs.messages.NetrPathCanonicalizeResponse;
+import com.rapid7.client.dcerpc.mssrvs.messages.NetprPathCanonicalizeRequest;
+import com.rapid7.client.dcerpc.mssrvs.messages.NetprPathCanonicalizeResponse;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumRequest;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -85,9 +85,9 @@ public class ServerService {
     public String getCanonicalizedName(String serverName, String pathName, String prefix, int outBufLength, int pathType, int flags)
         throws IOException
     {
-        final NetrPathCanonicalizeRequest
-            request = new NetrPathCanonicalizeRequest(serverName, pathName, outBufLength, prefix, pathType, flags);
-        NetrPathCanonicalizeResponse response = transport.call(request);
+        final NetprPathCanonicalizeRequest
+            request = new NetprPathCanonicalizeRequest(serverName, pathName, outBufLength, prefix, pathType, flags);
+        NetprPathCanonicalizeResponse response = transport.call(request);
         return response.getCanonicalizedPath();
     }
 }

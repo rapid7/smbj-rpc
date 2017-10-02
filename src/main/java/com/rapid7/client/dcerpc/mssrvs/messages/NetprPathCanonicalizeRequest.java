@@ -23,7 +23,7 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssrvs.NetrOpCode;
 import java.io.IOException;
 
-public class NetrPathCanonicalizeRequest extends RequestCall<NetrPathCanonicalizeResponse>
+public class NetprPathCanonicalizeRequest extends RequestCall<NetprPathCanonicalizeResponse>
 {
     final String serverName;
     final String pathName;
@@ -34,7 +34,7 @@ public class NetrPathCanonicalizeRequest extends RequestCall<NetrPathCanonicaliz
 
     //private final static int MAX_BUFFER_SIZE = 64000;
 
-    public NetrPathCanonicalizeRequest(String serverName, String pathName, int outBufLen, String prefix, int pathType, int flags) {
+    public NetprPathCanonicalizeRequest(String serverName, String pathName, int outBufLen, String prefix, int pathType, int flags) {
         super(NetrOpCode.NetprPathCanonicalize.getOpCode());
         this.serverName = serverName;
         this.pathName = pathName;
@@ -57,7 +57,7 @@ public class NetrPathCanonicalizeRequest extends RequestCall<NetrPathCanonicaliz
     }
 
     @Override
-    public NetrPathCanonicalizeResponse getResponseObject() {
-        return new NetrPathCanonicalizeResponse();
+    public NetprPathCanonicalizeResponse getResponseObject() {
+        return new NetprPathCanonicalizeResponse();
     }
 }

@@ -24,7 +24,7 @@ import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssrvs.NetprPathType;
 import java.io.IOException;
 
-public class NetrPathCanonicalizeResponse extends RequestResponse
+public class NetprPathCanonicalizeResponse extends RequestResponse
 {
     private String canonicalizedPath;
     private int pathType;
