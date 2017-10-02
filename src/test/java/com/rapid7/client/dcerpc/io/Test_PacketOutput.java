@@ -86,7 +86,7 @@ public class Test_PacketOutput {
         throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
-        packetOut.writeString(null, true);
+        packetOut.writeStringBuffer(null, true);
         assertEquals("0000000000000000", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
 
@@ -95,7 +95,7 @@ public class Test_PacketOutput {
         throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
-        packetOut.writeString("?", true);
+        packetOut.writeStringBuffer("?", true);
         assertEquals("04000400000002000200000000000000020000003F000000",
             Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
@@ -105,7 +105,7 @@ public class Test_PacketOutput {
         throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
-        packetOut.writeStringRef(null, true);
+        packetOut.writeStringBufferRef(null, true);
         assertEquals("00000000", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
 
@@ -114,7 +114,7 @@ public class Test_PacketOutput {
         throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
-        packetOut.writeStringRef("?", true);
+        packetOut.writeStringBufferRef("?", true);
         assertEquals("0000020004000400040002000200000000000000020000003F000000",
             Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
