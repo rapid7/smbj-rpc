@@ -32,7 +32,7 @@ public class NetprPathCanonicalizeResponse extends RequestResponse
 
     public void unmarshal(final PacketInput packetIn)
         throws IOException {
-        canonicalizedPath = packetIn.readChars();
+        canonicalizedPath = readChars(packetIn);
         pathType = packetIn.readInt();
         returnValue = packetIn.readInt();
     }
@@ -47,5 +47,28 @@ public class NetprPathCanonicalizeResponse extends RequestResponse
 
     public SystemErrorCode getReturnValue() {
         return SystemErrorCode.getErrorCode(returnValue);
+    }
+
+    private String readChars(final PacketInput packetIn)
+            throws IOException {
+        final StringBuffer result;
+        int currentOffset = 0;
+        int lengthInBytes = packetIn.readInt();
+        int lengthOfChars = lengthInBytes / 2;
+        result = new StringBuffer(lengthOfChars);
+
+        while (currentOffset++ < lengthOfChars){
+            final char currentChar = (char) packetIn.readShort();
+            if (currentChar == 0) {
+                break;
+            }
+            result.append(currentChar);
+        }
+        while (currentOffset++ < lengthOfChars) {
+            packetIn.readShort();
+        }
+        packetIn.align();
+
+        return result.toString();
     }
 }
