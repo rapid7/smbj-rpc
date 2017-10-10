@@ -18,18 +18,30 @@
  */
 package com.rapid7.client.dcerpc.mslsad;
 
-import java.io.IOException;
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.msdtyp.SID;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
-import com.rapid7.client.dcerpc.mslsad.messages.*;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAccountDomInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAuditEventsInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyPrimaryDomInfo;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarClosePolicyRpcRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupAcctPrivsRpcRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupAcctPrivsRpcResponse;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesResponse;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcResponse;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarOpenPolicy2Request;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_ACCOUNT_DOM_INFO;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_AUDIT_EVENTS_INFO;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_PRIMARY_DOM_INFO;
+import com.rapid7.client.dcerpc.mslsad.objects.LookupNamesInfo;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
+import com.hierynomus.msdtyp.AccessMask;
+import com.hierynomus.msdtyp.SID;
+import java.io.IOException;
+import java.util.EnumSet;
 
 /**
  * This class implements a partial Local Security Authority service in according with [MS-LSAD] and [MS-LSAT].
@@ -38,6 +50,7 @@ import com.rapid7.client.dcerpc.transport.RPCTransport;
  * @see <a href= "https://msdn.microsoft.com/en-us/library/cc234420.aspx">[MS-LSAT]</a>
  */
 public class LocalSecurityAuthorityService {
+    private ContextHandle policyHandle;
 
     public LocalSecurityAuthorityService(final RPCTransport transport) {
         this.transport = transport;
@@ -97,6 +110,15 @@ public class LocalSecurityAuthorityService {
 
         LsarClosePolicyRpcRequest closeRequest = new LsarClosePolicyRpcRequest(handle);
         transport.call(closeRequest);
+    }
+
+    public LookupNamesInfo lookupName(ContextHandle policyHandle, String name)
+            throws IOException {
+        final String[] names = {name};
+        final LsarLookupNamesRequest lookupNamesRequest =
+                new LsarLookupNamesRequest(policyHandle, names);
+        final LsarLookupNamesResponse lsarLookupNamesResponse = transport.call(lookupNamesRequest);
+        return lsarLookupNamesResponse.getLookupNamesInfo();
     }
 
     private final RPCTransport transport;
