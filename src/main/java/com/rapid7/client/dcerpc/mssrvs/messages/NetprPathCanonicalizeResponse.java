@@ -28,7 +28,7 @@ import java.io.IOException;
  * Server Service, NetPathCanonicalize
  *   Operation: NetPathCanonicalize (31)
  *   Count: 200
- *   Path: C:\this\works 
+ *   Path: C:\this\works
  *   Path Type: ITYPE_PATH_ABSD (0x00002006)
  *   Windows Error: WERR_OK (0x00000000)
  *
