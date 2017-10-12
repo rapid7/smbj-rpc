@@ -161,8 +161,10 @@ public class NetprPathCanonicalizeRequest extends RequestCall<NetprPathCanonical
     public void marshal(final PacketOutput stubOut) throws IOException {
         stubOut.writeStringRef(serverName, true);
         stubOut.writeString(pathName, true);
+        stubOut.align(); // align WCHAR*
         stubOut.writeInt(outBufLen);
         stubOut.writeString(prefix, true);
+        stubOut.align(); // align WCHAR*
         stubOut.writeInt(pathType);
         stubOut.writeInt(flags);
 
