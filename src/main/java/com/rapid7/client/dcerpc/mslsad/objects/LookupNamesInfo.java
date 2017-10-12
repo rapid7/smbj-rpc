@@ -18,6 +18,9 @@
  */
 package com.rapid7.client.dcerpc.mslsad.objects;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The POLICY_AUDIT_EVENTS_INFO structure is used to set and query the system's auditing rules. The
  * LsaQueryInformationPolicy and LsaSetInformationPolicy functions use this structure when their InformationClass
@@ -36,6 +39,37 @@ package com.rapid7.client.dcerpc.mslsad.objects;
  *      structure</a>
  */
 public class LookupNamesInfo {
+    private List<LsaDomainInfo> domainList = new ArrayList<LsaDomainInfo>();
+    private List<LsaTranslatedSid> translatedSids  = new ArrayList<LsaTranslatedSid>();
+    private int count;
+
     public LookupNamesInfo() {
+    }
+
+    public void addDomain(final LsaDomainInfo domain){
+        domainList.add(domain);
+    }
+
+    public void addTranslatedSid(final LsaTranslatedSid sid){
+        translatedSids.add(sid);
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public List<LsaDomainInfo> getDomainList()
+    {
+        return domainList;
+    }
+
+    public List<LsaTranslatedSid> getTranslatedSids()
+    {
+        return translatedSids;
+    }
+
+    public int getCount()
+    {
+        return count;
     }
 }

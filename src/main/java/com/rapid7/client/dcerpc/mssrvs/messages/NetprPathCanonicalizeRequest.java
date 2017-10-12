@@ -164,8 +164,10 @@ public class NetprPathCanonicalizeRequest extends RequestCall<NetprPathCanonical
     {
         stubOut.writeStringRef(serverName, true);
         stubOut.writeString(pathName, true);
+        stubOut.align(); // align WCHAR*
         stubOut.writeInt(outBufLen);
         stubOut.writeString(prefix, true);
+        stubOut.align(); // align WCHAR*
         stubOut.writeInt(pathType);
         stubOut.writeInt(flags);
 
