@@ -25,7 +25,32 @@ import com.rapid7.client.dcerpc.mslsad.objects.LookupNamesInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LsaDomainInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LsaTranslatedSid;
 import java.io.IOException;
-import java.nio.ByteBuffer;
+
+/**
+ * Local Security Authority, lsa_LookupNames
+ *   Operation: lsa_LookupNames (14)
+ *   Pointer to Domains (lsa_RefDomainList)
+ *     Domains
+ *       Cound: 1
+ *       Pointer to Domains (lsa_DomainInfo)
+ *          Name (String)
+ *          Sid (dom_sid2)
+ *            Revision:
+ *            Authority:
+ *            Subauthorities:
+ *       Max Count: 32
+ *   Pointer to Sids (lsa_TransSidArray)
+ *     Sids
+ *       Count: 1
+ *       Pointer to Sids (lsa_TranslatedSid)
+ *         Sid Type: SID_NAME_USER (1)
+ *         Rid: 500
+ *         Sid Index: 0
+ *       Max Count: 1
+ *   Count: 1
+ *   Windows Error: WERR_OK (0x00000000)
+ *
+ */
 
 public class LsarLookupNamesResponse extends RequestResponse {
     private LookupNamesInfo lookupNamesInfo;
