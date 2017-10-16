@@ -18,31 +18,36 @@
  */
 
 /**
- Using MSDN Reference: https://msdn.microsoft.com/en-us/library/cc234455.aspx
+   Using MSDN Reference: https://msdn.microsoft.com/en-us/library/cc234452.aspx
  */
 package com.rapid7.client.dcerpc.mslsad.objects;
 
-public class LsaTranslatedSid
+import com.hierynomus.msdtyp.SID;
+
+public class LSADomainInfo
 {
-    private int use;
-    private int relativeId;
-    private int domainIndex;
+    private String name;
+    private SID SID;
 
-    public LsaTranslatedSid(int use, int relativeId, int domainIndex) {
-        this.use = use;
-        this.relativeId = relativeId;
-        this.domainIndex = domainIndex;
+    public LSADomainInfo() {}
+
+    public String getName()
+    {
+        return name;
     }
 
-    public int getUse() {
-        return use;
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
-    public int getRelativeId() {
-        return relativeId;
+    public SID getSID()
+    {
+        return SID;
     }
 
-    public int getDomainIndex() {
-        return domainIndex;
+    public void setSID(SID SID)
+    {
+        this.SID = SID;
     }
 }
