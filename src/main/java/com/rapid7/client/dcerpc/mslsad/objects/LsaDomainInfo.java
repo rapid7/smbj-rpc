@@ -22,10 +22,12 @@
  */
 package com.rapid7.client.dcerpc.mslsad.objects;
 
+import com.hierynomus.msdtyp.SID;
+
 public class LsaDomainInfo
 {
     private String name;
-    private DomainSid sid;
+    private SID sid;
 
     public LsaDomainInfo() {}
 
@@ -39,12 +41,12 @@ public class LsaDomainInfo
         this.name = name;
     }
 
-    public DomainSid getSid()
+    public SID getSid()
     {
         return sid;
     }
 
-    public void setSid(DomainSid sid)
+    public void setSid(SID sid)
     {
         this.sid = sid;
     }
