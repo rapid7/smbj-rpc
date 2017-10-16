@@ -43,8 +43,8 @@ public class Test_LookupNames {
         response.fromHexString(
             "00000200010000000400020020000000010000001a001c00080002000c0002000e000000000000000d0000005700310030002d0045004e0054002d005800360034002d005500000004000000010400000000000515000000a43cb4affe0503bd73de0f3501000000100002000100000001000000f4010000000000000100000000000000");
         final LookupNamesInfo lookupNamesInfo = response.getLookupNamesInfo();
-        assertEquals(lookupNamesInfo.getDomainList().get(0).getSid().toString(), "S-1-5-21-2947824804-3171091966-890232435");
-        assertEquals(lookupNamesInfo.getTranslatedSids().get(0).getRelativeId(), 500);
+        assertEquals(lookupNamesInfo.getDomainList().get(0).getSID().toString(), "S-1-5-21-2947824804-3171091966-890232435");
+        assertEquals(lookupNamesInfo.getTranslatedSIDs().get(0).getRelativeId(), 500);
     }
 
     @SuppressWarnings("unchecked")
