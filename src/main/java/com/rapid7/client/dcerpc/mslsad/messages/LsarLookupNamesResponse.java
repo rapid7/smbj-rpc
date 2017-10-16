@@ -21,9 +21,6 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.LookupNamesInfo;
-import com.rapid7.client.dcerpc.mslsad.objects.LsaDomainInfo;
-import com.rapid7.client.dcerpc.mslsad.objects.LsaTranslatedSid;
-import com.hierynomus.msdtyp.SID;
 import java.io.IOException;
 
 /**
@@ -60,82 +57,15 @@ public class LsarLookupNamesResponse extends RequestResponse {
     public void unmarshal(final PacketInput packetIn)
             throws IOException {
         lookupNamesInfo = new LookupNamesInfo();
-        readDomainList(packetIn);
-        readSIDs(packetIn);
-        lookupNamesInfo.setCount(packetIn.readInt()); //MappedCount
+        lookupNamesInfo.unmarshal(packetIn);
         returnValue = packetIn.readInt();
-
     }
 
     public LookupNamesInfo getLookupNamesInfo(){
         return lookupNamesInfo;
     }
 
-    private void readDomainList(final PacketInput packetIn)
-        throws IOException
-    {
-        packetIn.readReferentID(); //refId
-        int entries = packetIn.readInt();
-
-        for (int i = 0; i < entries; i++)
-        {
-            packetIn.readReferentID(); //referents for domains
-        }
-        packetIn.readInt(); //maxEntries
-
-        readDomains(packetIn);
+    public int getReturnValue() {
+        return returnValue;
     }
-
-    private void readDomains(final PacketInput packetIn)
-        throws IOException {
-        int maxCount = packetIn.readInt();
-        for (int i = 0; i < maxCount; i++){
-            readNameAndSid(packetIn);
-        }
-    }
-
-    private void readNameAndSid(final PacketInput packetIn)
-        throws IOException {
-        LsaDomainInfo domain = new LsaDomainInfo();
-        packetIn.readShort(); //length
-        packetIn.readShort(); //size
-        packetIn.readReferentID(); //name string referent
-        packetIn.readReferentID(); //sid referent
-        String name = packetIn.readString(true);
-        domain.setName(name);
-
-        packetIn.readInt(); //sidCount
-        byte revision = packetIn.readByte();
-        byte subAuthorityCount = packetIn.readByte();
-        byte[] identifierAuthority = packetIn.readBytes(6);
-        long[] subAuthorities = new long[subAuthorityCount];
-        for (int index = 0; index < subAuthorityCount; index ++ ){
-            subAuthorities[index] = packetIn.readInt();
-        }
-        SID sid = new SID(revision, identifierAuthority, subAuthorities);
-        domain.setSid(sid);
-        lookupNamesInfo.addDomain(domain);
-    }
-
-    private void readSIDs(final PacketInput packetIn)
-            throws IOException {
-        int entries = packetIn.readInt();
-        for (int count = 0; count < entries; count ++){
-            packetIn.readReferentID();
-        }
-        packetIn.readInt(); //max count
-        for (int count = 0; count < entries; count ++){
-            readSID(packetIn);
-        }
-    }
-
-    private void readSID(final PacketInput packetIn)
-        throws IOException {
-        int sidType = packetIn.readInt();
-        int relativeId = packetIn.readInt();
-        int domainIndex = packetIn.readInt();
-        LsaTranslatedSid translatedSid = new LsaTranslatedSid(sidType, relativeId, domainIndex);
-        lookupNamesInfo.addTranslatedSid(translatedSid);
-    }
-
 }
