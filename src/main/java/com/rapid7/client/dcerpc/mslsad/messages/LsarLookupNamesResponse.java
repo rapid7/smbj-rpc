@@ -20,10 +20,10 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.mslsad.objects.DomainSid;
 import com.rapid7.client.dcerpc.mslsad.objects.LookupNamesInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LsaDomainInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LsaTranslatedSid;
+import com.hierynomus.msdtyp.SID;
 import java.io.IOException;
 
 /**
@@ -108,11 +108,11 @@ public class LsarLookupNamesResponse extends RequestResponse {
         byte revision = packetIn.readByte();
         byte subAuthorityCount = packetIn.readByte();
         byte[] identifierAuthority = packetIn.readBytes(6);
-        int[] subAuthorities = new int[subAuthorityCount];
+        long[] subAuthorities = new long[subAuthorityCount];
         for (int index = 0; index < subAuthorityCount; index ++ ){
             subAuthorities[index] = packetIn.readInt();
         }
-        DomainSid sid = new DomainSid(revision, identifierAuthority, subAuthorities);
+        SID sid = new SID(revision, identifierAuthority, subAuthorities);
         domain.setSid(sid);
         lookupNamesInfo.addDomain(domain);
     }
