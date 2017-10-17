@@ -22,11 +22,15 @@ import static com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass.POL
 import java.io.IOException;
 import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarOpenPolicy2Request;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.PolicyAuditEventsInformationResponse;
+import com.rapid7.client.dcerpc.mslsad.objects.LookupNamesInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.PolicyAuditEventsInfo;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
+import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 /**
@@ -38,20 +42,36 @@ import com.rapid7.client.dcerpc.transport.RPCTransport;
  * @see <a href= "https://msdn.microsoft.com/en-us/library/cc234420.aspx">[MS-LSAT]</a>
  */
 public class LocalSecurityAuthorityService {
+    private ContextHandle policyHandle;
 
     public LocalSecurityAuthorityService(final RPCTransport transport) {
         this.transport = transport;
     }
 
+    private void getPolicyHandle()
+            throws IOException {
+        final LsarOpenPolicy2Request openRequest =
+                new LsarOpenPolicy2Request("", EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final HandleResponse openResponse = transport.call(openRequest);
+        policyHandle = openResponse.getHandle();
+    }
     public PolicyAuditEventsInfo getAuditPolicy()
         throws IOException {
-        final LsarOpenPolicy2Request openRequest =
-            new LsarOpenPolicy2Request("", EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final HandleResponse openResponse = transport.call(openRequest);
+        if (policyHandle == null) getPolicyHandle();
         final LsarQueryInformationPolicyRequest queryRequest =
-            new LsarQueryInformationPolicyRequest(openResponse.getHandle(), POLICY_AUDIT_EVENTS_INFORMATION);
+            new LsarQueryInformationPolicyRequest(policyHandle, POLICY_AUDIT_EVENTS_INFORMATION);
         final PolicyAuditEventsInformationResponse queryResponse = transport.call(queryRequest);
         return queryResponse.getPolicyAuditInformation();
+    }
+
+    public LookupNamesInfo lookupName(String name)
+            throws IOException {
+        if (policyHandle == null) getPolicyHandle();
+        final String[] names = {name};
+        final LsarLookupNamesRequest lookupNamesRequest =
+                new LsarLookupNamesRequest(policyHandle, names);
+        final LsarLookupNamesResponse lsarLookupNamesResponse = transport.call(lookupNamesRequest);
+        return lsarLookupNamesResponse.getLookupNamesInfo();
     }
 
     private final RPCTransport transport;
