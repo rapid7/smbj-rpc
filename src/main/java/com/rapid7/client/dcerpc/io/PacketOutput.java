@@ -90,8 +90,6 @@ public class PacketOutput extends PrimitiveOutput {
         throws IOException {
         final int maximumBytes;
         final int currentBytes;
-        final int maximumChars;
-        final int currentChars;
 
         if (string == null) {
             maximumBytes = 0;
