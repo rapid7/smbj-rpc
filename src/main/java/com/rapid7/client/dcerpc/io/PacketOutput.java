@@ -114,12 +114,8 @@ public class PacketOutput extends PrimitiveOutput {
 
     public void writeStringRef(final String string, final boolean nullTerminate)
         throws IOException {
-        if (string != null) {
-            writeReferentID();
-            writeString(string, nullTerminate);
-        } else {
-            writeNull();
-        }
+        writeReferentID();
+        writeString(string, nullTerminate);
     }
 
     public void writeString(final String string, final boolean nullTerminate)
