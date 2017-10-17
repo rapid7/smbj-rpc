@@ -21,6 +21,7 @@ package com.rapid7.client.dcerpc.mssrvs.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.mssrvs.NetrOpCode;
 
 /**
  * <b>3.1.4.8 NetrShareEnum (Opnum 15)</b><br>
@@ -263,7 +264,7 @@ public class NetrShareEnumRequest extends RequestCall<NetrShareEnumResponse> {
      *        subsequent calls to this method to continue with the enumeration in ShareList.
      */
     public NetrShareEnumRequest(final int level, final Integer resumeHandle) {
-        super((short) 15);
+        super(NetrOpCode.NetrShareEnum.getOpCode());
         this.level = level;
         this.resumeHandle = resumeHandle;
     }

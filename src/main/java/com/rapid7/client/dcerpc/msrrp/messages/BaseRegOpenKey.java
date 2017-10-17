@@ -370,7 +370,7 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
         //          Standard rights: 0x00000000
         //          WINREG specific rights: 0x00000000
         packetOut.write(hKey.getBytes());
-        packetOut.writeString(subKey, true);
+        packetOut.writeStringBuffer(subKey, true);
         packetOut.writeInt(options);
         packetOut.writeInt((int) EnumUtils.toLong(accessMask));
     }

@@ -28,6 +28,8 @@ import com.hierynomus.protocol.transport.TransportException;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetShareInfo0;
+import com.rapid7.client.dcerpc.mssrvs.messages.NetprPathCanonicalizeRequest;
+import com.rapid7.client.dcerpc.mssrvs.messages.NetprPathCanonicalizeResponse;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumRequest;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -78,5 +80,14 @@ public class ServerService {
             }
         }
         return Collections.unmodifiableList(new ArrayList<>(shares));
+    }
+
+    public String getCanonicalizedName(String serverName, String pathName, String prefix, int outBufLength, int pathType, int flags)
+        throws IOException
+    {
+        final NetprPathCanonicalizeRequest
+            request = new NetprPathCanonicalizeRequest(serverName, pathName, outBufLength, prefix, pathType, flags);
+        NetprPathCanonicalizeResponse response = transport.call(request);
+        return response.getCanonicalizedPath();
     }
 }

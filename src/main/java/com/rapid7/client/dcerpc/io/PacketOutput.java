@@ -76,7 +76,17 @@ public class PacketOutput extends PrimitiveOutput {
         align();
     }
 
-    public void writeString(final String string, final boolean nullTerminate)
+    public void writeStringBufferRef(final String string, final boolean nullTerminate)
+        throws IOException {
+        if (string != null) {
+            writeReferentID();
+            writeStringBuffer(string, nullTerminate);
+        } else {
+            writeNull();
+        }
+    }
+
+    public void writeStringBuffer(final String string, final boolean nullTerminate)
         throws IOException {
         final int maximumBytes;
         final int currentBytes;
@@ -86,13 +96,9 @@ public class PacketOutput extends PrimitiveOutput {
         if (string == null) {
             maximumBytes = 0;
             currentBytes = 0;
-            maximumChars = 0;
-            currentChars = 0;
         } else {
             maximumBytes = 2 * string.length() + (nullTerminate ? 2 : 0);
             currentBytes = 2 * string.length() + (nullTerminate ? 2 : 0);
-            maximumChars = string.length() + (nullTerminate ? 1 : 0);
-            currentChars = string.length() + (nullTerminate ? 1 : 0);
         }
 
         writeShort((short) currentBytes);
@@ -100,16 +106,7 @@ public class PacketOutput extends PrimitiveOutput {
 
         if (string != null) {
             writeReferentID();
-            writeInt(maximumChars);
-            writeInt(0);
-            writeInt(currentChars);
-            writeChars(string);
-
-            if (nullTerminate) {
-                writeShort((short) 0);
-            }
-
-            align();
+            writeString(string, nullTerminate);
         } else {
             writeNull();
         }
@@ -117,12 +114,27 @@ public class PacketOutput extends PrimitiveOutput {
 
     public void writeStringRef(final String string, final boolean nullTerminate)
         throws IOException {
-        if (string != null) {
-            writeReferentID();
-            writeString(string, nullTerminate);
-        } else {
-            writeNull();
+        writeReferentID();
+        writeString(string, nullTerminate);
+    }
+
+    public void writeString(final String string, final boolean nullTerminate)
+        throws IOException {
+        final int maximumChars;
+        final int currentChars;
+
+        maximumChars = string.length() + (nullTerminate ? 1 : 0);
+        currentChars = string.length() + (nullTerminate ? 1 : 0);
+
+        writeInt(maximumChars); //max_is (max size)
+        writeInt(0); //min_is (offset)
+        writeInt(currentChars); //size_is (actual size)
+
+        writeChars(string);
+        if (nullTerminate) {
+            writeShort((short) 0);
         }
+        align();
     }
 
     public void writeStringBuffer(final int maximumChars)

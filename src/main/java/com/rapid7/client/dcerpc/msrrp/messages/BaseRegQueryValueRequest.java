@@ -257,7 +257,7 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
         //          Referent ID: 0x00020010
         //          Data Length: 0
         packetOut.write(hKey.getBytes());
-        packetOut.writeString(valueName, true);
+        packetOut.writeStringBuffer(valueName, true);
         packetOut.writeIntRef(0);
         packetOut.writeEmptyArrayRef(dataLen);
         packetOut.writeIntRef(dataLen);
