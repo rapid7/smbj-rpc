@@ -68,6 +68,19 @@ public class PacketInput extends PrimitiveInput {
         return result;
     }
 
+    public byte[] readRawBytes(int length)
+	throws IOException {
+	byte[] bytes = new byte[length];
+	readRawBytes(bytes);
+
+	return bytes;
+    }
+
+    public void readRawBytes(byte[] buf)
+	throws IOException {
+	readFully(buf, 0, buf.length);
+    }
+
     public String readString(final boolean nullTerminated)
         throws IOException {
         final StringBuffer result;

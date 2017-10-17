@@ -20,13 +20,17 @@ package com.rapid7.client.dcerpc.mslsad;
 
 import static com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass.POLICY_AUDIT_EVENTS_INFORMATION;
 import java.io.IOException;
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-import com.rapid7.client.dcerpc.mslsad.messages.LsarOpenPolicy2Request;
+import com.hierynomus.msdtyp.SID;
+
+import com.rapid7.client.dcerpc.mslsad.messages.LsarClosePolicyRpcRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupAcctPrivsRpcRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupAcctPrivsRpcResponse;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.PolicyAuditEventsInformationResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.PolicyAuditEventsInfo;
-import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
+import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 /**
@@ -40,19 +44,48 @@ import com.rapid7.client.dcerpc.transport.RPCTransport;
 public class LocalSecurityAuthorityService {
 
     public LocalSecurityAuthorityService(final RPCTransport transport) {
-        this.transport = transport;
+	this.transport = transport;
     }
 
-    public PolicyAuditEventsInfo getAuditPolicy()
-        throws IOException {
-        final LsarOpenPolicy2Request openRequest =
-            new LsarOpenPolicy2Request("", EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final HandleResponse openResponse = transport.call(openRequest);
-        final LsarQueryInformationPolicyRequest queryRequest =
-            new LsarQueryInformationPolicyRequest(openResponse.getHandle(), POLICY_AUDIT_EVENTS_INFORMATION);
-        final PolicyAuditEventsInformationResponse queryResponse = transport.call(queryRequest);
-        return queryResponse.getPolicyAuditInformation();
+    public void checkHandle(ContextHandle handle) throws IOException {
+	if (handle == null) {
+            throw new IllegalArgumentException("ContextHandle is invalid: " + handle);
+        }
+    }
+
+    public PolicyAuditEventsInfo getAuditPolicy(ContextHandle handle) throws IOException {
+	checkHandle(handle);
+
+	final LsarQueryInformationPolicyRequest queryRequest = new LsarQueryInformationPolicyRequest(handle,
+		POLICY_AUDIT_EVENTS_INFORMATION);
+	final PolicyAuditEventsInformationResponse queryResponse = transport.call(queryRequest);
+	return queryResponse.getPolicyAuditInformation();
+    }
+
+    public String[] getLookupAcctPrivs(ContextHandle handle, String sid) throws IOException {
+	checkHandle(handle);
+
+	final LsarLookupAcctPrivsRpcRequest queryRequest = new LsarLookupAcctPrivsRpcRequest(handle, sid);
+	final LsarLookupAcctPrivsRpcResponse queryResponse = transport.call(queryRequest);
+	return queryResponse.getPrivNames();
+    }
+
+    public SID[] enumerateAccountsWithPrivilege(ContextHandle handle, String privilege) throws IOException {
+	checkHandle(handle);
+
+	final LsarLookupSidsWithAcctPrivRpcRequest queryRequest = new LsarLookupSidsWithAcctPrivRpcRequest(handle,
+		privilege);
+	final LsarLookupSidsWithAcctPrivRpcResponse queryResponse = transport.call(queryRequest);
+	return queryResponse.getSids();
+    }
+
+    public void closePolicyHandle(ContextHandle handle) throws IOException {
+	checkHandle(handle);
+
+	LsarClosePolicyRpcRequest closeRequest = new LsarClosePolicyRpcRequest(handle);
+	transport.call(closeRequest);
     }
 
     private final RPCTransport transport;
 }
+

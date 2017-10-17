@@ -252,6 +252,17 @@ public class Test_PrimitiveInput {
     }
 
     @Test
+    public void readRawBytes()
+        throws IOException {
+        final byte[] result1 = getPacketInput("0001020304").readRawBytes(2);
+        assertArrayEquals(new byte[] { 0x00, 0x01 }, result1);
+
+        final byte[] result2 = getPacketInput("0001020304").readRawBytes(3);
+        assertArrayEquals(new byte[] { 0x00, 0x01, 0x02 }, result2);
+
+    }
+
+    @Test
     public void fullySkipBytes()
         throws IOException {
         final PacketInput packetIn = getPacketInput("00");
