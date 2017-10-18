@@ -18,8 +18,8 @@
  */
 package com.rapid7.client.dcerpc.messages;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import com.rapid7.client.dcerpc.io.Hexify;
 import com.rapid7.client.dcerpc.io.HexifyImpl;
 import com.rapid7.client.dcerpc.io.Packet;
