@@ -27,6 +27,8 @@ import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountRightsReques
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountsWithUserRightRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarOpenPolicy2Request;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
@@ -95,5 +97,13 @@ public class LocalSecurityAuthorityService extends Service {
         final LsarLookupNamesRequest request = new LsarLookupNamesRequest(policyHandle, names);
         return callExpectSuccess(request, "LsarLookupNames");
     }
+
+    public LsarLookupSIDsResponse lookupSIDs(ContextHandle policyHandle, String... SIDs)
+        throws IOException {
+        final LsarLookupSIDsRequest request =
+            new LsarLookupSIDsRequest(policyHandle, SIDs);
+        return callExpect(request, "LsarLookupSIDs", SystemErrorCode.ERROR_SUCCESS);
+    }
+
 }
 
