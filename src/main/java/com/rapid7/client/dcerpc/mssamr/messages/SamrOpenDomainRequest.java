@@ -36,8 +36,8 @@ public class SamrOpenDomainRequest extends RequestCall<SamrOpenDomainResponse> {
         packetOut.write(handle.getBytes());
         packetOut.writeInt((int) EnumUtils.toLong(desiredAccess));
 
-        // SID count
-        packetOut.writeInt(1);
+        // SID sub authority count
+        packetOut.writeInt(sid.getSubAuthorities().length);
 
         // SID start
         packetOut.writeByte(sid.getRevision());
