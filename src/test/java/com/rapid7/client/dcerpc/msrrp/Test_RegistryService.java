@@ -38,12 +38,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumValueResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
-import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 

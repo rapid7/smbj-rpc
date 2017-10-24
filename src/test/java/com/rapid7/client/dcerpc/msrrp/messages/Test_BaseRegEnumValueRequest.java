@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_BaseRegEnumValueRequest {
     private final ContextHandle contextHandle = new ContextHandle("000000000a665393f4666e49a68cd99f269d020f");

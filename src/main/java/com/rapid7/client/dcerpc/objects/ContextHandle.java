@@ -16,19 +16,20 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.msrrp.objects;
+package com.rapid7.client.dcerpc.objects;
 
 import java.util.Arrays;
 import org.bouncycastle.util.encoders.Hex;
 
 public class ContextHandle {
-    private final byte[] handle = new byte[20];
+    private final byte[] handle;
 
-    public ContextHandle(final String hKey) {
-        if (hKey == null || hKey.length() > 40) {
-            throw new IllegalArgumentException("hKey is invalid: " + hKey);
+    public ContextHandle(final String hString, int length) {
+        this(length);
+        if (hString == null || hString.length() > 40) {
+            throw new IllegalArgumentException("hKey is invalid: " + hString);
         }
-        final byte[] handle = Hex.decode(hKey);
+        final byte[] handle = Hex.decode(hString);
         int srcPos = 0;
         int index = 0;
         while (index < handle.length) {
@@ -41,7 +42,16 @@ public class ContextHandle {
         System.arraycopy(handle, srcPos, this.handle, dstPos, dstLen);
     }
 
+    public ContextHandle(final String hKey) {
+        this(hKey, 20);
+    }
+
+    public ContextHandle(int length) {
+        this.handle = new byte[length];
+    }
+
     public ContextHandle() {
+        this.handle = new byte[20];
     }
 
     public byte[] getBytes() {

@@ -7,7 +7,7 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 import java.io.IOException;
 
 public class LsarClosePolicyRpcRequest extends RequestCall<LsarClosePolicyRpcResponse> {

@@ -21,7 +21,8 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_HandleResponse {
     @Test

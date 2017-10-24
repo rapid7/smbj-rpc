@@ -20,8 +20,9 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <b>3.1.5.6 BaseRegCloseKey (Opnum 5)</b><br>

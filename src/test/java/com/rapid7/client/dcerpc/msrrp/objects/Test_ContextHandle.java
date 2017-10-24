@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import java.util.Arrays;
 import org.junit.Test;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_ContextHandle {
     private final ContextHandle maximumHandle = new ContextHandle("ffffffffffffffffffffffffffffffffffffffff");

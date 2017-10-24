@@ -16,12 +16,11 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.msrrp.messages;
+package com.rapid7.client.dcerpc.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <b>Example:</b>
@@ -39,7 +38,7 @@ import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
  * </pre>
  */
 public class HandleResponse extends RequestResponse {
-    private final ContextHandle handle = new ContextHandle();
+    protected final ContextHandle handle = new ContextHandle();
     private int returnValue;
 
     /** @return The handle to a opened key. */
@@ -48,7 +47,8 @@ public class HandleResponse extends RequestResponse {
     }
 
     /**
-     * @return The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code, as
+     * @return The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise,
+     *         it returns a nonzero error code, as
      *         specified in [MS-ERREF] section 2.2.
      */
     public int getReturnValue() {
@@ -59,14 +59,14 @@ public class HandleResponse extends RequestResponse {
     public void unmarshal(final PacketInput packetIn)
         throws IOException {
         // Remote Registry Service, OpenHKLM
-        //      Operation: OpenHKLM (2)
-        //      [Request in frame: 11174]
-        //      Pointer to Handle (policy_handle)
-        //          Policy Handle: OpenHKLM(<...>)
-        //              Handle: 0000000032daf234b77c86409d29efe60d326683
-        //              [Frame handle opened: 11176]
-        //              [Frame handle closed: 11424]
-        //      Windows Error: WERR_OK (0x00000000)
+        // Operation: OpenHKLM (2)
+        // [Request in frame: 11174]
+        // Pointer to Handle (policy_handle)
+        // Policy Handle: OpenHKLM(<...>)
+        // Handle: 0000000032daf234b77c86409d29efe60d326683
+        // [Frame handle opened: 11176]
+        // [Frame handle closed: 11424]
+        // Windows Error: WERR_OK (0x00000000)
         final byte[] handleBytes = new byte[handle.getLength()];
         packetIn.readFully(handleBytes);
         handle.setBytes(handleBytes);

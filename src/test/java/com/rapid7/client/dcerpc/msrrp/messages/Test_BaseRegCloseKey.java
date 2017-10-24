@@ -24,7 +24,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_BaseRegCloseKey {
     private final ContextHandle contextHandle = new ContextHandle("0000000032daf234b77c86409d29efe60d326683");

@@ -26,7 +26,8 @@ import java.io.IOException;
 import java.util.EnumSet;
 import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_BaseRegOpenKey {
     private final ContextHandle contextHandle = new ContextHandle("0000000032daf234b77c86409d29efe60d326683");
