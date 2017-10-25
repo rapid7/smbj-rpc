@@ -62,7 +62,7 @@ public class Test_HandleResponse {
             }
         };
 
-        response.fromHexString("00000000");
+        response.fromHexString("0000000000000000");
 
         assertEquals(new CustomHandle(), response.getHandle());
         assertEquals(0, response.getReturnValue());
