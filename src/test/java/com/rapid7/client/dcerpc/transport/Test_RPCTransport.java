@@ -18,6 +18,8 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import com.rapid7.client.dcerpc.Interface;
 import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.PFCFlag;
@@ -199,11 +201,17 @@ public class Test_RPCTransport {
         when(requestCall.getStub()).thenReturn(new byte[0]);
         when(requestCall.getResponseObject()).thenReturn(requestResponse);
 
-        doAnswer(invocation -> {
-            final Object[] arguments = invocation.getArguments();
-            final PacketInput packetIn = (PacketInput) arguments[0];
-            assertEquals(19088743, packetIn.readInt());
-            return null;
+        doAnswer(new Answer()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation)
+                throws Throwable
+            {
+                final Object[] arguments = invocation.getArguments();
+                final PacketInput packetIn = (PacketInput) arguments[0];
+                assertEquals(19088743, packetIn.readInt());
+                return null;
+            }
         }).when(requestResponse).unmarshal(any(PacketInput.class));
 
         final RequestResponse callResponse = transport.call(requestCall);
@@ -277,12 +285,18 @@ public class Test_RPCTransport {
         when(requestCall.getStub()).thenReturn(new byte[0]);
         when(requestCall.getResponseObject()).thenReturn(requestResponse);
 
-        doAnswer(invocation -> {
-            final Object[] arguments = invocation.getArguments();
-            final PacketInput packetIn = (PacketInput) arguments[0];
-            assertEquals(19088743, packetIn.readInt());
-            assertEquals(1732584193, packetIn.readInt());
-            return null;
+        doAnswer(new Answer()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation)
+                throws Throwable
+            {
+                final Object[] arguments = invocation.getArguments();
+		final PacketInput packetIn = (PacketInput) arguments[0];
+		assertEquals(19088743, packetIn.readInt());
+		assertEquals(1732584193, packetIn.readInt());
+		return null;
+            }
         }).when(requestResponse).unmarshal(any(PacketInput.class));
 
         final RequestResponse callResponse = transport.call(requestCall);

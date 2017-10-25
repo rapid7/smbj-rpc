@@ -3,7 +3,7 @@
    <groupId>com.rapid7.client</groupId>
    <artifactId>dcerpc</artifactId>
    <packaging>jar</packaging>
-   <version>0.4.1-SNAPSHOT</version>
+   <version>0.4.2-SNAPSHOT</version>
    <name>dcerpc</name>
    <url>https://www.rapid7.com</url>
    <description>DCE-RPC implementation capable of using SMBv2 via SMBJ to invoke remote procedure calls (RPC) over the IPC$ named pipe.</description>
@@ -50,8 +50,8 @@
       <thirdparty.junit.version>4.12</thirdparty.junit.version>
       <thirdparty.mockito.version>1.10.19</thirdparty.mockito.version>
       <thirdparty.smbj.version>0.5.0</thirdparty.smbj.version>
-      <maven.compiler.target>1.8</maven.compiler.target>
-      <maven.compiler.source>1.8</maven.compiler.source>
+      <maven.compiler.target>1.7</maven.compiler.target>
+      <maven.compiler.source>1.7</maven.compiler.source>
    </properties>
 
    <dependencies>

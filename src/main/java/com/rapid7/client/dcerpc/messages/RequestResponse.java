@@ -20,10 +20,11 @@ package com.rapid7.client.dcerpc.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.Hexify;
+import com.rapid7.client.dcerpc.io.HexifyImpl;
 import com.rapid7.client.dcerpc.io.Packet;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 
-public abstract class RequestResponse implements Packet, Hexify {
+public abstract class RequestResponse extends HexifyImpl implements Packet, Hexify {
     @Override
     public void marshal(final PacketOutput packetOut)
         throws IOException {
