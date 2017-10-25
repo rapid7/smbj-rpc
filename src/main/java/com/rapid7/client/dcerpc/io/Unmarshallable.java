@@ -3,16 +3,14 @@
  * All rights reserved. This material contains unpublished, copyrighted
  * work including confidential and proprietary information of Rapid7.
  **************************************************************************/
-package com.rapid7.client.dcerpc.mssamr.messages;
+package com.rapid7.client.dcerpc.io;
 
-import com.rapid7.client.dcerpc.messages.HandleResponse;
-import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
+import java.io.IOException;
 
-public class SamrConnect2Response extends HandleResponse<ServerHandle> {
+/**
+ * An interface for unmarshalling typed objects from {@link PacketInput}.
+ */
+public interface Unmarshallable<T> {
 
-    @Override
-    protected ServerHandle initHandle()
-    {
-	return new ServerHandle();
-    }
+    public T unmarshall(PacketInput in) throws IOException;
 }

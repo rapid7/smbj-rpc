@@ -16,9 +16,6 @@ import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 
-/**
- * 
- */
 public class Test_SamrConnect2Request {
     private final SamrConnect2Request request1 = new SamrConnect2Request(null, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
     private final SamrConnect2Request request2 = new SamrConnect2Request("", EnumSet.of(AccessMask.MAXIMUM_ALLOWED));

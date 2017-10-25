@@ -8,23 +8,10 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
-/**
- * 
- */
-public class SamrOpenDomainResponse extends HandleResponse {
-    /////////////////////////////////////////////////////////////////////////
-    // Public methods
-    /////////////////////////////////////////////////////////////////////////
+public class SamrOpenDomainResponse extends HandleResponse<DomainHandle> {
 
     @Override
-    public DomainHandle getHandle() {
-        DomainHandle handle = new DomainHandle();
-        handle.setBytes(super.handle.getBytes());
-        return handle;
+    protected DomainHandle initHandle() {
+        return new DomainHandle();
     }
-
-    /////////////////////////////////////////////////////////////////////////
-    // Non-public fields
-    /////////////////////////////////////////////////////////////////////////
-
 }
