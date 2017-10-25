@@ -91,6 +91,7 @@ public class ContextHandle implements Unmarshallable<ContextHandle> {
     @Override
     public ContextHandle unmarshall(PacketInput in) throws IOException {
 	byte[] bytes = new byte[handle.length];
+	in.readFully(bytes);
 	setBytes(bytes);
 	return this;
     }
