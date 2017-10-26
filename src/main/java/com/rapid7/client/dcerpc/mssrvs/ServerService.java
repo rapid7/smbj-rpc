@@ -35,15 +35,11 @@ import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 /**
- * This class implements a partial service service in accordance with [MS-SRVS]:
- * Server Service Remote Protocol which
- * specifies the Server Service Remote Protocol, which remotely enables file and
- * printer sharing and named pipe access
+ * This class implements a partial service service in accordance with [MS-SRVS]: Server Service Remote Protocol which
+ * specifies the Server Service Remote Protocol, which remotely enables file and printer sharing and named pipe access
  * to the server through the Server Message Block Protocol.
  *
- * @see <a href=
- *      "https://msdn.microsoft.com/en-us/library/cc247080.aspx">[MS-SRVS]:
- *      Server Service Remote Protocol</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/library/cc247080.aspx">[MS-SRVS]: Server Service Remote Protocol</a>
  */
 public class ServerService {
     private final RPCTransport transport;
@@ -86,11 +82,11 @@ public class ServerService {
         return Collections.unmodifiableList(new ArrayList<>(shares));
     }
 
-    public String getCanonicalizedName(String serverName, String pathName, String prefix, int outBufLength,
-        int pathType, int flags)
-        throws IOException {
-        final NetprPathCanonicalizeRequest request = new NetprPathCanonicalizeRequest(serverName, pathName,
-            outBufLength, prefix, pathType, flags);
+    public String getCanonicalizedName(String serverName, String pathName, String prefix, int outBufLength, int pathType, int flags)
+        throws IOException
+    {
+        final NetprPathCanonicalizeRequest
+            request = new NetprPathCanonicalizeRequest(serverName, pathName, outBufLength, prefix, pathType, flags);
         NetprPathCanonicalizeResponse response = transport.call(request);
         return response.getCanonicalizedPath();
     }
