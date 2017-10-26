@@ -29,17 +29,17 @@ public class SamrCloseHandleRequest extends RequestCall<SamrCloseHandleResponse>
     private final ContextHandle handle;
 
     public SamrCloseHandleRequest(ContextHandle handle) {
-	super(OP_NUM);
-	this.handle = handle;
+        super(OP_NUM);
+        this.handle = handle;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-	packetOut.write(handle.getBytes());
+        packetOut.write(handle.getBytes());
     }
 
     @Override
     public SamrCloseHandleResponse getResponseObject() {
-	return new SamrCloseHandleResponse();
+        return new SamrCloseHandleResponse();
     }
 }

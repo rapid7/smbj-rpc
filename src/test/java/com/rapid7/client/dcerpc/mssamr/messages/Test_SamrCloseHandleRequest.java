@@ -28,22 +28,21 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_SamrCloseHandleRequest {
     SamrCloseHandleRequest request = new SamrCloseHandleRequest(
-	    new ContextHandle("0000000032daf234b77c86409d29efe60d326683"));
+        new ContextHandle("0000000032daf234b77c86409d29efe60d326683"));
 
     @Test
     public void getOpNum() {
-	assertEquals(SamrCloseHandleRequest.OP_NUM, request.getOpNum());
-    }
-    @Test
-    public void getStub()
-	    throws IOException {
-	assertEquals("0000000032daf234b77c86409d29efe60d326683", toHexString(request.getStub()));
+        assertEquals(SamrCloseHandleRequest.OP_NUM, request.getOpNum());
     }
 
     @Test
-    public void getResponseObject()
-	    throws IOException {
-	assertThat(request.getResponseObject(), instanceOf(SamrCloseHandleResponse.class));
+    public void getStub() throws IOException {
+        assertEquals("0000000032daf234b77c86409d29efe60d326683", toHexString(request.getStub()));
+    }
+
+    @Test
+    public void getResponseObject() throws IOException {
+        assertThat(request.getResponseObject(), instanceOf(SamrCloseHandleResponse.class));
     }
 
 }

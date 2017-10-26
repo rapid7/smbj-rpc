@@ -29,13 +29,13 @@ public class SamrCloseHandleResponse extends RequestResponse {
 
     @Override
     public void unmarshal(PacketInput in) throws IOException {
-	// SAMR handle is 20 bytes
-	ContextHandle handle = new ContextHandle();
-	handle.unmarshall(in);
-	returnValue = in.readInt();
+        // SAMR handle is 20 bytes
+        ContextHandle handle = new ContextHandle();
+        handle.unmarshall(in);
+        returnValue = in.readInt();
     }
 
     public int getReturnValue() {
-	return returnValue;
+        return returnValue;
     }
 }
