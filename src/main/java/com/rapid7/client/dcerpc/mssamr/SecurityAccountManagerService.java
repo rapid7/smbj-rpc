@@ -22,12 +22,15 @@ import java.io.IOException;
 import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class SecurityAccountManagerService {
@@ -46,15 +49,23 @@ public class SecurityAccountManagerService {
     public DomainHandle openDomain(String serverName, SID sid) throws IOException {
 	final ServerHandle handle = getServerHandle(serverName);
 	final SamrOpenDomainRequest request = new SamrOpenDomainRequest(handle, sid,
-	        EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+		EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
 	final SamrOpenDomainResponse response = transport.call(request);
 	return response.getHandle();
     }
 
     public DomainHandle openDomain(ServerHandle serverHandle, SID sid) throws IOException {
 	final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, sid,
-	        EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+		EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
 	final SamrOpenDomainResponse response = transport.call(request);
 	return response.getHandle();
+    }
+
+    public void closeHandle(ContextHandle handle) throws IOException {
+	final SamrCloseHandleRequest request = new SamrCloseHandleRequest(handle);
+	final SamrCloseHandleResponse response = transport.call(request);
+
+	if (response.getReturnValue() != 0)
+	    throw new IOException("Failed to close handle: " + new String(handle.getBytes()));
     }
 }
