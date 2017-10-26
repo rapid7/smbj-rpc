@@ -24,6 +24,7 @@ import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.valueOf;
 import java.io.IOException;
 import java.util.Set;
 import com.rapid7.client.dcerpc.io.Hexify;
+import com.rapid7.client.dcerpc.io.HexifyImpl;
 import com.rapid7.client.dcerpc.io.Packet;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
@@ -46,7 +47,7 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
  *
  * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
-public class Header implements Packet, Hexify {
+public class Header extends HexifyImpl implements Packet, Hexify {
     private byte majorVersion = 5;
     private byte minorVersion = 0;
     private PDUType pduType;
