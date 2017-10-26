@@ -3,19 +3,18 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
+import com.rapid7.client.dcerpc.msvcctl.ServiceControlManagerService;
 import java.io.IOException;
 
 public class ROpenSCManagerWRequest extends RequestCall<HandleResponse>
 {
-
     private final static short OP_NUM = 15;
-    private final static int FULL_ACCESS = 0x000F003F;
     private final String name;
     private final String databaseName;
     private final int desiredAccess;
 
     public ROpenSCManagerWRequest() {
-        this("test", null, FULL_ACCESS);
+        this("test", null, ServiceControlManagerService.FULL_ACCESS);
     }
     public ROpenSCManagerWRequest(String name, String databaseName, int desiredAccess) {
         super(OP_NUM);
@@ -30,7 +29,7 @@ public class ROpenSCManagerWRequest extends RequestCall<HandleResponse>
     {
         if (name != null) packetOut.writeStringRef(name, true);
         else packetOut.writeNull();
-        if (databaseName != null)packetOut.writeStringRef(name, true);
+        if (databaseName != null)packetOut.writeStringRef(databaseName, true);
         else packetOut.writeNull();
         packetOut.writeInt(desiredAccess);
     }

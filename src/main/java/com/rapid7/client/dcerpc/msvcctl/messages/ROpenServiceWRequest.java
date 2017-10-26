@@ -10,15 +10,17 @@ public class ROpenServiceWRequest extends RequestCall<HandleResponse>
 {
 
     private final static short OP_NUM = 16;
-    private final static int FULL_ACCESS = 0x000F003F;
+
     private final String serviceName;
     private final ContextHandle serviceManagerHandle;
+    private final int access;
 
-    public ROpenServiceWRequest(ContextHandle serviceManagerHandle, String serviceName)
+    public ROpenServiceWRequest(ContextHandle serviceManagerHandle, String serviceName, int access)
     {
         super(OP_NUM);
         this.serviceManagerHandle = serviceManagerHandle;
         this.serviceName = serviceName;
+        this.access = access;
     }
 
     @Override public void marshal(PacketOutput packetOut)
@@ -27,7 +29,7 @@ public class ROpenServiceWRequest extends RequestCall<HandleResponse>
         packetOut.write(serviceManagerHandle.getBytes());
         if (serviceName != null)packetOut.writeString(serviceName, true);
         else packetOut.writeNull();
-        packetOut.writeInt(FULL_ACCESS);
+        packetOut.writeInt(access);
     }
 
     @Override public HandleResponse getResponseObject()

@@ -24,7 +24,7 @@ public class RStartServiceWRequest extends RequestCall<EmptyResponse>
     @Override public void marshal(PacketOutput packetOut)
         throws IOException {
         packetOut.write(serviceHandle.getBytes());
-        packetOut.writeNull(); //argc
-        packetOut.writeNull(); //argv
+        packetOut.writeNull(); //argc (not implemented)
+        packetOut.writeNull(); //argv (not implemented)
     }
 }

@@ -20,6 +20,7 @@ public class ServiceControlManagerService
 {
 
     public final static String REMOTE_REGISTRY = "Remoteregistry";
+    public final static int FULL_ACCESS = 0x000F003F;
 
     private final RPCTransport transport;
     private ContextHandle serviceManagerHandle;
@@ -30,14 +31,14 @@ public class ServiceControlManagerService
 
     private void getServiceManagerHandle()
         throws IOException {
-        ROpenSCManagerWRequest request = new ROpenSCManagerWRequest();
+        ROpenSCManagerWRequest request = new ROpenSCManagerWRequest("test",null, FULL_ACCESS);
         HandleResponse response = transport.call(request);
         serviceManagerHandle = response.getHandle();
     }
 
     private ContextHandle getServiceHandle(String serviceName)
         throws IOException {
-        ROpenServiceWRequest request = new ROpenServiceWRequest(serviceManagerHandle, serviceName);
+        ROpenServiceWRequest request = new ROpenServiceWRequest(serviceManagerHandle, serviceName, FULL_ACCESS);
         HandleResponse response = transport.call(request);
         return response.getHandle();
     }
