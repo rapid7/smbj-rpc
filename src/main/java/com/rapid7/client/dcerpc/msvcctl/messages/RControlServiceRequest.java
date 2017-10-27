@@ -21,8 +21,6 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceStatusInfo;
-import com.rapid7.client.dcerpc.objects.EmptyResponse;
 import java.io.IOException;
 
 public class RControlServiceRequest extends RequestCall<RQueryServiceStatusResponse>

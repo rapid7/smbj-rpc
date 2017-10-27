@@ -20,9 +20,6 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.rapid7.client.dcerpc.mssrvs.NetprPathType;
-import com.rapid7.client.dcerpc.mssrvs.messages.NetprPathCanonicalizeRequest;
-import com.rapid7.client.dcerpc.mssrvs.messages.NetprPathCanonicalizeResponse;
 import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceStatusInfo;
 import java.io.IOException;
 import org.junit.Rule;

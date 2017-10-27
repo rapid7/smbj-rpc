@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceStatusInfo;
 import java.io.IOException;
 
 public class RChangeServiceConfigWResponse extends RequestResponse
