@@ -27,22 +27,22 @@ public class PacketInput extends PrimitiveInput {
     }
 
     public Integer readIntRef()
-        throws IOException {
+            throws IOException {
         return 0 != readReferentID() ? readInt() : null;
     }
 
     public Long readLongRef()
-        throws IOException {
+            throws IOException {
         return 0 != readReferentID() ? readLong() : null;
     }
 
     public int readReferentID()
-        throws IOException {
+            throws IOException {
         return readInt();
     }
 
     public byte[] readByteArray()
-        throws IOException {
+            throws IOException {
         readInt();
         final int initialOffset = readInt();
         final int actualCount = readInt();
@@ -56,7 +56,7 @@ public class PacketInput extends PrimitiveInput {
     }
 
     public byte[] readByteArrayRef()
-        throws IOException {
+            throws IOException {
         final byte[] result;
         if (0 != readReferentID()) {
             result = readByteArray();
@@ -69,20 +69,20 @@ public class PacketInput extends PrimitiveInput {
     }
 
     public byte[] readRawBytes(int length)
-	throws IOException {
-	byte[] bytes = new byte[length];
-	readRawBytes(bytes);
+            throws IOException {
+        byte[] bytes = new byte[length];
+        readRawBytes(bytes);
 
-	return bytes;
+        return bytes;
     }
 
     public void readRawBytes(byte[] buf)
-	throws IOException {
-	readFully(buf, 0, buf.length);
+            throws IOException {
+        readFully(buf, 0, buf.length);
     }
 
     public String readString(final boolean nullTerminated)
-        throws IOException {
+            throws IOException {
         final StringBuffer result;
 
         readInt();
@@ -111,7 +111,7 @@ public class PacketInput extends PrimitiveInput {
     }
 
     public String readStringRef(final boolean nullTerminated)
-        throws IOException {
+            throws IOException {
         final String result;
 
         if (0 != readReferentID()) {
@@ -125,7 +125,7 @@ public class PacketInput extends PrimitiveInput {
     }
 
     public String readStringBuf(final boolean nullTerminated)
-        throws IOException {
+            throws IOException {
         readShort(); // Current byte length
         readShort(); // Maximum byte length
 
@@ -133,7 +133,7 @@ public class PacketInput extends PrimitiveInput {
     }
 
     public String readStringBufRef(final boolean nullTerminated)
-        throws IOException {
+            throws IOException {
         final String result;
         if (0 != readReferentID()) {
             result = readStringBuf(nullTerminated);
@@ -143,5 +143,9 @@ public class PacketInput extends PrimitiveInput {
         }
 
         return result;
+    }
+
+    public <T extends Unmarshallable<T>> T unmarshallObject(T t) throws IOException {
+        return t.unmarshall(this);
     }
 }

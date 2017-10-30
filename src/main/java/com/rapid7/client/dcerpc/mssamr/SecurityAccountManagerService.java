@@ -20,15 +20,19 @@ package com.rapid7.client.dcerpc.mssamr;
 
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.List;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -67,5 +71,13 @@ public class SecurityAccountManagerService {
 
         if (response.getReturnValue() != 0)
             throw new IOException("Failed to close handle: " + new String(handle.getBytes()));
+    }
+
+    public List<DomainInfo> getDomainOnServer(ServerHandle serverHandle) throws IOException {
+        int enumContext = 0;
+        SamrEnumerateDomainsInSamServerRequest request = new SamrEnumerateDomainsInSamServerRequest(serverHandle,
+            enumContext, 1024);
+        SamrEnumerateDomainsInSamServerResponse response = transport.call(request);
+        return response.getDomainList();
     }
 }
