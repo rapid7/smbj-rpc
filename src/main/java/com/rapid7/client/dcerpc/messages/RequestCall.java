@@ -21,11 +21,12 @@ package com.rapid7.client.dcerpc.messages;
 import java.io.IOException;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import com.rapid7.client.dcerpc.io.Hexify;
+import com.rapid7.client.dcerpc.io.HexifyImpl;
 import com.rapid7.client.dcerpc.io.Packet;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 
-public abstract class RequestCall<T extends RequestResponse> implements Packet, Hexify {
+public abstract class RequestCall<T extends RequestResponse> extends HexifyImpl implements Packet, Hexify {
     private final short opNum;
 
     public RequestCall(final short opNum) {

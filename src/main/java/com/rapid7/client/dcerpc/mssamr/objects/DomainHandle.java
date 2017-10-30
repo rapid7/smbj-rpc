@@ -8,7 +8,9 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
- * 
+ * A typed RPC context handle for domains.
+ *
+ * @see <a href= "https://msdn.microsoft.com/en-us/library/cc245544.aspx">SAMPR_HANDLE</a>
  */
 public class DomainHandle extends ContextHandle {
     /////////////////////////////////////////////////////////////////////////

@@ -21,8 +21,11 @@ package com.rapid7.client.dcerpc.msrrp.objects;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import org.junit.Test;
+import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_ContextHandle {
@@ -155,5 +158,18 @@ public class Test_ContextHandle {
         assertNotEquals(maximumHandle, defaultHandle);
         assertEquals(minimumHandle, minimumHandle);
         assertEquals(minimumHandle, defaultHandle);
+    }
+    
+    @Test
+    public void unmarshall() throws IOException {
+	byte[] buf = new String("1234567890abcdefghij").getBytes();
+	PacketInput input = new PacketInput(new ByteArrayInputStream(buf));
+	ContextHandle handle = new ContextHandle();
+	assertArrayEquals(buf, handle.unmarshall(input).getBytes());
+	
+	byte[] buf2 = new String("1234567890").getBytes();
+	PacketInput input2 = new PacketInput(new ByteArrayInputStream(buf));
+	ContextHandle handle2 = new ContextHandle(10);
+	assertArrayEquals(buf2, handle2.unmarshall(input2).getBytes());
     }
 }

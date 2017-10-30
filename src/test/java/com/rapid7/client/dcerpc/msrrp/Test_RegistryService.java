@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumValueResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
@@ -66,12 +67,12 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         assertTrue(registryService.doesKeyExist("HKLM", ""));
 
-        verify(transport, times(1)).call(any());
+        verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verifyNoMoreInteractions(transport, hiveResponse);
@@ -84,12 +85,12 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         assertTrue(registryService.doesKeyExist("HKLM", null));
 
-        verify(transport, times(1)).call(any());
+        verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verifyNoMoreInteractions(transport, hiveResponse);
@@ -102,12 +103,12 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         assertFalse(registryService.doesKeyExist("HKLM", ""));
 
-        verify(transport, times(1)).call(any());
+        verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getReturnValue();
         verifyNoMoreInteractions(transport, hiveResponse);
     }
@@ -119,12 +120,12 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         assertFalse(registryService.doesKeyExist("HKLM", null));
 
-        verify(transport, times(1)).call(any());
+        verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getReturnValue();
         verifyNoMoreInteractions(transport, hiveResponse);
     }
@@ -136,7 +137,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -153,13 +154,13 @@ public class Test_RegistryService {
         final HandleResponse keyResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         assertTrue(registryService.doesKeyExist("HKLM", "key"));
 
-        verify(transport, times(2)).call(any());
+        verify(transport, times(2)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -175,13 +176,13 @@ public class Test_RegistryService {
         final HandleResponse keyResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         assertFalse(registryService.doesKeyExist("HKLM", "key"));
 
-        verify(transport, times(2)).call(any());
+        verify(transport, times(2)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getReturnValue();
@@ -196,7 +197,7 @@ public class Test_RegistryService {
         final HandleResponse keyResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getErrorCode());
 
@@ -239,7 +240,7 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
@@ -248,7 +249,7 @@ public class Test_RegistryService {
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -268,14 +269,14 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         assertFalse(registryService.doesValueExist("HKLM", "key", "value"));
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -293,7 +294,7 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getErrorCode());
@@ -337,7 +338,7 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
@@ -346,7 +347,7 @@ public class Test_RegistryService {
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -366,7 +367,7 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
@@ -375,7 +376,7 @@ public class Test_RegistryService {
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -395,7 +396,7 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
@@ -404,7 +405,7 @@ public class Test_RegistryService {
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -424,7 +425,7 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
@@ -433,7 +434,7 @@ public class Test_RegistryService {
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -453,7 +454,7 @@ public class Test_RegistryService {
         final BaseRegQueryInfoKeyResponse infoResponse = mock(BaseRegQueryInfoKeyResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(infoResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(infoResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(infoResponse.getSubKeys()).thenReturn(111);
@@ -477,7 +478,7 @@ public class Test_RegistryService {
         assertEquals(777, registryKeyInfo.getSecurityDescriptor());
         assertEquals(116444736000000000l, registryKeyInfo.getLastWriteTime());
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -525,7 +526,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -541,7 +542,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -559,7 +560,7 @@ public class Test_RegistryService {
         final BaseRegQueryInfoKeyResponse infoResponse = mock(BaseRegQueryInfoKeyResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(infoResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(infoResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
@@ -580,7 +581,7 @@ public class Test_RegistryService {
         final BaseRegEnumKeyResponse enumResponse3 = mock(BaseRegEnumKeyResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1)
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1)
             .thenReturn(enumResponse2).thenReturn(enumResponse3);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
@@ -600,7 +601,7 @@ public class Test_RegistryService {
         assertTrue(subKeys.contains(subKey2));
         assertTrue(subKeys.size() == 2);
 
-        verify(transport, times(5)).call(any());
+        verify(transport, times(5)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -624,7 +625,7 @@ public class Test_RegistryService {
         final BaseRegEnumKeyResponse enumResponse = mock(BaseRegEnumKeyResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(enumResponse.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getErrorCode());
@@ -633,7 +634,7 @@ public class Test_RegistryService {
 
         assertTrue(subKeys.isEmpty());
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -673,7 +674,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -689,7 +690,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -706,7 +707,7 @@ public class Test_RegistryService {
         final HandleResponse keyResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
@@ -727,7 +728,7 @@ public class Test_RegistryService {
         final BaseRegEnumValueResponse enumResponse3 = mock(BaseRegEnumValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1)
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1)
             .thenReturn(enumResponse2).thenReturn(enumResponse3);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
@@ -751,7 +752,7 @@ public class Test_RegistryService {
         assertTrue(values.contains(value2));
         assertTrue(values.size() == 2);
 
-        verify(transport, times(5)).call(any());
+        verify(transport, times(5)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -777,7 +778,7 @@ public class Test_RegistryService {
         final BaseRegEnumValueResponse enumResponse = mock(BaseRegEnumValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(enumResponse.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getErrorCode());
@@ -786,7 +787,7 @@ public class Test_RegistryService {
 
         assertTrue(values.isEmpty());
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -826,7 +827,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -842,7 +843,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -859,7 +860,7 @@ public class Test_RegistryService {
         final HandleResponse keyResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
@@ -878,7 +879,7 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
@@ -891,7 +892,7 @@ public class Test_RegistryService {
         assertEquals(RegistryValueType.REG_BINARY, value.getType());
         assertArrayEquals(new byte[] { 0x01, 0x23, 0x45, 0x67 }, value.getData());
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -911,7 +912,7 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
@@ -924,7 +925,7 @@ public class Test_RegistryService {
         assertEquals(RegistryValueType.REG_BINARY, value.getType());
         assertArrayEquals(new byte[] { 0x01, 0x23, 0x45, 0x67 }, value.getData());
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -944,7 +945,7 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
@@ -957,7 +958,7 @@ public class Test_RegistryService {
         assertEquals(RegistryValueType.REG_BINARY, value.getType());
         assertArrayEquals(new byte[] { 0x01, 0x23, 0x45, 0x67 }, value.getData());
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -977,7 +978,7 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
@@ -1019,7 +1020,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -1035,7 +1036,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -1052,7 +1053,7 @@ public class Test_RegistryService {
         final HandleResponse keyResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
@@ -1082,7 +1083,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
@@ -1090,7 +1091,7 @@ public class Test_RegistryService {
 
         assertEquals(new ContextHandle("01234567"), handle);
 
-        verify(transport, times(1)).call(any());
+        verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verifyNoMoreInteractions(transport, hiveResponse);
@@ -1103,7 +1104,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -1119,7 +1120,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
@@ -1129,7 +1130,7 @@ public class Test_RegistryService {
         assertEquals(new ContextHandle("01234567"), handle1);
         assertEquals(new ContextHandle("01234567"), handle2);
 
-        verify(transport, times(1)).call(any());
+        verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verifyNoMoreInteractions(transport, hiveResponse);
@@ -1143,7 +1144,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse2 = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse1).thenReturn(hiveResponse2);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse1).thenReturn(hiveResponse2);
         when(hiveResponse1.getHandle()).thenReturn(new ContextHandle("11111111"));
         when(hiveResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(hiveResponse2.getHandle()).thenReturn(new ContextHandle("22222222"));
@@ -1155,7 +1156,7 @@ public class Test_RegistryService {
         assertEquals(new ContextHandle("11111111"), handle1);
         assertEquals(new ContextHandle("22222222"), handle2);
 
-        verify(transport, times(2)).call(any());
+        verify(transport, times(2)).call(any(RequestCall.class));
         verify(hiveResponse1, times(1)).getHandle();
         verify(hiveResponse1, times(1)).getReturnValue();
         verify(hiveResponse2, times(1)).getHandle();
@@ -1195,7 +1196,7 @@ public class Test_RegistryService {
         final HandleResponse keyResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
@@ -1205,7 +1206,7 @@ public class Test_RegistryService {
 
         assertEquals(new ContextHandle("01234567"), handle);
 
-        verify(transport, times(2)).call(any());
+        verify(transport, times(2)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -1220,7 +1221,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
 
         thrown.expect(RPCException.class);
@@ -1237,7 +1238,7 @@ public class Test_RegistryService {
         final HandleResponse keyResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
@@ -1256,7 +1257,7 @@ public class Test_RegistryService {
         final HandleResponse keyResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
@@ -1268,7 +1269,7 @@ public class Test_RegistryService {
         assertEquals(new ContextHandle("01234567"), handle1);
         assertEquals(new ContextHandle("01234567"), handle2);
 
-        verify(transport, times(2)).call(any());
+        verify(transport, times(2)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
@@ -1285,7 +1286,7 @@ public class Test_RegistryService {
         final HandleResponse keyResponse2 = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse).thenReturn(keyResponse1).thenReturn(keyResponse2);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse1).thenReturn(keyResponse2);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse1.getHandle()).thenReturn(new ContextHandle("11111111"));
@@ -1299,7 +1300,7 @@ public class Test_RegistryService {
         assertEquals(new ContextHandle("11111111"), handle1);
         assertEquals(new ContextHandle("22222222"), handle2);
 
-        verify(transport, times(3)).call(any());
+        verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse1, times(1)).getHandle();
@@ -1340,7 +1341,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
@@ -1348,7 +1349,7 @@ public class Test_RegistryService {
 
         assertEquals(new ContextHandle("76543210"), handle);
 
-        verify(transport, times(1)).call(any());
+        verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verifyNoMoreInteractions(transport, hiveResponse);
@@ -1361,7 +1362,7 @@ public class Test_RegistryService {
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any())).thenReturn(hiveResponse);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
@@ -1369,7 +1370,7 @@ public class Test_RegistryService {
 
         assertEquals(new ContextHandle("76543210"), handle);
 
-        verify(transport, times(1)).call(any());
+        verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
         verify(hiveResponse, times(1)).getReturnValue();
         verifyNoMoreInteractions(transport, hiveResponse);

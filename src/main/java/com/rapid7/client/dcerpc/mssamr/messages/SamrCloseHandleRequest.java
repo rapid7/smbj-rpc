@@ -16,14 +16,30 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.io;
+package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
-public interface Hexify extends Packet {
-    public String toHexString()
-        throws IOException;
+public class SamrCloseHandleRequest extends RequestCall<SamrCloseHandleResponse>{
+    public static short OP_NUM = 1;
 
-    public void fromHexString(final String hexIn)
-        throws IOException;
+    private final ContextHandle handle;
+
+    public SamrCloseHandleRequest(ContextHandle handle) {
+        super(OP_NUM);
+        this.handle = handle;
+    }
+
+    @Override
+    public void marshal(PacketOutput packetOut) throws IOException {
+        packetOut.write(handle.getBytes());
+    }
+
+    @Override
+    public SamrCloseHandleResponse getResponseObject() {
+        return new SamrCloseHandleResponse();
+    }
 }

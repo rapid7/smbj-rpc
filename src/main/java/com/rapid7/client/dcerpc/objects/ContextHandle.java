@@ -18,10 +18,13 @@
  */
 package com.rapid7.client.dcerpc.objects;
 
+import java.io.IOException;
 import java.util.Arrays;
 import org.bouncycastle.util.encoders.Hex;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.Unmarshallable;
 
-public class ContextHandle {
+public class ContextHandle implements Unmarshallable<ContextHandle> {
     private final byte[] handle;
 
     public ContextHandle(final String hString, int length) {
@@ -83,5 +86,13 @@ public class ContextHandle {
     @Override
     public boolean equals(final Object anObject) {
         return anObject instanceof ContextHandle && Arrays.equals(handle, ((ContextHandle) anObject).handle);
+    }
+
+    @Override
+    public ContextHandle unmarshall(PacketInput in) throws IOException {
+	byte[] bytes = new byte[handle.length];
+	in.readFully(bytes);
+	setBytes(bytes);
+	return this;
     }
 }

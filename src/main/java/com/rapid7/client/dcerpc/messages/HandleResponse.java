@@ -37,12 +37,12 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
  *     Windows Error: WERR_OK (0x00000000)
  * </pre>
  */
-public class HandleResponse extends RequestResponse {
-    protected final ContextHandle handle = new ContextHandle();
+public class HandleResponse<T extends ContextHandle> extends RequestResponse {
+    protected final T handle = initHandle();
     private int returnValue;
 
     /** @return The handle to a opened key. */
-    public ContextHandle getHandle() {
+    public T getHandle() {
         return handle;
     }
 
@@ -67,9 +67,17 @@ public class HandleResponse extends RequestResponse {
         // [Frame handle opened: 11176]
         // [Frame handle closed: 11424]
         // Windows Error: WERR_OK (0x00000000)
-        final byte[] handleBytes = new byte[handle.getLength()];
-        packetIn.readFully(handleBytes);
-        handle.setBytes(handleBytes);
+	handle.unmarshall(packetIn);
         returnValue = packetIn.readInt();
+    }
+    
+    /**
+     * Instantiate the context handle.
+     * Can be overriden to return a context handle of a specific type.
+     * 
+     * @return The context handle.
+     */
+    protected T initHandle() {
+	return (T) new ContextHandle();
     }
 }

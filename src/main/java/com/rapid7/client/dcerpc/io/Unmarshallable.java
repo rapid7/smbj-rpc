@@ -20,10 +20,10 @@ package com.rapid7.client.dcerpc.io;
 
 import java.io.IOException;
 
-public interface Hexify extends Packet {
-    public String toHexString()
-        throws IOException;
+/**
+ * An interface for unmarshalling typed objects from {@link PacketInput}.
+ */
+public interface Unmarshallable<T> {
 
-    public void fromHexString(final String hexIn)
-        throws IOException;
+    public T unmarshall(PacketInput in) throws IOException;
 }
