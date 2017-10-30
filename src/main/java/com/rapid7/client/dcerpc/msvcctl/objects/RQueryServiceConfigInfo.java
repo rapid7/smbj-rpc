@@ -18,9 +18,6 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.objects;
 
-
-import static com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWRequest.SERVICE_NO_CHANGE;
-
 /**
  *  Query Service Config responses from:
  * https://msdn.microsoft.com/en-us/library/cc245948.aspx
@@ -28,9 +25,28 @@ import static com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWReq
 
 public class RQueryServiceConfigInfo
 {
-    private int serviceType = SERVICE_NO_CHANGE; //defaults
-    private int startType = SERVICE_NO_CHANGE;
-    private int errorControl = SERVICE_NO_CHANGE;
+    //Service Type
+    public final static int SERVICE_KERNEL_DRIVER = 0x1;
+    public final static int SERVICE_FILE_SYSTEM_DRIVER = 0x2;
+    public final static int SERVICE_WIN32_OWN_PROCESS = 0x10;
+    public final static int SERVICE_WIN32_SHARE_PROCESS = 0x20;
+
+    //Startup Type
+    public final static int SERVICE_BOOT_START = 0x0;
+    public final static int SERVICE_SYSTEM_START = 0x1;
+    public final static int SERVICE_AUTO_START = 0x2;
+    public final static int SERVICE_DEMAND_START = 0x3;
+    public final static int SERVICE_DISABLED = 0x4;
+
+    //Error control
+    public final static int SERVICE_ERROR_IGNORE = 0x0;
+    public final static int SERVICE_ERROR_NORMAL = 0x1;
+    public final static int SERVICE_ERROR_SEVERE = 0x2;
+    public final static int SERVICE_ERROR_CRITICAL = 0x3;
+
+    private int serviceType; //defaults
+    private int startType;
+    private int errorControl;
     private String binaryPathName;
     private String loadOrderGroup;
     private int tagId;
@@ -84,5 +100,37 @@ public class RQueryServiceConfigInfo
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RQueryServiceConfigInfo that = (RQueryServiceConfigInfo) o;
+
+        if (serviceType != that.serviceType) return false;
+        if (startType != that.startType) return false;
+        if (errorControl != that.errorControl) return false;
+        if (tagId != that.tagId) return false;
+        if (!binaryPathName.equals(that.binaryPathName)) return false;
+        if (!loadOrderGroup.equals(that.loadOrderGroup)) return false;
+        if (!dependencies.equals(that.dependencies)) return false;
+        if (!serviceStartName.equals(that.serviceStartName)) return false;
+        return displayName.equals(that.displayName);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = serviceType;
+        result = 31 * result + startType;
+        result = 31 * result + errorControl;
+        result = 31 * result + binaryPathName.hashCode();
+        result = 31 * result + loadOrderGroup.hashCode();
+        result = 31 * result + tagId;
+        result = 31 * result + dependencies.hashCode();
+        result = 31 * result + serviceStartName.hashCode();
+        result = 31 * result + displayName.hashCode();
+        return result;
     }
 }
