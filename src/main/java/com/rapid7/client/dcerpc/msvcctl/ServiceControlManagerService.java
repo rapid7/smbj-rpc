@@ -41,39 +41,36 @@ public class ServiceControlManagerService
     public final static int FULL_ACCESS = 0x000F003F;
 
     private final RPCTransport transport;
-    private ContextHandle serviceManagerHandle;
 
     public ServiceControlManagerService(final RPCTransport transport) {
         this.transport = transport;
     }
 
-    private void getServiceManagerHandle()
+    public ContextHandle getServiceManagerHandle()
         throws IOException {
         ROpenSCManagerWRequest request = new ROpenSCManagerWRequest("test",null, FULL_ACCESS);
         HandleResponse response = transport.call(request);
-        serviceManagerHandle = response.getHandle();
+        return response.getHandle();
     }
 
-    private ContextHandle getServiceHandle(String serviceName)
+    private ContextHandle getServiceHandle(String serviceName, ContextHandle serviceManagerHandle)
         throws IOException {
         ROpenServiceWRequest request = new ROpenServiceWRequest(serviceManagerHandle, serviceName, FULL_ACCESS);
         HandleResponse response = transport.call(request);
         return response.getHandle();
     }
 
-    public boolean startService(String service)
+    public boolean startService(String service, ContextHandle serviceManagerHandle)
         throws IOException {
-        if (serviceManagerHandle == null) getServiceManagerHandle();
-        ContextHandle serviceHandle = getServiceHandle(service);
+        ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RStartServiceWRequest request = new RStartServiceWRequest(serviceHandle);
         EmptyResponse response = transport.call(request);
         return (response.getReturnValue().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode()));
     }
 
-    public RQueryServiceStatusInfo queryService(String service)
+    public RQueryServiceStatusInfo queryService(String service, ContextHandle serviceManagerHandle)
         throws IOException {
-        if (serviceManagerHandle == null) getServiceManagerHandle();
-        ContextHandle serviceHandle = getServiceHandle(service);
+        ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RQueryServiceStatusRequest request = new RQueryServiceStatusRequest(serviceHandle);
         RQueryServiceStatusResponse response = transport.call(request);
         if (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode())){
@@ -81,10 +78,9 @@ public class ServiceControlManagerService
         } else return null;
     }
 
-    public RQueryServiceStatusInfo stopService(String service)
+    public RQueryServiceStatusInfo stopService(String service, ContextHandle serviceManagerHandle)
         throws IOException {
-        if (serviceManagerHandle == null) getServiceManagerHandle();
-        ContextHandle serviceHandle = getServiceHandle(service);
+        ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RControlServiceRequest request = new RControlServiceRequest(serviceHandle, RControlServiceRequest.SERVICE_CONTROL_STOP);
         RQueryServiceStatusResponse response = transport.call(request);
         if (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode())){
@@ -92,10 +88,9 @@ public class ServiceControlManagerService
         } else return null;
     }
 
-    public boolean changeServiceConfig(String service, int serviceType, int startType, int errorControl)
+    public boolean changeServiceConfig(String service, ContextHandle serviceManagerHandle, int serviceType, int startType, int errorControl)
         throws IOException {
-        if (serviceManagerHandle == null) getServiceManagerHandle();
-        ContextHandle serviceHandle = getServiceHandle(service);
+        ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(serviceHandle, serviceType, startType, errorControl);
         RChangeServiceConfigWResponse response = transport.call(request);
         return (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode()));
