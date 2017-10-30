@@ -26,9 +26,12 @@ import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RControlServiceRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenSCManagerWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenServiceWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RStartServiceWRequest;
+import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceConfigInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceStatusInfo;
 import com.rapid7.client.dcerpc.objects.EmptyResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -95,5 +98,14 @@ public class ServiceControlManagerService
         RChangeServiceConfigWResponse response = transport.call(request);
         return (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode()));
 
+    }
+
+    public RQueryServiceConfigInfo queryServiceConfig(String service, ContextHandle serviceManagerHandle) throws IOException {
+        ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
+        RQueryServiceConfigWRequest request = new RQueryServiceConfigWRequest(serviceHandle, RQueryServiceConfigWRequest.MAX_BUFFER_SIZE);
+        RQueryServiceConfigWResponse response = transport.call(request);
+        if (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode())){
+            return response.getrQueryServiceConfigInfo();
+        } else return null;
     }
 }
