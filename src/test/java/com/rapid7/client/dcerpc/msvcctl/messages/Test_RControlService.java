@@ -20,7 +20,7 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
 import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,17 +39,17 @@ public class Test_RControlService
         final RQueryServiceStatusResponse response = new RQueryServiceStatusResponse();
         response.fromHexString("2000000001000000000000000000000000000000000000000000000026040000");
 
-        RQueryServiceStatusInfo expectedResponse = new RQueryServiceStatusInfo(
-            RQueryServiceStatusInfo.SERVICE_WIN32_SHARE_PROCESS,
-            RQueryServiceStatusInfo.SERVICE_STOPPED,
-            RQueryServiceStatusInfo.SERVICE_ACCEPT_NONE,
+        ServiceStatusInfo expectedResponse = new ServiceStatusInfo(
+            ServiceStatusInfo.SERVICE_WIN32_SHARE_PROCESS,
+            ServiceStatusInfo.SERVICE_STOPPED,
+            ServiceStatusInfo.SERVICE_ACCEPT_NONE,
             0,
             0,
             0,
             0
         );
         assertEquals(SystemErrorCode.ERROR_SERVICE_NOT_ACTIVE, response.getReturnCode());
-        assertEquals(expectedResponse, response.getrQueryServiceStatusInfo());
+        assertEquals(expectedResponse, response.getServiceStatusInfo());
     }
 
     @SuppressWarnings("unchecked")

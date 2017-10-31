@@ -20,7 +20,7 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
 import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,10 +36,10 @@ public class Test_RQueryServiceStatus
     @Test
     public void parseRQueryServiceStatusResponse()
             throws IOException {
-        RQueryServiceStatusInfo expectedResponse = new RQueryServiceStatusInfo(
-            RQueryServiceStatusInfo.SERVICE_WIN32_SHARE_PROCESS,
-            RQueryServiceStatusInfo.SERVICE_STOPPED,
-            RQueryServiceStatusInfo.SERVICE_ACCEPT_NONE,
+        ServiceStatusInfo expectedResponse = new ServiceStatusInfo(
+            ServiceStatusInfo.SERVICE_WIN32_SHARE_PROCESS,
+            ServiceStatusInfo.SERVICE_STOPPED,
+            ServiceStatusInfo.SERVICE_ACCEPT_NONE,
             0,
             0,
             0,
@@ -47,7 +47,7 @@ public class Test_RQueryServiceStatus
         );
         RQueryServiceStatusResponse response = new RQueryServiceStatusResponse();
         response.fromHexString("200000000100000000000000000000000000000000000000d007000000000000");
-        assertEquals(expectedResponse, response.getrQueryServiceStatusInfo());
+        assertEquals(expectedResponse, response.getServiceStatusInfo());
         assertEquals(SystemErrorCode.ERROR_SUCCESS, response.getReturnCode());
 
     }

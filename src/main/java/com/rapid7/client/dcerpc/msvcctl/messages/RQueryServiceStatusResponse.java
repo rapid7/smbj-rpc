@@ -21,12 +21,12 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
 import java.io.IOException;
 
 public class RQueryServiceStatusResponse extends RequestResponse
 {
-    private RQueryServiceStatusInfo rQueryServiceStatusInfo;
+    private ServiceStatusInfo serviceStatusInfo;
     private int returnCode;
 
     @Override public void unmarshal(PacketInput packetIn)
@@ -39,7 +39,7 @@ public class RQueryServiceStatusResponse extends RequestResponse
         int serviceSpecificExitCode = packetIn.readInt();
         int checkPoint = packetIn.readInt();
         int waitHint = packetIn.readInt();
-        rQueryServiceStatusInfo = new RQueryServiceStatusInfo(
+        serviceStatusInfo = new ServiceStatusInfo(
             serviceType,
             currentState,
             controlsAccepted,
@@ -51,8 +51,8 @@ public class RQueryServiceStatusResponse extends RequestResponse
         returnCode = packetIn.readInt();
     }
 
-    public RQueryServiceStatusInfo getrQueryServiceStatusInfo() {
-        return rQueryServiceStatusInfo;
+    public ServiceStatusInfo getServiceStatusInfo() {
+        return serviceStatusInfo;
     }
 
     public SystemErrorCode getReturnCode() {

@@ -20,6 +20,7 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
 import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,11 +59,20 @@ public class Test_RChangeServiceConfig
     public void encodeRChangeServiceConfigRequest_nullParams()
         throws IOException {
         ContextHandle testHandle = new ContextHandle("000000004ba33dee35ec1246bd1a407779babf11");
+        ServiceConfigInfo serviceConfigInfo = new ServiceConfigInfo(
+                RChangeServiceConfigWRequest.SERVICE_NO_CHANGE,
+                RChangeServiceConfigWRequest.SERVICE_DEMAND_START,
+                RChangeServiceConfigWRequest.SERVICE_ERROR_NORMAL,
+                null,
+                null,
+                0,
+                null,
+                null,
+                null
+        );
         RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(
             testHandle,
-            RChangeServiceConfigWRequest.SERVICE_NO_CHANGE,
-            RChangeServiceConfigWRequest.SERVICE_DEMAND_START,
-            RChangeServiceConfigWRequest.SERVICE_ERROR_NORMAL);
+            serviceConfigInfo);
         assertEquals(request.toHexString(), "000000004ba33dee35ec1246bd1a407779babf11ffffffff0300000001000000000000000000000000000000000000000000000000000000000000000000000000000000");
     }
 
@@ -71,21 +81,19 @@ public class Test_RChangeServiceConfig
     public void encodeRChangeServiceConfigRequest()
         throws IOException {
         ContextHandle testHandle = new ContextHandle("00000000f3fdced6b714df4ba7c770d115f24601");
-        RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(
-            testHandle,
-            RChangeServiceConfigWRequest.SERVICE_NO_CHANGE,
-            RChangeServiceConfigWRequest.SERVICE_DEMAND_START,
-            RChangeServiceConfigWRequest.SERVICE_ERROR_NORMAL);
-        request.setTagId(1);
-        request.setBinaryPathName("Some binary path");
-        request.setDependencies(new byte[]{0xd,0xe,0xa});
-        request.setDisplayName("TestDisplayName");
-        request.setPassword("TestPassword");
-        request.setLoadOrderGroup("TestLOG");
-        request.setPassword("Password");
-        assertEquals(request.toHexString(), "00000000f3fdced6b714df4ba7c770d115f24601ffffffff03000000010000000000020011000000000000001100000053006f006d0065002000620069006e0061007200790020007000610074006800000000000400020008000000000000000800000054006500730074004c004f004700000008000200010000000c000200030000000d0e0a000300000000000000100002000800000050617373776f72640800000014000200100000000000000010000000540065007300740044006900730070006c00610079004e0061006d0065000000");
+        ServiceConfigInfo serviceConfigInfo = new ServiceConfigInfo(
+                RChangeServiceConfigWRequest.SERVICE_NO_CHANGE,
+                RChangeServiceConfigWRequest.SERVICE_DEMAND_START,
+                RChangeServiceConfigWRequest.SERVICE_ERROR_NORMAL,
+                "Some binary path",
+                "TestLOG",
+                1,
+                "abc",
+                null,
+                "TestDisplayName"
+        );
+        serviceConfigInfo.setPassword("Password");
+        RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(testHandle, serviceConfigInfo);
+        assertEquals(request.toHexString(), "00000000f3fdced6b714df4ba7c770d115f24601ffffffff03000000010000000000020011000000000000001100000053006f006d0065002000620069006e0061007200790020007000610074006800000000000400020008000000000000000800000054006500730074004c004f004700000008000200010000000c00020003000000616263000300000000000000100002000800000050617373776f72640800000014000200100000000000000010000000540065007300740044006900730070006c00610079004e0061006d0065000000");
     }
-
-
-
 }

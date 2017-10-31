@@ -20,7 +20,7 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceConfigInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
 import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,10 +36,10 @@ public class Test_RQueryServiceConfig
     @Test
     public void parseRQueryServiceConfigResponse()
             throws IOException {
-        RQueryServiceConfigInfo expectedResponse = new RQueryServiceConfigInfo(
-                RQueryServiceConfigInfo.SERVICE_WIN32_SHARE_PROCESS,
-                RQueryServiceConfigInfo.SERVICE_DEMAND_START,
-                RQueryServiceConfigInfo.SERVICE_ERROR_NORMAL,
+        ServiceConfigInfo expectedResponse = new ServiceConfigInfo(
+                ServiceConfigInfo.SERVICE_WIN32_SHARE_PROCESS,
+                ServiceConfigInfo.SERVICE_DEMAND_START,
+                ServiceConfigInfo.SERVICE_ERROR_NORMAL,
                 "something",
                 "",
                 0,
@@ -49,7 +49,7 @@ public class Test_RQueryServiceConfig
         );
         RQueryServiceConfigWResponse response = new RQueryServiceConfigWResponse();
         response.fromHexString("200000000300000001000000000002000400020000000000080002000c000200100002000a000000000000000a00000073006f006d0065007400680069006e006700000001000000000000000100000000000000070000000000000007000000520050004300530053002f00000000001a000000000000001a0000004e005400200041005500540048004f0052004900540059005c004c006f00630061006c0053006500720076006900630065000000100000000000000010000000520065006d006f00740065002000520065006700690073007400720079000000dc00000000000000");
-        assertEquals(expectedResponse, response.getrQueryServiceConfigInfo());
+        assertEquals(expectedResponse, response.getServiceConfigInfo());
         assertEquals(SystemErrorCode.ERROR_SUCCESS, response.getReturnCode());
 
     }

@@ -23,7 +23,7 @@ package com.rapid7.client.dcerpc.msvcctl.objects;
  * https://msdn.microsoft.com/en-us/library/cc245948.aspx
  */
 
-public class RQueryServiceConfigInfo
+public class ServiceConfigInfo
 {
     //Service Type
     public final static int SERVICE_KERNEL_DRIVER = 0x1;
@@ -52,9 +52,10 @@ public class RQueryServiceConfigInfo
     private int tagId;
     private String dependencies;
     private String serviceStartName;
+    private String password;
     private String displayName;
 
-    public RQueryServiceConfigInfo(int serviceType, int startType, int errorControl, String binaryPathName, String loadOrderGroup, int tagId, String dependencies, String serviceStartName, String displayName) {
+    public ServiceConfigInfo(int serviceType, int startType, int errorControl, String binaryPathName, String loadOrderGroup, int tagId, String dependencies, String serviceStartName, String displayName) {
         this.serviceType = serviceType;
         this.startType = startType;
         this.errorControl = errorControl;
@@ -102,12 +103,20 @@ public class RQueryServiceConfigInfo
         return displayName;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        RQueryServiceConfigInfo that = (RQueryServiceConfigInfo) o;
+        ServiceConfigInfo that = (ServiceConfigInfo) o;
 
         if (serviceType != that.serviceType) return false;
         if (startType != that.startType) return false;
@@ -117,6 +126,7 @@ public class RQueryServiceConfigInfo
         if (!loadOrderGroup.equals(that.loadOrderGroup)) return false;
         if (!dependencies.equals(that.dependencies)) return false;
         if (!serviceStartName.equals(that.serviceStartName)) return false;
+        if (password != null ? !password.equals(that.password) : that.password != null) return false;
         return displayName.equals(that.displayName);
     }
 
@@ -130,6 +140,7 @@ public class RQueryServiceConfigInfo
         result = 31 * result + tagId;
         result = 31 * result + dependencies.hashCode();
         result = 31 * result + serviceStartName.hashCode();
+        result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + displayName.hashCode();
         return result;
     }

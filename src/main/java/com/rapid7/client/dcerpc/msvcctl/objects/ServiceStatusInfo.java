@@ -24,7 +24,7 @@ package com.rapid7.client.dcerpc.msvcctl.objects;
  * https://msdn.microsoft.com/en-us/library/cc245911.aspx
  */
 
-public class RQueryServiceStatusInfo
+public class ServiceStatusInfo
 {
     // Service Type
     public final static int SERVICE_KERNEL_DRIVER = 0x1;
@@ -63,7 +63,7 @@ public class RQueryServiceStatusInfo
     final private int checkPoint;
     final private int waitHint;
 
-    public RQueryServiceStatusInfo(
+    public ServiceStatusInfo(
         int serviceType,
         int currentState,
         int controlsAccepted,
@@ -128,7 +128,7 @@ public class RQueryServiceStatusInfo
         if (o == null || getClass() != o.getClass())
             return false;
 
-        RQueryServiceStatusInfo that = (RQueryServiceStatusInfo)o;
+        ServiceStatusInfo that = (ServiceStatusInfo)o;
 
         if (serviceType != that.serviceType)
             return false;

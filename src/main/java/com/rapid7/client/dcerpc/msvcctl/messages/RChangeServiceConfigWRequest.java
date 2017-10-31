@@ -21,6 +21,7 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
 import java.io.IOException;
 
 public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConfigWResponse>
@@ -50,63 +51,14 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
 
     private final static short OP_NUM = 11;
     private ContextHandle serviceHandle;
-    private int serviceType = SERVICE_NO_CHANGE; //defaults
-    private int startType = SERVICE_NO_CHANGE;
-    private int errorControl = SERVICE_NO_CHANGE;
-    private String binaryPathName;
-    private String loadOrderGroup;
-    private int tagId;
-    private byte[] dependencies;
-    private String serviceStartName;
-    private String password;
-    private String displayName;
-
+    private ServiceConfigInfo serviceConfigInfo;
 
     public RChangeServiceConfigWRequest(
         final ContextHandle handle,
-        final int serviceType,
-        final int startType,
-        final int errorControl){
+        final ServiceConfigInfo serviceConfigInfo){
         super(OP_NUM);
         this.serviceHandle = handle;
-        this.serviceType = serviceType;
-        this.startType = startType;
-        this.errorControl = errorControl;
-    }
-
-    public void setBinaryPathName(String binaryPathName)
-    {
-        this.binaryPathName = binaryPathName;
-    }
-
-    public void setLoadOrderGroup(String loadOrderGroup)
-    {
-        this.loadOrderGroup = loadOrderGroup;
-    }
-
-    public void setTagId(int tagId)
-    {
-        this.tagId = tagId;
-    }
-
-    public void setDependencies(byte[] dependencies)
-    {
-        this.dependencies = dependencies;
-    }
-
-    public void setServiceStartName(String serviceStartName)
-    {
-        this.serviceStartName = serviceStartName;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
-
-    public void setDisplayName(String displayName)
-    {
-        this.displayName = displayName;
+        this.serviceConfigInfo = serviceConfigInfo;
     }
 
     @Override public RChangeServiceConfigWResponse getResponseObject() {
@@ -116,48 +68,52 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
     @Override public void marshal(PacketOutput packetOut)
         throws IOException {
         packetOut.write(serviceHandle.getBytes());
-        packetOut.writeInt(serviceType);
-        packetOut.writeInt(startType);
-        packetOut.writeInt(errorControl);
-        if (binaryPathName != null) packetOut.writeStringRef(binaryPathName, true);
+        packetOut.writeInt(serviceConfigInfo.getServiceType());
+        packetOut.writeInt(serviceConfigInfo.getStartType());
+        packetOut.writeInt(serviceConfigInfo.getErrorControl());
+        if (serviceConfigInfo.getBinaryPathName() != null)
+            packetOut.writeStringRef(serviceConfigInfo.getBinaryPathName(), true);
         else packetOut.writeNull();
 
-        if (loadOrderGroup != null) packetOut.writeStringRef(loadOrderGroup, true);
+        if (serviceConfigInfo.getLoadOrderGroup() != null)
+            packetOut.writeStringRef(serviceConfigInfo.getLoadOrderGroup(), true);
         else packetOut.writeNull();
 
-        if (tagId != 0) packetOut.writeIntRef(tagId);
+        if (serviceConfigInfo.getTagId() != 0) packetOut.writeIntRef(serviceConfigInfo.getTagId());
         else packetOut.writeNull();
 
-        if (dependencies != null) {
+        if (serviceConfigInfo.getDependencies() != null) {
             packetOut.writeReferentID();
-            packetOut.writeInt(dependencies.length); //conformat array, count
-            packetOut.write(dependencies);
+            packetOut.writeInt(serviceConfigInfo.getDependencies().length()); //conformat array, count
+            packetOut.write(serviceConfigInfo.getDependencies().getBytes());
             packetOut.align();
             //dependency size
-            packetOut.writeInt(dependencies.length);
+            packetOut.writeInt(serviceConfigInfo.getDependencies().length());
         } else {
             packetOut.writeNull();
             //dependency size
             packetOut.writeInt(0);
         }
 
-        if (serviceStartName != null) packetOut.writeStringRef(serviceStartName, true);
+        if (serviceConfigInfo.getServiceStartName() != null)
+            packetOut.writeStringRef(serviceConfigInfo.getServiceStartName(), true);
         else packetOut.writeNull();
 
-        if (password != null) {
+        if (serviceConfigInfo.getPassword() != null) {
             packetOut.writeReferentID();
-            packetOut.writeInt(password.length());
-            packetOut.write(password.getBytes());
+            packetOut.writeInt(serviceConfigInfo.getPassword().length());
+            packetOut.write(serviceConfigInfo.getPassword().getBytes());
             packetOut.align();
             //password size
-            packetOut.writeInt(password.length());
+            packetOut.writeInt(serviceConfigInfo.getPassword().length());
         } else {
             packetOut.writeNull();
             //password size
             packetOut.writeInt(0);
         }
 
-        if (displayName != null) packetOut.writeStringRef(displayName, true);
+        if (serviceConfigInfo.getDisplayName() != null)
+            packetOut.writeStringRef(serviceConfigInfo.getDisplayName(), true);
         else packetOut.writeNull();
     }
 }

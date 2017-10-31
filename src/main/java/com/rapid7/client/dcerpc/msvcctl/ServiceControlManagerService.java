@@ -31,8 +31,8 @@ import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RStartServiceWRequest;
-import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceConfigInfo;
-import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
 import com.rapid7.client.dcerpc.objects.EmptyResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 import java.io.IOException;
@@ -71,41 +71,43 @@ public class ServiceControlManagerService
         return (response.getReturnValue().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode()));
     }
 
-    public RQueryServiceStatusInfo queryService(String service, ContextHandle serviceManagerHandle)
+    public ServiceStatusInfo queryService(String service, ContextHandle serviceManagerHandle)
         throws IOException {
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RQueryServiceStatusRequest request = new RQueryServiceStatusRequest(serviceHandle);
         RQueryServiceStatusResponse response = transport.call(request);
         if (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode())){
-            return response.getrQueryServiceStatusInfo();
+            return response.getServiceStatusInfo();
         } else return null;
     }
 
-    public RQueryServiceStatusInfo stopService(String service, ContextHandle serviceManagerHandle)
+    public ServiceStatusInfo stopService(String service, ContextHandle serviceManagerHandle)
         throws IOException {
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RControlServiceRequest request = new RControlServiceRequest(serviceHandle, RControlServiceRequest.SERVICE_CONTROL_STOP);
         RQueryServiceStatusResponse response = transport.call(request);
         if (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode())){
-            return response.getrQueryServiceStatusInfo();
+            return response.getServiceStatusInfo();
         } else return null;
     }
 
-    public boolean changeServiceConfig(String service, ContextHandle serviceManagerHandle, int serviceType, int startType, int errorControl)
+    public boolean changeServiceConfig(String service,
+                                       ContextHandle serviceManagerHandle,
+                                       ServiceConfigInfo serviceConfigInfo)
         throws IOException {
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
-        RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(serviceHandle, serviceType, startType, errorControl);
+        RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(serviceHandle, serviceConfigInfo);
         RChangeServiceConfigWResponse response = transport.call(request);
         return (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode()));
 
     }
 
-    public RQueryServiceConfigInfo queryServiceConfig(String service, ContextHandle serviceManagerHandle) throws IOException {
+    public ServiceConfigInfo queryServiceConfig(String service, ContextHandle serviceManagerHandle) throws IOException {
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RQueryServiceConfigWRequest request = new RQueryServiceConfigWRequest(serviceHandle, RQueryServiceConfigWRequest.MAX_BUFFER_SIZE);
         RQueryServiceConfigWResponse response = transport.call(request);
         if (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode())){
-            return response.getrQueryServiceConfigInfo();
+            return response.getServiceConfigInfo();
         } else return null;
     }
 }

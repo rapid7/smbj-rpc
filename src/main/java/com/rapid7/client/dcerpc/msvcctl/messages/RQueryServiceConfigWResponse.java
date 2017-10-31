@@ -21,12 +21,12 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.msvcctl.objects.RQueryServiceConfigInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
 import java.io.IOException;
 
 public class RQueryServiceConfigWResponse extends RequestResponse
 {
-    private RQueryServiceConfigInfo rQueryServiceConfigInfo;
+    private ServiceConfigInfo serviceConfigInfo;
     private int bytesNeeded;
     private int returnCode;
 
@@ -56,7 +56,7 @@ public class RQueryServiceConfigWResponse extends RequestResponse
         String serviceStartName = (serviceStartNameRef != 0) ? packetIn.readString(true) : null;
         String displayName =  (displayNameRef != 0) ? packetIn.readString(true) : null;
 
-        rQueryServiceConfigInfo = new RQueryServiceConfigInfo(
+        serviceConfigInfo = new ServiceConfigInfo(
                 serviceType,
                 startType,
                 errorControl,
@@ -72,8 +72,8 @@ public class RQueryServiceConfigWResponse extends RequestResponse
         return bytesNeeded;
     }
 
-    public RQueryServiceConfigInfo getrQueryServiceConfigInfo() {
-        return rQueryServiceConfigInfo;
+    public ServiceConfigInfo getServiceConfigInfo() {
+        return serviceConfigInfo;
     }
 
     public SystemErrorCode getReturnCode() {
