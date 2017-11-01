@@ -6,7 +6,19 @@ Partial support for the Windows Remote Registry Protocol (MS-RRP) specification 
 
 Special thank you to Jeroen van Erp for SMBJ (https://github.com/hierynomus/smbj).
 
-# Usage Example
+Table of contents
+=================
+* [Usage Examples](#usage-examples)
+* [NDR Types](#ndr-types)
+  * [Structure](#structure)
+  * [Pointers](#pointers)
+  * [Arrays](#arrays)
+* [NDR to Java Mapping](#ndr-to-java-mapping)
+* [NDR Marshalling](#ndr-marshalling)
+  * [Primitive Marshalling](#primitive-marshalling)
+  * [Construct Marshalling](#construct-marshalling)
+
+# Usage Examples
 
 #### [MS-RRP]: Windows Remote Registry Protocol (https://msdn.microsoft.com/en-us/library/cc244877.aspx)
 
@@ -61,4 +73,156 @@ try (final Connection smbConnection = smbClient.connect("aaa.bbb.ccc.ddd")) {
 }
 ```
 
-test!
+# NDR Types
+
+All objects are assigned to a type hierarchy:
+* Primitive
+  * `boolean`
+  * `character` (ASCII)
+  * Signed/Unsigned Integers:
+    * `small`
+    * `short`
+    * `long`
+    * `hyper`
+  * Signed/Unsigned Floating Points:
+    * `single`
+    * `double`
+* NDR Construct
+  * `Struct`
+  * `Union`
+  * Arrays
+    * `Fixed Array`
+    * `Varying Array`
+    * `Conformant Array`
+    * `Conformant Varying Array`
+  * `Pointer`
+
+# Structure
+
+Structures have 0 or more fields of NDR objects, and have special marshalling and alignment considerations.
+
+## Alignment
+
+All fields in a struct must be aligned according to the largest alignment of its fields. This can and should be known ahead of time to improve performance.
+Each field has unique rules for calculating their alignment:
+* Struct: The largest alignment of its fields
+* Pointer: Modulo 4 for NDR20, and modulo 8 for NDR64
+* Primitives: Constant alignment.
+* Arrays: Max value of the size representation of the array and its entry type alignment.
+* Union: Largest alignment of union discriminator and all arms.
+
+# Pointers
+
+All pointers are represented with a `ReferentID` as an `unsigned long` (NDR20) or `unsigned hyper` (NDR64). While these IDs don't need to be unique, a value of `0` indicates a NULL pointer, and the subsequent referent is considered null and should be ignored.
+
+# Arrays
+
+## Size Representation
+
+* **Fixed**: Size information is not represented as is expected to be known ahead of time. This can either be from another hint (i.e. struct field), or hardcoded to be of constant size.
+
+* **Conformant**: Conformant arrays must contain a `MaximumSize`, which is the size of the entire array. For ND20, this values is an `unsigned long` (4 bytes). For ND64, it is an `unsigned hyper` (8 byte).
+
+* **Varying**: Varying arrays must contain the `Offset` and `ActualSize`, which represents the subset of the complete array to consider. For ND20, these values are an `unsigned long` (4 bytes). For ND64, they are an `unsigned hyper` (8 byte).
+
+## Element Storage
+
+When embedded within a struct, element storage has special rules:
+
+* **Conformant**: Stored at the *end* of the embedded structure. This is not the same as deferred references as they are stored at the end of the top level construct.
+
+* **Fixed**/**Varying**: If the array is not conformant, data is stored inline, immediately after size representation (if any).
+
+# NDR to Java Mapping
+
+The Java mapping of NDR primitivies is as follows:
+
+| NDR | NDR Size | Java | Java Size |
+| --- | --- | --- | --- |
+| boolean | 1 | java.lang.Boolean | 1 |
+| character | 1 | java.lang.Character | 1 |
+| small | 1 | java.lang.Byte | 1 |
+| unsigned small | 1 | java.lang.Short | 2 |
+| short | 2 | java.lang.Short | 2 |
+| unsigned short | 2 | java.lang.Integer | 4 |
+| long | 4 | java.lang.Integer | 4 |
+| unsigned long | 4 | java.lang.Long | 8 |
+| hyper | 8 | java.lang.Long | 8 |
+| unsigned hyper | 8 | N/A | N/A |
+
+The Java mapping of NDR constructs is as folllows:
+
+| NDR | Java |
+| --- | --- |
+| * | NDRConstruct |
+| Struct | NDRStruct |
+| Union | NDRUnion |
+| *Array | NDRArray |
+| Fixed Array | NDRFixedArray |
+| Varying Array | NDRVaryingArray |
+| Conformant Array | NDRConformantArray |
+| Conformant Varying Array | NDRConformantArray & NDRVaryingArray |
+
+# NDR Marshalling
+
+## Primitive Marshalling
+
+Each primitive is provided its own unique marshalling strategy, and does not require special consideration.
+
+## Construct Marshalling
+
+The marshalling algorithm consists of three stages:
+* Header
+* Body
+* Footer
+
+The approach to marshalling any NDR object is:
+```
+marshall(Object obj) {
+	if obj is NDRConstruct
+		obj.marshallHeader(Stream)
+		obj.marshallBody(Stream)
+		obj.marshallFooter(Stream)
+	else
+		// Marshall primtive type
+}
+```
+
+`NDRConstruct` rules are as follows:
+
+| | Fixed Array | Varying Array | Conformant Array | Pointer  | Struct |
+| --- | --- | ---| --- | --- | --- |
+| Header | |               |   MaximumLength  | | Fields.Header|
+| Body   | Entries | Offset, ActualSize, Entries | | ReferentID | Fields.Body |
+| Footer | |  | Entries | Referent | Fields.Footer |
+
+* `Referent`: The construct or primitive the referent references:
+	```
+	marshall(reference.referent)
+	```
+* `Fields.Header`:
+	```
+	for field in struct fields:
+		field.marshallHeader(Stream)
+	```
+* `Fields.Body`:
+	```
+	for field in struct fields:
+		field.marshallBody(Stream)
+	```
+* `Fields.Footer`:
+	```
+	for field in struct fields:
+		field.marshallFooter(Stream)
+	```
+
+* `Entries`: Each entry is treated as a struct field:
+	```
+    for entry in entries
+    	marshall entry header
+   	for entry in entries
+      	marshall entry body
+    for entry in entries
+      	marshal entry tail
+    ```
+
