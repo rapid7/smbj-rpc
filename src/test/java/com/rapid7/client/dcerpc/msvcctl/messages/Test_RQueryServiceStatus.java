@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 public class Test_RQueryServiceStatus
@@ -48,8 +49,7 @@ public class Test_RQueryServiceStatus
         RQueryServiceStatusResponse response = new RQueryServiceStatusResponse();
         response.fromHexString("200000000100000000000000000000000000000000000000d007000000000000");
         assertEquals(expectedResponse, response.getServiceStatusInfo());
-        assertEquals(SystemErrorCode.ERROR_SUCCESS, response.getReturnCode());
-
+        assertTrue(SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue()));
     }
 
     @SuppressWarnings("unchecked")

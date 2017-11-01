@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class Test_RControlService
 {
@@ -48,7 +49,7 @@ public class Test_RControlService
             0,
             0
         );
-        assertEquals(SystemErrorCode.ERROR_SERVICE_NOT_ACTIVE, response.getReturnCode());
+        assertTrue(SystemErrorCode.ERROR_SERVICE_NOT_ACTIVE.is(response.getReturnValue()));
         assertEquals(expectedResponse, response.getServiceStatusInfo());
     }
 

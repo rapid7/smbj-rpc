@@ -20,7 +20,6 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
 import java.io.IOException;
 
@@ -28,14 +27,14 @@ public class RQueryServiceConfigWResponse extends RequestResponse
 {
     private ServiceConfigInfo serviceConfigInfo;
     private int bytesNeeded;
-    private int returnCode;
+    private int returnValue;
 
     @Override public void unmarshal(PacketInput packetIn)
         throws IOException
     {
         readQueryServiceConfg(packetIn);
         bytesNeeded = packetIn.readInt();
-        returnCode = packetIn.readInt();
+        returnValue = packetIn.readInt();
     }
 
     private void readQueryServiceConfg(PacketInput packetIn) throws IOException {
@@ -76,7 +75,7 @@ public class RQueryServiceConfigWResponse extends RequestResponse
         return serviceConfigInfo;
     }
 
-    public SystemErrorCode getReturnCode() {
-        return SystemErrorCode.getErrorCode(returnCode);
+    public int getReturnValue() {
+        return returnValue;
     }
 }

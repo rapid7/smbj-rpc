@@ -18,6 +18,7 @@
  */
 package com.rapid7.client.dcerpc.msvcctl;
 
+import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
@@ -53,14 +54,18 @@ public class ServiceControlManagerService
         throws IOException {
         ROpenSCManagerWRequest request = new ROpenSCManagerWRequest(null, null, FULL_ACCESS);
         HandleResponse response = transport.call(request);
-        return response.getHandle();
+        if (SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue()))
+            return response.getHandle();
+        else throw new RPCException("ServiceManagerHandle", response.getReturnValue());
     }
 
     private ContextHandle getServiceHandle(String serviceName, ContextHandle serviceManagerHandle)
         throws IOException {
         ROpenServiceWRequest request = new ROpenServiceWRequest(serviceManagerHandle, serviceName, FULL_ACCESS);
         HandleResponse response = transport.call(request);
-        return response.getHandle();
+        if (SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue()))
+            return response.getHandle();
+        else throw new RPCException("ServiceHandle", response.getReturnValue());
     }
 
     public boolean startService(String service, ContextHandle serviceManagerHandle)
@@ -68,7 +73,7 @@ public class ServiceControlManagerService
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RStartServiceWRequest request = new RStartServiceWRequest(serviceHandle);
         EmptyResponse response = transport.call(request);
-        return (response.getReturnValue().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode()));
+        return SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue());
     }
 
     public ServiceStatusInfo queryService(String service, ContextHandle serviceManagerHandle)
@@ -76,9 +81,9 @@ public class ServiceControlManagerService
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RQueryServiceStatusRequest request = new RQueryServiceStatusRequest(serviceHandle);
         RQueryServiceStatusResponse response = transport.call(request);
-        if (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode())){
+        if (SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue())) {
             return response.getServiceStatusInfo();
-        } else return null;
+        } else throw new RPCException("QueryService", response.getReturnValue());
     }
 
     public ServiceStatusInfo stopService(String service, ContextHandle serviceManagerHandle)
@@ -86,9 +91,9 @@ public class ServiceControlManagerService
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RControlServiceRequest request = new RControlServiceRequest(serviceHandle, RControlServiceRequest.SERVICE_CONTROL_STOP);
         RQueryServiceStatusResponse response = transport.call(request);
-        if (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode())){
+        if (SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue())) {
             return response.getServiceStatusInfo();
-        } else return null;
+        } else throw new RPCException("StopService", response.getReturnValue());
     }
 
     public boolean changeServiceConfig(String service,
@@ -98,7 +103,7 @@ public class ServiceControlManagerService
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(serviceHandle, serviceConfigInfo);
         RChangeServiceConfigWResponse response = transport.call(request);
-        return (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode()));
+        return SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue());
 
     }
 
@@ -106,8 +111,8 @@ public class ServiceControlManagerService
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RQueryServiceConfigWRequest request = new RQueryServiceConfigWRequest(serviceHandle, RQueryServiceConfigWRequest.MAX_BUFFER_SIZE);
         RQueryServiceConfigWResponse response = transport.call(request);
-        if (response.getReturnCode().is(SystemErrorCode.ERROR_SUCCESS.getErrorCode())){
+        if (SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue())) {
             return response.getServiceConfigInfo();
-        } else return null;
+        } else throw new RPCException("QueryServiceConfig", response.getReturnValue());
     }
 }

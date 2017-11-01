@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class Test_RStartService
 {
@@ -38,7 +39,7 @@ public class Test_RStartService
             throws IOException {
         final EmptyResponse response = new EmptyResponse();
         response.fromHexString("00000000");
-        assertEquals(SystemErrorCode.ERROR_SUCCESS, response.getReturnValue());
+        assertTrue(SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue()));
     }
 
     @SuppressWarnings("unchecked")

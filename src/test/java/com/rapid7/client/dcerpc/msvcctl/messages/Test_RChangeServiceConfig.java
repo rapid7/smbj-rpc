@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class Test_RChangeServiceConfig
 {
@@ -40,7 +41,7 @@ public class Test_RChangeServiceConfig
         response.fromHexString("0000000000000000");
 
         assertEquals(0, response.getTagId());
-        assertEquals(SystemErrorCode.ERROR_SUCCESS, response.getReturnCode());
+        assertTrue(SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue()));
     }
 
     @SuppressWarnings("unchecked")
@@ -51,7 +52,7 @@ public class Test_RChangeServiceConfig
         response.fromHexString("000002000100000057000000");
 
         assertEquals(1, response.getTagId());
-        assertEquals(SystemErrorCode.ERROR_INVALID_PARAMETER, response.getReturnCode());
+        assertTrue(SystemErrorCode.ERROR_INVALID_PARAMETER.is(response.getReturnValue()));
     }
 
     @SuppressWarnings("unchecked")
