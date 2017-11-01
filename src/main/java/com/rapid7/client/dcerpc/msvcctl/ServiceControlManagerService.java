@@ -51,7 +51,7 @@ public class ServiceControlManagerService
 
     public ContextHandle getServiceManagerHandle()
         throws IOException {
-        ROpenSCManagerWRequest request = new ROpenSCManagerWRequest("test",null, FULL_ACCESS);
+        ROpenSCManagerWRequest request = new ROpenSCManagerWRequest(null, null, FULL_ACCESS);
         HandleResponse response = transport.call(request);
         return response.getHandle();
     }
