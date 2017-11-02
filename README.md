@@ -171,7 +171,7 @@ Each primitive is provided its own unique marshalling strategy, and does not req
 
 ## Construct Marshalling
 
-The marshalling algorithm consists of three stages:
+Marshalling of constructs consists of three stages:
 * Preamble
 * Entity
 * Deferrals
@@ -192,37 +192,7 @@ marshall(Object obj) {
 
 | | Fixed Array | Varying Array | Conformant Array | Pointer  | Struct |
 | --- | --- | ---| --- | --- | --- |
-| Premable | |               |   MaximumLength  | | Fields.Preamble |
-| Entity   | Entries | Offset, ActualSize, Entries | | ReferentID | Fields.Entity |
-| Deferrals | |  | Entries | Referent | Fields.Deferrals |
-
-* `Referent`: The construct or primitive the referent references:
-	```
-	marshall(reference.referent)
-	```
-* `Fields.Preamble`:
-	```
-	for field in struct fields:
-		field.marshallPreamble(Stream)
-	```
-* `Fields.Entity`:
-	```
-	for field in struct fields:
-		field.marshallEntity(Stream)
-	```
-* `Fields.Deferrals`:
-	```
-	for field in struct fields:
-		field.marshallDeferrals(Stream)
-	```
-
-* `Entries`: Each entry is treated as a struct field:
-	```
-   for entry in array entries
-      entry.marshallPreamble(Stream)
-   for entry in array entries
-      entry.marshallEntity(Stream)
-   for entry in array entries
-      entry.marshallDeferrals(Stream)
-   ```
+| Premable | | | marshall(MaximumLength) | | for f in fields:<br/>f.marshallPreamble(Stream) |
+| Entity   | for e in entries:<br/>marshall(e) | marshall(Offset)<br/>marshall(ActualSize)<br/>marshall(Entries) | | marshall(ReferentID) | for f in fields:<br/>f.marshallEntity(Stream) |
+| Deferrals | |  | for e in entries:<br/>marshall(e) | marshall(reference.referent) | for f in fields:<br/>f.marshallDeferrals(Stream) |
 
