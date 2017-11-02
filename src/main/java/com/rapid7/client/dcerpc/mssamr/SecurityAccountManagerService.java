@@ -28,8 +28,14 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenLocalGroupRpcRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenLocalGroupRpcResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
+import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -61,6 +67,21 @@ public class SecurityAccountManagerService {
         return response.getHandle();
     }
 
+    public UserHandle openUser(DomainHandle domainHandle, int sid) throws IOException {
+	final SamrOpenUserRequest request = new SamrOpenUserRequest(domainHandle, sid);
+	final SamrOpenUserResponse response = transport.call(request);
+	return response.getHandle();
+    }
+
+    public AliasHandle openAlias(DomainHandle domainHandle, int sid) throws IOException {
+	// AccessMask(0x0002000C)
+	// SAMR Alias specific rights: 0x0000000c
+	// - SAMR_ALIAS_ACCESS_LOOKUP_INFO is SET(8)
+	// - SAMR_ALIAS_ACCESS_GET_MEMBERS is SET(4)
+	final SamrOpenLocalGroupRpcRequest request = new SamrOpenLocalGroupRpcRequest(domainHandle, sid, 0x0002000C);
+	final SamrOpenLocalGroupRpcResponse response = transport.call(request);
+	return response.getHandle();
+    }
     public void closeHandle(ContextHandle handle) throws IOException {
         final SamrCloseHandleRequest request = new SamrCloseHandleRequest(handle);
         final SamrCloseHandleResponse response = transport.call(request);
