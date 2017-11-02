@@ -26,6 +26,6 @@ public class SamrConnect2Response extends HandleResponse<ServerHandle> {
     @Override
     protected ServerHandle initHandle()
     {
-	return new ServerHandle();
+        return new ServerHandle();
     }
 }

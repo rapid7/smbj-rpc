@@ -16,7 +16,7 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr;
+package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import org.junit.Test;

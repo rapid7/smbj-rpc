@@ -31,23 +31,21 @@ import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 
 public class Test_SamrOpenDomainRequest {
     private final SamrOpenDomainRequest request = new SamrOpenDomainRequest(new ServerHandle(),
-	    SID.fromString("S-1-5-32"), EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        SID.fromString("S-1-5-32"), EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
 
     @Test
     public void getOpNum() {
-	assertEquals(SamrOpenDomainRequest.OP_NUM, request.getOpNum());
+        assertEquals(SamrOpenDomainRequest.OP_NUM, request.getOpNum());
     }
 
     @Test
-    public void getStub()
-	    throws IOException {
-	assertEquals("00000000000000000000000000000000000000000000000201000000010100000000000520000000",
-		toHexString(request.getStub()));
+    public void getStub() throws IOException {
+        assertEquals("00000000000000000000000000000000000000000000000201000000010100000000000520000000",
+            toHexString(request.getStub()));
     }
 
     @Test
-    public void getResponseObject()
-	    throws IOException {
-	assertThat(request.getResponseObject(), instanceOf(SamrOpenDomainResponse.class));
+    public void getResponseObject() throws IOException {
+        assertThat(request.getResponseObject(), instanceOf(SamrOpenDomainResponse.class));
     }
 }

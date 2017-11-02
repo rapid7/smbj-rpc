@@ -34,17 +34,17 @@ public class Test_SamrConnect2Request {
 
     @Test
     public void getOpNum() {
-	assertEquals(SamrConnect2Request.OP_NUM, request1.getOpNum());
+        assertEquals(SamrConnect2Request.OP_NUM, request1.getOpNum());
     }
 
     @Test
     public void getStub() throws IOException {
-	assertEquals("000002000100000000000000010000000000000000000002", toHexString(request1.getStub()));
-	assertEquals("000002000100000000000000010000000000000000000002", toHexString(request2.getStub()));
+        assertEquals("000002000100000000000000010000000000000000000002", toHexString(request1.getStub()));
+        assertEquals("000002000100000000000000010000000000000000000002", toHexString(request2.getStub()));
     }
 
     @Test
     public void getResponseObject() throws IOException {
-	assertThat(request1.getResponseObject(), instanceOf(HandleResponse.class));
+        assertThat(request1.getResponseObject(), instanceOf(HandleResponse.class));
     }
 }

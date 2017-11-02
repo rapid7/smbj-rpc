@@ -25,7 +25,7 @@ public class SamrOpenUserResponse extends HandleResponse {
 
     @Override
     public UserHandle getHandle() {
-	UserHandle handle = new UserHandle();
+        UserHandle handle = new UserHandle();
         handle.setBytes(super.handle.getBytes());
         return handle;
     }

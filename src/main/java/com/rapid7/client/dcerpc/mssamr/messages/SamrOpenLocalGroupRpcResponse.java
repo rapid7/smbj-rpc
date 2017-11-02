@@ -25,7 +25,7 @@ public class SamrOpenLocalGroupRpcResponse extends HandleResponse {
 
     @Override
     public AliasHandle getHandle() {
-	AliasHandle handle = new AliasHandle();
+        AliasHandle handle = new AliasHandle();
         handle.setBytes(super.handle.getBytes());
         return handle;
     }
