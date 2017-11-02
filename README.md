@@ -172,17 +172,17 @@ Each primitive is provided its own unique marshalling strategy, and does not req
 ## Construct Marshalling
 
 The marshalling algorithm consists of three stages:
-* Header
-* Body
-* Footer
+* Preamble
+* Entity
+* Deferrals
 
 The approach to marshalling any NDR object is:
 ```
 marshall(Object obj) {
 	if obj is NDRConstruct
-		obj.marshallHeader(Stream)
-		obj.marshallBody(Stream)
-		obj.marshallFooter(Stream)
+		obj.marshallPreamble(Stream)
+		obj.marshallEntity(Stream)
+		obj.marshallDeferrals(Stream)
 	else
 		// Marshall primtive type
 }
@@ -192,37 +192,37 @@ marshall(Object obj) {
 
 | | Fixed Array | Varying Array | Conformant Array | Pointer  | Struct |
 | --- | --- | ---| --- | --- | --- |
-| Header | |               |   MaximumLength  | | Fields.Header|
-| Body   | Entries | Offset, ActualSize, Entries | | ReferentID | Fields.Body |
-| Footer | |  | Entries | Referent | Fields.Footer |
+| Premable | |               |   MaximumLength  | | Fields.Preamble |
+| Entity   | Entries | Offset, ActualSize, Entries | | ReferentID | Fields.Entity |
+| Deferrals | |  | Entries | Referent | Fields.Deferrals |
 
 * `Referent`: The construct or primitive the referent references:
 	```
 	marshall(reference.referent)
 	```
-* `Fields.Header`:
+* `Fields.Preamble`:
 	```
 	for field in struct fields:
-		field.marshallHeader(Stream)
+		field.marshallPreamble(Stream)
 	```
-* `Fields.Body`:
-	```
-	for field in struct fields:
-		field.marshallBody(Stream)
-	```
-* `Fields.Footer`:
+* `Fields.Entity`:
 	```
 	for field in struct fields:
-		field.marshallFooter(Stream)
+		field.marshallEntity(Stream)
+	```
+* `Fields.Deferrals`:
+	```
+	for field in struct fields:
+		field.marshallDeferrals(Stream)
 	```
 
 * `Entries`: Each entry is treated as a struct field:
 	```
-    for entry in entries
-    	marshall entry header
-   	for entry in entries
-      	marshall entry body
-    for entry in entries
-      	marshal entry tail
-    ```
+   for entry in array entries
+      entry.marshallPreamble(Stream)
+   for entry in array entries
+      entry.marshallEntity(Stream)
+   for entry in array entries
+      entry.marshallDeferrals(Stream)
+   ```
 
