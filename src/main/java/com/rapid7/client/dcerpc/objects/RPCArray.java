@@ -18,10 +18,12 @@ public class RPCArray<T extends Unmarshallable> extends RPCReference {
 
     private final List<T> list = new ArrayList<>();
     private int entries;
+    private final Class<T> containedType;
     private final Queue<RPCReference> deferredObjects = new LinkedList<>();
 
     public RPCArray(Class<T> clazz) {
-        super(clazz);
+        super(RPCArray.class);
+        containedType = clazz;
     }
 
     public List<T> getList() {
@@ -34,7 +36,7 @@ public class RPCArray<T extends Unmarshallable> extends RPCReference {
         entries = in.readInt();
         for (int i = 0; i < entries; i++) {
             try {
-                Unmarshallable t = (Unmarshallable) getType().newInstance();
+                Unmarshallable t = containedType.newInstance();
                 list.add((T) t.unmarshall(in));
                 if (t instanceof RPCReference) {
                     deferredObjects.add((RPCReference) t);

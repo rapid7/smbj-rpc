@@ -9,20 +9,15 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.Unmarshallable;
 import com.rapid7.client.dcerpc.objects.RPCArray;
-import com.rapid7.client.dcerpc.objects.RPCReference;
 
-/**
- *
- */
-public class SamArray<T extends Unmarshallable<T>> extends RPCReference implements Unmarshallable<SamArray> {
+public class SamArray<T extends Unmarshallable<T>> implements Unmarshallable<SamArray> {
 
     private int count;
     private RPCArray<T> array;
-    private final Class<T> clazz;
+    private final Class<T> containedType;
 
     public SamArray(Class<T> clazz) {
-        super(SamArray.class);
-        this.clazz = clazz;
+        this.containedType = clazz;
     }
 
     public int getEntryCount() {
@@ -37,7 +32,7 @@ public class SamArray<T extends Unmarshallable<T>> extends RPCReference implemen
     public SamArray unmarshall(PacketInput in) throws IOException {
         in.readReferentID();
         count = in.readInt();
-        array = new RPCArray(clazz);
+        array = new RPCArray(containedType);
         array.unmarshall(in);
         return this;
     }
