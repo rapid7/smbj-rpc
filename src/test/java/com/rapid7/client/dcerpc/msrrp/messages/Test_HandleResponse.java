@@ -26,8 +26,7 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_HandleResponse {
     @Test
-    public void unmarshal()
-            throws IOException {
+    public void unmarshal() throws IOException {
         // Remote Registry Service, CloseKey
         //      Operation: CloseKey (5)
         //      [Request in frame: 11424]
@@ -44,8 +43,7 @@ public class Test_HandleResponse {
     }
 
     @Test
-    public void unmarshalNonDefaultSize()
-            throws IOException {
+    public void unmarshalNonDefaultSize() throws IOException {
         // Remote Registry Service, CloseKey
         //      Operation: CloseKey (5)
         //      [Request in frame: 11424]
@@ -55,9 +53,7 @@ public class Test_HandleResponse {
         //      Windows Error: WERR_OK (0x00000000)
         final HandleResponse<CustomHandle> response = new HandleResponse(){
             @Override
-            protected
-            CustomHandle initHandle()
-            {
+            protected CustomHandle initHandle() {
                 return new CustomHandle();
             }
         };
@@ -68,8 +64,7 @@ public class Test_HandleResponse {
         assertEquals(0, response.getReturnValue());
     }
 
-    private class CustomHandle extends ContextHandle
-    {
+    private class CustomHandle extends ContextHandle {
         public CustomHandle() {
             super(4);
         }
