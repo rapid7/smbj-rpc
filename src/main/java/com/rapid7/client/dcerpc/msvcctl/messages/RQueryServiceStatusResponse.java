@@ -20,20 +20,24 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
+import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
 import java.io.IOException;
 
 public class RQueryServiceStatusResponse extends RequestResponse
 {
-    private ServiceStatusInfo serviceStatusInfo;
     private int returnValue;
+    private IServiceStatusInfo serviceStatusInfo;
 
     @Override public void unmarshal(PacketInput packetIn)
         throws IOException
     {
-        int serviceType = packetIn.readInt();
-        int currentState = packetIn.readInt();
-        int controlsAccepted = packetIn.readInt();
+        ServiceType serviceType = ServiceType.fromInt(packetIn.readInt());
+        ServiceStatusType currentState = ServiceStatusType.fromInt(packetIn.readInt());
+        ServicesAcceptedControls controlsAccepted = ServicesAcceptedControls.fromInt(packetIn.readInt());
         int win32ExitCode = packetIn.readInt();
         int serviceSpecificExitCode = packetIn.readInt();
         int checkPoint = packetIn.readInt();
@@ -50,7 +54,7 @@ public class RQueryServiceStatusResponse extends RequestResponse
         returnValue = packetIn.readInt();
     }
 
-    public ServiceStatusInfo getServiceStatusInfo() {
+    public IServiceStatusInfo getServiceStatusInfo() {
         return serviceStatusInfo;
     }
 

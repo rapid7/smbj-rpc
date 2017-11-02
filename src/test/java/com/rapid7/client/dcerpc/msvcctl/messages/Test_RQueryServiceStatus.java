@@ -20,6 +20,11 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
+import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
 import java.io.IOException;
 import org.junit.Rule;
@@ -37,10 +42,10 @@ public class Test_RQueryServiceStatus
     @Test
     public void parseRQueryServiceStatusResponse()
             throws IOException {
-        ServiceStatusInfo expectedResponse = new ServiceStatusInfo(
-            ServiceStatusInfo.SERVICE_WIN32_SHARE_PROCESS,
-            ServiceStatusInfo.SERVICE_STOPPED,
-            ServiceStatusInfo.SERVICE_ACCEPT_NONE,
+        IServiceStatusInfo expectedResponse = new ServiceStatusInfo(
+                ServiceType.WIN32_SHARE_PROCESS,
+                ServiceStatusType.SERVICE_STOPPED,
+                ServicesAcceptedControls.SERVICE_ACCEPT_NONE,
             0,
             0,
             0,

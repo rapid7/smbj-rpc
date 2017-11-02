@@ -68,9 +68,9 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
     @Override public void marshal(PacketOutput packetOut)
         throws IOException {
         packetOut.write(serviceHandle.getBytes());
-        packetOut.writeInt(serviceConfigInfo.getServiceType());
-        packetOut.writeInt(serviceConfigInfo.getStartType());
-        packetOut.writeInt(serviceConfigInfo.getErrorControl());
+        packetOut.writeInt(serviceConfigInfo.getServiceType().getValue());
+        packetOut.writeInt(serviceConfigInfo.getStartType().getValue());
+        packetOut.writeInt(serviceConfigInfo.getErrorControl().getValue());
         if (serviceConfigInfo.getBinaryPathName() != null)
             packetOut.writeStringRef(serviceConfigInfo.getBinaryPathName(), true);
         else packetOut.writeNull();

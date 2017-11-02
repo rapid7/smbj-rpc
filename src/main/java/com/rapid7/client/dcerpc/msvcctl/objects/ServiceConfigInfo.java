@@ -18,35 +18,20 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.objects;
 
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
+import javax.xml.ws.Service;
+
 /**
  *  Query Service Config responses from:
  * https://msdn.microsoft.com/en-us/library/cc245948.aspx
  */
 
-public class ServiceConfigInfo
-{
-    //Service Type
-    public final static int SERVICE_KERNEL_DRIVER = 0x1;
-    public final static int SERVICE_FILE_SYSTEM_DRIVER = 0x2;
-    public final static int SERVICE_WIN32_OWN_PROCESS = 0x10;
-    public final static int SERVICE_WIN32_SHARE_PROCESS = 0x20;
-
-    //Startup Type
-    public final static int SERVICE_BOOT_START = 0x0;
-    public final static int SERVICE_SYSTEM_START = 0x1;
-    public final static int SERVICE_AUTO_START = 0x2;
-    public final static int SERVICE_DEMAND_START = 0x3;
-    public final static int SERVICE_DISABLED = 0x4;
-
-    //Error control
-    public final static int SERVICE_ERROR_IGNORE = 0x0;
-    public final static int SERVICE_ERROR_NORMAL = 0x1;
-    public final static int SERVICE_ERROR_SEVERE = 0x2;
-    public final static int SERVICE_ERROR_CRITICAL = 0x3;
-
-    private int serviceType; //defaults
-    private int startType;
-    private int errorControl;
+public class ServiceConfigInfo implements IServiceConfigInfo {
+    private ServiceType serviceType; //defaults
+    private ServiceStartType startType;
+    private ServiceError errorControl;
     private String binaryPathName;
     private String loadOrderGroup;
     private int tagId;
@@ -55,7 +40,15 @@ public class ServiceConfigInfo
     private String password;
     private String displayName;
 
-    public ServiceConfigInfo(int serviceType, int startType, int errorControl, String binaryPathName, String loadOrderGroup, int tagId, String dependencies, String serviceStartName, String displayName) {
+    public ServiceConfigInfo(ServiceType serviceType,
+                             ServiceStartType startType,
+                             ServiceError errorControl,
+                             String binaryPathName,
+                             String loadOrderGroup,
+                             int tagId,
+                             String dependencies,
+                             String serviceStartName,
+                             String displayName) {
         this.serviceType = serviceType;
         this.startType = startType;
         this.errorControl = errorControl;
@@ -67,46 +60,57 @@ public class ServiceConfigInfo
         this.displayName = displayName;
     }
 
-    public int getServiceType() {
+    @Override
+    public ServiceType getServiceType() {
         return serviceType;
     }
 
-    public int getStartType() {
+    @Override
+    public ServiceStartType getStartType() {
         return startType;
     }
 
-    public int getErrorControl() {
+    @Override
+    public ServiceError getErrorControl() {
         return errorControl;
     }
 
+    @Override
     public String getBinaryPathName() {
         return binaryPathName;
     }
 
+    @Override
     public String getLoadOrderGroup() {
         return loadOrderGroup;
     }
 
+    @Override
     public int getTagId() {
         return tagId;
     }
 
+    @Override
     public String getDependencies() {
         return dependencies;
     }
 
+    @Override
     public String getServiceStartName() {
         return serviceStartName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
@@ -118,30 +122,33 @@ public class ServiceConfigInfo
 
         ServiceConfigInfo that = (ServiceConfigInfo) o;
 
+        if (tagId != that.tagId) return false;
         if (serviceType != that.serviceType) return false;
         if (startType != that.startType) return false;
         if (errorControl != that.errorControl) return false;
-        if (tagId != that.tagId) return false;
-        if (!binaryPathName.equals(that.binaryPathName)) return false;
-        if (!loadOrderGroup.equals(that.loadOrderGroup)) return false;
-        if (!dependencies.equals(that.dependencies)) return false;
-        if (!serviceStartName.equals(that.serviceStartName)) return false;
+        if (binaryPathName != null ? !binaryPathName.equals(that.binaryPathName) : that.binaryPathName != null)
+            return false;
+        if (loadOrderGroup != null ? !loadOrderGroup.equals(that.loadOrderGroup) : that.loadOrderGroup != null)
+            return false;
+        if (dependencies != null ? !dependencies.equals(that.dependencies) : that.dependencies != null) return false;
+        if (serviceStartName != null ? !serviceStartName.equals(that.serviceStartName) : that.serviceStartName != null)
+            return false;
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
-        return displayName.equals(that.displayName);
+        return displayName != null ? displayName.equals(that.displayName) : that.displayName == null;
     }
 
     @Override
     public int hashCode() {
-        int result = serviceType;
-        result = 31 * result + startType;
-        result = 31 * result + errorControl;
-        result = 31 * result + binaryPathName.hashCode();
-        result = 31 * result + loadOrderGroup.hashCode();
+        int result = serviceType.hashCode();
+        result = 31 * result + startType.hashCode();
+        result = 31 * result + errorControl.hashCode();
+        result = 31 * result + (binaryPathName != null ? binaryPathName.hashCode() : 0);
+        result = 31 * result + (loadOrderGroup != null ? loadOrderGroup.hashCode() : 0);
         result = 31 * result + tagId;
-        result = 31 * result + dependencies.hashCode();
-        result = 31 * result + serviceStartName.hashCode();
+        result = 31 * result + (dependencies != null ? dependencies.hashCode() : 0);
+        result = 31 * result + (serviceStartName != null ? serviceStartName.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + displayName.hashCode();
+        result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
         return result;
     }
 }

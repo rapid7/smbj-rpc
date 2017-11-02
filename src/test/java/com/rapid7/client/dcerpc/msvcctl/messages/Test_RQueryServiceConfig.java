@@ -20,6 +20,9 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
 import java.io.IOException;
 import org.junit.Rule;
@@ -38,9 +41,9 @@ public class Test_RQueryServiceConfig
     public void parseRQueryServiceConfigResponse()
             throws IOException {
         ServiceConfigInfo expectedResponse = new ServiceConfigInfo(
-                ServiceConfigInfo.SERVICE_WIN32_SHARE_PROCESS,
-                ServiceConfigInfo.SERVICE_DEMAND_START,
-                ServiceConfigInfo.SERVICE_ERROR_NORMAL,
+                ServiceType.WIN32_SHARE_PROCESS,
+                ServiceStartType.DEMAND_START,
+                ServiceError.NORMAL,
                 "something",
                 "",
                 0,

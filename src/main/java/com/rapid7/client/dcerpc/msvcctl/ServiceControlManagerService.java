@@ -32,8 +32,8 @@ import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RStartServiceWRequest;
+import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
-import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
 import com.rapid7.client.dcerpc.objects.EmptyResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 import java.io.IOException;
@@ -76,7 +76,7 @@ public class ServiceControlManagerService
         return SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue());
     }
 
-    public ServiceStatusInfo queryService(String service, ContextHandle serviceManagerHandle)
+    public IServiceStatusInfo queryService(String service, ContextHandle serviceManagerHandle)
         throws IOException {
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RQueryServiceStatusRequest request = new RQueryServiceStatusRequest(serviceHandle);
@@ -86,7 +86,7 @@ public class ServiceControlManagerService
         } else throw new RPCException("QueryService", response.getReturnValue());
     }
 
-    public ServiceStatusInfo stopService(String service, ContextHandle serviceManagerHandle)
+    public IServiceStatusInfo stopService(String service, ContextHandle serviceManagerHandle)
         throws IOException {
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RControlServiceRequest request = new RControlServiceRequest(serviceHandle, RControlServiceRequest.SERVICE_CONTROL_STOP);
