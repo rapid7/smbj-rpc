@@ -23,19 +23,19 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
-public class SamrOpenLocalGroupRpcRequest extends RequestCall<SamrOpenLocalGroupRpcResponse> {
+public class SamrOpenAliasRequest extends RequestCall<SamrOpenAliasResponse> {
     public final static short OP_NUM = 27;
 
     private final DomainHandle handle;
     private final int userRid;
     private final int desiredAccess;
 
-    public SamrOpenLocalGroupRpcRequest(DomainHandle handle, int userRid) {
+    public SamrOpenAliasRequest(DomainHandle handle, int userRid) {
         // SAMR_ALIAS_ACCESS_LOOKUP_INFO(8)
         this(handle, userRid, 8);
     }
 
-    public SamrOpenLocalGroupRpcRequest(DomainHandle handle, int userRid, int desiredAccess) {
+    public SamrOpenAliasRequest(DomainHandle handle, int userRid, int desiredAccess) {
         super(OP_NUM);
         this.handle = handle;
         this.userRid = userRid;
@@ -44,15 +44,14 @@ public class SamrOpenLocalGroupRpcRequest extends RequestCall<SamrOpenLocalGroup
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-
         packetOut.write(handle.getBytes());
         packetOut.writeInt(desiredAccess);
         packetOut.writeInt(userRid);
     }
 
     @Override
-    public SamrOpenLocalGroupRpcResponse getResponseObject() {
-        return new SamrOpenLocalGroupRpcResponse();
+    public SamrOpenAliasResponse getResponseObject() {
+        return new SamrOpenAliasResponse();
     }
 
 }
