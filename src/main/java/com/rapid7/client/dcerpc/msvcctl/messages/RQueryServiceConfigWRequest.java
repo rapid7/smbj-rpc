@@ -18,10 +18,10 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
+import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import java.io.IOException;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class RQueryServiceConfigWRequest extends RequestCall<RQueryServiceConfigWResponse>
 {
@@ -29,8 +29,8 @@ public class RQueryServiceConfigWRequest extends RequestCall<RQueryServiceConfig
     public final static int MAX_BUFFER_SIZE = 8192;
 
     private final static short OP_NUM = 17;
-    private ContextHandle serviceHandle;
-    private int bufSize;
+    private final ContextHandle serviceHandle;
+    private final int bufSize;
 
     public RQueryServiceConfigWRequest(
         final ContextHandle handle,

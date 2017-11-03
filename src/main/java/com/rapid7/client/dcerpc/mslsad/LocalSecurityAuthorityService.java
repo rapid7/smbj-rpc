@@ -30,7 +30,7 @@ import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcRes
 import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.PolicyAuditEventsInformationResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.PolicyAuditEventsInfo;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 /**

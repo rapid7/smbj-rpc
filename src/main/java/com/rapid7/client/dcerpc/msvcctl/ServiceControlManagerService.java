@@ -18,10 +18,10 @@
  */
 package com.rapid7.client.dcerpc.msvcctl;
 
+import java.io.IOException;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RControlServiceRequest;
@@ -34,9 +34,9 @@ import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RStartServiceWRequest;
 import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.EmptyResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
-import java.io.IOException;
 
 public class ServiceControlManagerService
 {

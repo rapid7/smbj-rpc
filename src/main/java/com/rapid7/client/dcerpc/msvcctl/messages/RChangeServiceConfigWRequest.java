@@ -18,11 +18,11 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
+import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
-import java.io.IOException;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConfigWResponse>
 {

@@ -31,6 +31,7 @@ import java.util.Map;
 import com.google.common.base.Strings;
 import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumValueRequest;
@@ -41,8 +42,7 @@ import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
-import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 /**

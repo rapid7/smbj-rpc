@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 
 public class Test_HandleRequest {
     private final HandleRequest request =

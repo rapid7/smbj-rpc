@@ -18,16 +18,16 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
+import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.EmptyResponse;
-import java.io.IOException;
 
 public class RStartServiceWRequest extends RequestCall<EmptyResponse>
 {
     private final static short OP_NUM = 19;
-    private ContextHandle serviceHandle;
+    private final ContextHandle serviceHandle;
 
     public RStartServiceWRequest(ContextHandle handle){
         super(OP_NUM);

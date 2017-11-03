@@ -18,15 +18,15 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
-import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.rapid7.client.dcerpc.objects.EmptyResponse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.EmptyResponse;
 
 public class Test_RStartService
 {

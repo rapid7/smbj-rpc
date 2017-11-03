@@ -23,8 +23,8 @@ import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
 
 public class LsarOpenPolicy2Request extends RequestCall<HandleResponse> {
     private final static short OP_NUM = 44;

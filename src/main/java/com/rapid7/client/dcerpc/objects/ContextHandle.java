@@ -16,19 +16,23 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.msrrp.objects;
+package com.rapid7.client.dcerpc.objects;
 
+import java.io.IOException;
 import java.util.Arrays;
 import org.bouncycastle.util.encoders.Hex;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.Unmarshallable;
 
-public class ContextHandle {
-    private final byte[] handle = new byte[20];
+public class ContextHandle implements Unmarshallable<ContextHandle> {
+    private final byte[] handle;
 
-    public ContextHandle(final String hKey) {
-        if (hKey == null || hKey.length() > 40) {
-            throw new IllegalArgumentException("hKey is invalid: " + hKey);
+    public ContextHandle(final String hString, int length) {
+        this(length);
+        if (hString == null || hString.length() > 40) {
+            throw new IllegalArgumentException("hKey is invalid: " + hString);
         }
-        final byte[] handle = Hex.decode(hKey);
+        final byte[] handle = Hex.decode(hString);
         int srcPos = 0;
         int index = 0;
         while (index < handle.length) {
@@ -41,7 +45,16 @@ public class ContextHandle {
         System.arraycopy(handle, srcPos, this.handle, dstPos, dstLen);
     }
 
+    public ContextHandle(final String hKey) {
+        this(hKey, 20);
+    }
+
+    public ContextHandle(int length) {
+        this.handle = new byte[length];
+    }
+
     public ContextHandle() {
+        this.handle = new byte[20];
     }
 
     public byte[] getBytes() {
@@ -73,5 +86,13 @@ public class ContextHandle {
     @Override
     public boolean equals(final Object anObject) {
         return anObject instanceof ContextHandle && Arrays.equals(handle, ((ContextHandle) anObject).handle);
+    }
+
+    @Override
+    public ContextHandle unmarshall(PacketInput in) throws IOException {
+        byte[] bytes = new byte[handle.length];
+        in.readFully(bytes);
+        setBytes(bytes);
+        return this;
     }
 }
