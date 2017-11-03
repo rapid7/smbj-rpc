@@ -18,10 +18,10 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
+import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import java.io.IOException;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class RControlServiceRequest extends RequestCall<RQueryServiceStatusResponse>
 {
@@ -37,8 +37,8 @@ public class RControlServiceRequest extends RequestCall<RQueryServiceStatusRespo
     public final static int SERVICE_CONTROL_NETBINDDISABLE = 0xA;
 
     private final static short OP_NUM = 1;
-    private ContextHandle serviceHandle;
-    private int operation;
+    private final ContextHandle serviceHandle;
+    private final int operation;
 
     public RControlServiceRequest(final ContextHandle handle, final int operation){
         super(OP_NUM);

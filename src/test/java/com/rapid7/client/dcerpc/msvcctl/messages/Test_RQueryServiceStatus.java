@@ -18,20 +18,19 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import java.io.IOException;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
 import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
-import java.io.IOException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_RQueryServiceStatus
 {

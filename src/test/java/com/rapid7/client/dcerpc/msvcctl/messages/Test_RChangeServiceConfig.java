@@ -18,18 +18,18 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
-import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
-import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
+import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_RChangeServiceConfig
 {

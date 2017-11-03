@@ -18,11 +18,11 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
-import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.msrrp.messages.HandleResponse;
-import com.rapid7.client.dcerpc.msvcctl.ServiceControlManagerService;
 import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.msvcctl.ServiceControlManagerService;
 
 public class ROpenSCManagerWRequest extends RequestCall<HandleResponse>
 {
