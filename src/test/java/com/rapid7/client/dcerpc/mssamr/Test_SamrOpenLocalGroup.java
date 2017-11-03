@@ -26,12 +26,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenLocalGroupRpcRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenLocalGroupRpcResponse;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 
 
 public class Test_SamrOpenLocalGroup {
     // https://msdn.microsoft.com/en-us/library/cc980032.aspx
-    private final SamrOpenLocalGroupRpcRequest request = new SamrOpenLocalGroupRpcRequest(new DomainHandle(),
+    private final SamrOpenLocalGroupRpcRequest request = new SamrOpenLocalGroupRpcRequest(new UserHandle(),
 	    500, 0x0002000C);
 
     @Test

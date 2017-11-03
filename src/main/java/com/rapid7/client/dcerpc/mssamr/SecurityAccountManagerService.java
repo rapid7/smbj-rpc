@@ -73,12 +73,12 @@ public class SecurityAccountManagerService {
 	return response.getHandle();
     }
 
-    public AliasHandle openAlias(DomainHandle domainHandle, int sid) throws IOException {
+    public AliasHandle openAlias(UserHandle userHandle, int sid) throws IOException {
 	// AccessMask(0x0002000C)
 	// SAMR Alias specific rights: 0x0000000c
 	// - SAMR_ALIAS_ACCESS_LOOKUP_INFO is SET(8)
 	// - SAMR_ALIAS_ACCESS_GET_MEMBERS is SET(4)
-	final SamrOpenLocalGroupRpcRequest request = new SamrOpenLocalGroupRpcRequest(domainHandle, sid, 0x0002000C);
+	final SamrOpenLocalGroupRpcRequest request = new SamrOpenLocalGroupRpcRequest(userHandle, sid, 0x0002000C);
 	final SamrOpenLocalGroupRpcResponse response = transport.call(request);
 	return response.getHandle();
     }
