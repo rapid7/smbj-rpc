@@ -165,11 +165,19 @@ public class Test_ContextHandle {
         byte[] buf = new String("1234567890abcdefghij").getBytes();
         PacketInput input = new PacketInput(new ByteArrayInputStream(buf));
         ContextHandle handle = new ContextHandle();
-        assertArrayEquals(buf, handle.unmarshall(input).getBytes());
+        input.readUnmarshallable(handle);
+        assertArrayEquals(buf, handle.getBytes());
 
         byte[] buf2 = new String("1234567890").getBytes();
         PacketInput input2 = new PacketInput(new ByteArrayInputStream(buf));
-        ContextHandle handle2 = new ContextHandle(10);
-        assertArrayEquals(buf2, handle2.unmarshall(input2).getBytes());
+        ContextHandle handle2 = new MyContextHandle();
+        input2.readUnmarshallable(handle2);
+        assertArrayEquals(buf2, handle2.getBytes());
+    }
+
+    private static class MyContextHandle extends ContextHandle {
+        public MyContextHandle() {
+            super(10);
+        }
     }
 }
