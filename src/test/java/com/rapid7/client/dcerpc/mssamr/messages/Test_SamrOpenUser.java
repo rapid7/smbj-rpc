@@ -18,34 +18,37 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
+import java.io.IOException;
+import org.junit.Test;
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import java.io.IOException;
-import java.util.EnumSet;
-import org.junit.Test;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.msdtyp.SID;
-import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
+import static org.junit.Assert.*;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
+import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
-public class Test_SamrOpenDomainRequest {
-    private final SamrOpenDomainRequest request = new SamrOpenDomainRequest(new ServerHandle(),
-        SID.fromString("S-1-5-32"), EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+
+public class Test_SamrOpenUser {
+    // https://msdn.microsoft.com/en-us/library/cc980032.aspx
+    private final SamrOpenUserRequest request = new SamrOpenUserRequest(new DomainHandle(),
+	    500); //ADMINISTRATOR(500)
 
     @Test
     public void getOpNum() {
-        assertEquals(SamrOpenDomainRequest.OP_NUM, request.getOpNum());
+        assertEquals(SamrOpenUserRequest.OP_NUM, request.getOpNum());
     }
 
     @Test
-    public void getStub() throws IOException {
-        assertEquals("00000000000000000000000000000000000000000000000201000000010100000000000520000000",
+    public void getStub()
+        throws IOException {
+        assertEquals("00000000000000000000000000000000000000001b010200f4010000",
             toHexString(request.getStub()));
     }
 
     @Test
-    public void getResponseObject() throws IOException {
-        assertThat(request.getResponseObject(), instanceOf(SamrOpenDomainResponse.class));
+    public void getResponseObject()
+        throws IOException {
+        assertThat(request.getResponseObject(), instanceOf(SamrOpenUserResponse.class));
     }
+
 }

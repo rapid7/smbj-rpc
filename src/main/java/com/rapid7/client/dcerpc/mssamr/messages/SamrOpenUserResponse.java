@@ -19,12 +19,13 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import com.rapid7.client.dcerpc.messages.HandleResponse;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 
-public class SamrOpenDomainResponse extends HandleResponse<DomainHandle> {
+public class SamrOpenUserResponse extends HandleResponse<UserHandle> {
 
     @Override
-    protected DomainHandle initHandle() {
-        return new DomainHandle();
+    protected UserHandle initHandle() {
+        return new UserHandle();
     }
+
 }

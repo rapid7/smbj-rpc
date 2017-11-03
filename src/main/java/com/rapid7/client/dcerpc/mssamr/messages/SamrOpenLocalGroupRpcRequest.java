@@ -19,35 +19,40 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
-import java.util.EnumSet;
-import com.google.common.base.Strings;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
-public class SamrConnect2Request extends RequestCall<SamrConnect2Response> {
+public class SamrOpenLocalGroupRpcRequest extends RequestCall<SamrOpenLocalGroupRpcResponse> {
+    public final static short OP_NUM = 27;
 
-    public final static short OP_NUM = 57;
+    private final DomainHandle handle;
+    private final int userRid;
+    private final int desiredAccess;
 
-    private final String serverName;
-    private final EnumSet<AccessMask> desiredAccess;
+    public SamrOpenLocalGroupRpcRequest(DomainHandle handle, int userRid) {
+        // SAMR_ALIAS_ACCESS_LOOKUP_INFO(8)
+        this(handle, userRid, 8);
+    }
 
-    public SamrConnect2Request(String serverName, final EnumSet<AccessMask> desiredAccess) {
+    public SamrOpenLocalGroupRpcRequest(DomainHandle handle, int userRid, int desiredAccess) {
         super(OP_NUM);
-        this.serverName = Strings.nullToEmpty(serverName);
+        this.handle = handle;
+        this.userRid = userRid;
         this.desiredAccess = desiredAccess;
     }
 
     @Override
-    public void marshal(PacketOutput packetOut)
-            throws IOException {
-        packetOut.writeStringRef(serverName, true);
-        packetOut.writeInt((int) EnumUtils.toLong(desiredAccess));
+    public void marshal(PacketOutput packetOut) throws IOException {
+
+        packetOut.write(handle.getBytes());
+        packetOut.writeInt(desiredAccess);
+        packetOut.writeInt(userRid);
     }
 
     @Override
-    public SamrConnect2Response getResponseObject() {
-        return new SamrConnect2Response();
+    public SamrOpenLocalGroupRpcResponse getResponseObject() {
+        return new SamrOpenLocalGroupRpcResponse();
     }
+
 }

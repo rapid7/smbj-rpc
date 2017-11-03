@@ -19,35 +19,39 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
-import java.util.EnumSet;
-import com.google.common.base.Strings;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
-public class SamrConnect2Request extends RequestCall<SamrConnect2Response> {
+public class SamrOpenUserRequest extends RequestCall<SamrOpenUserResponse> {
+    public final static short OP_NUM = 34;
 
-    public final static short OP_NUM = 57;
+    private final DomainHandle handle;
+    private final int userRid;
 
-    private final String serverName;
-    private final EnumSet<AccessMask> desiredAccess;
-
-    public SamrConnect2Request(String serverName, final EnumSet<AccessMask> desiredAccess) {
+    public SamrOpenUserRequest(DomainHandle handle, int userRid) {
         super(OP_NUM);
-        this.serverName = Strings.nullToEmpty(serverName);
-        this.desiredAccess = desiredAccess;
+        this.handle = handle;
+        this.userRid = userRid;
     }
 
     @Override
-    public void marshal(PacketOutput packetOut)
-            throws IOException {
-        packetOut.writeStringRef(serverName, true);
-        packetOut.writeInt((int) EnumUtils.toLong(desiredAccess));
+    public void marshal(PacketOutput packetOut) throws IOException {
+        packetOut.write(handle.getBytes());
+        // Generic rights: 0x00000000
+        // Standard rights: 0x00020000
+        // SAMR User specific rights: 0x0000011b
+        // Samr User Access Get
+        // - Groups: SAMR_USER_ACCESS_GET_GROUPS is SET
+        // - Attributes: SAMR_USER_ACCESS_GET_ATTRIBUTES is SET
+        // - Logoninfo: SAMR_USER_ACCESS_GET_LOGONINFO is SET
+        packetOut.writeInt(0x2011B);
+        packetOut.writeInt(userRid);
     }
 
     @Override
-    public SamrConnect2Response getResponseObject() {
-        return new SamrConnect2Response();
+    public SamrOpenUserResponse getResponseObject() {
+        return new SamrOpenUserResponse();
     }
+
 }

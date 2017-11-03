@@ -16,15 +16,13 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr.messages;
+package com.rapid7.client.dcerpc.mssamr.objects;
 
-import com.rapid7.client.dcerpc.messages.HandleResponse;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
-public class SamrOpenDomainResponse extends HandleResponse<DomainHandle> {
+public class UserHandle extends ContextHandle {
 
-    @Override
-    protected DomainHandle initHandle() {
-        return new DomainHandle();
+    public UserHandle() {
+        super();
     }
 }
