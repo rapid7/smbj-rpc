@@ -21,13 +21,11 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 
-public class SamrOpenLocalGroupRpcResponse extends HandleResponse {
+public class SamrOpenLocalGroupRpcResponse extends HandleResponse<AliasHandle> {
 
     @Override
-    public AliasHandle getHandle() {
-        AliasHandle handle = new AliasHandle();
-        handle.setBytes(super.handle.getBytes());
-        return handle;
+    protected AliasHandle initHandle() {
+        return new AliasHandle();
     }
 
 }

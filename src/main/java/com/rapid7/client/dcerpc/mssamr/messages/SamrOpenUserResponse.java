@@ -21,13 +21,11 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 
-public class SamrOpenUserResponse extends HandleResponse {
+public class SamrOpenUserResponse extends HandleResponse<UserHandle> {
 
     @Override
-    public UserHandle getHandle() {
-        UserHandle handle = new UserHandle();
-        handle.setBytes(super.handle.getBytes());
-        return handle;
+    protected UserHandle initHandle() {
+        return new UserHandle();
     }
 
 }
