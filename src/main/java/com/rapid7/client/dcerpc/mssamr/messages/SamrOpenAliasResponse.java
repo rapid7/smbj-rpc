@@ -24,7 +24,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 public class SamrOpenAliasResponse extends HandleResponse<AliasHandle> {
 
     @Override
-    public AliasHandle initHandle() {
+    protected AliasHandle initHandle() {
         return new AliasHandle();
     }
 

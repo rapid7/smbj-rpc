@@ -31,8 +31,8 @@ public class SamrOpenAliasRequest extends RequestCall<SamrOpenAliasResponse> {
     private final int desiredAccess;
 
     public SamrOpenAliasRequest(DomainHandle handle, int userRid) {
-	// SAMR_ALIAS_ACCESS_LOOKUP_INFO(8)
-	this(handle, userRid, 8);
+        // SAMR_ALIAS_ACCESS_LOOKUP_INFO(8)
+        this(handle, userRid, 8);
     }
 
     public SamrOpenAliasRequest(DomainHandle handle, int userRid, int desiredAccess) {
@@ -44,7 +44,6 @@ public class SamrOpenAliasRequest extends RequestCall<SamrOpenAliasResponse> {
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-
         packetOut.write(handle.getBytes());
         packetOut.writeInt(desiredAccess);
         packetOut.writeInt(userRid);

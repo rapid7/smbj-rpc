@@ -24,7 +24,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 public class SamrOpenUserResponse extends HandleResponse<UserHandle> {
 
     @Override
-    public UserHandle initHandle() {
+    protected UserHandle initHandle() {
         return new UserHandle();
     }
 
