@@ -45,6 +45,8 @@ class PrimitiveInput {
 
     public void align(Alignment alignment)
         throws IOException {
+        if (alignment == Alignment.ONE)
+            return;
         final long alignmentOffset = alignment.getOffByOneAlignment() + dataInStream.getCount() & ~alignment.getOffByOneAlignment();
         while (alignmentOffset > dataInStream.getCount()) {
             readByte();
