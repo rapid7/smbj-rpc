@@ -50,8 +50,8 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
 
 
     private final static short OP_NUM = 11;
-    private ContextHandle serviceHandle;
-    private ServiceConfigInfo serviceConfigInfo;
+    private final ContextHandle serviceHandle;
+    private final ServiceConfigInfo serviceConfigInfo;
 
     public RChangeServiceConfigWRequest(
         final ContextHandle handle,
