@@ -13,7 +13,6 @@ Table of contents
   * [Structure](#structure)
   * [Pointers](#pointers)
   * [Arrays](#arrays)
-* [NDR to Java Mapping](#ndr-to-java-mapping)
 * [NDR Marshalling](#ndr-marshalling)
   * [Primitive Marshalling](#primitive-marshalling)
   * [Construct Marshalling](#construct-marshalling)
