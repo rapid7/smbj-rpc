@@ -24,19 +24,19 @@ import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenLocalGroupRpcRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenLocalGroupRpcResponse;
-import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
+import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
 
-public class Test_SamrOpenLocalGroup {
+public class Test_SamrOpenAlias {
     // https://msdn.microsoft.com/en-us/library/cc980032.aspx
-    private final SamrOpenLocalGroupRpcRequest request = new SamrOpenLocalGroupRpcRequest(new UserHandle(),
+    private final SamrOpenAliasRequest request = new SamrOpenAliasRequest(new DomainHandle(),
 	    500, 0x0002000C);
 
     @Test
     public void getOpNum() {
-        assertEquals(SamrOpenLocalGroupRpcRequest.OP_NUM, request.getOpNum());
+        assertEquals(SamrOpenAliasRequest.OP_NUM, request.getOpNum());
     }
 
     @Test
@@ -49,7 +49,7 @@ public class Test_SamrOpenLocalGroup {
     @Test
     public void getResponseObject()
         throws IOException {
-        assertThat(request.getResponseObject(), instanceOf(SamrOpenLocalGroupRpcResponse.class));
+        assertThat(request.getResponseObject(), instanceOf(SamrOpenAliasResponse.class));
     }
 
 }
