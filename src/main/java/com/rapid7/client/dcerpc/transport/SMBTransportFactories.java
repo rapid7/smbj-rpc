@@ -36,7 +36,8 @@ public enum SMBTransportFactories {
     WINREG("winreg", Interface.WINREG_V1_0, Interface.NDR_32BIT_V2),
     SRVSVC("srvsvc", Interface.SRVSVC_V3_0, Interface.NDR_32BIT_V2),
     LSASVC("lsarpc", Interface.LSASVC_V0_0, Interface.NDR_32BIT_V2),
-    SAMSVC("samr", Interface.SAMSVC_V1_0, Interface.NDR_32BIT_V2);
+    SAMSVC("samr", Interface.SAMSVC_V1_0, Interface.NDR_32BIT_V2),
+    SVCCTL("svcctl", Interface.SVCCTL_V2_0, Interface.NDR_32BIT_V2);
 
     private final static int STATUS_PIPE_NOT_AVAILABLE_BACKOFF_TIME_MS = 3000;
     private final static int STATUS_PIPE_NOT_AVAILABLE_RETRIES = 1;
