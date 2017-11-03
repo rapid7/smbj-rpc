@@ -45,9 +45,9 @@ public class SamrOpenLocalGroupRpcRequest extends RequestCall<SamrOpenLocalGroup
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
 
-	packetOut.write(handle.getBytes());
-	packetOut.writeInt(desiredAccess);
-	packetOut.writeInt(userRid);
+        packetOut.write(handle.getBytes());
+        packetOut.writeInt(desiredAccess);
+        packetOut.writeInt(userRid);
     }
 
     @Override

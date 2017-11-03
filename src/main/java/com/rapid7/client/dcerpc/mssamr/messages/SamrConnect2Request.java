@@ -34,20 +34,20 @@ public class SamrConnect2Request extends RequestCall<SamrConnect2Response> {
     private final EnumSet<AccessMask> desiredAccess;
 
     public SamrConnect2Request(String serverName, final EnumSet<AccessMask> desiredAccess) {
-	super(OP_NUM);
-	this.serverName = Strings.nullToEmpty(serverName);
-	this.desiredAccess = desiredAccess;
+        super(OP_NUM);
+        this.serverName = Strings.nullToEmpty(serverName);
+        this.desiredAccess = desiredAccess;
     }
 
     @Override
     public void marshal(PacketOutput packetOut)
-	    throws IOException {
-	packetOut.writeStringRef(serverName, true);
-	packetOut.writeInt((int) EnumUtils.toLong(desiredAccess));
+            throws IOException {
+        packetOut.writeStringRef(serverName, true);
+        packetOut.writeInt((int) EnumUtils.toLong(desiredAccess));
     }
 
     @Override
     public SamrConnect2Response getResponseObject() {
-	return new SamrConnect2Response();
+        return new SamrConnect2Response();
     }
 }

@@ -35,33 +35,33 @@ public class SamrOpenDomainRequest extends RequestCall<SamrOpenDomainResponse> {
     private final EnumSet<AccessMask> desiredAccess;
 
     public SamrOpenDomainRequest(ServerHandle handle, SID sid, EnumSet<AccessMask> desiredAccess) {
-	super(OP_NUM);
-	this.handle = handle;
-	this.sid = sid;
-	this.desiredAccess = desiredAccess;
+        super(OP_NUM);
+        this.handle = handle;
+        this.sid = sid;
+        this.desiredAccess = desiredAccess;
     }
 
     @Override
     public void marshal(PacketOutput packetOut)
-	    throws IOException {
-	packetOut.write(handle.getBytes());
-	packetOut.writeInt((int) EnumUtils.toLong(desiredAccess));
+            throws IOException {
+        packetOut.write(handle.getBytes());
+        packetOut.writeInt((int) EnumUtils.toLong(desiredAccess));
 
-	// SID sub authority count
-	packetOut.writeInt(sid.getSubAuthorities().length);
+        // SID sub authority count
+        packetOut.writeInt(sid.getSubAuthorities().length);
 
-	// SID start
-	packetOut.writeByte(sid.getRevision());
-	packetOut.writeByte((byte) (sid.getSubAuthorities().length));
-	packetOut.write(sid.getSidIdentifierAuthority());
-	for (int i = 0; i < sid.getSubAuthorities().length; i++) {
-	    packetOut.writeInt((int) (sid.getSubAuthorities()[i])); // SubAuthority (variable * 4 bytes)
-	}
-	// SID end
+        // SID start
+        packetOut.writeByte(sid.getRevision());
+        packetOut.writeByte((byte) (sid.getSubAuthorities().length));
+        packetOut.write(sid.getSidIdentifierAuthority());
+        for (int i = 0; i < sid.getSubAuthorities().length; i++) {
+            packetOut.writeInt((int) (sid.getSubAuthorities()[i])); // SubAuthority (variable * 4 bytes)
+        }
+        // SID end
     }
 
     @Override
     public SamrOpenDomainResponse getResponseObject() {
-	return new SamrOpenDomainResponse();
+        return new SamrOpenDomainResponse();
     }
 }

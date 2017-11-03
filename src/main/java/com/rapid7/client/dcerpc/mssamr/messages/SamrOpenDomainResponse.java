@@ -25,6 +25,6 @@ public class SamrOpenDomainResponse extends HandleResponse<DomainHandle> {
 
     @Override
     protected DomainHandle initHandle() {
-	return new DomainHandle();
+        return new DomainHandle();
     }
 }
