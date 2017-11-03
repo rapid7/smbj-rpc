@@ -16,12 +16,14 @@ public class SamrEnumerateDomainsInSamServerResponse extends RequestResponse {
     private int resumeHandle;
     private SamArray domains;
     private int numEntries;
+    private int returnCode;
 
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         resumeHandle = packetIn.readInt();
         domains = packetIn.unmarshallObject(new SamArray(DomainInfo.class));
         numEntries = packetIn.readInt();
+        returnCode = packetIn.readInt();
     }
 
     public List<DomainInfo> getDomainList() {
@@ -34,5 +36,9 @@ public class SamrEnumerateDomainsInSamServerResponse extends RequestResponse {
 
     public int getResumeHandle() {
         return resumeHandle;
+    }
+
+    public int getReturnValue() {
+        return returnCode;
     }
 }

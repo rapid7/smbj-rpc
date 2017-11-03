@@ -18,11 +18,17 @@
  */
 package com.rapid7.client.dcerpc.mssamr;
 
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_MORE_ENTRIES;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
+import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
@@ -95,11 +101,23 @@ public class SecurityAccountManagerService {
             throw new IOException("Failed to close handle: " + new String(handle.getBytes()));
     }
 
-    public List<DomainInfo> getDomainOnServer(ServerHandle serverHandle) throws IOException {
-        int enumContext = 0;
-        SamrEnumerateDomainsInSamServerRequest request = new SamrEnumerateDomainsInSamServerRequest(serverHandle,
-            enumContext, 1024);
-        SamrEnumerateDomainsInSamServerResponse response = transport.call(request);
-        return response.getDomainList();
+    public List<DomainInfo> getDomainsForServer(ServerHandle serverHandle) throws IOException {
+        final int bufferSize = 0xffff;
+        List<DomainInfo> domains = new ArrayList<>();
+        for (int enumContext = 0;;) {
+            SamrEnumerateDomainsInSamServerRequest request = new SamrEnumerateDomainsInSamServerRequest(serverHandle,
+                enumContext, bufferSize);
+            final SamrEnumerateDomainsInSamServerResponse response = transport.call(request);
+            final int returnCode = response.getReturnValue();
+            enumContext = response.getResumeHandle();
+            if (ERROR_MORE_ENTRIES.is(returnCode)) {
+                domains.addAll(response.getDomainList());
+            } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
+                domains.addAll(response.getDomainList());
+                return Collections.unmodifiableList(domains);
+            } else {
+                throw new RPCException("EnumDomainsInSamServer", returnCode);
+            }
+        }
     }
 }

@@ -30,4 +30,8 @@ public class ServerHandle extends ContextHandle {
     public ServerHandle() {
         super();
     }
+
+    public ServerHandle(final String handle) {
+        super(handle);
+    }
 }
