@@ -26,7 +26,7 @@ import java.io.InputStream;
 import com.google.common.io.CountingInputStream;
 import com.google.common.io.LittleEndianDataInputStream;
 
-class PrimitiveInput implements DataInput {
+class PrimitiveInput {
     private final CountingInputStream dataInStream;
     private final DataInput dataIn;
 
@@ -44,7 +44,7 @@ class PrimitiveInput implements DataInput {
     }
 
     public void align(Alignment alignment)
-       throws IOException {
+        throws IOException {
         final long alignmentOffset = alignment.getOffByOneAlignment() + dataInStream.getCount() & ~alignment.getOffByOneAlignment();
         while (alignmentOffset > dataInStream.getCount()) {
             readByte();
@@ -55,22 +55,14 @@ class PrimitiveInput implements DataInput {
         return dataInStream.getCount();
     }
 
-    @Override
     public void readFully(final byte[] b)
         throws IOException {
         dataIn.readFully(b);
     }
 
-    @Override
     public void readFully(final byte[] b, final int off, final int len)
         throws IOException {
         dataIn.readFully(b, off, len);
-    }
-
-    @Override
-    public int skipBytes(int n)
-       throws IOException {
-        return dataIn.skipBytes(n);
     }
 
     public void fullySkipBytes(final int n)
@@ -80,75 +72,53 @@ class PrimitiveInput implements DataInput {
         }
     }
 
-    @Override
     public boolean readBoolean()
         throws IOException {
         return dataIn.readBoolean();
     }
 
-    @Override
     public byte readByte()
         throws IOException {
         return dataIn.readByte();
     }
 
-    @Override
     public int readUnsignedByte()
         throws IOException {
         return dataIn.readUnsignedByte();
     }
 
-    @Override
     public short readShort()
         throws IOException {
         return dataIn.readShort();
     }
 
-    @Override
     public int readUnsignedShort()
         throws IOException {
         return dataIn.readUnsignedShort();
     }
 
-    @Override
     public char readChar()
         throws IOException {
         return dataIn.readChar();
     }
 
-    @Override
     public int readInt()
         throws IOException {
         return dataIn.readInt();
     }
 
-    @Override
     public long readLong()
         throws IOException {
         return dataIn.readLong();
     }
 
-    @Override
     public float readFloat()
-       throws IOException {
+        throws IOException {
         return dataIn.readFloat();
     }
 
-    @Override
     public double readDouble()
-       throws IOException {
+        throws IOException {
         return dataIn.readDouble();
-    }
-
-    @Override
-    public String readLine()
-       throws IOException {
-        return dataIn.readLine();
-    }
-
-    @Override
-    public String readUTF()
-       throws IOException {
-        return dataIn.readUTF();
     }
 }
