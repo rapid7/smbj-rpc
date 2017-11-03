@@ -133,36 +133,6 @@ When embedded within a struct, element storage has special rules:
 
 * **Fixed**/**Varying**: If the array is not conformant, data is stored inline, immediately after size representation (if any).
 
-# NDR to Java Mapping
-
-The Java mapping of NDR primitivies is as follows:
-
-| NDR | NDR Size | Java | Java Size |
-| --- | --- | --- | --- |
-| boolean | 1 | java.lang.Boolean | 1 |
-| character | 1 | java.lang.Character | 1 |
-| small | 1 | java.lang.Byte | 1 |
-| unsigned small | 1 | java.lang.Short | 2 |
-| short | 2 | java.lang.Short | 2 |
-| unsigned short | 2 | java.lang.Integer | 4 |
-| long | 4 | java.lang.Integer | 4 |
-| unsigned long | 4 | java.lang.Long | 8 |
-| hyper | 8 | java.lang.Long | 8 |
-| unsigned hyper | 8 | N/A | N/A |
-
-The Java mapping of NDR constructs is as folllows:
-
-| NDR | Java |
-| --- | --- |
-| * | NDRConstruct |
-| Struct | NDRStruct |
-| Union | NDRUnion |
-| *Array | NDRArray |
-| Fixed Array | NDRFixedArray |
-| Varying Array | NDRVaryingArray |
-| Conformant Array | NDRConformantArray |
-| Conformant Varying Array | NDRConformantArray & NDRVaryingArray |
-
 # NDR Marshalling
 
 ## Primitive Marshalling
@@ -176,19 +146,16 @@ Marshalling of constructs consists of three stages:
 * Entity
 * Deferrals
 
-The approach to marshalling any NDR object is:
+The approach to marshalling any NDR data type is:
 ```
-marshall(Object obj) {
-	if obj is NDRConstruct
-		obj.marshallPreamble(Stream)
-		obj.marshallEntity(Stream)
-		obj.marshallDeferrals(Stream)
-	else
-		// Marshall primtive type
+marshall(DataType obj) {
+	obj.marshallPreamble(Stream)
+	obj.marshallEntity(Stream)
+	obj.marshallDeferrals(Stream)
 }
 ```
 
-`NDRConstruct` rules are as follows:
+Standard rules for marshalling any NDR construct are as follows:
 
 | | Fixed Array | Varying Array | Conformant Array | Pointer  | Struct |
 | --- | --- | ---| --- | --- | --- |
