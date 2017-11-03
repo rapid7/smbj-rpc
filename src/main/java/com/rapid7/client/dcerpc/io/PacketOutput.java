@@ -18,6 +18,7 @@
  */
 package com.rapid7.client.dcerpc.io;
 
+import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -26,6 +27,13 @@ public class PacketOutput extends PrimitiveOutput {
 
     public PacketOutput(final OutputStream outputStream) {
         super(outputStream);
+    }
+
+    public void writeMarshallable(Marshallable marshallable)
+        throws IOException {
+        marshallable.marshallPreamble(this);
+        marshallable.marshallEntity(this);
+        marshallable.marshallDeferrals(this);
     }
 
     public void writeIntRef(final Integer value)
@@ -86,12 +94,15 @@ public class PacketOutput extends PrimitiveOutput {
         }
     }
 
+    public void writeRPCUnicodeString(final String string, final boolean nullTerminate)
+       throws IOException {
+        writeStringBuffer(string, nullTerminate);
+    }
+
     public void writeStringBuffer(final String string, final boolean nullTerminate)
         throws IOException {
         final int maximumBytes;
         final int currentBytes;
-        final int maximumChars;
-        final int currentChars;
 
         if (string == null) {
             maximumBytes = 0;
