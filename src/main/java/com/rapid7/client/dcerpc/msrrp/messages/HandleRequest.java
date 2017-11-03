@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 
 /**

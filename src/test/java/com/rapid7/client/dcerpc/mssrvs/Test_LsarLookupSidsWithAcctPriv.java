@@ -21,8 +21,7 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcResponse;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.hierynomus.msdtyp.SID;
 
 import java.io.ByteArrayInputStream;
