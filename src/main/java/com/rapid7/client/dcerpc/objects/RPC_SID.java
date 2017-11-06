@@ -115,8 +115,7 @@ public class RPC_SID implements Unmarshallable, Marshallable {
       for (long subAuthority : this.subAuthority) {
          out.writeInt((int) subAuthority);
       }
-      // Align conformant array
-      // This is not required, as the total bytes written by this class are always a multiple of 4
+      // Alignment not required as the total bytes written by this class are always a multiple of 4
       // out.align(Alignment.FOUR);
    }
 
