@@ -24,15 +24,14 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 /**
  * Represents an NDR data type suitable for unmarshalling.
  * Unmarshalling consists of three states that are to be called in order:
- * Preamble
- * Entity
- * Deferrals
+ *    Preamble
+ *    Entity
+ *    Deferrals
  */
 public interface Unmarshallable extends DataType {
     /**
      * The preamble in NDR typically only consists of any MaximumCount fields from embedded
      * conformant arrays.
-     *
      * @param in The stream to read from
      * @throws IOException On error
      */
@@ -40,10 +39,9 @@ public interface Unmarshallable extends DataType {
 
     /**
      * The entity represents the DataType itself. For example:
-     * * Structs: All fields (conformant array entries at the end)
-     * * Pointers: Referent IDs
-     * * Arrays: Size information and entries (if not conformant).
-     *
+     *    * Structs: All fields (conformant array entries at the end)
+     *    * Pointers: Referent IDs
+     *    * Arrays: Size information and entries (if not conformant).
      * @param in The stream to read from
      * @throws IOException On error
      */
@@ -53,7 +51,6 @@ public interface Unmarshallable extends DataType {
      * The deferrals are any data that is to be deferred to the end of this data type.
      * For pointers, this would be the reference data for non-null pointers.
      * For conformant arrays, this would be entries.
-     *
      * @param in The stream to read from
      * @throws IOException On error
      */
