@@ -18,6 +18,7 @@
  */
 package com.rapid7.client.dcerpc.io;
 
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,7 +39,14 @@ public class PrimitiveOutput {
 
     public void align()
         throws IOException {
-        final long alignmentOffset = 3 + dataOutStream.getCount() & ~3;
+        align(Alignment.FOUR);
+    }
+
+    public void align(Alignment alignment)
+        throws IOException {
+        if (alignment == Alignment.ONE)
+            return;
+        final long alignmentOffset = alignment.getOffByOneAlignment() + dataOutStream.getCount() & ~alignment.getOffByOneAlignment();
         while (alignmentOffset > dataOutStream.getCount()) {
             writeByte(0);
         }
@@ -91,6 +99,16 @@ public class PrimitiveOutput {
     public void writeLong(final long v)
         throws IOException {
         dataOut.writeLong(v);
+    }
+
+    public void writeFloat(float v)
+        throws IOException {
+        dataOut.writeFloat(v);
+    }
+
+    public void writeDouble(double v)
+        throws IOException {
+        dataOut.writeDouble(v);
     }
 
     public void writeBytes(final String s)

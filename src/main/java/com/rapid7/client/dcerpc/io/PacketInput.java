@@ -18,12 +18,21 @@
  */
 package com.rapid7.client.dcerpc.io;
 
+import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class PacketInput extends PrimitiveInput {
     public PacketInput(final InputStream inputStream) {
         super(inputStream);
+    }
+
+    public <T extends Unmarshallable> T readUnmarshallable(T unmarshallable)
+        throws IOException {
+        unmarshallable.unmarshallPreamble(this);
+        unmarshallable.unmarshallEntity(this);
+        unmarshallable.unmarshallDeferrals(this);
+        return unmarshallable;
     }
 
     public Integer readIntRef()
@@ -122,6 +131,11 @@ public class PacketInput extends PrimitiveInput {
         }
 
         return result != null ? result.toString() : null;
+    }
+
+    public String readRPCUnicodeString(final boolean nullTerminated)
+        throws IOException {
+        return readStringBuf(nullTerminated);
     }
 
     public String readStringBuf(final boolean nullTerminated)

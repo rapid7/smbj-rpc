@@ -6,7 +6,18 @@ Partial support for the Windows Remote Registry Protocol (MS-RRP) specification 
 
 Special thank you to Jeroen van Erp for SMBJ (https://github.com/hierynomus/smbj).
 
-# Usage Example
+Table of contents
+=================
+* [Usage Examples](#usage-examples)
+* [NDR Types](#ndr-types)
+  * [Structure](#structure)
+  * [Pointers](#pointers)
+  * [Arrays](#arrays)
+* [NDR Marshalling](#ndr-marshalling)
+  * [Primitive Marshalling](#primitive-marshalling)
+  * [Construct Marshalling](#construct-marshalling)
+
+# Usage Examples
 
 #### [MS-RRP]: Windows Remote Registry Protocol (https://msdn.microsoft.com/en-us/library/cc244877.aspx)
 
@@ -61,4 +72,93 @@ try (final Connection smbConnection = smbClient.connect("aaa.bbb.ccc.ddd")) {
 }
 ```
 
-test!
+# NDR Types
+
+All objects are assigned to a type hierarchy:
+* Primitive
+  * `boolean`
+  * `character` (ASCII)
+  * Signed/Unsigned Integers:
+    * `small`
+    * `short`
+    * `long`
+    * `hyper`
+  * Signed/Unsigned Floating Points:
+    * `single`
+    * `double`
+* NDR Construct
+  * `Struct`
+  * `Union`
+  * Arrays
+    * `Fixed Array`
+    * `Varying Array`
+    * `Conformant Array`
+    * `Conformant Varying Array`
+  * `Pointer`
+
+# Structure
+
+Structures have 0 or more fields of NDR objects, and have special marshalling and alignment considerations.
+
+## Alignment
+
+All fields in a struct must be aligned according to the largest alignment of its fields. This can and should be known ahead of time to improve performance.
+Each field has unique rules for calculating their alignment:
+* Struct: The largest alignment of its fields
+* Pointer: Modulo 4 for NDR20, and modulo 8 for NDR64
+* Primitives: Constant alignment.
+* Arrays: Max value of the size representation of the array and its entry type alignment.
+* Union: Largest alignment of union discriminator and all arms.
+
+# Pointers
+
+All pointers are represented with a `ReferentID` as an `unsigned long` (NDR20) or `unsigned hyper` (NDR64). While these IDs don't need to be unique, a value of `0` indicates a NULL pointer, and the subsequent referent is considered null and should be ignored.
+
+# Arrays
+
+## Size Representation
+
+* **Fixed**: Size information is not represented as is expected to be known ahead of time. This can either be from another hint (i.e. struct field), or hardcoded to be of constant size.
+
+* **Conformant**: Conformant arrays must contain a `MaximumSize`, which is the size of the entire array. For ND20, this values is an `unsigned long` (4 bytes). For ND64, it is an `unsigned hyper` (8 byte).
+
+* **Varying**: Varying arrays must contain the `Offset` and `ActualSize`, which represents the subset of the complete array to consider. For ND20, these values are an `unsigned long` (4 bytes). For ND64, they are an `unsigned hyper` (8 byte).
+
+## Element Storage
+
+When embedded within a struct, element storage has special rules:
+
+* **Conformant**: Stored at the *end* of the embedded structure. This is not the same as deferred references as they are stored at the end of the top level construct.
+
+* **Fixed**/**Varying**: If the array is not conformant, data is stored inline, immediately after size representation (if any).
+
+# NDR Marshalling
+
+## Primitive Marshalling
+
+Each primitive is provided its own unique marshalling strategy, and does not require special consideration.
+
+## Construct Marshalling
+
+Marshalling of constructs consists of three stages:
+* Preamble
+* Entity
+* Deferrals
+
+The approach to marshalling any NDR data type is:
+```
+marshall(DataType obj) {
+	obj.marshallPreamble(Stream)
+	obj.marshallEntity(Stream)
+	obj.marshallDeferrals(Stream)
+}
+```
+
+Standard rules for marshalling any NDR construct are as follows:
+
+| | Fixed Array | Varying Array | Conformant Array | Pointer  | Struct |
+| --- | --- | ---| --- | --- | --- |
+| Premable | | | marshall(MaximumLength) | | for f in fields:<br/>f.marshallPreamble(Stream) |
+| Entity   | for e in entries:<br/>marshall(e) | marshall(Offset)<br/>marshall(ActualSize)<br/>marshall(Entries) | | marshall(ReferentID) | for f in fields:<br/>f.marshallEntity(Stream) |
+| Deferrals | |  | for e in entries:<br/>marshall(e) | marshall(reference.referent) | for f in fields:<br/>f.marshallDeferrals(Stream) |
+

@@ -16,14 +16,28 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.io;
 
-import java.io.IOException;
+package com.rapid7.client.dcerpc.io.ndr;
 
 /**
- * An interface for unmarshalling typed objects from {@link PacketInput}.
+ * Represents the static alignment of an NDR data type.
  */
-public interface Unmarshallable<T> {
+public enum Alignment {
+   ONE((byte) 1),
+   TWO((byte) 2),
+   FOUR((byte) 4),
+   EIGHT((byte) 8);
 
-    public T unmarshall(PacketInput in) throws IOException;
+   private final byte offByOneAlignment;
+
+   Alignment(final byte alignment) {
+      this.offByOneAlignment = (byte) (alignment - 1);
+   }
+
+   /**
+    * @return The alignment minus 1
+    */
+   public byte getOffByOneAlignment() {
+      return this.offByOneAlignment;
+   }
 }

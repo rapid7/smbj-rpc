@@ -38,7 +38,7 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
  * </pre>
  */
 public class HandleResponse<T extends ContextHandle> extends RequestResponse {
-    protected final T handle = initHandle();
+    private final T handle = initHandle();
     private int returnValue;
 
     /** @return The handle to a opened key. */
@@ -67,7 +67,7 @@ public class HandleResponse<T extends ContextHandle> extends RequestResponse {
         // [Frame handle opened: 11176]
         // [Frame handle closed: 11424]
         // Windows Error: WERR_OK (0x00000000)
-	handle.unmarshall(packetIn);
+        packetIn.readUnmarshallable(handle);
         returnValue = packetIn.readInt();
     }
     
@@ -78,6 +78,6 @@ public class HandleResponse<T extends ContextHandle> extends RequestResponse {
      * @return The context handle.
      */
     protected T initHandle() {
-	return (T) new ContextHandle();
+	     return (T) new ContextHandle();
     }
 }

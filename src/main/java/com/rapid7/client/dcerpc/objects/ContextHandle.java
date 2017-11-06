@@ -22,15 +22,28 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.bouncycastle.util.encoders.Hex;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.io.Unmarshallable;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
-public class ContextHandle implements Unmarshallable<ContextHandle> {
+/***
+ * This class represents any NDR context handle. It is defined to be a struct of 16 bytes:
+ *
+ *   typedef struct ndr_context_handle
+ *   {
+ *      ULONG      attributes;
+ *      GUID       uuid;
+ *   } ndr_context_handle;
+ *
+ * However, since the server will be computing these handles, DCERPC will treat these as:
+ *   byte[20]
+ */
+public class ContextHandle implements Unmarshallable {
     private final byte[] handle;
 
-    public ContextHandle(final String hString, int length) {
-        this(length);
-        if (hString == null || hString.length() > 40) {
-            throw new IllegalArgumentException("hKey is invalid: " + hString);
+    public ContextHandle(final String hString) {
+        this();
+        if (hString == null || hString.length() > (handle.length*2)) {
+            throw new IllegalArgumentException("hString is invalid: " + hString);
         }
         final byte[] handle = Hex.decode(hString);
         int srcPos = 0;
@@ -45,16 +58,12 @@ public class ContextHandle implements Unmarshallable<ContextHandle> {
         System.arraycopy(handle, srcPos, this.handle, dstPos, dstLen);
     }
 
-    public ContextHandle(final String hKey) {
-        this(hKey, 20);
-    }
-
-    public ContextHandle(int length) {
-        this.handle = new byte[length];
-    }
-
     public ContextHandle() {
-        this.handle = new byte[20];
+        this(20);
+    }
+
+    protected ContextHandle(int length) {
+        this.handle = new byte[length];
     }
 
     public byte[] getBytes() {
@@ -67,6 +76,31 @@ public class ContextHandle implements Unmarshallable<ContextHandle> {
 
     public void setBytes(final byte[] handle) {
         System.arraycopy(handle, 0, this.handle, 0, this.handle.length);
+    }
+
+    @Override
+    public Alignment getAlignment() {
+        // Size Alignment: N/A
+        // Element Alignment: 1
+        return Alignment.ONE;
+    }
+
+    @Override
+    public void unmarshallPreamble(PacketInput in)
+        throws IOException {
+        // Fixed array
+    }
+
+    @Override
+    public void unmarshallEntity(PacketInput in)
+        throws IOException {
+        in.readFully(this.handle);
+    }
+
+    @Override
+    public void unmarshallDeferrals(PacketInput in)
+        throws IOException {
+        // Fixed array
     }
 
     @Override
@@ -86,13 +120,5 @@ public class ContextHandle implements Unmarshallable<ContextHandle> {
     @Override
     public boolean equals(final Object anObject) {
         return anObject instanceof ContextHandle && Arrays.equals(handle, ((ContextHandle) anObject).handle);
-    }
-
-    @Override
-    public ContextHandle unmarshall(PacketInput in) throws IOException {
-        byte[] bytes = new byte[handle.length];
-        in.readFully(bytes);
-        setBytes(bytes);
-        return this;
     }
 }

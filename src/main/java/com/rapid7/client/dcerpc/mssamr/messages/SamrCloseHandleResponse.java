@@ -30,8 +30,7 @@ public class SamrCloseHandleResponse extends RequestResponse {
     @Override
     public void unmarshal(PacketInput in) throws IOException {
         // SAMR handle is 20 bytes
-        ContextHandle handle = new ContextHandle();
-        handle.unmarshall(in);
+        in.readUnmarshallable(new ContextHandle());
         returnValue = in.readInt();
     }
 
