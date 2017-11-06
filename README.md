@@ -147,10 +147,10 @@ Marshalling of constructs consists of three stages:
 
 The approach to marshalling any NDR data type is:
 ```
-marshall(DataType obj) {
-	obj.marshallPreamble(Stream)
-	obj.marshallEntity(Stream)
-	obj.marshallDeferrals(Stream)
+marshal(DataType obj) {
+	obj.marshalPreamble(Stream)
+	obj.marshalEntity(Stream)
+	obj.marshalDeferrals(Stream)
 }
 ```
 
@@ -158,7 +158,7 @@ Standard rules for marshalling any NDR construct are as follows:
 
 | | Fixed Array | Varying Array | Conformant Array | Pointer  | Struct |
 | --- | --- | ---| --- | --- | --- |
-| Premable | | | marshall(MaximumLength) | | for f in fields:<br/>f.marshallPreamble(Stream) |
-| Entity   | for e in entries:<br/>marshall(e) | marshall(Offset)<br/>marshall(ActualSize)<br/>marshall(Entries) | | marshall(ReferentID) | for f in fields:<br/>f.marshallEntity(Stream) |
-| Deferrals | |  | for e in entries:<br/>marshall(e) | marshall(reference.referent) | for f in fields:<br/>f.marshallDeferrals(Stream) |
+| Premable | | | marshal(MaximumLength) | | for f in fields:<br/>f.marshalPreamble(Stream) |
+| Entity   | for e in entries:<br/>marshal(e) | marshal(Offset)<br/>marshal(ActualSize)<br/>marshal(Entries) | | marshal(ReferentID) | for f in fields:<br/>f.marshalEntity(Stream) |
+| Deferrals | |  | for e in entries:<br/>marshal(e) | marshal(reference.referent) | for f in fields:<br/>f.marshalDeferrals(Stream) |
 

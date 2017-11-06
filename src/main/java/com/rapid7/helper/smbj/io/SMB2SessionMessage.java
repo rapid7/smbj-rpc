@@ -1,3 +1,21 @@
+/**
+ * Copyright 2017, Rapid7, Inc.
+ *
+ * License: BSD-3-clause
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * * Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
+ */
 package com.rapid7.helper.smbj.io;
 
 import java.io.IOException;
@@ -39,8 +57,7 @@ public abstract class SMB2SessionMessage {
         return sessionID;
     }
 
-    public <T extends SMB2Packet> Future<T> send(final SMB2Packet packet)
-        throws IOException {
+    public <T extends SMB2Packet> Future<T> send(final SMB2Packet packet) throws IOException {
         try {
             return getSession().send(packet);
         } catch (final IOException exception) {
@@ -51,8 +68,7 @@ public abstract class SMB2SessionMessage {
         }
     }
 
-    public <T extends SMB2Packet> T read(final Future<T> future)
-        throws IOException {
+    public <T extends SMB2Packet> T read(final Future<T> future) throws IOException {
         try {
             return future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (final InterruptedException exception) {
@@ -68,14 +84,13 @@ public abstract class SMB2SessionMessage {
         }
     }
 
-    public <T extends SMB2Packet> T sendAndRead(final SMB2Packet packet)
-        throws IOException {
+    public <T extends SMB2Packet> T sendAndRead(final SMB2Packet packet) throws IOException {
         final Future<T> future = send(packet);
         return read(future);
     }
 
     public <T extends SMB2Packet> T sendAndRead(final SMB2Packet packet, final EnumSet<NtStatus> ok)
-        throws IOException {
+            throws IOException {
         final Future<T> future = send(packet);
         final T responsePacket = read(future);
         final SMB2Header responseHeader = responsePacket.getHeader();

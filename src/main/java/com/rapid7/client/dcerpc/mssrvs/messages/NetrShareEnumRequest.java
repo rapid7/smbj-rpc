@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.mssrvs.messages;
 
@@ -254,14 +254,14 @@ public class NetrShareEnumRequest extends RequestCall<NetrShareEnumResponse> {
     /**
      * The NetrShareEnum method retrieves information about each shared resource on a server.
      *
-     * @param level The InfoStruct parameter has a Level member. The valid values of Level are 0, 1, 2, 501, 502, and
-     *        503. If the Level member is not equal to one of the valid values, the server MUST fail the call with an
-     *        ERROR_INVALID_LEVEL error code.
+     * @param level        The InfoStruct parameter has a Level member. The valid values of Level are 0, 1, 2, 501, 502, and
+     *                     503. If the Level member is not equal to one of the valid values, the server MUST fail the call with an
+     *                     ERROR_INVALID_LEVEL error code.
      * @param resumeHandle A pointer to a value that contains a handle, which is used to continue an existing share
-     *        search in ShareList. The handle MUST be zero on the first call and remain unchanged for subsequent calls.
-     *        If the ResumeHandle parameter is NULL, no resume handle MUST be stored. If this parameter is not NULL and
-     *        the method returns ERROR_MORE_DATA, this parameter receives a nonzero value that can be passed in
-     *        subsequent calls to this method to continue with the enumeration in ShareList.
+     *                     search in ShareList. The handle MUST be zero on the first call and remain unchanged for subsequent calls.
+     *                     If the ResumeHandle parameter is NULL, no resume handle MUST be stored. If this parameter is not NULL and
+     *                     the method returns ERROR_MORE_DATA, this parameter receives a nonzero value that can be passed in
+     *                     subsequent calls to this method to continue with the enumeration in ShareList.
      */
     public NetrShareEnumRequest(final int level, final Integer resumeHandle) {
         super(NetrOpCode.NetrShareEnum.getOpCode());
@@ -275,8 +275,7 @@ public class NetrShareEnumRequest extends RequestCall<NetrShareEnumResponse> {
     }
 
     @Override
-    public void marshal(final PacketOutput stubOut)
-        throws IOException {
+    public void marshal(final PacketOutput stubOut) throws IOException {
         stubOut.writeNull();
         stubOut.writeInt(level);
         stubOut.writeInt(level);

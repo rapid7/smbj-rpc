@@ -6,28 +6,28 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 public class Test_BaseRegEnumValueResponse {
     @Test
-    public void unmarshal()
-        throws IOException {
+    public void unmarshal() throws IOException {
         // Remote Registry Service, EnumValue
         //      Operation: EnumValue (10)
         //      [Request in frame: 11206]
@@ -90,8 +90,7 @@ public class Test_BaseRegEnumValueResponse {
         //      Windows Error: WERR_OK (0x00000000)
         final BaseRegEnumValueResponse response = new BaseRegEnumValueResponse();
 
-        response.fromHexString(
-            "1600feff00000200ff7f0000000000000b000000530079007300740065006d0052006f006f0074000000000004000200010000000800020016000000000000001600000043003a005c00570069006e0064006f0077007300000000000c00020016000000100002001600000000000000");
+        response.fromHexString("1600feff00000200ff7f0000000000000b000000530079007300740065006d0052006f006f0074000000000004000200010000000800020016000000000000001600000043003a005c00570069006e0064006f0077007300000000000c00020016000000100002001600000000000000");
 
         assertEquals("SystemRoot", response.getName());
         assertEquals(RegistryValueType.REG_SZ, response.getType());

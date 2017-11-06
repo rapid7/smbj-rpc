@@ -6,21 +6,18 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.mssrvs.messages;
 
-import static org.bouncycastle.util.encoders.Hex.toHexString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +25,10 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+
+import static org.bouncycastle.util.encoders.Hex.toHexString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class Test_NetrShareEnum {
     private final NetrShareEnumRequest request = new NetrShareEnumRequest(1, null);
@@ -38,18 +39,14 @@ public class Test_NetrShareEnum {
     }
 
     @Test
-    public void getStub()
-        throws IOException {
-        assertEquals("0000000001000000010000000000020000000000000000000000100000000000",
-            toHexString(request.getStub()));
+    public void getStub() throws IOException {
+        assertEquals("0000000001000000010000000000020000000000000000000000100000000000", toHexString(request.getStub()));
     }
 
     @Test
-    public void getResponseObject()
-        throws IOException {
+    public void getResponseObject() throws IOException {
         final NetrShareEnumResponse response = request.getResponseObject();
-        final ByteArrayInputStream packetInputStream = new ByteArrayInputStream(Hex.decode(
-            "01000000010000000000020003000000040002000300000008000200000000800c00020010000200000000801400020018000200030000801c000200070000000000000007000000410044004d0049004e002400000000000d000000000000000d000000520065006d006f00740065002000410064006d0069006e000000000003000000000000000300000043002400000000000e000000000000000e000000440065006600610075006c00740020007300680061007200650000000500000000000000050000004900500043002400000000000b000000000000000b000000520065006d006f0074006500200049005000430000000000030000000000000000000000"));
+        final ByteArrayInputStream packetInputStream = new ByteArrayInputStream(Hex.decode("01000000010000000000020003000000040002000300000008000200000000800c00020010000200000000801400020018000200030000801c000200070000000000000007000000410044004d0049004e002400000000000d000000000000000d000000520065006d006f00740065002000410064006d0069006e000000000003000000000000000300000043002400000000000e000000000000000e000000440065006600610075006c00740020007300680061007200650000000500000000000000050000004900500043002400000000000b000000000000000b000000520065006d006f0074006500200049005000430000000000030000000000000000000000"));
         final PacketInput packetIn = new PacketInput(packetInputStream);
 
         response.unmarshal(packetIn);

@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msvcctl.objects;
 
@@ -24,7 +24,7 @@ import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
 
 /**
- *  Service Status responses from:
+ * Service Status responses from:
  * https://msdn.microsoft.com/en-us/library/cc245911.aspx
  */
 
@@ -38,15 +38,7 @@ public class ServiceStatusInfo implements IServiceStatusInfo {
     final private int checkPoint;
     final private int waitHint;
 
-    public ServiceStatusInfo(
-        ServiceType serviceType,
-        ServiceStatusType currentState,
-        ServicesAcceptedControls controlsAccepted,
-        int win32ExitCode,
-        int serviceSpecificExitCode,
-        int checkPoint,
-        int waitHint)
-    {
+    public ServiceStatusInfo(ServiceType serviceType, ServiceStatusType currentState, ServicesAcceptedControls controlsAccepted, int win32ExitCode, int serviceSpecificExitCode, int checkPoint, int waitHint) {
         this.serviceType = serviceType;
         this.currentState = currentState;
         this.controlsAccepted = controlsAccepted;
@@ -57,44 +49,37 @@ public class ServiceStatusInfo implements IServiceStatusInfo {
     }
 
     @Override
-    public ServiceType getServiceType()
-    {
+    public ServiceType getServiceType() {
         return serviceType;
     }
 
     @Override
-    public ServiceStatusType getCurrentState()
-    {
+    public ServiceStatusType getCurrentState() {
         return currentState;
     }
 
     @Override
-    public ServicesAcceptedControls getControlsAccepted()
-    {
+    public ServicesAcceptedControls getControlsAccepted() {
         return controlsAccepted;
     }
 
     @Override
-    public int getWin32ExitCode()
-    {
+    public int getWin32ExitCode() {
         return win32ExitCode;
     }
 
     @Override
-    public int getServiceSpecificExitCode()
-    {
+    public int getServiceSpecificExitCode() {
         return serviceSpecificExitCode;
     }
 
     @Override
-    public int getCheckPoint()
-    {
+    public int getCheckPoint() {
         return checkPoint;
     }
 
     @Override
-    public int getWaitHint()
-    {
+    public int getWaitHint() {
         return waitHint;
     }
 
