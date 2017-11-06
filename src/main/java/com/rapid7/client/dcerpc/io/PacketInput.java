@@ -27,11 +27,12 @@ public class PacketInput extends PrimitiveInput {
         super(inputStream);
     }
 
-    public void readUnmarshallable(Unmarshallable unmarshallable)
+    public <T extends Unmarshallable> T readUnmarshallable(T unmarshallable)
         throws IOException {
         unmarshallable.unmarshallPreamble(this);
         unmarshallable.unmarshallEntity(this);
         unmarshallable.unmarshallDeferrals(this);
+        return unmarshallable;
     }
 
     public Integer readIntRef()

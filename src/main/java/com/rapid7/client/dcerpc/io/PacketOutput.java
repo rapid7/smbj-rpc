@@ -29,11 +29,12 @@ public class PacketOutput extends PrimitiveOutput {
         super(outputStream);
     }
 
-    public void writeMarshallable(Marshallable marshallable)
+    public <T extends Marshallable> T writeMarshallable(T marshallable)
         throws IOException {
         marshallable.marshallPreamble(this);
         marshallable.marshallEntity(this);
         marshallable.marshallDeferrals(this);
+        return marshallable;
     }
 
     public void writeIntRef(final Integer value)
