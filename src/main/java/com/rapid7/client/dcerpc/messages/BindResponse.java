@@ -6,24 +6,25 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.messages;
 
-import static com.rapid7.client.dcerpc.PDUType.BIND_ACK;
-import static com.rapid7.client.dcerpc.PDUType.BIND_NAK;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.Header;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+
+import static com.rapid7.client.dcerpc.PDUType.BIND_ACK;
+import static com.rapid7.client.dcerpc.PDUType.BIND_NAK;
 
 /**
  * The IDL declaration of the bind_ack PDU is as follows:<br>
@@ -130,41 +131,39 @@ public final class BindResponse extends Header {
     }
 
     @Override
-    public void marshal(final PacketOutput packetOut)
-        throws IOException {
+    public void marshal(final PacketOutput packetOut) throws IOException {
         // This method is used for unit tests and is not a complete implementation.
         switch (getPDUType()) {
-        case BIND_ACK:
-            setFragLength((short) 20);
-            super.marshal(packetOut);
-            packetOut.writeShort(maxXmitFrag);
-            packetOut.writeShort(maxRecvFrag);
-            break;
-        case BIND_NAK:
-            setFragLength((short) 16);
-            super.marshal(packetOut);
-            break;
-        default:
-            throw new IOException("Invalid PDU type: " + getPDUType());
+            case BIND_ACK:
+                setFragLength((short) 20);
+                super.marshal(packetOut);
+                packetOut.writeShort(maxXmitFrag);
+                packetOut.writeShort(maxRecvFrag);
+                break;
+            case BIND_NAK:
+                setFragLength((short) 16);
+                super.marshal(packetOut);
+                break;
+            default:
+                throw new IOException("Invalid PDU type: " + getPDUType());
         }
     }
 
     @Override
-    public void unmarshal(final PacketInput packetIn)
-        throws IOException {
+    public void unmarshal(final PacketInput packetIn) throws IOException {
         super.unmarshal(packetIn);
 
         switch (getPDUType()) {
-        case BIND_ACK:
-            maxXmitFrag = packetIn.readShort();
-            maxRecvFrag = packetIn.readShort();
-            packetIn.fullySkipBytes(getFragLength() - 20);
-            break;
-        case BIND_NAK:
-            packetIn.fullySkipBytes(getFragLength() - 16);
-            break;
-        default:
-            throw new IOException("Invalid PDU type: " + getPDUType());
+            case BIND_ACK:
+                maxXmitFrag = packetIn.readShort();
+                maxRecvFrag = packetIn.readShort();
+                packetIn.fullySkipBytes(getFragLength() - 20);
+                break;
+            case BIND_NAK:
+                packetIn.fullySkipBytes(getFragLength() - 16);
+                break;
+            default:
+                throw new IOException("Invalid PDU type: " + getPDUType());
         }
     }
 }

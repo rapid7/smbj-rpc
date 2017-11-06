@@ -6,32 +6,26 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp;
 
-import static com.rapid7.client.dcerpc.msrrp.RegistryHive.HKEY_CLASSES_ROOT;
-import static com.rapid7.client.dcerpc.msrrp.RegistryHive.HKEY_CURRENT_CONFIG;
-import static com.rapid7.client.dcerpc.msrrp.RegistryHive.HKEY_CURRENT_USER;
-import static com.rapid7.client.dcerpc.msrrp.RegistryHive.HKEY_LOCAL_MACHINE;
-import static com.rapid7.client.dcerpc.msrrp.RegistryHive.HKEY_PERFORMANCE_DATA;
-import static com.rapid7.client.dcerpc.msrrp.RegistryHive.HKEY_PERFORMANCE_NLSTEXT;
-import static com.rapid7.client.dcerpc.msrrp.RegistryHive.HKEY_PERFORMANCE_TEXT;
-import static com.rapid7.client.dcerpc.msrrp.RegistryHive.HKEY_USERS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import java.util.EnumSet;
 import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
+
+import static com.rapid7.client.dcerpc.msrrp.RegistryHive.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class Test_RegistryHive {
     @Test

@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
@@ -178,7 +178,9 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
      * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
     private final ContextHandle hKey;
-    /** The name of a key to open. */
+    /**
+     * The name of a key to open.
+     */
     private final String subKey;
     /**
      * Registry key options. The user rights are represented as a bit field. In addition to the standard user rights, as
@@ -253,84 +255,80 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
      * The BaseRegOpenKey method is called by the client. In response, the server opens a specified key for access and
      * returns a handle to it.
      *
-     * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods:
-     *        {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
-     *        {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
-     *        {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
-     * @param subKey The name of a key to open.
-     * @param options Registry key options. The user rights are represented as a bit field. In addition to the standard
-     *        user rights, as specified in [MS-DTYP] section 2.4.3, the Windows Remote Registry Protocol SHOULD support
-     *        the following user rights.
-     *        <table border="1" summary="">
-     *        <tr>
-     *        <td>Value</td>
-     *        <td>Meaning</td>
-     *        </tr>
-     *        <tr>
-     *        <td>0x00000000</td>
-     *        <td>This key is not volatile. The key and all its values MUST be persisted to the backing store and is
-     *        preserved when the registry server loses context due to a system restart, reboot, or shut down
-     *        process.</td>
-     *        </tr>
-     *        <tr>
-     *        <td>0x00000001</td>
-     *        <td>This key is volatile. The key with all its subkeys and values MUST NOT be preserved when the registry
-     *        server loses context due to a system restart, reboot, or shut down process.</td>
-     *        </tr>
-     *        <tr>
-     *        <td>0x00000002</td>
-     *        <td>This key is a symbolic link to another key. The server stores the target of the symbolic link in an
-     *        implementation-specific format.</td>
-     *        </tr>
-     *        </table>
+     * @param hKey       A handle to a key that MUST have been opened previously by using one of the open methods:
+     *                   {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
+     *                   {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+     *                   {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
+     * @param subKey     The name of a key to open.
+     * @param options    Registry key options. The user rights are represented as a bit field. In addition to the standard
+     *                   user rights, as specified in [MS-DTYP] section 2.4.3, the Windows Remote Registry Protocol SHOULD support
+     *                   the following user rights.
+     *                   <table border="1" summary="">
+     *                   <tr>
+     *                   <td>Value</td>
+     *                   <td>Meaning</td>
+     *                   </tr>
+     *                   <tr>
+     *                   <td>0x00000000</td>
+     *                   <td>This key is not volatile. The key and all its values MUST be persisted to the backing store and is
+     *                   preserved when the registry server loses context due to a system restart, reboot, or shut down
+     *                   process.</td>
+     *                   </tr>
+     *                   <tr>
+     *                   <td>0x00000001</td>
+     *                   <td>This key is volatile. The key with all its subkeys and values MUST NOT be preserved when the registry
+     *                   server loses context due to a system restart, reboot, or shut down process.</td>
+     *                   </tr>
+     *                   <tr>
+     *                   <td>0x00000002</td>
+     *                   <td>This key is a symbolic link to another key. The server stores the target of the symbolic link in an
+     *                   implementation-specific format.</td>
+     *                   </tr>
+     *                   </table>
      * @param accessMask A bit field that describes the requested security access for the handle to the key that is
-     *        being opened.
-     *        <table border="1" summary="">
-     *        <tr>
-     *        <td>Value</td>
-     *        <td>Meaning</td>
-     *        </tr>
-     *        <tr>
-     *        <td>KEY_QUERY_VALUE (0x00000001)</td>
-     *        <td>When set, specifies access to query the values of a registry key.</td>
-     *        </tr>
-     *        <tr>
-     *        <td>KEY_SET_VALUE (0x00000002)</td>
-     *        <td>When set, specifies access to create, delete, or set a registry value.</td>
-     *        </tr>
-     *        <tr>
-     *        <td>KEY_CREATE_SUB_KEY (0x00000004)</td>
-     *        <td>When set, specifies access to create a subkey of a registry key. Subkeys directly underneath the
-     *        HKEY_LOCAL_MACHINE and HKEY_USERS predefined keys cannot be created even if this bit is set.</td>
-     *        </tr>
-     *        <tr>
-     *        <td>KEY_ENUMERATE_SUB_KEYS (0x00000008)</td>
-     *        <td>When set, specifies access to enumerate the subkeys of a registry key.</td>
-     *        </tr>
-     *        <tr>
-     *        <td>KEY_CREATE_LINK (0x00000020)</td>
-     *        <td>When set, specifies access to create a symbolic link to another key.</td>
-     *        </tr>
-     *        <tr>
-     *        <td>KEY_WOW64_64KEY (0x00000100)</td>
-     *        <td>When set, indicates that a registry server on a 64-bit operating system operates on the 64-bit key
-     *        namespace.</td>
-     *        </tr>
-     *        <tr>
-     *        <td>KEY_WOW64_32KEY (0x00000200)</td>
-     *        <td>When set, indicates that a registry server on a 64-bit operating system operates on the 32-bit key
-     *        namespace.</td>
-     *        </tr>
-     *        </table>
+     *                   being opened.
+     *                   <table border="1" summary="">
+     *                   <tr>
+     *                   <td>Value</td>
+     *                   <td>Meaning</td>
+     *                   </tr>
+     *                   <tr>
+     *                   <td>KEY_QUERY_VALUE (0x00000001)</td>
+     *                   <td>When set, specifies access to query the values of a registry key.</td>
+     *                   </tr>
+     *                   <tr>
+     *                   <td>KEY_SET_VALUE (0x00000002)</td>
+     *                   <td>When set, specifies access to create, delete, or set a registry value.</td>
+     *                   </tr>
+     *                   <tr>
+     *                   <td>KEY_CREATE_SUB_KEY (0x00000004)</td>
+     *                   <td>When set, specifies access to create a subkey of a registry key. Subkeys directly underneath the
+     *                   HKEY_LOCAL_MACHINE and HKEY_USERS predefined keys cannot be created even if this bit is set.</td>
+     *                   </tr>
+     *                   <tr>
+     *                   <td>KEY_ENUMERATE_SUB_KEYS (0x00000008)</td>
+     *                   <td>When set, specifies access to enumerate the subkeys of a registry key.</td>
+     *                   </tr>
+     *                   <tr>
+     *                   <td>KEY_CREATE_LINK (0x00000020)</td>
+     *                   <td>When set, specifies access to create a symbolic link to another key.</td>
+     *                   </tr>
+     *                   <tr>
+     *                   <td>KEY_WOW64_64KEY (0x00000100)</td>
+     *                   <td>When set, indicates that a registry server on a 64-bit operating system operates on the 64-bit key
+     *                   namespace.</td>
+     *                   </tr>
+     *                   <tr>
+     *                   <td>KEY_WOW64_32KEY (0x00000200)</td>
+     *                   <td>When set, indicates that a registry server on a 64-bit operating system operates on the 32-bit key
+     *                   namespace.</td>
+     *                   </tr>
+     *                   </table>
      * @see <a href="https://msdn.microsoft.com/en-us/cc244922">2.2.4 REGSAM</a>
      * @see <a href="https://msdn.microsoft.com/en-us/cc230294">2.4.3 ACCESS_MASK</a>
      * @see <a href="https://msdn.microsoft.com/en-us/cc244886">3.1.1.2 Key Types</a>
      */
-    public BaseRegOpenKey(
-        final ContextHandle hKey,
-        final String subKey,
-        final int options,
-        final EnumSet<AccessMask> accessMask) {
+    public BaseRegOpenKey(final ContextHandle hKey, final String subKey, final int options, final EnumSet<AccessMask> accessMask) {
         super((short) 15);
         this.hKey = hKey;
         this.subKey = subKey;
@@ -344,8 +342,7 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
     }
 
     @Override
-    public void marshal(final PacketOutput packetOut)
-        throws IOException {
+    public void marshal(final PacketOutput packetOut) throws IOException {
         // Remote Registry Service, OpenKey
         //      Operation: OpenKey (15)
         //      [Response in frame: 11204]

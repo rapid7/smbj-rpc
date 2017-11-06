@@ -6,32 +6,18 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp;
 
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_FILE_NOT_FOUND;
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_INVALID_FUNCTION;
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.List;
 import org.junit.Rule;
@@ -48,6 +34,11 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.*;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+
 public class Test_RegistryService {
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
@@ -61,8 +52,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesHiveWithEmptyKeyExistYes()
-        throws IOException {
+    public void doesHiveWithEmptyKeyExistYes() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -79,8 +69,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesHiveWithNullKeyExistYes()
-        throws IOException {
+    public void doesHiveWithNullKeyExistYes() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -97,8 +86,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesHiveWithEmptyKeyExistNo()
-        throws IOException {
+    public void doesHiveWithEmptyKeyExistNo() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -114,8 +102,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesHiveWithNullKeyExistNo()
-        throws IOException {
+    public void doesHiveWithNullKeyExistNo() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -131,8 +118,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesHiveExistUnknown()
-        throws IOException {
+    public void doesHiveExistUnknown() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -147,8 +133,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesKeyExistYes()
-        throws IOException {
+    public void doesKeyExistYes() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -169,8 +154,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesKeyExistNo()
-        throws IOException {
+    public void doesKeyExistNo() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -190,8 +174,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesKeyExistUnknown()
-        throws IOException {
+    public void doesKeyExistUnknown() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -208,8 +191,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesKeyExistWithEmptyHiveName()
-        throws IOException {
+    public void doesKeyExistWithEmptyHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -220,8 +202,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesKeyExistWithNullHiveName()
-        throws IOException {
+    public void doesKeyExistWithNullHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -232,8 +213,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesValueExistYes()
-        throws IOException {
+    public void doesValueExistYes() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -244,7 +224,7 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
@@ -261,8 +241,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesValueExistNo()
-        throws IOException {
+    public void doesValueExistNo() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -286,8 +265,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesValueExistUnknown()
-        throws IOException {
+    public void doesValueExistUnknown() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -306,8 +284,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesValueExistWithEmptyHiveName()
-        throws IOException {
+    public void doesValueExistWithEmptyHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -318,8 +295,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesValueExistWithNullHiveName()
-        throws IOException {
+    public void doesValueExistWithNullHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -330,8 +306,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesValueExistWithEmptyKeyName()
-        throws IOException {
+    public void doesValueExistWithEmptyKeyName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -342,7 +317,7 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
@@ -359,8 +334,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesValueExistWithNullKeyName()
-        throws IOException {
+    public void doesValueExistWithNullKeyName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -371,7 +345,7 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
@@ -388,8 +362,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesValueExistWithEmptyName()
-        throws IOException {
+    public void doesValueExistWithEmptyName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -400,7 +373,7 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
@@ -417,8 +390,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void doesValueExistWithNullName()
-        throws IOException {
+    public void doesValueExistWithNullName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -429,7 +401,7 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
@@ -446,8 +418,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getKeyInfo()
-        throws IOException {
+    public void getKeyInfo() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -496,8 +467,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getKeyInfoWithEmptyHive()
-        throws IOException {
+    public void getKeyInfoWithEmptyHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -508,8 +478,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getKeyInfoWithNullHive()
-        throws IOException {
+    public void getKeyInfoWithNullHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -520,8 +489,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getKeyInfoWhenHiveDoesNotExistWithEmptyKey()
-        throws IOException {
+    public void getKeyInfoWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -536,8 +504,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getKeyInfoWhenHiveDoesNotExistWithNullKey()
-        throws IOException {
+    public void getKeyInfoWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -552,8 +519,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getKeyInfoWhenKeyDoesNotExist()
-        throws IOException {
+    public void getKeyInfoWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -571,8 +537,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getSubKeys()
-        throws IOException {
+    public void getSubKeys() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -581,8 +546,7 @@ public class Test_RegistryService {
         final BaseRegEnumKeyResponse enumResponse3 = mock(BaseRegEnumKeyResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1)
-            .thenReturn(enumResponse2).thenReturn(enumResponse3);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1).thenReturn(enumResponse2).thenReturn(enumResponse3);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(enumResponse1.getName()).thenReturn("subKey1");
@@ -617,8 +581,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getSubKeysWhenEmpty()
-        throws IOException {
+    public void getSubKeysWhenEmpty() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -644,8 +607,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getSubKeysWithEmptyHive()
-        throws IOException {
+    public void getSubKeysWithEmptyHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -656,8 +618,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getSubKeysWithNullHive()
-        throws IOException {
+    public void getSubKeysWithNullHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -668,8 +629,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getSubKeysWhenHiveDoesNotExistWithEmptyKey()
-        throws IOException {
+    public void getSubKeysWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -684,8 +644,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getSubKeysWhenHiveDoesNotExistWithNullKey()
-        throws IOException {
+    public void getSubKeysWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -700,8 +659,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getSubKeysWhenKeyDoesNotExist()
-        throws IOException {
+    public void getSubKeysWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -718,8 +676,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValues()
-        throws IOException {
+    public void getValues() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -728,25 +685,22 @@ public class Test_RegistryService {
         final BaseRegEnumValueResponse enumResponse3 = mock(BaseRegEnumValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
-        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1)
-            .thenReturn(enumResponse2).thenReturn(enumResponse3);
+        when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1).thenReturn(enumResponse2).thenReturn(enumResponse3);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(enumResponse1.getName()).thenReturn("value1");
         when(enumResponse1.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(enumResponse1.getData()).thenReturn(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        when(enumResponse1.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
         when(enumResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(enumResponse2.getName()).thenReturn("value2");
         when(enumResponse2.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(enumResponse2.getData()).thenReturn(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        when(enumResponse2.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
         when(enumResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(enumResponse3.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getErrorCode());
 
         final List<RegistryValue> values = registryService.getValues("HKLM", "key");
-        final RegistryValue value1 =
-            new RegistryValue("value1", RegistryValueType.REG_BINARY, new byte[] { 0x01, 0x23, 0x45, 0x67 });
-        final RegistryValue value2 =
-            new RegistryValue("value2", RegistryValueType.REG_BINARY, new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        final RegistryValue value1 = new RegistryValue("value1", RegistryValueType.REG_BINARY, new byte[]{0x01, 0x23, 0x45, 0x67});
+        final RegistryValue value2 = new RegistryValue("value2", RegistryValueType.REG_BINARY, new byte[]{0x01, 0x23, 0x45, 0x67});
 
         assertTrue(values.contains(value1));
         assertTrue(values.contains(value2));
@@ -770,8 +724,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValuesWhenEmpty()
-        throws IOException {
+    public void getValuesWhenEmpty() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -797,8 +750,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValuesWithEmptyHive()
-        throws IOException {
+    public void getValuesWithEmptyHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -809,8 +761,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValuesWithNullHive()
-        throws IOException {
+    public void getValuesWithNullHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -821,8 +772,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValuesWhenHiveDoesNotExistWithEmptyKey()
-        throws IOException {
+    public void getValuesWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -837,8 +787,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValuesWhenHiveDoesNotExistWithNullKey()
-        throws IOException {
+    public void getValuesWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -853,8 +802,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValuesWhenKeyDoesNotExist()
-        throws IOException {
+    public void getValuesWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -871,8 +819,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValue()
-        throws IOException {
+    public void getValue() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -883,14 +830,14 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         final RegistryValue value = registryService.getValue("HKLM", "key", "value");
 
         assertEquals("value", value.getName());
         assertEquals(RegistryValueType.REG_BINARY, value.getType());
-        assertArrayEquals(new byte[] { 0x01, 0x23, 0x45, 0x67 }, value.getData());
+        assertArrayEquals(new byte[]{0x01, 0x23, 0x45, 0x67}, value.getData());
 
         verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
@@ -904,8 +851,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValueWithEmptyName()
-        throws IOException {
+    public void getValueWithEmptyName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -916,14 +862,14 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         final RegistryValue value = registryService.getValue("HKLM", "key", "");
 
         assertEquals("", value.getName());
         assertEquals(RegistryValueType.REG_BINARY, value.getType());
-        assertArrayEquals(new byte[] { 0x01, 0x23, 0x45, 0x67 }, value.getData());
+        assertArrayEquals(new byte[]{0x01, 0x23, 0x45, 0x67}, value.getData());
 
         verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
@@ -937,8 +883,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValueWithNullName()
-        throws IOException {
+    public void getValueWithNullName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -949,14 +894,14 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
 
         final RegistryValue value = registryService.getValue("HKLM", "key", null);
 
         assertEquals("", value.getName());
         assertEquals(RegistryValueType.REG_BINARY, value.getType());
-        assertArrayEquals(new byte[] { 0x01, 0x23, 0x45, 0x67 }, value.getData());
+        assertArrayEquals(new byte[]{0x01, 0x23, 0x45, 0x67}, value.getData());
 
         verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
@@ -970,8 +915,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValueWhenDoesNotExist()
-        throws IOException {
+    public void getValueWhenDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -990,8 +934,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValueWithEmptyHive()
-        throws IOException {
+    public void getValueWithEmptyHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -1002,8 +945,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValueWithNullHive()
-        throws IOException {
+    public void getValueWithNullHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -1014,8 +956,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValueWhenHiveDoesNotExistWithEmptyKey()
-        throws IOException {
+    public void getValueWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -1030,8 +971,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValueWhenHiveDoesNotExistWithNullKey()
-        throws IOException {
+    public void getValueWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -1046,8 +986,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void getValueWhenKeyDoesNotExist()
-        throws IOException {
+    public void getValueWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -1077,8 +1016,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openHive()
-        throws IOException {
+    public void openHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -1098,8 +1036,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openHiveWhenHiveDoesNotExist()
-        throws IOException {
+    public void openHiveWhenHiveDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -1114,8 +1051,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openHiveCached()
-        throws IOException {
+    public void openHiveCached() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -1137,8 +1073,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openHiveNotCached()
-        throws IOException {
+    public void openHiveNotCached() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse1 = mock(HandleResponse.class);
         final HandleResponse hiveResponse2 = mock(HandleResponse.class);
@@ -1165,8 +1100,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openHiveWithEmptyHiveName()
-        throws IOException {
+    public void openHiveWithEmptyHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -1177,8 +1111,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openHiveWithNullHiveName()
-        throws IOException {
+    public void openHiveWithNullHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -1189,8 +1122,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openKey()
-        throws IOException {
+    public void openKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -1215,8 +1147,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openKeyWhenHiveDoesNotExist()
-        throws IOException {
+    public void openKeyWhenHiveDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -1231,8 +1162,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openKeyWhenKeyDoesNotExist()
-        throws IOException {
+    public void openKeyWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -1250,8 +1180,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openKeyCached()
-        throws IOException {
+    public void openKeyCached() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse = mock(HandleResponse.class);
@@ -1278,8 +1207,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openKeyNotCached()
-        throws IOException {
+    public void openKeyNotCached() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final HandleResponse keyResponse1 = mock(HandleResponse.class);
@@ -1311,8 +1239,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openKeyWithEmptyHiveName()
-        throws IOException {
+    public void openKeyWithEmptyHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -1323,8 +1250,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openKeyWithNullHiveName()
-        throws IOException {
+    public void openKeyWithNullHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
 
@@ -1335,8 +1261,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openKeyWithEmptyKeyName()
-        throws IOException {
+    public void openKeyWithEmptyKeyName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);
@@ -1356,8 +1281,7 @@ public class Test_RegistryService {
     }
 
     @Test
-    public void openKeyWithNullKeyName()
-        throws IOException {
+    public void openKeyWithNullKeyName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
         final RegistryService registryService = new RegistryService(transport);

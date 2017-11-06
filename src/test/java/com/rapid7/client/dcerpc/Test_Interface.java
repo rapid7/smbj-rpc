@@ -1,9 +1,10 @@
 package com.rapid7.client.dcerpc;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class Test_Interface {
     @Test

@@ -6,44 +6,30 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp;
 
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import com.google.common.base.Strings;
 import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
-import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyRequest;
-import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyResponse;
-import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumValueRequest;
-import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumValueResponse;
-import com.rapid7.client.dcerpc.msrrp.messages.BaseRegOpenKey;
-import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyRequest;
-import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
-import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueRequest;
-import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
-import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
+import com.rapid7.client.dcerpc.msrrp.messages.*;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
+
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 
 /**
  * This class implements a partial registry service in accordance with [MS-RRP]: Windows Remote Registry Protocol which
@@ -69,17 +55,16 @@ public class RegistryService {
         this.transport = transport;
     }
 
-    public boolean doesKeyExist(final String hiveName, final String keyPath)
-        throws IOException {
+    public boolean doesKeyExist(final String hiveName, final String keyPath) throws IOException {
         try {
             openKey(hiveName, keyPath);
         } catch (final RPCException exception) {
             if (exception.hasErrorCode()) {
                 switch (exception.getErrorCode()) {
-                case ERROR_FILE_NOT_FOUND:
-                    return false;
-                default:
-                    throw exception;
+                    case ERROR_FILE_NOT_FOUND:
+                        return false;
+                    default:
+                        throw exception;
                 }
             }
         }
@@ -87,24 +72,23 @@ public class RegistryService {
     }
 
     public boolean doesValueExist(final String hiveName, final String keyPath, final String valueName)
-        throws IOException {
+            throws IOException {
         try {
             getValue(hiveName, keyPath, valueName);
         } catch (final RPCException exception) {
             if (exception.hasErrorCode()) {
                 switch (exception.getErrorCode()) {
-                case ERROR_FILE_NOT_FOUND:
-                    return false;
-                default:
-                    throw exception;
+                    case ERROR_FILE_NOT_FOUND:
+                        return false;
+                    default:
+                        throw exception;
                 }
             }
         }
         return true;
     }
 
-    public RegistryKeyInfo getKeyInfo(final String hiveName, final String keyPath)
-        throws IOException {
+    public RegistryKeyInfo getKeyInfo(final String hiveName, final String keyPath) throws IOException {
         final ContextHandle handle = openKey(hiveName, keyPath);
         final BaseRegQueryInfoKeyRequest request = new BaseRegQueryInfoKeyRequest(handle);
         final BaseRegQueryInfoKeyResponse response = transport.call(request);
@@ -112,18 +96,14 @@ public class RegistryService {
         if (returnCode != 0) {
             throw new RPCException("BaseRegQueryInfoKey", returnCode);
         }
-        return new RegistryKeyInfo(response.getSubKeys(), response.getMaxSubKeyLen(), response.getMaxClassLen(),
-            response.getValues(), response.getMaxValueNameLen(), response.getMaxValueLen(),
-            response.getSecurityDescriptor(), response.getLastWriteTime());
+        return new RegistryKeyInfo(response.getSubKeys(), response.getMaxSubKeyLen(), response.getMaxClassLen(), response.getValues(), response.getMaxValueNameLen(), response.getMaxValueLen(), response.getSecurityDescriptor(), response.getLastWriteTime());
     }
 
-    public List<RegistryKey> getSubKeys(final String hiveName, final String keyPath)
-        throws IOException {
+    public List<RegistryKey> getSubKeys(final String hiveName, final String keyPath) throws IOException {
         final List<RegistryKey> keyNames = new LinkedList<>();
         final ContextHandle handle = openKey(hiveName, keyPath);
-        for (int index = 0;; index++) {
-            final BaseRegEnumKeyRequest request =
-                new BaseRegEnumKeyRequest(handle, index, MAX_REGISTRY_KEY_NAME_SIZE, MAX_REGISTRY_KEY_CLASS_SIZE);
+        for (int index = 0; ; index++) {
+            final BaseRegEnumKeyRequest request = new BaseRegEnumKeyRequest(handle, index, MAX_REGISTRY_KEY_NAME_SIZE, MAX_REGISTRY_KEY_CLASS_SIZE);
             final BaseRegEnumKeyResponse response = transport.call(request);
             final int returnCode = response.getReturnValue();
 
@@ -137,13 +117,11 @@ public class RegistryService {
         }
     }
 
-    public List<RegistryValue> getValues(final String hiveName, final String keyPath)
-        throws IOException {
+    public List<RegistryValue> getValues(final String hiveName, final String keyPath) throws IOException {
         final List<RegistryValue> values = new LinkedList<>();
         final ContextHandle handle = openKey(hiveName, keyPath);
-        for (int index = 0;; index++) {
-            final BaseRegEnumValueRequest request =
-                new BaseRegEnumValueRequest(handle, index, MAX_REGISTRY_VALUE_NAME_SIZE, MAX_REGISTRY_VALUE_DATA_SIZE);
+        for (int index = 0; ; index++) {
+            final BaseRegEnumValueRequest request = new BaseRegEnumValueRequest(handle, index, MAX_REGISTRY_VALUE_NAME_SIZE, MAX_REGISTRY_VALUE_DATA_SIZE);
             final BaseRegEnumValueResponse response = transport.call(request);
             final int returnCode = response.getReturnValue();
 
@@ -158,11 +136,10 @@ public class RegistryService {
     }
 
     public RegistryValue getValue(final String hiveName, final String keyPath, final String valueName)
-        throws IOException {
+            throws IOException {
         final String canonicalizedValueName = Strings.nullToEmpty(valueName);
         final ContextHandle handle = openKey(hiveName, keyPath);
-        final BaseRegQueryValueRequest request =
-            new BaseRegQueryValueRequest(handle, canonicalizedValueName, MAX_REGISTRY_VALUE_DATA_SIZE);
+        final BaseRegQueryValueRequest request = new BaseRegQueryValueRequest(handle, canonicalizedValueName, MAX_REGISTRY_VALUE_DATA_SIZE);
         final BaseRegQueryValueResponse response = transport.call(request);
         final int returnCode = response.getReturnValue();
         if (returnCode != 0) {
@@ -183,8 +160,7 @@ public class RegistryService {
         return keyPath;
     }
 
-    protected ContextHandle openHive(final String hiveName)
-        throws IOException {
+    protected ContextHandle openHive(final String hiveName) throws IOException {
         if (hiveName == null) {
             throw new IllegalArgumentException("Invalid hive: " + hiveName);
         }
@@ -210,8 +186,7 @@ public class RegistryService {
         }
     }
 
-    protected ContextHandle openKey(final String hiveName, final String keyPath)
-        throws IOException {
+    protected ContextHandle openKey(final String hiveName, final String keyPath) throws IOException {
         final String canonicalizedKeyPath = canonicalize(keyPath);
         if (canonicalizedKeyPath.isEmpty()) {
             return openHive(hiveName);

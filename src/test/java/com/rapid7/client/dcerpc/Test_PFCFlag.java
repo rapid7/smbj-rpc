@@ -1,7 +1,8 @@
 package com.rapid7.client.dcerpc;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class Test_PFCFlag {
     @Test

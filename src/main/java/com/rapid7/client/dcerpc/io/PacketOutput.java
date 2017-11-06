@@ -6,21 +6,21 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.io;
 
-import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import java.io.IOException;
 import java.io.OutputStream;
+import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 
 public class PacketOutput extends PrimitiveOutput {
     private int referentID = 0x00020000;
@@ -29,16 +29,14 @@ public class PacketOutput extends PrimitiveOutput {
         super(outputStream);
     }
 
-    public <T extends Marshallable> T writeMarshallable(T marshallable)
-        throws IOException {
+    public <T extends Marshallable> T writeMarshallable(T marshallable) throws IOException {
         marshallable.marshallPreamble(this);
         marshallable.marshallEntity(this);
         marshallable.marshallDeferrals(this);
         return marshallable;
     }
 
-    public void writeIntRef(final Integer value)
-        throws IOException {
+    public void writeIntRef(final Integer value) throws IOException {
         if (value != null) {
             writeReferentID();
             writeInt(value.intValue());
@@ -48,8 +46,7 @@ public class PacketOutput extends PrimitiveOutput {
         }
     }
 
-    public void writeLongRef(final Long value)
-        throws IOException {
+    public void writeLongRef(final Long value) throws IOException {
         if (value != null) {
             writeReferentID();
             writeLong(value.longValue());
@@ -59,34 +56,29 @@ public class PacketOutput extends PrimitiveOutput {
         }
     }
 
-    public void writeReferentID()
-        throws IOException {
+    public void writeReferentID() throws IOException {
         final int referentID = this.referentID;
         this.referentID += 4;
         writeInt(referentID);
     }
 
-    public void writeNull()
-        throws IOException {
+    public void writeNull() throws IOException {
         writeInt(0);
     }
 
-    public void writeEmptyArray(final int maximumCount)
-        throws IOException {
+    public void writeEmptyArray(final int maximumCount) throws IOException {
         writeInt(maximumCount);
         writeInt(0);
         writeInt(0);
     }
 
-    public void writeEmptyArrayRef(final int maximumCount)
-        throws IOException {
+    public void writeEmptyArrayRef(final int maximumCount) throws IOException {
         writeReferentID();
         writeEmptyArray(maximumCount);
         align();
     }
 
-    public void writeStringBufferRef(final String string, final boolean nullTerminate)
-        throws IOException {
+    public void writeStringBufferRef(final String string, final boolean nullTerminate) throws IOException {
         if (string != null) {
             writeReferentID();
             writeStringBuffer(string, nullTerminate);
@@ -95,13 +87,11 @@ public class PacketOutput extends PrimitiveOutput {
         }
     }
 
-    public void writeRPCUnicodeString(final String string, final boolean nullTerminate)
-       throws IOException {
+    public void writeRPCUnicodeString(final String string, final boolean nullTerminate) throws IOException {
         writeStringBuffer(string, nullTerminate);
     }
 
-    public void writeStringBuffer(final String string, final boolean nullTerminate)
-        throws IOException {
+    public void writeStringBuffer(final String string, final boolean nullTerminate) throws IOException {
         final int maximumBytes;
         final int currentBytes;
 
@@ -124,14 +114,12 @@ public class PacketOutput extends PrimitiveOutput {
         }
     }
 
-    public void writeStringRef(final String string, final boolean nullTerminate)
-        throws IOException {
+    public void writeStringRef(final String string, final boolean nullTerminate) throws IOException {
         writeReferentID();
         writeString(string, nullTerminate);
     }
 
-    public void writeString(final String string, final boolean nullTerminate)
-        throws IOException {
+    public void writeString(final String string, final boolean nullTerminate) throws IOException {
         final int maximumChars;
         final int currentChars;
 
@@ -149,8 +137,7 @@ public class PacketOutput extends PrimitiveOutput {
         align();
     }
 
-    public void writeStringBuffer(final int maximumChars)
-        throws IOException {
+    public void writeStringBuffer(final int maximumChars) throws IOException {
         final int maximumBytes = maximumChars << 1;
         final int currentBytes = 0;
         final int currentChars = 0;
@@ -163,8 +150,7 @@ public class PacketOutput extends PrimitiveOutput {
         writeInt(currentChars);
     }
 
-    public void writeStringBufferRef(final int maximumChars)
-        throws IOException {
+    public void writeStringBufferRef(final int maximumChars) throws IOException {
         writeReferentID();
         writeStringBuffer(maximumChars);
         align();

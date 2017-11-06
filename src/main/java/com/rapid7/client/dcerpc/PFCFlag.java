@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc;
 
@@ -39,17 +39,29 @@ import com.hierynomus.protocol.commons.EnumWithValue;
  * See: http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm
  */
 public enum PFCFlag implements EnumWithValue<PFCFlag> {
-    /** First fragment. */
+    /**
+     * First fragment.
+     */
     FIRST_FRAGMENT(0x01),
-    /** Last fragment. */
+    /**
+     * Last fragment.
+     */
     LAST_FRAGMENT(0x02),
-    /** Cancel was pending at sender. */
+    /**
+     * Cancel was pending at sender.
+     */
     PENDING_CANCEL(0x04),
-    /** Supports concurrent multiplexing of a single connection. */
+    /**
+     * Supports concurrent multiplexing of a single connection.
+     */
     CONCURRENT_MULTIPLEXING(0x10),
-    /** Only meaningful on `fault' packet; if true, guaranteed call did not execute. */
+    /**
+     * Only meaningful on `fault' packet; if true, guaranteed call did not execute.
+     */
     DID_NOT_EXECUTE(0x20),
-    /** "maybe" call semantics requested. */
+    /**
+     * "maybe" call semantics requested.
+     */
     MAYBE(0x40),
     /**
      * If true, a non-nil object UUID was specified in the handle, and is present in the optional object field. If
@@ -59,7 +71,7 @@ public enum PFCFlag implements EnumWithValue<PFCFlag> {
 
     private final int value;
 
-    private PFCFlag(final int value) {
+    PFCFlag(final int value) {
         this.value = value;
     }
 
