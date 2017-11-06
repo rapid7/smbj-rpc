@@ -35,7 +35,7 @@ public interface Marshallable extends DataType {
      * @param out The stream to write to
      * @throws IOException On error
      */
-    void marshallPreamble(PacketOutput out) throws IOException;
+    void marshalPreamble(PacketOutput out) throws IOException;
 
     /**
      * The entity represents the DataType itself. For example:
@@ -45,7 +45,7 @@ public interface Marshallable extends DataType {
      * @param out The stream to write to
      * @throws IOException On error
      */
-    void marshallEntity(PacketOutput out) throws IOException;
+    void marshalEntity(PacketOutput out) throws IOException;
 
     /**
      * The deferrals are any data that is to be deferred to the end of this data type.
@@ -54,5 +54,5 @@ public interface Marshallable extends DataType {
      * @param out The stream to write to
      * @throws IOException On error
      */
-    void marshallDeferrals(PacketOutput out) throws IOException;
+    void marshalDeferrals(PacketOutput out) throws IOException;
 }

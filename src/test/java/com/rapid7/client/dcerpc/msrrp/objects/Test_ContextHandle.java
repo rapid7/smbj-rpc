@@ -160,7 +160,7 @@ public class Test_ContextHandle {
     }
 
     @Test
-    public void unmarshall() throws IOException {
+    public void unmarshal() throws IOException {
         byte[] buf = new String("1234567890abcdefghij").getBytes();
         PacketInput input = new PacketInput(new ByteArrayInputStream(buf));
         ContextHandle handle = new ContextHandle();

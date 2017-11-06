@@ -28,9 +28,9 @@ public class PacketInput extends PrimitiveInput {
     }
 
     public <T extends Unmarshallable> T readUnmarshallable(T unmarshallable) throws IOException {
-        unmarshallable.unmarshallPreamble(this);
-        unmarshallable.unmarshallEntity(this);
-        unmarshallable.unmarshallDeferrals(this);
+        unmarshallable.unmarshalPreamble(this);
+        unmarshallable.unmarshalEntity(this);
+        unmarshallable.unmarshalDeferrals(this);
         return unmarshallable;
     }
 

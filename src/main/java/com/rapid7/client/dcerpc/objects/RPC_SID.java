@@ -96,13 +96,13 @@ public class RPC_SID implements Unmarshallable, Marshallable {
     }
 
     @Override
-    public void marshallPreamble(PacketOutput out) throws IOException {
+    public void marshalPreamble(PacketOutput out) throws IOException {
         // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
         out.writeInt(this.subAuthority.length);
     }
 
     @Override
-    public void marshallEntity(PacketOutput out) throws IOException {
+    public void marshalEntity(PacketOutput out) throws IOException {
         checkSubAuthorityCount();
         // <NDR: unsigned char> unsigned char Revision;
         out.writeByte(getRevision());
@@ -120,18 +120,18 @@ public class RPC_SID implements Unmarshallable, Marshallable {
     }
 
     @Override
-    public void marshallDeferrals(PacketOutput out) throws IOException {
+    public void marshalDeferrals(PacketOutput out) throws IOException {
         // No deferrals
     }
 
     @Override
-    public void unmarshallPreamble(PacketInput in) throws IOException {
+    public void unmarshalPreamble(PacketInput in) throws IOException {
         // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
         this.subAuthority = new long[in.readInt()];
     }
 
     @Override
-    public void unmarshallEntity(PacketInput in) throws IOException {
+    public void unmarshalEntity(PacketInput in) throws IOException {
         // <NDR: unsigned char> unsigned char Revision;
         this.revision = (char) UnsignedBytes.toInt(in.readByte());
         // <NDR: unsigned char> unsigned char SubAuthorityCount;
@@ -149,7 +149,7 @@ public class RPC_SID implements Unmarshallable, Marshallable {
     }
 
     @Override
-    public void unmarshallDeferrals(PacketInput in) throws IOException {
+    public void unmarshalDeferrals(PacketInput in) throws IOException {
         // No deferrals
     }
 
