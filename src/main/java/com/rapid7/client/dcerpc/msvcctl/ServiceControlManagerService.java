@@ -22,7 +22,17 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.msvcctl.messages.*;
+import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWResponse;
+import com.rapid7.client.dcerpc.msvcctl.messages.RControlServiceRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.ROpenSCManagerWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.ROpenServiceWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWResponse;
+import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusResponse;
+import com.rapid7.client.dcerpc.msvcctl.messages.RStartServiceWRequest;
+import com.rapid7.client.dcerpc.msvcctl.objects.IServiceConfigInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
@@ -58,7 +68,8 @@ public class ServiceControlManagerService {
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RStartServiceWRequest request = new RStartServiceWRequest(serviceHandle);
         EmptyResponse response = transport.call(request);
-        return SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue());
+        if(SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue())) return true;
+        else throw new RPCException("StartService", response.getReturnValue());
     }
 
     public IServiceStatusInfo queryService(String service, ContextHandle serviceManagerHandle) throws IOException {
@@ -79,12 +90,15 @@ public class ServiceControlManagerService {
         } else throw new RPCException("StopService", response.getReturnValue());
     }
 
-    public boolean changeServiceConfig(String service, ContextHandle serviceManagerHandle, ServiceConfigInfo serviceConfigInfo)
-            throws IOException {
+    public boolean changeServiceConfig(String service,
+                                       ContextHandle serviceManagerHandle,
+                                       IServiceConfigInfo serviceConfigInfo)
+        throws IOException {
         ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(serviceHandle, serviceConfigInfo);
         RChangeServiceConfigWResponse response = transport.call(request);
-        return SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue());
+        if(SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue())) return true;
+        else throw new RPCException("ChangeServiceConfig", response.getReturnValue());
 
     }
 
