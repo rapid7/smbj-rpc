@@ -16,25 +16,33 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr.messages;
+package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
-import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.EmptyResponse;
 
-public class SamrCloseHandleResponse extends RequestResponse {
+public class RStartServiceWRequest extends RequestCall<EmptyResponse>
+{
+    private final static short OP_NUM = 19;
+    private final ContextHandle serviceHandle;
 
-    private int returnValue;
-
-    @Override
-    public void unmarshal(PacketInput in) throws IOException {
-        // SAMR handle is 20 bytes
-        in.readUnmarshallable(new ContextHandle());
-        returnValue = in.readInt();
+    public RStartServiceWRequest(ContextHandle handle){
+        super(OP_NUM);
+        this.serviceHandle = handle;
     }
 
-    public int getReturnValue() {
-        return returnValue;
+    @Override public EmptyResponse getResponseObject()
+    {
+        return new EmptyResponse();
+    }
+
+    @Override public void marshal(PacketOutput packetOut)
+        throws IOException {
+        packetOut.write(serviceHandle.getBytes());
+        packetOut.writeNull(); //argc (not implemented)
+        packetOut.writeNull(); //argv (not implemented)
     }
 }

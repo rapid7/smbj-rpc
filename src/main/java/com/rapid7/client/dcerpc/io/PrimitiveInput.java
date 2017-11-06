@@ -18,6 +18,7 @@
  */
 package com.rapid7.client.dcerpc.io;
 
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import java.io.DataInput;
 import java.io.EOFException;
 import java.io.IOException;
@@ -39,7 +40,14 @@ class PrimitiveInput {
 
     public void align()
         throws IOException {
-        final long alignmentOffset = 3 + dataInStream.getCount() & ~3;
+        align(Alignment.FOUR);
+    }
+
+    public void align(Alignment alignment)
+        throws IOException {
+        if (alignment == Alignment.ONE)
+            return;
+        final long alignmentOffset = alignment.getOffByOneAlignment() + dataInStream.getCount() & ~alignment.getOffByOneAlignment();
         while (alignmentOffset > dataInStream.getCount()) {
             readByte();
         }
@@ -104,5 +112,15 @@ class PrimitiveInput {
     public long readLong()
         throws IOException {
         return dataIn.readLong();
+    }
+
+    public float readFloat()
+        throws IOException {
+        return dataIn.readFloat();
+    }
+
+    public double readDouble()
+        throws IOException {
+        return dataIn.readDouble();
     }
 }

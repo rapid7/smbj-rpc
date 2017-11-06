@@ -16,25 +16,19 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr.messages;
+package com.rapid7.client.dcerpc.mssamr.objects;
 
-import java.io.IOException;
-import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
+/**
+ * A array of enumerated {@link DomainInfo}
+ */
+public class EnumeratedDomains extends SamArray<DomainInfo> {
 
-public class SamrCloseHandleResponse extends RequestResponse {
-
-    private int returnValue;
-
-    @Override
-    public void unmarshal(PacketInput in) throws IOException {
-        // SAMR handle is 20 bytes
-        in.readUnmarshallable(new ContextHandle());
-        returnValue = in.readInt();
+    public EnumeratedDomains() {
+        super();
     }
 
-    public int getReturnValue() {
-        return returnValue;
+    @Override
+    protected DomainInfo initEntry() {
+        return new DomainInfo();
     }
 }

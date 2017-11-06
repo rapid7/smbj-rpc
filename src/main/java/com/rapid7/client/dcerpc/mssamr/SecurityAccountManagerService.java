@@ -35,10 +35,10 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainResponse;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenLocalGroupRpcRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenLocalGroupRpcResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
@@ -88,8 +88,8 @@ public class SecurityAccountManagerService {
         // SAMR Alias specific rights: 0x0000000c
         // - SAMR_ALIAS_ACCESS_LOOKUP_INFO is SET(8)
         // - SAMR_ALIAS_ACCESS_GET_MEMBERS is SET(4)
-        final SamrOpenLocalGroupRpcRequest request = new SamrOpenLocalGroupRpcRequest(domainHandle, sid, 0x0002000C);
-        final SamrOpenLocalGroupRpcResponse response = transport.call(request);
+        final SamrOpenAliasRequest request = new SamrOpenAliasRequest(domainHandle, sid, 0x0002000C);
+        final SamrOpenAliasResponse response = transport.call(request);
         return response.getHandle();
     }
 

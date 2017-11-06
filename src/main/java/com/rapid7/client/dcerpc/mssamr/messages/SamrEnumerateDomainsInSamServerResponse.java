@@ -10,24 +10,25 @@ import java.util.List;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
-import com.rapid7.client.dcerpc.mssamr.objects.SamArray;
+import com.rapid7.client.dcerpc.mssamr.objects.EnumeratedDomains;
 
 public class SamrEnumerateDomainsInSamServerResponse extends RequestResponse {
     private int resumeHandle;
-    private SamArray domains;
+    private EnumeratedDomains domains;
     private int numEntries;
     private int returnCode;
 
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         resumeHandle = packetIn.readInt();
-        domains = packetIn.unmarshallObject(new SamArray(DomainInfo.class));
+        domains = new EnumeratedDomains();
+        packetIn.readUnmarshallable(domains);
         numEntries = packetIn.readInt();
         returnCode = packetIn.readInt();
     }
 
     public List<DomainInfo> getDomainList() {
-        return domains.getArray().getList();
+        return domains.getArray();
     }
 
     public int getNumEntries() {

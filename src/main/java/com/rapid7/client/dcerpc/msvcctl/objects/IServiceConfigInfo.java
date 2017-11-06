@@ -16,25 +16,38 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr.messages;
+package com.rapid7.client.dcerpc.msvcctl.objects;
 
-import java.io.IOException;
-import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 
-public class SamrCloseHandleResponse extends RequestResponse {
+public interface IServiceConfigInfo {
+    ServiceType getServiceType();
 
-    private int returnValue;
+    ServiceStartType getStartType();
+
+    ServiceError getErrorControl();
+
+    String getBinaryPathName();
+
+    String getLoadOrderGroup();
+
+    int getTagId();
+
+    String getDependencies();
+
+    String getServiceStartName();
+
+    String getDisplayName();
+
+    String getPassword();
+
+    void setPassword(String password);
 
     @Override
-    public void unmarshal(PacketInput in) throws IOException {
-        // SAMR handle is 20 bytes
-        in.readUnmarshallable(new ContextHandle());
-        returnValue = in.readInt();
-    }
+    boolean equals(Object o);
 
-    public int getReturnValue() {
-        return returnValue;
-    }
+    @Override
+    int hashCode();
 }

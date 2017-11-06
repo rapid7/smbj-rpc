@@ -16,25 +16,32 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr.messages;
+package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
-import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 
-public class SamrCloseHandleResponse extends RequestResponse {
+public class RQueryServiceStatusRequest extends RequestCall<RQueryServiceStatusResponse>
+{
 
-    private int returnValue;
+    private final static short OP_NUM = 6;
+    private final ContextHandle handle;
 
-    @Override
-    public void unmarshal(PacketInput in) throws IOException {
-        // SAMR handle is 20 bytes
-        in.readUnmarshallable(new ContextHandle());
-        returnValue = in.readInt();
+    public RQueryServiceStatusRequest(ContextHandle handle) {
+        super(OP_NUM);
+        this.handle = handle;
     }
 
-    public int getReturnValue() {
-        return returnValue;
+    @Override public void marshal(PacketOutput packetOut)
+        throws IOException
+    {
+        packetOut.write(handle.getBytes());
+    }
+
+    @Override public RQueryServiceStatusResponse getResponseObject()
+    {
+        return new RQueryServiceStatusResponse();
     }
 }

@@ -16,22 +16,27 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr.messages;
+package com.rapid7.client.dcerpc.msvcctl.messages;
 
-import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
+import java.io.IOException;
 
-public class SamrCloseHandleResponse extends RequestResponse {
-
+public class RChangeServiceConfigWResponse extends RequestResponse
+{
+    private int tagId;
     private int returnValue;
 
-    @Override
-    public void unmarshal(PacketInput in) throws IOException {
-        // SAMR handle is 20 bytes
-        in.readUnmarshallable(new ContextHandle());
-        returnValue = in.readInt();
+    @Override public void unmarshal(PacketInput packetIn)
+        throws IOException
+    {
+        int tagIdRefId = packetIn.readReferentID();
+        if (tagIdRefId != 0) tagId = packetIn.readInt();
+        returnValue = packetIn.readInt();
+    }
+
+    public int getTagId() {
+        return tagId;
     }
 
     public int getReturnValue() {

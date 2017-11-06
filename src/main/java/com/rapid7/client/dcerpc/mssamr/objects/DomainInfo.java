@@ -7,8 +7,8 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.io.Unmarshallable;
-import com.rapid7.client.dcerpc.objects.RPCReference;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.objects.RPC_UNICODE_STRING;
 
 /**********************
  * Relative ID (idx) RPC_UNICODE_STRING -- length -- max length -- reference ID
@@ -16,36 +16,40 @@ import com.rapid7.client.dcerpc.objects.RPCReference;
  * Deferred RPC_UNICODE_STRING -- String body
  **********************
  */
-public class DomainInfo extends RPCReference implements Unmarshallable<DomainInfo> {
+public class DomainInfo implements com.rapid7.client.dcerpc.io.ndr.Unmarshallable {
 
     public DomainInfo() {
-        super(DomainInfo.class);
     }
 
-    private String name;
+    private RPC_UNICODE_STRING name;
 
     public String getName() {
-        return name;
+        return name.getValue();
+    }
+
+    public void setName(final RPC_UNICODE_STRING name) {
+        this.name = name;
     }
 
     @Override
-    public DomainInfo unmarshall(PacketInput in) throws IOException {
-        // Entry index
-        in.readInt();
-
-        // Start of RPC_UNICODE_STRING
-        // Length
-        in.readShort();
-        // Max length
-        in.readShort();
-        // Reference ID.
-        in.readReferentID();
-        return this;
+    public Alignment getAlignment() {
+        return Alignment.FOUR;
     }
 
     @Override
-    public void unmarshallData(PacketInput in) throws IOException {
-        // Body of RPC_UNICODE_STRING
-        name = in.readString(true);
+    public void unmarshallPreamble(PacketInput in) throws IOException {
+    }
+
+    @Override
+    public void unmarshallEntity(PacketInput in) throws IOException {
+        // relative ID.
+        int relativeId = in.readInt();
+        name = RPC_UNICODE_STRING.of(true);
+        name.unmarshallEntity(in);
+    }
+
+    @Override
+    public void unmarshallDeferrals(PacketInput in) throws IOException {
+        name.unmarshallDeferrals(in);
     }
 }

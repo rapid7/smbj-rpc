@@ -16,43 +16,44 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr.messages;
+package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.msvcctl.ServiceControlManagerService;
 
-public class SamrOpenLocalGroupRpcRequest extends RequestCall<SamrOpenLocalGroupRpcResponse> {
-    public final static short OP_NUM = 27;
-
-    private final DomainHandle handle;
-    private final int userRid;
+public class ROpenSCManagerWRequest extends RequestCall<HandleResponse>
+{
+    private final static short OP_NUM = 15;
+    private final String name;
+    private final String databaseName;
     private final int desiredAccess;
 
-    public SamrOpenLocalGroupRpcRequest(DomainHandle handle, int userRid) {
-        // SAMR_ALIAS_ACCESS_LOOKUP_INFO(8)
-        this(handle, userRid, 8);
+    public ROpenSCManagerWRequest() {
+        this("test", null, ServiceControlManagerService.FULL_ACCESS);
     }
-
-    public SamrOpenLocalGroupRpcRequest(DomainHandle handle, int userRid, int desiredAccess) {
+    public ROpenSCManagerWRequest(String name, String databaseName, int desiredAccess) {
         super(OP_NUM);
-        this.handle = handle;
-        this.userRid = userRid;
+        this.name = name;
+        this.databaseName = databaseName;
         this.desiredAccess = desiredAccess;
+
     }
 
-    @Override
-    public void marshal(PacketOutput packetOut) throws IOException {
-
-        packetOut.write(handle.getBytes());
+    @Override public void marshal(PacketOutput packetOut)
+        throws IOException
+    {
+        if (name != null) packetOut.writeStringRef(name, true);
+        else packetOut.writeNull();
+        if (databaseName != null)packetOut.writeStringRef(databaseName, true);
+        else packetOut.writeNull();
         packetOut.writeInt(desiredAccess);
-        packetOut.writeInt(userRid);
     }
 
-    @Override
-    public SamrOpenLocalGroupRpcResponse getResponseObject() {
-        return new SamrOpenLocalGroupRpcResponse();
+    @Override public HandleResponse getResponseObject()
+    {
+        return new HandleResponse();
     }
-
 }

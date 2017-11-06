@@ -16,14 +16,16 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.io;
+package com.rapid7.client.dcerpc.mssamr.messages;
 
-import java.io.IOException;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 
-/**
- * An interface for unmarshalling typed objects from {@link PacketInput}.
- */
-public interface Unmarshallable<T> {
+public class SamrOpenAliasResponse extends HandleResponse<AliasHandle> {
 
-    public T unmarshall(PacketInput in) throws IOException;
+    @Override
+    protected AliasHandle initHandle() {
+        return new AliasHandle();
+    }
+
 }
