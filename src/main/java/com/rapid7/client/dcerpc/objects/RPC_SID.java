@@ -27,6 +27,9 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.google.common.primitives.UnsignedBytes;
 import com.google.common.primitives.UnsignedInts;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * typedef struct _RPC_SID {
@@ -104,6 +107,7 @@ public class RPC_SID implements Unmarshallable, Marshallable {
    @Override
    public void marshallEntity(PacketOutput out)
       throws IOException {
+      checkSubAuthorityCount();
       // <NDR: unsigned char> unsigned char Revision;
       out.writeByte(getRevision());
       // <NDR: unsigned char> unsigned char SubAuthorityCount;
@@ -139,10 +143,7 @@ public class RPC_SID implements Unmarshallable, Marshallable {
       this.revision = (char) UnsignedBytes.toInt(in.readByte());
       // <NDR: unsigned char> unsigned char SubAuthorityCount;
       this.subAuthorityCount = (char) UnsignedBytes.toInt(in.readByte());
-      if (this.subAuthorityCount != this.subAuthority.length) {
-         throw new IllegalArgumentException(String.format("subAuthorityCount (%d) != SubAuthority[] length (%d)",
-                                                          (int) this.subAuthorityCount, this.subAuthority.length));
-      }
+      checkSubAuthorityCount();
       // <NDR: fixed array> RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
       this.identifierAuthority = new byte[6];
       in.readRawBytes(this.identifierAuthority);
@@ -157,5 +158,43 @@ public class RPC_SID implements Unmarshallable, Marshallable {
    @Override
    public void unmarshallDeferrals(PacketInput in)
       throws IOException {
+   }
+
+   @Override
+   public int hashCode() {
+      int result = Objects.hash(getRevision(), getSubAuthorityCount());
+      result = (31 * result) + Arrays.hashCode(getIdentifierAuthority());
+      result = (31 * result) + Arrays.hashCode(getSubAuthority());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) {
+         return true;
+      } else if (! (obj instanceof RPC_SID)) {
+         return false;
+      }
+      RPC_SID other = (RPC_SID) obj;
+      return getRevision() == other.getRevision()
+         && getSubAuthorityCount() == other.getSubAuthorityCount()
+         && Arrays.equals(getIdentifierAuthority(), other.getIdentifierAuthority())
+         && Arrays.equals(getSubAuthority(), other.getSubAuthority());
+   }
+
+   @Override
+   public String toString() {
+      return String.format("RPC_SID{Revision:%d, SubAuthorityCount:%d, IdentifierAuthority:%s, SubAuthority: %s}",
+                           Character.getNumericValue(getRevision()),
+                           Character.getNumericValue(getSubAuthorityCount()),
+                           Arrays.toString(getIdentifierAuthority()),
+                           Arrays.toString(getSubAuthority()));
+   }
+
+   private void checkSubAuthorityCount() throws IllegalArgumentException {
+      if (this.subAuthorityCount != this.subAuthority.length) {
+         throw new IllegalArgumentException(String.format("SubAuthorityCount (%d) != SubAuthority[] length (%d)",
+                                                          (int) this.subAuthorityCount, this.subAuthority.length));
+      }
    }
 }
