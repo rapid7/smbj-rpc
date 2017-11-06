@@ -31,6 +31,7 @@ public class PacketInput extends PrimitiveInput {
         unmarshallable.unmarshalPreamble(this);
         unmarshallable.unmarshalEntity(this);
         unmarshallable.unmarshalDeferrals(this);
+        // TODO Align should be called, but can require resetting the packet counts
         return unmarshallable;
     }
 
