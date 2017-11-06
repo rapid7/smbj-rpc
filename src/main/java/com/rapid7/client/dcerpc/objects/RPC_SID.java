@@ -158,6 +158,7 @@ public class RPC_SID implements Unmarshallable, Marshallable {
    @Override
    public void unmarshallDeferrals(PacketInput in)
       throws IOException {
+      // No deferrals
    }
 
    @Override
@@ -185,8 +186,8 @@ public class RPC_SID implements Unmarshallable, Marshallable {
    @Override
    public String toString() {
       return String.format("RPC_SID{Revision:%d, SubAuthorityCount:%d, IdentifierAuthority:%s, SubAuthority: %s}",
-                           Character.getNumericValue(getRevision()),
-                           Character.getNumericValue(getSubAuthorityCount()),
+                           (int) getRevision(),
+                           (int) getSubAuthorityCount(),
                            Arrays.toString(getIdentifierAuthority()),
                            Arrays.toString(getSubAuthority()));
    }
