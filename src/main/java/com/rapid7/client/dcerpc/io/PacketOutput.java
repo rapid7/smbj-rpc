@@ -30,9 +30,9 @@ public class PacketOutput extends PrimitiveOutput {
     }
 
     public <T extends Marshallable> T writeMarshallable(T marshallable) throws IOException {
-        marshallable.marshallPreamble(this);
-        marshallable.marshallEntity(this);
-        marshallable.marshallDeferrals(this);
+        marshallable.marshalPreamble(this);
+        marshallable.marshalEntity(this);
+        marshallable.marshalDeferrals(this);
         return marshallable;
     }
 
