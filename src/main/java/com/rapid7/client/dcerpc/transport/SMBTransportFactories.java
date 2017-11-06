@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.transport;
 
@@ -51,8 +51,7 @@ public enum SMBTransportFactories {
         this.transferSyntax = transferSyntax;
     }
 
-    public RPCTransport getTransport(final Session session)
-        throws IOException {
+    public RPCTransport getTransport(final Session session) throws IOException {
         final Share share = session.connectShare("IPC$");
         if (share instanceof PipeShare) {
             final PipeShare pipeShare = (PipeShare) share;
@@ -68,33 +67,32 @@ public enum SMBTransportFactories {
     }
 
     private NamedPipe openAndHandleStatusPipeNotAvailable(final Session session, final PipeShare pipeShare)
-        throws IOException {
+            throws IOException {
         final Queue<SMBApiException> exceptions = new LinkedList<>();
         for (int retry = -1; retry < STATUS_PIPE_NOT_AVAILABLE_RETRIES; retry++) {
             try {
                 return openPipe(session, pipeShare);
             } catch (final SMB2Exception exception) {
                 switch (exception.getStatus()) {
-                case STATUS_PIPE_NOT_AVAILABLE:
-                    // XXX: There has to be a better way to do this...
-                    try {
-                        Thread.sleep(STATUS_PIPE_NOT_AVAILABLE_BACKOFF_TIME_MS);
-                    } catch (final InterruptedException iException) {
-                        final InterruptedIOException iioException = new InterruptedIOException();
-                        iioException.addSuppressed(iException);
-                        throw iioException;
-                    }
-                    break;
-                default:
-                    throw new SMBException(exceptions.poll());
+                    case STATUS_PIPE_NOT_AVAILABLE:
+                        // XXX: There has to be a better way to do this...
+                        try {
+                            Thread.sleep(STATUS_PIPE_NOT_AVAILABLE_BACKOFF_TIME_MS);
+                        } catch (final InterruptedException iException) {
+                            final InterruptedIOException iioException = new InterruptedIOException();
+                            iioException.addSuppressed(iException);
+                            throw iioException;
+                        }
+                        break;
+                    default:
+                        throw new SMBException(exceptions.poll());
                 }
             }
         }
         throw new SMBException(exceptions.poll());
     }
 
-    private NamedPipe openPipe(final Session session, final PipeShare pipeShare)
-        throws IOException {
+    private NamedPipe openPipe(final Session session, final PipeShare pipeShare) throws IOException {
         return new NamedPipe(session, pipeShare, name);
     }
 }

@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc;
 
@@ -43,24 +43,34 @@ public enum PDUType implements EnumWithValue<PDUType> {
      * A server sends a fault PDU if an operation incurs a fault while executing on the server side.
      */
     FAULT(3),
-    /** A server sends a working PDU in reply to a ping PDU. */
+    /**
+     * A server sends a working PDU in reply to a ping PDU.
+     */
     WORKING(4),
-    /** A server sends a nocall PDU in reply to a ping PDU. */
+    /**
+     * A server sends a nocall PDU in reply to a ping PDU.
+     */
     NOCALL(5),
-    /** A server sends a reject PDU if an RPC request is rejected. */
+    /**
+     * A server sends a reject PDU if an RPC request is rejected.
+     */
     REJECT(6),
     /**
      * A client sends an ack PDU after it has received a response to an at-most-once request.
      */
     ACK(7),
-    /** A client sends a cancel PDU when it has incurred a cancel fault. */
+    /**
+     * A client sends a cancel PDU when it has incurred a cancel fault.
+     */
     CL_CANCEL(8),
     /**
      * Both clients and servers send fack PDUs. A client sends a fack PDU after it has received a fragment of a
      * multi-PDU response. A server sends a fack PDU after it has received a fragment of a multi-PDU request.
      */
     FACK(9),
-    /** A server sends a cancel_ack PDU after it has received a cancel PDU. */
+    /**
+     * A server sends a cancel_ack PDU after it has received a cancel PDU.
+     */
     CANCEL_ACK(10),
     /**
      * The bind PDU is used to initiate the presentation negotiation for the body data, and optionally, authentication.
@@ -89,7 +99,9 @@ public enum PDUType implements EnumWithValue<PDUType> {
      * resources.
      */
     SHUTDOWN(17),
-    /** The cancel PDU is used to forward a cancel. */
+    /**
+     * The cancel PDU is used to forward a cancel.
+     */
     CO_CANCEL(18),
     /**
      * The orphaned PDU is used by a client to notify a server that it is aborting a request in progress that has not
@@ -99,7 +111,7 @@ public enum PDUType implements EnumWithValue<PDUType> {
 
     private final int value;
 
-    private PDUType(final int value) {
+    PDUType(final int value) {
         this.value = value;
     }
 

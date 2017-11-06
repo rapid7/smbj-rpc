@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
@@ -182,30 +182,32 @@ public class BaseRegEnumValueRequest extends RequestCall<BaseRegEnumValueRespons
      * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
     private final ContextHandle hKey;
-    /** The index of the value to be retrieved. */
+    /**
+     * The index of the value to be retrieved.
+     */
     private final int index;
-    /** The maximum length of the value name to be retrieved. */
+    /**
+     * The maximum length of the value name to be retrieved.
+     */
     private final int valueNameLen;
-    /** The maximum length of the value data to be retrieved. */
+    /**
+     * The maximum length of the value data to be retrieved.
+     */
     private final int dataLen;
 
     /**
      * The BaseRegEnumValue method is called by the client. In response, the server enumerates the value at the
      * specified index for the specified registry key.
      *
-     * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods:
-     *        {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
-     *        {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
-     *        {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
-     * @param index The index of the value to be retrieved.
+     * @param hKey         A handle to a key that MUST have been opened previously by using one of the open methods:
+     *                     {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
+     *                     {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+     *                     {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
+     * @param index        The index of the value to be retrieved.
      * @param valueNameLen The maximum length of the value name to be retrieved.
-     * @param dataLen The maximum length of the value data to be retrieved.
+     * @param dataLen      The maximum length of the value data to be retrieved.
      */
-    public BaseRegEnumValueRequest(
-        final ContextHandle hKey,
-        final int index,
-        final int valueNameLen,
-        final int dataLen) {
+    public BaseRegEnumValueRequest(final ContextHandle hKey, final int index, final int valueNameLen, final int dataLen) {
         super((short) 10);
         this.hKey = hKey;
         this.index = index;
@@ -219,8 +221,7 @@ public class BaseRegEnumValueRequest extends RequestCall<BaseRegEnumValueRespons
     }
 
     @Override
-    public void marshal(final PacketOutput packetOut)
-        throws IOException {
+    public void marshal(final PacketOutput packetOut) throws IOException {
         // Remote Registry Service, OpenKey
         //      Operation: OpenKey (15)
         //      [Response in frame: 11204]

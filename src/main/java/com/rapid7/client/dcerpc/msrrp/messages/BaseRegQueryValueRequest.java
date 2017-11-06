@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
@@ -192,9 +192,13 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
      * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
     private final ContextHandle hKey;
-    /** The name of the value to be queried. */
+    /**
+     * The name of the value to be queried.
+     */
     private final String valueName;
-    /** The maximum number of bytes to accept for the value data. */
+    /**
+     * The maximum number of bytes to accept for the value data.
+     */
     private final int dataLen;
 
     /**
@@ -202,12 +206,12 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
      * with the named value of a specified registry open key. If a value name is not specified, the server returns the
      * data that is associated with the default value of the specified registry open key.
      *
-     * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods that are
-     *        specified in section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
-     *        {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
-     *        {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
+     * @param hKey      A handle to a key that MUST have been opened previously by using one of the open methods that are
+     *                  specified in section 3.1.5: {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
+     *                  {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
+     *                  {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      * @param valueName The name of the value to be queried.
-     * @param dataLen The maximum number of bytes to accept for the value data.
+     * @param dataLen   The maximum number of bytes to accept for the value data.
      */
     public BaseRegQueryValueRequest(final ContextHandle hKey, final String valueName, final int dataLen) {
         super((short) 17);
@@ -222,8 +226,7 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
     }
 
     @Override
-    public void marshal(final PacketOutput packetOut)
-        throws IOException {
+    public void marshal(final PacketOutput packetOut) throws IOException {
         // Remote Registry Service, QueryValue
         //      Operation: QueryValue (17)
         //      [Response in frame: 11403]

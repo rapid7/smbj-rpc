@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
@@ -66,7 +66,9 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
  * @see <a href="https://msdn.microsoft.com/en-us/cc244955">3.1.5.29 OpenPerformanceNlsText (Opnum 33)</a>
  */
 public class HandleRequest extends RequestCall<HandleResponse> {
-    /** A bit field that describes the requested security access for the key. */
+    /**
+     * A bit field that describes the requested security access for the key.
+     */
     private final EnumSet<AccessMask> accessMask;
 
     /**
@@ -75,10 +77,10 @@ public class HandleRequest extends RequestCall<HandleResponse> {
      * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText} is called by the client.
      * In response, the server opens the appropriate predefined key.
      *
-     * @param op The operation number for one of {@link OpenClassesRoot}, {@link OpenCurrentUser},
-     *        {@link OpenLocalMachine}, {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey,
-     *        {@link BaseRegOpenKey}, {@link OpenCurrentConfig}, {@link OpenPerformanceText},
-     *        {@link OpenPerformanceNlsText}.
+     * @param op         The operation number for one of {@link OpenClassesRoot}, {@link OpenCurrentUser},
+     *                   {@link OpenLocalMachine}, {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey,
+     *                   {@link BaseRegOpenKey}, {@link OpenCurrentConfig}, {@link OpenPerformanceText},
+     *                   {@link OpenPerformanceNlsText}.
      * @param accessMask A bit field that describes the requested security access for the key.
      */
     public HandleRequest(final short op, final EnumSet<AccessMask> accessMask) {
@@ -99,8 +101,7 @@ public class HandleRequest extends RequestCall<HandleResponse> {
     }
 
     @Override
-    public void marshal(final PacketOutput packetOut)
-        throws IOException {
+    public void marshal(final PacketOutput packetOut) throws IOException {
         // Remote Registry Service, OpenHKLM
         //      Operation: OpenHKLM (2)
         //      [Response in frame: 11176]

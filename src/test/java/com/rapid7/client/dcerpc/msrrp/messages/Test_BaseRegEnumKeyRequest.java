@@ -6,25 +6,26 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
+
+import java.io.IOException;
+import org.junit.Test;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import java.io.IOException;
-import org.junit.Test;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class Test_BaseRegEnumKeyRequest {
     private final ContextHandle contextHandle = new ContextHandle("0000000032daf234b77c86409d29efe60d326683");
@@ -36,8 +37,7 @@ public class Test_BaseRegEnumKeyRequest {
     }
 
     @Test
-    public void getStub()
-        throws IOException {
+    public void getStub() throws IOException {
         // Remote Registry Service, EnumKey
         //      Operation: EnumKey (9)
         //      [Response in frame: 11178]
@@ -69,14 +69,11 @@ public class Test_BaseRegEnumKeyRequest {
         //      Pointer to Last Changed Time (NTTIME)
         //          Referent ID: 0x0002000c
         //          Last Changed Time: No time specified (0)
-        assertEquals(
-            "0000000032daf234b77c86409d29efe60d326683000000000000000200000200000100000000000000000000040002000000feff08000200ff7f000000000000000000000c0002000000000000000000",
-            toHexString(request.getStub()));
+        assertEquals("0000000032daf234b77c86409d29efe60d326683000000000000000200000200000100000000000000000000040002000000feff08000200ff7f000000000000000000000c0002000000000000000000", toHexString(request.getStub()));
     }
 
     @Test
-    public void getResponseObject()
-        throws IOException {
+    public void getResponseObject() throws IOException {
         assertThat(request.getResponseObject(), instanceOf(BaseRegEnumKeyResponse.class));
     }
 }
