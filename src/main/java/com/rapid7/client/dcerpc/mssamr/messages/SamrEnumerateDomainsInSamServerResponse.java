@@ -28,7 +28,7 @@ public class SamrEnumerateDomainsInSamServerResponse extends RequestResponse {
     }
 
     public List<DomainInfo> getDomainList() {
-        return domains.getArray();
+        return domains.getEntries();
     }
 
     public int getNumEntries() {

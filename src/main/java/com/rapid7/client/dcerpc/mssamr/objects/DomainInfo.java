@@ -8,15 +8,21 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.objects.RPC_UNICODE_STRING;
 
-/**********************
- * Relative ID (idx) RPC_UNICODE_STRING -- length -- max length -- reference ID
- **********************
- * Deferred RPC_UNICODE_STRING -- String body
- **********************
+/**
+ * This class represents the structure returned with {@link EnumeratedDomains}.
+ *
+ * <pre>
+ * Relative ID (idx)  - index
+ * RPC_UNICODE_STRING - Domain Name
+ * </pre>
+ *
+ * @see <a href="https://msdn.microsoft.com/en-us/library/cc245560.aspx">
+ *       https://msdn.microsoft.com/en-us/library/cc245560.aspx</a>
  */
-public class DomainInfo implements com.rapid7.client.dcerpc.io.ndr.Unmarshallable {
+public class DomainInfo implements Unmarshallable {
 
     public DomainInfo() {
     }
@@ -37,19 +43,19 @@ public class DomainInfo implements com.rapid7.client.dcerpc.io.ndr.Unmarshallabl
     }
 
     @Override
-    public void unmarshallPreamble(PacketInput in) throws IOException {
+    public void unmarshalPreamble(PacketInput in) throws IOException {
     }
 
     @Override
-    public void unmarshallEntity(PacketInput in) throws IOException {
+    public void unmarshalEntity(PacketInput in) throws IOException {
         // relative ID.
-        int relativeId = in.readInt();
-        name = RPC_UNICODE_STRING.of(true);
-        name.unmarshallEntity(in);
+        in.readInt();
+        name = RPC_UNICODE_STRING.of(false);
+        name.unmarshalEntity(in);
     }
 
     @Override
-    public void unmarshallDeferrals(PacketInput in) throws IOException {
-        name.unmarshallDeferrals(in);
+    public void unmarshalDeferrals(PacketInput in) throws IOException {
+        name.unmarshalDeferrals(in);
     }
 }

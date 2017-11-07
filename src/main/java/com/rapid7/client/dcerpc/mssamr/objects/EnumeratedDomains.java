@@ -19,16 +19,16 @@
 package com.rapid7.client.dcerpc.mssamr.objects;
 
 /**
- * A array of enumerated {@link DomainInfo}
+ * A array of enumerated {@link DomainInfo}.
  */
-public class EnumeratedDomains extends SamArray<DomainInfo> {
+public class EnumeratedDomains extends SAMPR_ENUMERATION_BUFFER<DomainInfo> {
 
     public EnumeratedDomains() {
         super();
     }
 
     @Override
-    protected DomainInfo initEntry() {
+    protected DomainInfo initEntity() {
         return new DomainInfo();
     }
 }
