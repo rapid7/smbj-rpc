@@ -24,7 +24,21 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 
 /**
+ * The SamrEnumerateDomainsInSamServer method obtains a listing of all domains hosted by the server side of this
+ * protocol.
  *
+ * <pre>
+ * long SamrEnumerateDomainsInSamServer(
+ *   [in] SAMPR_HANDLE ServerHandle,
+ *   [in, out] unsigned long* EnumerationContext,
+ *   [out] PSAMPR_ENUMERATION_BUFFER* Buffer,
+ *   [in] unsigned long PreferedMaximumLength,
+ *   [out] unsigned long* CountReturned
+ * );
+ * </pre>
+ *
+ * @see <a href="https://msdn.microsoft.com/en-ca/library/cc245755.aspx">
+ *       https://msdn.microsoft.com/en-ca/library/cc245755.aspx</a>
  */
 public class SamrEnumerateDomainsInSamServerRequest extends RequestCall<SamrEnumerateDomainsInSamServerResponse> {
     public final static short OP_NUM = 6;
