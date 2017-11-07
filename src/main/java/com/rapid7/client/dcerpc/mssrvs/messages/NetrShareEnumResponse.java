@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.mssrvs.messages;
 
@@ -121,76 +121,74 @@ public class NetrShareEnumResponse extends RequestResponse {
     }
 
     @Override
-    public void unmarshal(final PacketInput packetIn)
-        throws IOException {
+    public void unmarshal(final PacketInput packetIn) throws IOException {
         shares = new LinkedList<>();
         level = packetIn.readInt();
         packetIn.readInt();
 
         switch (level) {
-        case 1:
-            if (0 != packetIn.readReferentID()) {
-                final int count = packetIn.readInt();
+            case 1:
                 if (0 != packetIn.readReferentID()) {
-                    final List<Integer> nameRefs = new LinkedList<>();
-                    final List<Integer> types = new LinkedList<>();
-                    final List<Integer> commentRefs = new LinkedList<>();
-                    packetIn.readInt(); // Maximum count
-                    for (int index = 0; index < count; index++) {
-                        nameRefs.add(packetIn.readReferentID());
-                        types.add(packetIn.readInt());
-                        commentRefs.add(packetIn.readReferentID());
-                    }
-                    for (int index = 0; index < count; index++) {
-                        final String name = nameRefs.get(index) == 0 ? null : packetIn.readString(true);
-                        final int type = types.get(index);
-                        final String comment = commentRefs.get(index) == 0 ? null : packetIn.readString(true);
-                        shares.add(new NetShareInfo1(name, type, comment));
+                    final int count = packetIn.readInt();
+                    if (0 != packetIn.readReferentID()) {
+                        final List<Integer> nameRefs = new LinkedList<>();
+                        final List<Integer> types = new LinkedList<>();
+                        final List<Integer> commentRefs = new LinkedList<>();
+                        packetIn.readInt(); // Maximum count
+                        for (int index = 0; index < count; index++) {
+                            nameRefs.add(packetIn.readReferentID());
+                            types.add(packetIn.readInt());
+                            commentRefs.add(packetIn.readReferentID());
+                        }
+                        for (int index = 0; index < count; index++) {
+                            final String name = nameRefs.get(index) == 0 ? null : packetIn.readString(true);
+                            final int type = types.get(index);
+                            final String comment = commentRefs.get(index) == 0 ? null : packetIn.readString(true);
+                            shares.add(new NetShareInfo1(name, type, comment));
+                        }
                     }
                 }
-            }
-            break;
-        case 2:
-            if (0 != packetIn.readReferentID()) {
-                final int count = packetIn.readInt();
+                break;
+            case 2:
                 if (0 != packetIn.readReferentID()) {
-                    final List<Integer> nameRefs = new LinkedList<>();
-                    final List<Integer> types = new LinkedList<>();
-                    final List<Integer> commentRefs = new LinkedList<>();
-                    final List<Integer> permissions = new LinkedList<>();
-                    final List<Integer> maximumUsers = new LinkedList<>();
-                    final List<Integer> currentUsers = new LinkedList<>();
-                    final List<Integer> pathRefs = new LinkedList<>();
-                    final List<Integer> passwordRefs = new LinkedList<>();
-                    packetIn.readInt(); // Maximum count
-                    for (int index = 0; index < count; index++) {
-                        nameRefs.add(packetIn.readReferentID());
-                        types.add(packetIn.readInt());
-                        commentRefs.add(packetIn.readReferentID());
-                        permissions.add(packetIn.readInt());
-                        maximumUsers.add(packetIn.readInt());
-                        currentUsers.add(packetIn.readInt());
-                        pathRefs.add(packetIn.readReferentID());
-                        passwordRefs.add(packetIn.readReferentID());
-                    }
-                    for (int index = 0; index < count; index++) {
-                        final String name = nameRefs.get(index) == 0 ? null : packetIn.readString(true);
-                        final int type = types.get(index);
-                        final String comment = commentRefs.get(index) == 0 ? null : packetIn.readString(true);
-                        final int permission = permissions.get(index);
-                        final int maximumUser = maximumUsers.get(index);
-                        final int currentUser = currentUsers.get(index);
-                        final String path = pathRefs.get(index) == 0 ? null : packetIn.readString(true);
-                        final String password = passwordRefs.get(index) == 0 ? null : packetIn.readString(true);
-                        final NetShareInfo2 shareInfo = new NetShareInfo2(name, type, comment, permission, maximumUser,
-                            currentUser, path, password);
-                        shares.add(shareInfo);
+                    final int count = packetIn.readInt();
+                    if (0 != packetIn.readReferentID()) {
+                        final List<Integer> nameRefs = new LinkedList<>();
+                        final List<Integer> types = new LinkedList<>();
+                        final List<Integer> commentRefs = new LinkedList<>();
+                        final List<Integer> permissions = new LinkedList<>();
+                        final List<Integer> maximumUsers = new LinkedList<>();
+                        final List<Integer> currentUsers = new LinkedList<>();
+                        final List<Integer> pathRefs = new LinkedList<>();
+                        final List<Integer> passwordRefs = new LinkedList<>();
+                        packetIn.readInt(); // Maximum count
+                        for (int index = 0; index < count; index++) {
+                            nameRefs.add(packetIn.readReferentID());
+                            types.add(packetIn.readInt());
+                            commentRefs.add(packetIn.readReferentID());
+                            permissions.add(packetIn.readInt());
+                            maximumUsers.add(packetIn.readInt());
+                            currentUsers.add(packetIn.readInt());
+                            pathRefs.add(packetIn.readReferentID());
+                            passwordRefs.add(packetIn.readReferentID());
+                        }
+                        for (int index = 0; index < count; index++) {
+                            final String name = nameRefs.get(index) == 0 ? null : packetIn.readString(true);
+                            final int type = types.get(index);
+                            final String comment = commentRefs.get(index) == 0 ? null : packetIn.readString(true);
+                            final int permission = permissions.get(index);
+                            final int maximumUser = maximumUsers.get(index);
+                            final int currentUser = currentUsers.get(index);
+                            final String path = pathRefs.get(index) == 0 ? null : packetIn.readString(true);
+                            final String password = passwordRefs.get(index) == 0 ? null : packetIn.readString(true);
+                            final NetShareInfo2 shareInfo = new NetShareInfo2(name, type, comment, permission, maximumUser, currentUser, path, password);
+                            shares.add(shareInfo);
+                        }
                     }
                 }
-            }
-            break;
-        default:
-            throw new TransportException("Unsupported share info container.");
+                break;
+            default:
+                throw new TransportException("Unsupported share info container.");
         }
 
         shareCount = packetIn.readInt();

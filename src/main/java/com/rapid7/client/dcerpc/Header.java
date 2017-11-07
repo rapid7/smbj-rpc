@@ -6,28 +6,23 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc;
 
-import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.toEnumSet;
-import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.toLong;
-import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.valueOf;
 import java.io.IOException;
 import java.util.Set;
-import com.rapid7.client.dcerpc.io.Hexify;
-import com.rapid7.client.dcerpc.io.HexifyImpl;
-import com.rapid7.client.dcerpc.io.Packet;
-import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.*;
+
+import static com.hierynomus.protocol.commons.EnumWithValue.EnumUtils.*;
 
 /**
  * The common header fields, which appear in all PDU types, are as follows. The comment fields show the exact octet
@@ -52,7 +47,7 @@ public class Header extends HexifyImpl implements Packet, Hexify {
     private byte minorVersion = 0;
     private PDUType pduType;
     private Set<PFCFlag> pfcFlags;
-    private byte[] ndr = { 0x10, 0x00, 0x00, 0x00 };
+    private byte[] ndr = {0x10, 0x00, 0x00, 0x00};
     private short fragLength = 16;
     private short authLength = 0;
     private int callID = 0;
@@ -122,8 +117,7 @@ public class Header extends HexifyImpl implements Packet, Hexify {
     }
 
     @Override
-    public void marshal(final PacketOutput packetOut)
-        throws IOException {
+    public void marshal(final PacketOutput packetOut) throws IOException {
         if (null == getPDUType()) {
             throw new IllegalStateException("Invalid PDU type: " + getPDUType());
         }
@@ -141,14 +135,12 @@ public class Header extends HexifyImpl implements Packet, Hexify {
     }
 
     @Override
-    public void unmarshal(final PacketInput packetIn)
-        throws IOException {
+    public void unmarshal(final PacketInput packetIn) throws IOException {
         setMajorVersion(packetIn.readByte());
         setMinorVersion(packetIn.readByte());
 
         if (5 != getMajorVersion() || 0 != getMinorVersion()) {
-            throw new IOException(
-                String.format("Version mismatch: %d.%d != 5.0", getMajorVersion(), getMinorVersion()));
+            throw new IOException(String.format("Version mismatch: %d.%d != 5.0", getMajorVersion(), getMinorVersion()));
         }
 
         final byte pduTypePrimitive = packetIn.readByte();

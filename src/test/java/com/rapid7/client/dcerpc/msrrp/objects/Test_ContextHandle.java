@@ -6,27 +6,26 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp.objects;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+
+import static org.junit.Assert.*;
 
 public class Test_ContextHandle {
     private final ContextHandle maximumHandle = new ContextHandle("ffffffffffffffffffffffffffffffffffffffff");
@@ -161,15 +160,23 @@ public class Test_ContextHandle {
     }
 
     @Test
-    public void unmarshall() throws IOException {
+    public void unmarshal() throws IOException {
         byte[] buf = new String("1234567890abcdefghij").getBytes();
         PacketInput input = new PacketInput(new ByteArrayInputStream(buf));
         ContextHandle handle = new ContextHandle();
-        assertArrayEquals(buf, handle.unmarshall(input).getBytes());
+        input.readUnmarshallable(handle);
+        assertArrayEquals(buf, handle.getBytes());
 
         byte[] buf2 = new String("1234567890").getBytes();
         PacketInput input2 = new PacketInput(new ByteArrayInputStream(buf));
-        ContextHandle handle2 = new ContextHandle(10);
-        assertArrayEquals(buf2, handle2.unmarshall(input2).getBytes());
+        ContextHandle handle2 = new MyContextHandle();
+        input2.readUnmarshallable(handle2);
+        assertArrayEquals(buf2, handle2.getBytes());
+    }
+
+    private static class MyContextHandle extends ContextHandle {
+        public MyContextHandle() {
+            super(10);
+        }
     }
 }

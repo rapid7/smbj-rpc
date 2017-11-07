@@ -1,15 +1,23 @@
+/**
+ * Copyright 2017, Rapid7, Inc.
+ *
+ * License: BSD-3-clause
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * * Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
+ */
 package com.rapid7.client.dcerpc.transport;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -24,20 +32,18 @@ import com.rapid7.client.dcerpc.Interface;
 import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.PFCFlag;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.messages.BindRequest;
-import com.rapid7.client.dcerpc.messages.BindResponse;
-import com.rapid7.client.dcerpc.messages.Request;
-import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.messages.Response;
+import com.rapid7.client.dcerpc.messages.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class Test_RPCTransport {
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void bindACK()
-        throws IOException {
+    public void bindACK() throws IOException {
         final BindRequest request = new BindRequest(16384, 16384, Interface.WINREG_V1_0, Interface.NDR_32BIT_V2);
 
         request.setPDUType(PDUType.BIND);
@@ -58,8 +64,7 @@ public class Test_RPCTransport {
 
         final RPCTransport transport = new TestRPCTransport() {
             @Override
-            public int transact(final byte[] packetOut, final byte[] packetIn)
-                throws IOException {
+            public int transact(final byte[] packetOut, final byte[] packetIn) throws IOException {
                 assertArrayEquals(requestBytes, packetOut);
                 assertArrayEquals(new byte[getMaxXmitFrag()], packetIn);
                 System.arraycopy(responseBytes, 0, packetIn, 0, responseBytes.length);
@@ -77,8 +82,7 @@ public class Test_RPCTransport {
     }
 
     @Test
-    public void bindNAK()
-        throws IOException {
+    public void bindNAK() throws IOException {
         final BindRequest request = new BindRequest(16384, 16384, Interface.WINREG_V1_0, Interface.NDR_32BIT_V2);
 
         request.setPDUType(PDUType.BIND);
@@ -97,8 +101,7 @@ public class Test_RPCTransport {
 
         final RPCTransport transport = new TestRPCTransport() {
             @Override
-            public int transact(final byte[] packetOut, final byte[] packetIn)
-                throws IOException {
+            public int transact(final byte[] packetOut, final byte[] packetIn) throws IOException {
                 assertArrayEquals(requestBytes, packetOut);
                 assertArrayEquals(new byte[getMaxXmitFrag()], packetIn);
                 System.arraycopy(responseBytes, 0, packetIn, 0, responseBytes.length);
@@ -113,8 +116,7 @@ public class Test_RPCTransport {
     }
 
     @Test
-    public void call()
-        throws IOException {
+    public void call() throws IOException {
         final Request request = new Request();
 
         request.setOpNum((short) 1);
@@ -134,8 +136,7 @@ public class Test_RPCTransport {
 
         final RPCTransport transport = new TestRPCTransport() {
             @Override
-            public int transact(final byte[] packetOut, final byte[] packetIn)
-                throws IOException {
+            public int transact(final byte[] packetOut, final byte[] packetIn) throws IOException {
                 assertArrayEquals(requestBytes, packetOut);
                 assertArrayEquals(new byte[getMaxXmitFrag()], packetIn);
                 System.arraycopy(responseBytes, 0, packetIn, 0, responseBytes.length);
@@ -143,8 +144,7 @@ public class Test_RPCTransport {
             }
         };
 
-        @SuppressWarnings("unchecked")
-        final RequestCall<RequestResponse> requestCall = mock(RequestCall.class);
+        @SuppressWarnings("unchecked") final RequestCall<RequestResponse> requestCall = mock(RequestCall.class);
         final RequestResponse requestResponse = mock(RequestResponse.class);
 
         when(requestCall.getOpNum()).thenReturn((short) 1);
@@ -163,8 +163,7 @@ public class Test_RPCTransport {
     }
 
     @Test
-    public void callWithStub()
-        throws IOException {
+    public void callWithStub() throws IOException {
         final Request request = new Request();
 
         request.setOpNum((short) 1);
@@ -177,15 +176,14 @@ public class Test_RPCTransport {
         final Response response = new Response();
 
         response.setPFCFlags(EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        response.setStub(new byte[] { 0x67, 0x45, 0x23, 0x01 });
+        response.setStub(new byte[]{0x67, 0x45, 0x23, 0x01});
 
         final String responseHexString = response.toHexString();
         final byte[] responseBytes = Hex.decode(responseHexString);
 
         final RPCTransport transport = new TestRPCTransport() {
             @Override
-            public int transact(final byte[] packetOut, final byte[] packetIn)
-                throws IOException {
+            public int transact(final byte[] packetOut, final byte[] packetIn) throws IOException {
                 assertArrayEquals(requestBytes, packetOut);
                 assertArrayEquals(new byte[getMaxXmitFrag()], packetIn);
                 System.arraycopy(responseBytes, 0, packetIn, 0, responseBytes.length);
@@ -193,20 +191,16 @@ public class Test_RPCTransport {
             }
         };
 
-        @SuppressWarnings("unchecked")
-        final RequestCall<RequestResponse> requestCall = mock(RequestCall.class);
+        @SuppressWarnings("unchecked") final RequestCall<RequestResponse> requestCall = mock(RequestCall.class);
         final RequestResponse requestResponse = mock(RequestResponse.class);
 
         when(requestCall.getOpNum()).thenReturn((short) 1);
         when(requestCall.getStub()).thenReturn(new byte[0]);
         when(requestCall.getResponseObject()).thenReturn(requestResponse);
 
-        doAnswer(new Answer()
-        {
+        doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation)
-                throws Throwable
-            {
+            public Object answer(InvocationOnMock invocation) throws Throwable {
                 final Object[] arguments = invocation.getArguments();
                 final PacketInput packetIn = (PacketInput) arguments[0];
                 assertEquals(19088743, packetIn.readInt());
@@ -226,8 +220,7 @@ public class Test_RPCTransport {
     }
 
     @Test
-    public void callWithMultiStub()
-        throws IOException {
+    public void callWithMultiStub() throws IOException {
         final Request request = new Request();
 
         request.setOpNum((short) 1);
@@ -245,9 +238,9 @@ public class Test_RPCTransport {
         response1.setPFCFlags(EnumSet.of(PFCFlag.FIRST_FRAGMENT));
         response2.setPFCFlags(EnumSet.noneOf(PFCFlag.class));
         response3.setPFCFlags(EnumSet.of(PFCFlag.LAST_FRAGMENT));
-        response1.setStub(new byte[] { 0x67, 0x45, 0x23, 0x01 });
+        response1.setStub(new byte[]{0x67, 0x45, 0x23, 0x01});
         response2.setStub(new byte[0]);
-        response3.setStub(new byte[] { 0x01, 0x23, 0x45, 0x67 });
+        response3.setStub(new byte[]{0x01, 0x23, 0x45, 0x67});
 
         final String response1HexString = response1.toHexString();
         final String response2HexString = response2.toHexString();
@@ -262,8 +255,7 @@ public class Test_RPCTransport {
 
         final RPCTransport transport = new TestRPCTransport() {
             @Override
-            public int transact(final byte[] packetOut, final byte[] packetIn)
-                throws IOException {
+            public int transact(final byte[] packetOut, final byte[] packetIn) throws IOException {
                 assertArrayEquals(requestBytes, packetOut);
                 assertArrayEquals(new byte[getMaxXmitFrag()], packetIn);
                 return read(packetIn);
@@ -277,25 +269,21 @@ public class Test_RPCTransport {
             }
         };
 
-        @SuppressWarnings("unchecked")
-        final RequestCall<RequestResponse> requestCall = mock(RequestCall.class);
+        @SuppressWarnings("unchecked") final RequestCall<RequestResponse> requestCall = mock(RequestCall.class);
         final RequestResponse requestResponse = mock(RequestResponse.class);
 
         when(requestCall.getOpNum()).thenReturn((short) 1);
         when(requestCall.getStub()).thenReturn(new byte[0]);
         when(requestCall.getResponseObject()).thenReturn(requestResponse);
 
-        doAnswer(new Answer()
-        {
+        doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation)
-                throws Throwable
-            {
+            public Object answer(InvocationOnMock invocation) throws Throwable {
                 final Object[] arguments = invocation.getArguments();
-		final PacketInput packetIn = (PacketInput) arguments[0];
-		assertEquals(19088743, packetIn.readInt());
-		assertEquals(1732584193, packetIn.readInt());
-		return null;
+                final PacketInput packetIn = (PacketInput) arguments[0];
+                assertEquals(19088743, packetIn.readInt());
+                assertEquals(1732584193, packetIn.readInt());
+                return null;
             }
         }).when(requestResponse).unmarshal(any(PacketInput.class));
 
@@ -348,20 +336,19 @@ public class Test_RPCTransport {
 
     private class TestRPCTransport extends RPCTransport {
         @Override
-        public int transact(final byte[] packetOut, final byte[] packetIn)
-            throws IOException {
+        public int transact(final byte[] packetOut, final byte[] packetIn) throws IOException {
             return 0;
         }
 
         @Override
-        public void write(final byte[] packetOut)
-            throws IOException {
+        public void write(final byte[] packetOut) throws IOException {
         }
 
         @Override
-        public int read(final byte[] packetIn)
-            throws IOException {
+        public int read(final byte[] packetIn) throws IOException {
             return 0;
         }
-    };
+    }
+
+    ;
 }

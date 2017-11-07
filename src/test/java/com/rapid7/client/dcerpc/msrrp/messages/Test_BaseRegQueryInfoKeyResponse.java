@@ -6,26 +6,26 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class Test_BaseRegQueryInfoKeyResponse {
     @Test
-    public void unmarshal()
-        throws IOException {
+    public void unmarshal() throws IOException {
         // Remote Registry Service, QueryInfoKey
         //      Operation: QueryInfoKey (16)
         //      [Request in frame: 11405]
@@ -53,8 +53,7 @@ public class Test_BaseRegQueryInfoKeyResponse {
         //      Windows Error: WERR_OK (0x00000000)
         final BaseRegQueryInfoKeyResponse response = new BaseRegQueryInfoKeyResponse();
 
-        response.fromHexString(
-            "0200000000000000060000001600000000000000000000000000000000000000a40000009e8b087eaeead20100000000");
+        response.fromHexString("0200000000000000060000001600000000000000000000000000000000000000a40000009e8b087eaeead20100000000");
 
         assertEquals(6, response.getSubKeys());
         assertEquals(22, response.getMaxSubKeyLen());

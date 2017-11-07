@@ -6,22 +6,18 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import static org.bouncycastle.util.encoders.Hex.toHexString;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.util.EnumSet;
 import org.junit.Test;
@@ -29,9 +25,13 @@ import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 
+import static org.bouncycastle.util.encoders.Hex.toHexString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
 public class Test_SamrOpenDomainRequest {
-    private final SamrOpenDomainRequest request = new SamrOpenDomainRequest(new ServerHandle(),
-        SID.fromString("S-1-5-32"), EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+    private final SamrOpenDomainRequest request = new SamrOpenDomainRequest(new ServerHandle(), SID.fromString("S-1-5-32"), EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
 
     @Test
     public void getOpNum() {
@@ -40,8 +40,7 @@ public class Test_SamrOpenDomainRequest {
 
     @Test
     public void getStub() throws IOException {
-        assertEquals("00000000000000000000000000000000000000000000000201000000010100000000000520000000",
-            toHexString(request.getStub()));
+        assertEquals("00000000000000000000000000000000000000000000000201000000010100000000000520000000", toHexString(request.getStub()));
     }
 
     @Test

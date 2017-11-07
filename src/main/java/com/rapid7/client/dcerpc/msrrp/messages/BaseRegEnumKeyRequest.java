@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
@@ -180,23 +180,29 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
      * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
     private final ContextHandle hKey;
-    /** The index of the subkey to retrieve. */
+    /**
+     * The index of the subkey to retrieve.
+     */
     private final int index;
-    /** The maximum length of the subkey name to retrieve. */
+    /**
+     * The maximum length of the subkey name to retrieve.
+     */
     private final int nameLen;
-    /** The maximum length of the subkey class to retrieve. */
+    /**
+     * The maximum length of the subkey class to retrieve.
+     */
     private final int classLen;
 
     /**
      * The BaseRegEnumKey method is called by the client in order to enumerate a subkey. In response, the server returns
      * a requested subkey.
      *
-     * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods:
-     *        {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
-     *        {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
-     *        {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
-     * @param index The index of the subkey to retrieve.
-     * @param nameLen The maximum length of the subkey name to retrieve.
+     * @param hKey     A handle to a key that MUST have been opened previously by using one of the open methods:
+     *                 {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine}, {@link OpenPerformanceData},
+     *                 {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
+     *                 {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
+     * @param index    The index of the subkey to retrieve.
+     * @param nameLen  The maximum length of the subkey name to retrieve.
      * @param classLen The maximum length of the subkey class to retrieve.
      */
     public BaseRegEnumKeyRequest(final ContextHandle hKey, final int index, final int nameLen, final int classLen) {
@@ -213,8 +219,7 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
     }
 
     @Override
-    public void marshal(final PacketOutput packetOut)
-        throws IOException {
+    public void marshal(final PacketOutput packetOut) throws IOException {
         // Remote Registry Service, EnumKey
         //      Operation: EnumKey (9)
         //      [Response in frame: 11178]

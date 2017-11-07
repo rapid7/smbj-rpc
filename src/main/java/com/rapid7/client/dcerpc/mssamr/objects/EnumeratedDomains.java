@@ -16,14 +16,19 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.io;
-
-import java.io.IOException;
+package com.rapid7.client.dcerpc.mssamr.objects;
 
 /**
- * An interface for unmarshalling typed objects from {@link PacketInput}.
+ * A array of enumerated {@link DomainInfo}.
  */
-public interface Unmarshallable<T> {
+public class EnumeratedDomains extends SAMPR_ENUMERATION_BUFFER<DomainInfo> {
 
-    public T unmarshall(PacketInput in) throws IOException;
+    public EnumeratedDomains() {
+        super();
+    }
+
+    @Override
+    protected DomainInfo initEntity() {
+        return new DomainInfo();
+    }
 }

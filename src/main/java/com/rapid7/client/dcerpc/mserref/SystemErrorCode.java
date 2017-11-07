@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.mserref;
 
@@ -210,6 +210,7 @@ public enum SystemErrorCode {
     ERROR_EA_LIST_INCONSISTENT(0xFF),
     WAIT_TIMEOUT(0x102),
     ERROR_NO_MORE_ITEMS(0x103),
+    ERROR_MORE_ENTRIES(0x105),
     ERROR_CANNOT_COPY(0x10A),
     ERROR_DIRECTORY(0x10B),
     ERROR_EAS_DIDNT_FIT(0x113),
