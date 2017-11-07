@@ -22,11 +22,19 @@ import java.io.IOException;
 import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
-import com.rapid7.client.dcerpc.mssamr.messages.*;
-import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
-import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
-import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
+import com.rapid7.client.dcerpc.mssamr.objects.*;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -37,22 +45,21 @@ public class SecurityAccountManagerService {
         this.transport = transport;
     }
 
-    public ServerHandle getServerHandle(String serverName) throws IOException {
+    public ServerHandle openServerHandle(String serverName) throws IOException {
         final SamrConnect2Request request = new SamrConnect2Request(serverName, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
         final SamrConnect2Response response = transport.call(request);
-        return response.getHandle();
-    }
-
-    public DomainHandle openDomain(String serverName, SID sid) throws IOException {
-        final ServerHandle handle = getServerHandle(serverName);
-        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(handle, sid, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final SamrOpenDomainResponse response = transport.call(request);
         return response.getHandle();
     }
 
     public DomainHandle openDomain(ServerHandle serverHandle, SID sid) throws IOException {
         final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, sid, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
         final SamrOpenDomainResponse response = transport.call(request);
+        return response.getHandle();
+    }
+
+    public GroupHandle openGroup(DomainHandle domainHandle, int groupRID) throws IOException {
+        final SamrOpenGroupRequest request = new SamrOpenGroupRequest(domainHandle, EnumSet.of(AccessMask.MAXIMUM_ALLOWED), groupRID);
+        final SamrOpenGroupResponse response = transport.call(request);
         return response.getHandle();
     }
 
