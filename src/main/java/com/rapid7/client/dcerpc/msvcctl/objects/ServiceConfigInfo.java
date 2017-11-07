@@ -39,6 +39,10 @@ public class ServiceConfigInfo implements IServiceConfigInfo {
     private String password;
     private String displayName;
 
+    public ServiceConfigInfo()
+    {
+    }
+
     public ServiceConfigInfo(ServiceType serviceType,
                              ServiceStartType startType,
                              ServiceError errorControl,
@@ -56,6 +60,51 @@ public class ServiceConfigInfo implements IServiceConfigInfo {
         this.tagId = tagId;
         this.dependencies = dependencies;
         this.serviceStartName = serviceStartName;
+        this.displayName = displayName;
+    }
+
+    public void setServiceType(ServiceType serviceType)
+    {
+        this.serviceType = serviceType;
+    }
+
+    public void setStartType(ServiceStartType startType)
+    {
+        this.startType = startType;
+    }
+
+    public void setErrorControl(ServiceError errorControl)
+    {
+        this.errorControl = errorControl;
+    }
+
+    public void setBinaryPathName(String binaryPathName)
+    {
+        this.binaryPathName = binaryPathName;
+    }
+
+    public void setLoadOrderGroup(String loadOrderGroup)
+    {
+        this.loadOrderGroup = loadOrderGroup;
+    }
+
+    public void setTagId(int tagId)
+    {
+        this.tagId = tagId;
+    }
+
+    public void setDependencies(String dependencies)
+    {
+        this.dependencies = dependencies;
+    }
+
+    public void setServiceStartName(String serviceStartName)
+    {
+        this.serviceStartName = serviceStartName;
+    }
+
+    public void setDisplayName(String displayName)
+    {
         this.displayName = displayName;
     }
 
