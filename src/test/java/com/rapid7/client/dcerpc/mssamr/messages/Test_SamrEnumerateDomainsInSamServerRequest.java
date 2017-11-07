@@ -23,15 +23,19 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 
 public class Test_SamrEnumerateDomainsInSamServerRequest {
+
+    private final ServerHandle handle = new ServerHandle();
     private final SamrEnumerateDomainsInSamServerRequest request1 = new SamrEnumerateDomainsInSamServerRequest(
-            new ServerHandle("000000005f32a420f68b2645b4e0e8467cc2e111"), 0, 0xffff);
+            handle, 0, 0xffff);
 
     @Test
     public void getStub() throws IOException {
+        handle.setBytes(Hex.decode("000000005f32a420f68b2645b4e0e8467cc2e111"));
         assertEquals("000000005f32a420f68b2645b4e0e8467cc2e11100000000ffff0000",
             toHexString(request1.getStub()));
     }

@@ -34,6 +34,8 @@ public class SamrEnumerateDomainsInSamServerResponse extends RequestResponse {
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         resumeHandle = packetIn.readInt();
+        // Reference ID to the ENUMERATION_BUFFER
+        packetIn.readReferentID();
         domains = new EnumeratedDomains();
         packetIn.readUnmarshallable(domains);
         numEntries = packetIn.readInt();

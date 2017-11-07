@@ -82,29 +82,33 @@ public abstract class SAMPR_ENUMERATION_BUFFER<T extends Unmarshallable> impleme
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
-        // Reference ID of sam_array
-        in.readReferentID();
         // Entries of sam_array
         entriesRead = in.readInt();
         // Reference ID of domain_list
-        in.readReferentID();
-        // Entries of domain_list
-        int entryCount = in.readInt();
-        if (entryCount >= 0)
-            array = new ArrayList<>(entryCount);
-
-        for (int i = 0; i < entryCount; i++) {
-            T t = initEntity();
-            array.add(t);
-            t.unmarshalPreamble(in);
-            t.unmarshalEntity(in);
+        if (in.readReferentID() != 0) {
+            if (entriesRead > 0)
+                array = new ArrayList<>(entriesRead);
         }
+
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        for (T t : array) {
-            t.unmarshalDeferrals(in);
+        // Entries of domain_list
+        if (array != null) {
+            // MaximumCount
+            int count = in.readInt();
+            for (int i = 0; i < count; i++) {
+                T t = initEntity();
+                array.add(t);
+                t.unmarshalPreamble(in);
+            }
+            for (T t : array) {
+                t.unmarshalEntity(in);
+            }
+            for (T t : array) {
+                t.unmarshalDeferrals(in);
+            }
         }
     }
 
