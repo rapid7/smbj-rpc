@@ -18,14 +18,23 @@
  */
 package com.rapid7.client.dcerpc.mssamr;
 
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_MORE_ENTRIES;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
+import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
@@ -34,7 +43,12 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
-import com.rapid7.client.dcerpc.mssamr.objects.*;
+import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -85,5 +99,25 @@ public class SecurityAccountManagerService {
 
         if (response.getReturnValue() != 0)
             throw new IOException("Failed to close handle: " + new String(handle.getBytes()));
+    }
+
+    public List<DomainInfo> getDomainsForServer(ServerHandle serverHandle) throws IOException {
+        final int bufferSize = 0xffff;
+        List<DomainInfo> domains = new ArrayList<>();
+        for (int enumContext = 0;;) {
+            SamrEnumerateDomainsInSamServerRequest request = new SamrEnumerateDomainsInSamServerRequest(serverHandle,
+                enumContext, bufferSize);
+            final SamrEnumerateDomainsInSamServerResponse response = transport.call(request);
+            final int returnCode = response.getReturnValue();
+            enumContext = response.getResumeHandle();
+            if (ERROR_MORE_ENTRIES.is(returnCode)) {
+                domains.addAll(response.getDomainList());
+            } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
+                domains.addAll(response.getDomainList());
+                return Collections.unmodifiableList(domains);
+            } else {
+                throw new RPCException("EnumDomainsInSamServer", returnCode);
+            }
+        }
     }
 }
