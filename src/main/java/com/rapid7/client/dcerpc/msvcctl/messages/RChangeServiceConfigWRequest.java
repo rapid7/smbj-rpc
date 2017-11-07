@@ -21,38 +21,18 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.IServiceConfigInfo;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 
-public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConfigWResponse> {
-
-    // Arguments to serviceType
-    public final static int SERVICE_KERNEL_DRIVER = 0x1;
-    public final static int SERVICE_FILE_SYSTEM_DRIVER = 0x2;
-    public final static int SERVICE_WIN32_OWN_PROCESS = 0x10;
-    public final static int SERVICE_WIN32_SHARE_PROCESS = 0x20;
-    public final static int SERVICE_INTERACTIVE_PROCESS = 0x100;
-    public final static int SERVICE_NO_CHANGE = 0xFFFFFFFF;
-
-    // Arguments to startType
-    public final static int SERVICE_BOOT_START = 0x0;
-    public final static int SERVICE_SYSTEM_START = 0x1;
-    public final static int SERVICE_AUTO_START = 0x2;
-    public final static int SERVICE_DEMAND_START = 0x3;
-    public final static int SERVICE_DISABLED = 0x4;
-
-    // Arguments to errorControl
-    public final static int SERVICE_ERROR_IGNORE = 0x0;
-    public final static int SERVICE_ERROR_NORMAL = 0x1;
-    public final static int SERVICE_ERROR_SEVERE = 0x2;
-    public final static int SERVICE_ERROR_CRITICAL = 0x3;
-
-
+public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConfigWResponse>
+{
     private final static short OP_NUM = 11;
-    private final ContextHandle serviceHandle;
-    private final ServiceConfigInfo serviceConfigInfo;
+    private ContextHandle serviceHandle;
+    private IServiceConfigInfo serviceConfigInfo;
 
-    public RChangeServiceConfigWRequest(final ContextHandle handle, final ServiceConfigInfo serviceConfigInfo) {
+    public RChangeServiceConfigWRequest(
+        final ContextHandle handle,
+        final IServiceConfigInfo serviceConfigInfo){
         super(OP_NUM);
         this.serviceHandle = handle;
         this.serviceConfigInfo = serviceConfigInfo;

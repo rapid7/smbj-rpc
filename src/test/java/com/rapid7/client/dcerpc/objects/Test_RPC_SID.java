@@ -29,7 +29,7 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 
 import static org.testng.Assert.*;
 
-public class TEST_RPC_SID {
+public class Test_RPC_SID {
 
     @Test(expectedExceptions = {NullPointerException.class})
     public void test_marshalPreamble_null() throws IOException {
