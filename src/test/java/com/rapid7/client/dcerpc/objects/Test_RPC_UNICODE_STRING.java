@@ -33,7 +33,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
-public class TEST_RPC_UNICODE_STRING {
+public class Test_RPC_UNICODE_STRING {
 
     @DataProvider
     public Object[][] data_of_null() {
@@ -112,8 +112,10 @@ public class TEST_RPC_UNICODE_STRING {
         return new Object[][] {
                 {false, null, ""},
                 {true, null, ""},
+                // MaximumCount=8, Offset=0, ActualCount=8, Alignment=0
                 {false, "testƟ123", "08000000000000000800000074006500730074009f01310032003300"},
-                {true, "testƟ123", "09000000000000000900000074006500730074009f013100320033000000"},
+                // MaximumCount=9, Offset=0, ActualCount=9, Alignment=2b
+                {true, "testƟ123", "09000000000000000900000074006500730074009f0131003200330000000000"},
         };
     }
 
@@ -158,14 +160,14 @@ public class TEST_RPC_UNICODE_STRING {
     @DataProvider
     public Object[][] data_unmarshal_deferrals() {
         return new Object[][] {
-                // not null terminated, no subset
+                // not null terminated, no subset, MaximumCount=8, Offset=8, ActualCount=8, Alignment=0b
                 {false, "08000000000000000800000074006500730074009f01310032003300", "testƟ123"},
-                // null terminated, no subset
-                {true, "09000000000000000900000074006500730074009f013100320033000000", "testƟ123"},
-                // not null terminated, lefthand subset MaximumCount=0, Offset=4, ActualCount=8 (testtestƟ123)
+                // null terminated, no subset, MaximumCount=9, Offset=0, ActualCount=9, Alignment=2b
+                {true, "09000000000000000900000074006500730074009f0131003200330000000000", "testƟ123"},
+                // not null terminated, lefthand subset MaximumCount=0, Offset=4, ActualCount=8, Alignment=0b(testtestƟ123)
                 {false, "000000000400000008000000740065007300740074006500730074009f01310032003300", "testƟ123"},
-                // null terminated, lefthand subset MaximumCount=0, Offset=4, ActualCount=9 (testtestƟ123)
-                {true, "000000000400000009000000740065007300740074006500730074009f013100320033000000", "testƟ123"},
+                // null terminated, lefthand subset MaximumCount=0, Offset=4, ActualCount=9, Alignment=2b (testtestƟ123)
+                {true, "000000000400000009000000740065007300740074006500730074009f0131003200330000000000", "testƟ123"},
         };
     }
 
