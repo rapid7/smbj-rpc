@@ -22,12 +22,9 @@ import java.io.IOException;
 import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
-import com.hierynomus.protocol.commons.EnumWithValue;
-import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mssamr.messages.*;
 import com.rapid7.client.dcerpc.mssamr.objects.*;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
-import com.rapid7.client.dcerpc.objects.RPC_UNICODE_STRING;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class SecurityAccountManagerService {
