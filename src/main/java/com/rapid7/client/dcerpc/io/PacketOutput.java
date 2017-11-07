@@ -33,6 +33,7 @@ public class PacketOutput extends PrimitiveOutput {
         marshallable.marshalPreamble(this);
         marshallable.marshalEntity(this);
         marshallable.marshalDeferrals(this);
+        // TODO Align should be called, but can require resetting the packet counts
         return marshallable;
     }
 
