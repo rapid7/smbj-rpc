@@ -22,7 +22,18 @@ import java.io.IOException;
 import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
-import com.rapid7.client.dcerpc.mssamr.messages.*;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.*;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -47,7 +58,7 @@ public class SecurityAccountManagerService {
     }
 
     public GroupHandle openGroup(DomainHandle domainHandle, int groupRID) throws IOException {
-        final SamrOpenGroupRequest request = new SamrOpenGroupRequest(domainHandle, (int) AccessMask.MAXIMUM_ALLOWED.getValue(), groupRID);
+        final SamrOpenGroupRequest request = new SamrOpenGroupRequest(domainHandle, EnumSet.of(AccessMask.MAXIMUM_ALLOWED), groupRID);
         final SamrOpenGroupResponse response = transport.call(request);
         return response.getHandle();
     }

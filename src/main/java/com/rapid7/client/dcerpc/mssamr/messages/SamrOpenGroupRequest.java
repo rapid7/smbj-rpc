@@ -19,6 +19,9 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
+import java.util.EnumSet;
+import com.hierynomus.msdtyp.AccessMask;
+import com.hierynomus.protocol.commons.EnumWithValue;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
@@ -41,17 +44,18 @@ public class SamrOpenGroupRequest extends RequestCall<SamrOpenGroupResponse> {
     // <NDR: unsigned long> [in] unsigned long GroupId
     private final int groupRID;
 
-    public SamrOpenGroupRequest(DomainHandle domainHandle, int desiredAccess, int groupRID) {
+    public SamrOpenGroupRequest(DomainHandle domainHandle, EnumSet<AccessMask> desiredAccess, int groupRID) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
-        this.desiredAccess = desiredAccess;
+        // TODO allow for unsigned int
+        this.desiredAccess = (int) EnumWithValue.EnumUtils.toLong(desiredAccess);
         this.groupRID = groupRID;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         packetOut.writeMarshallable(domainHandle);
-        // No align necessary - Always 24 bytes written
+        // No align necessary - Always 20 bytes written
         packetOut.writeInt(desiredAccess);
         // No align necessary - Always 4 bytes written
         packetOut.writeInt(groupRID);
