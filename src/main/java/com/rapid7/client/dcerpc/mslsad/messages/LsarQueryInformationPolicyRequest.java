@@ -22,6 +22,7 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_ACCOUNT_DOM_INFO;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_AUDIT_EVENTS_INFO;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_PRIMARY_DOM_INFO;
 import com.rapid7.client.dcerpc.mslsad.objects.POLICY_INFORMATION_CLASS;
@@ -71,6 +72,17 @@ public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable
         @Override
         LSAPR_POLICY_PRIMARY_DOM_INFO newPolicyInformation() {
             return new LSAPR_POLICY_PRIMARY_DOM_INFO();
+        }
+    }
+
+    public static class PolicyAccountDomainInformation extends LsarQueryInformationPolicyRequest<LSAPR_POLICY_ACCOUNT_DOM_INFO> {
+        public PolicyAccountDomainInformation(final ContextHandle policyHandle) {
+            super(policyHandle, POLICY_INFORMATION_CLASS.POLICY_ACCOUNT_DOMAIN_INFORMATION);
+        }
+
+        @Override
+        LSAPR_POLICY_ACCOUNT_DOM_INFO newPolicyInformation() {
+            return new LSAPR_POLICY_ACCOUNT_DOM_INFO();
         }
     }
 }
