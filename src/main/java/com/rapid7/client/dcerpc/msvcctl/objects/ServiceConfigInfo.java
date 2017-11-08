@@ -28,9 +28,9 @@ import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
  */
 
 public class ServiceConfigInfo implements IServiceConfigInfo {
-    private ServiceType serviceType; //defaults
-    private ServiceStartType startType;
-    private ServiceError errorControl;
+    private final ServiceType serviceType;
+    private final ServiceStartType startType;
+    private final ServiceError errorControl;
     private String binaryPathName;
     private String loadOrderGroup;
     private int tagId;
@@ -39,8 +39,14 @@ public class ServiceConfigInfo implements IServiceConfigInfo {
     private String password;
     private String displayName;
 
-    public ServiceConfigInfo()
+    public ServiceConfigInfo(
+        ServiceType serviceType,
+        ServiceStartType startType,
+        ServiceError errorControl)
     {
+        this.serviceType = serviceType;
+        this.startType = startType;
+        this.errorControl = errorControl;
     }
 
     public ServiceConfigInfo(ServiceType serviceType,
@@ -61,21 +67,6 @@ public class ServiceConfigInfo implements IServiceConfigInfo {
         this.dependencies = dependencies;
         this.serviceStartName = serviceStartName;
         this.displayName = displayName;
-    }
-
-    public void setServiceType(ServiceType serviceType)
-    {
-        this.serviceType = serviceType;
-    }
-
-    public void setStartType(ServiceStartType startType)
-    {
-        this.startType = startType;
-    }
-
-    public void setErrorControl(ServiceError errorControl)
-    {
-        this.errorControl = errorControl;
     }
 
     public void setBinaryPathName(String binaryPathName)
