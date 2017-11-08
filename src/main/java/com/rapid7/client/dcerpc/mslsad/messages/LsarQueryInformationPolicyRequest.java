@@ -23,6 +23,7 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_AUDIT_EVENTS_INFO;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_PRIMARY_DOM_INFO;
 import com.rapid7.client.dcerpc.mslsad.objects.POLICY_INFORMATION_CLASS;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 
@@ -52,7 +53,6 @@ public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable
     }
 
     public static class PolicyAuditEventsInformation extends LsarQueryInformationPolicyRequest<LSAPR_POLICY_AUDIT_EVENTS_INFO> {
-
         public PolicyAuditEventsInformation(final ContextHandle policyHandle) {
             super(policyHandle, POLICY_INFORMATION_CLASS.POLICY_AUDIT_EVENTS_INFORMATION);
         }
@@ -60,6 +60,17 @@ public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable
         @Override
         LSAPR_POLICY_AUDIT_EVENTS_INFO newPolicyInformation() {
             return new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        }
+    }
+
+    public static class PolicyPrimaryDomainInformation extends LsarQueryInformationPolicyRequest<LSAPR_POLICY_PRIMARY_DOM_INFO> {
+        public PolicyPrimaryDomainInformation(final ContextHandle policyHandle) {
+            super(policyHandle, POLICY_INFORMATION_CLASS.POLICY_PRIMARY_DOMAIN_INFORMATION);
+        }
+
+        @Override
+        LSAPR_POLICY_PRIMARY_DOM_INFO newPolicyInformation() {
+            return new LSAPR_POLICY_PRIMARY_DOM_INFO();
         }
     }
 }

@@ -28,7 +28,8 @@ public class Test_POLICY_INFORMATION_CLASS {
     @DataProvider
     public Object[][] data_getInfoLevel() {
         return new Object[][] {
-                {POLICY_INFORMATION_CLASS.POLICY_AUDIT_EVENTS_INFORMATION, (short) 2}
+                {POLICY_INFORMATION_CLASS.POLICY_AUDIT_EVENTS_INFORMATION, (short) 2},
+                {POLICY_INFORMATION_CLASS.POLICY_PRIMARY_DOMAIN_INFORMATION, (short) 3}
         };
     }
     @Test(dataProvider = "data_getInfoLevel")
