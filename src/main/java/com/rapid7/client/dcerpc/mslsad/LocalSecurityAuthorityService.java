@@ -25,6 +25,7 @@ import com.hierynomus.msdtyp.SID;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.*;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_ACCOUNT_DOM_INFO;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_AUDIT_EVENTS_INFO;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_PRIMARY_DOM_INFO;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
@@ -66,6 +67,12 @@ public class LocalSecurityAuthorityService {
     public LSAPR_POLICY_PRIMARY_DOM_INFO getPolicyPrimaryDomainInformation(ContextHandle policyHandle) throws IOException {
         checkHandle(policyHandle);
         final LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation queryRequest = new LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation(policyHandle);
+        return transport.call(queryRequest).getPolicyInformation();
+    }
+
+    public LSAPR_POLICY_ACCOUNT_DOM_INFO getPolicyAccountDomainInformation(ContextHandle policyHandle) throws IOException {
+        checkHandle(policyHandle);
+        final LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation queryRequest = new LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation(policyHandle);
         return transport.call(queryRequest).getPolicyInformation();
     }
 

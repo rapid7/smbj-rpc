@@ -20,7 +20,8 @@ package com.rapid7.client.dcerpc.mslsad.objects;
 
 public enum POLICY_INFORMATION_CLASS {
     POLICY_AUDIT_EVENTS_INFORMATION(2),
-    POLICY_PRIMARY_DOMAIN_INFORMATION(3);
+    POLICY_PRIMARY_DOMAIN_INFORMATION(3),
+    POLICY_ACCOUNT_DOMAIN_INFORMATION(5);
 
     POLICY_INFORMATION_CLASS(final int infoLevel) {
         this.infoLevel = infoLevel;
