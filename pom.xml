@@ -3,7 +3,7 @@
    <groupId>com.rapid7.client</groupId>
    <artifactId>dcerpc</artifactId>
    <packaging>jar</packaging>
-   <version>0.5.2-SNAPSHOT</version>
+   <version>0.5.3-SNAPSHOT</version>
    <name>dcerpc</name>
    <url>https://www.rapid7.com</url>
    <description>DCE-RPC implementation capable of using SMBv2 via SMBJ to invoke remote procedure calls (RPC) over the IPC$ named pipe.</description>
