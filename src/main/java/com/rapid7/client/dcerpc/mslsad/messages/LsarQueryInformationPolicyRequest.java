@@ -20,29 +20,46 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_AUDIT_EVENTS_INFO;
+import com.rapid7.client.dcerpc.mslsad.objects.POLICY_INFORMATION_CLASS;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 
-public class LsarQueryInformationPolicyRequest extends RequestCall<PolicyAuditEventsInformationResponse> {
+public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable> extends RequestCall<LsarQueryInformationPolicyResponse<T>> {
     private final static short OP_NUM = 7;
-    private final ContextHandle handle;
-    private final PolicyInformationClass infoLevel;
+    private final ContextHandle policyHandle;
+    private final POLICY_INFORMATION_CLASS infoLevel;
 
-    public LsarQueryInformationPolicyRequest(final ContextHandle handle, final PolicyInformationClass infoLevel) {
+    public LsarQueryInformationPolicyRequest(final ContextHandle policyHandle, final POLICY_INFORMATION_CLASS infoLevel) {
         super(OP_NUM);
-        this.handle = handle;
+        this.policyHandle = policyHandle;
         this.infoLevel = infoLevel;
     }
 
+    abstract T newPolicyInformation();
+
     @Override
-    public PolicyAuditEventsInformationResponse getResponseObject() {
-        return new PolicyAuditEventsInformationResponse();
+    public LsarQueryInformationPolicyResponse<T> getResponseObject() {
+        //noinspection unchecked
+        return (LsarQueryInformationPolicyResponse<T>) new LsarQueryInformationPolicyResponse(newPolicyInformation(), infoLevel);
     }
 
     @Override
     public void marshal(final PacketOutput packetOut) throws IOException {
-        packetOut.write(handle.getBytes());
-        packetOut.writeInt(infoLevel.getInfoLevel());
+        packetOut.writeMarshallable(policyHandle);
+        packetOut.writeShort(infoLevel.getInfoLevel());
+    }
+
+    public static class PolicyAuditEventsInformation extends LsarQueryInformationPolicyRequest<LSAPR_POLICY_AUDIT_EVENTS_INFO> {
+
+        public PolicyAuditEventsInformation(final ContextHandle policyHandle) {
+            super(policyHandle, POLICY_INFORMATION_CLASS.POLICY_AUDIT_EVENTS_INFORMATION);
+        }
+
+        @Override
+        LSAPR_POLICY_AUDIT_EVENTS_INFO newPolicyInformation() {
+            return new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        }
     }
 }
