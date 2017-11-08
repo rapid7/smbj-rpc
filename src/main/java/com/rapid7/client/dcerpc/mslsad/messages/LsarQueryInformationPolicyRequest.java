@@ -37,12 +37,12 @@ public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable
         this.infoLevel = infoLevel;
     }
 
-    abstract T newInstance();
+    abstract T newPolicyInformation();
 
     @Override
     public LsarQueryInformationPolicyResponse<T> getResponseObject() {
         //noinspection unchecked
-        return (LsarQueryInformationPolicyResponse<T>) new LsarQueryInformationPolicyResponse(newInstance(), infoLevel);
+        return (LsarQueryInformationPolicyResponse<T>) new LsarQueryInformationPolicyResponse(newPolicyInformation(), infoLevel);
     }
 
     @Override
@@ -58,7 +58,7 @@ public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable
         }
 
         @Override
-        LSAPR_POLICY_AUDIT_EVENTS_INFO newInstance() {
+        LSAPR_POLICY_AUDIT_EVENTS_INFO newPolicyInformation() {
             return new LSAPR_POLICY_AUDIT_EVENTS_INFO();
         }
     }
