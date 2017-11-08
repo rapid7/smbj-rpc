@@ -40,6 +40,7 @@ public class LsarQueryInformationPolicyResponse<T extends Unmarshallable> extend
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         if(packetIn.readReferentID() != 0) {
+            // TODO Create a separate LSAR_POLICY_INFORMATION union class
             final int infoLevel = packetIn.readShort();
             if (infoLevel != this.policyInformationClass.getInfoLevel()) {
                 throw new IllegalArgumentException(String.format(
