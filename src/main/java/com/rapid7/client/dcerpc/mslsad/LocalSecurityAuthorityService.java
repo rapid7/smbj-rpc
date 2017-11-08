@@ -26,6 +26,7 @@ import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.*;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_AUDIT_EVENTS_INFO;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_PRIMARY_DOM_INFO;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -59,6 +60,12 @@ public class LocalSecurityAuthorityService {
     public LSAPR_POLICY_AUDIT_EVENTS_INFO getAuditPolicy(ContextHandle handle) throws IOException {
         checkHandle(handle);
         final LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation queryRequest = new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(handle);
+        return transport.call(queryRequest).getPolicyInformation();
+    }
+
+    public LSAPR_POLICY_PRIMARY_DOM_INFO getPolicyPrimaryDomainInformation(ContextHandle policyHandle) throws IOException {
+        checkHandle(policyHandle);
+        final LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation queryRequest = new LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation(policyHandle);
         return transport.call(queryRequest).getPolicyInformation();
     }
 
