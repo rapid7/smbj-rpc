@@ -45,13 +45,15 @@ public class SecurityAccountManagerService {
 
     public DomainHandle openDomain(String serverName, SID sid) throws IOException {
         final ServerHandle handle = getServerHandle(serverName);
-        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(handle, sid, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(handle, sid,
+            EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
         final SamrOpenDomainResponse response = transport.call(request);
         return response.getHandle();
     }
 
     public DomainHandle openDomain(ServerHandle serverHandle, SID sid) throws IOException {
-        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, sid, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, sid,
+            EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
         final SamrOpenDomainResponse response = transport.call(request);
         return response.getHandle();
     }
@@ -70,6 +72,14 @@ public class SecurityAccountManagerService {
         final SamrOpenAliasRequest request = new SamrOpenAliasRequest(domainHandle, sid, 0x0002000C);
         final SamrOpenAliasResponse response = transport.call(request);
         return response.getHandle();
+    }
+
+    public void infoDomain(DomainHandle domainHandle, short infoLevel) throws IOException {
+        // SamrQueryInformationDomainRequest.DOMAIN_PASSWORD_INFORMATION
+        final SamrQueryInformationDomainRequest request = new SamrQueryInformationDomainRequest(domainHandle,
+            infoLevel);
+        final SamrQueryInformationDomainResponse response = transport.call(request);
+
     }
 
     public void closeHandle(ContextHandle handle) throws IOException {

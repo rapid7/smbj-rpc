@@ -20,7 +20,9 @@ package com.rapid7.client.dcerpc.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
+import com.google.common.primitives.Longs;
 
 public class PacketInput extends PrimitiveInput {
     public PacketInput(final InputStream inputStream) {
@@ -69,6 +71,13 @@ public class PacketInput extends PrimitiveInput {
         }
 
         return result;
+    }
+
+    public int readInterval() throws IOException {
+        final byte[] rawBytes = Longs.toByteArray(readLong());
+        final BigInteger interval = new BigInteger(rawBytes);
+
+        return (int) (interval.abs().longValue() / 10000000);
     }
 
     public byte[] readRawBytes(int length) throws IOException {
