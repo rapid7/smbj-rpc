@@ -33,6 +33,8 @@ import com.rapid7.client.dcerpc.objects.RPC_SID;
 import com.rapid7.client.dcerpc.objects.RPC_UNICODE_STRING;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
@@ -125,6 +127,33 @@ public class Test_LSAPR_POLICY_PRIMARY_DOM_INFO {
         assertEquals(bin.available(), 0);
         assertEquals(obj.getName(), expectedName);
         assertEquals(obj.getSid(), expectedSid);
+    }
+
+    @Test
+    public void test_hashCode() {
+        LSAPR_POLICY_PRIMARY_DOM_INFO obj = new LSAPR_POLICY_PRIMARY_DOM_INFO();
+        assertEquals(obj.hashCode(), 961);
+        obj.setName(RPC_UNICODE_STRING.of(false));
+        assertEquals(obj.hashCode(), 1219509);
+        obj.setSid(new RPC_SID());
+        assertEquals(obj.hashCode(), 2143030);
+    }
+
+    @Test
+    public void test_equals() {
+        LSAPR_POLICY_PRIMARY_DOM_INFO obj1 = new LSAPR_POLICY_PRIMARY_DOM_INFO();
+        assertEquals(obj1, obj1);
+        assertNotEquals(obj1, null);
+        LSAPR_POLICY_PRIMARY_DOM_INFO obj2 = new LSAPR_POLICY_PRIMARY_DOM_INFO();
+        assertEquals(obj1, obj2);
+        obj1.setName(RPC_UNICODE_STRING.of(false));
+        assertNotEquals(obj1, obj2);
+        obj2.setName(RPC_UNICODE_STRING.of(false));
+        assertEquals(obj1, obj2);
+        obj1.setSid(new RPC_SID());
+        assertNotEquals(obj1, obj2);
+        obj2.setSid(new RPC_SID());
+        assertEquals(obj1, obj2);
     }
 
     @Test

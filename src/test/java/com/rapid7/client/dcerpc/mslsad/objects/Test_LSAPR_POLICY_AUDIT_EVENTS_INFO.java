@@ -72,6 +72,8 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
     @Test
     public void test_equals() {
         LSAPR_POLICY_AUDIT_EVENTS_INFO obj1 = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        assertNotEquals(obj1, null);
+        assertEquals(obj1, obj1);
         LSAPR_POLICY_AUDIT_EVENTS_INFO obj2 = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
         assertEquals(obj1, obj2);
         obj1.setAuditingMode(true);
