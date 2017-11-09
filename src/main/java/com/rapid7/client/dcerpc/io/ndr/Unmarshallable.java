@@ -35,7 +35,7 @@ public interface Unmarshallable extends DataType {
      * @param in The stream to read from
      * @throws IOException On error
      */
-    void unmarshallPreamble(PacketInput in) throws IOException;
+    void unmarshalPreamble(PacketInput in) throws IOException;
 
     /**
      * The entity represents the DataType itself. For example:
@@ -45,7 +45,7 @@ public interface Unmarshallable extends DataType {
      * @param in The stream to read from
      * @throws IOException On error
      */
-    void unmarshallEntity(PacketInput in) throws IOException;
+    void unmarshalEntity(PacketInput in) throws IOException;
 
     /**
      * The deferrals are any data that is to be deferred to the end of this data type.
@@ -54,5 +54,5 @@ public interface Unmarshallable extends DataType {
      * @param in The stream to read from
      * @throws IOException On error
      */
-    void unmarshallDeferrals(PacketInput in) throws IOException;
+    void unmarshalDeferrals(PacketInput in) throws IOException;
 }

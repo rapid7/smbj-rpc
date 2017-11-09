@@ -30,9 +30,10 @@ public class PacketOutput extends PrimitiveOutput {
     }
 
     public <T extends Marshallable> T writeMarshallable(T marshallable) throws IOException {
-        marshallable.marshallPreamble(this);
-        marshallable.marshallEntity(this);
-        marshallable.marshallDeferrals(this);
+        marshallable.marshalPreamble(this);
+        marshallable.marshalEntity(this);
+        marshallable.marshalDeferrals(this);
+        // TODO Align should be called, but can require resetting the packet counts
         return marshallable;
     }
 

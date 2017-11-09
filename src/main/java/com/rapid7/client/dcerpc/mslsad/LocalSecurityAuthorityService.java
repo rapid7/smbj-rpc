@@ -19,18 +19,20 @@
 package com.rapid7.client.dcerpc.mslsad;
 
 import java.io.IOException;
+import java.util.EnumSet;
+import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
+import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.*;
-import com.rapid7.client.dcerpc.mslsad.objects.PolicyAuditEventsInfo;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_ACCOUNT_DOM_INFO;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_AUDIT_EVENTS_INFO;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_PRIMARY_DOM_INFO;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
-import static com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass.POLICY_AUDIT_EVENTS_INFORMATION;
-
 /**
  * This class implements a partial Local Security Authority service in according with [MS-LSAD] and [MS-LSAT].
- *
- * TODO: Add more functionalities.
  *
  * @see <a href= "https://msdn.microsoft.com/en-us/library/cc234225.aspx">[MS-LSAD]</a>
  * @see <a href= "https://msdn.microsoft.com/en-us/library/cc234420.aspx">[MS-LSAT]</a>
@@ -47,12 +49,31 @@ public class LocalSecurityAuthorityService {
         }
     }
 
-    public PolicyAuditEventsInfo getAuditPolicy(ContextHandle handle) throws IOException {
-        checkHandle(handle);
+    public ContextHandle openPolicyHandle(String serverName) throws IOException {
+        final LsarOpenPolicy2Request request = new LsarOpenPolicy2Request(serverName, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        HandleResponse response = transport.call(request);
+        if (response.getReturnValue() != 0) {
+            throw new RPCException("LsarOpenPolicy2Request", response.getReturnValue());
+        }
+        return response.getHandle();
+    }
 
-        final LsarQueryInformationPolicyRequest queryRequest = new LsarQueryInformationPolicyRequest(handle, POLICY_AUDIT_EVENTS_INFORMATION);
-        final PolicyAuditEventsInformationResponse queryResponse = transport.call(queryRequest);
-        return queryResponse.getPolicyAuditInformation();
+    public LSAPR_POLICY_AUDIT_EVENTS_INFO getAuditPolicy(ContextHandle handle) throws IOException {
+        checkHandle(handle);
+        final LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation queryRequest = new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(handle);
+        return transport.call(queryRequest).getPolicyInformation();
+    }
+
+    public LSAPR_POLICY_PRIMARY_DOM_INFO getPolicyPrimaryDomainInformation(ContextHandle policyHandle) throws IOException {
+        checkHandle(policyHandle);
+        final LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation queryRequest = new LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation(policyHandle);
+        return transport.call(queryRequest).getPolicyInformation();
+    }
+
+    public LSAPR_POLICY_ACCOUNT_DOM_INFO getPolicyAccountDomainInformation(ContextHandle policyHandle) throws IOException {
+        checkHandle(policyHandle);
+        final LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation queryRequest = new LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation(policyHandle);
+        return transport.call(queryRequest).getPolicyInformation();
     }
 
     public String[] getLookupAcctPrivs(ContextHandle handle, String sid) throws IOException {

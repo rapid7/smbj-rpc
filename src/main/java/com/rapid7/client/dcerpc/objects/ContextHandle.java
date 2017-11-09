@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.bouncycastle.util.encoders.Hex;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /***
@@ -37,7 +39,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * However, since the server will be computing these handles, DCERPC will treat these as:
  *   byte[20]
  */
-public class ContextHandle implements Unmarshallable {
+public class ContextHandle implements Unmarshallable, Marshallable {
     private final byte[] handle;
 
     public ContextHandle(final String hString) {
@@ -86,17 +88,32 @@ public class ContextHandle implements Unmarshallable {
     }
 
     @Override
-    public void unmarshallPreamble(PacketInput in) throws IOException {
+    public void marshalPreamble(PacketOutput out) throws IOException {
         // Fixed array
     }
 
     @Override
-    public void unmarshallEntity(PacketInput in) throws IOException {
+    public void marshalEntity(PacketOutput out) throws IOException {
+        out.write(this.handle);
+    }
+
+    @Override
+    public void marshalDeferrals(PacketOutput out) throws IOException {
+        // Fixed array
+    }
+
+    @Override
+    public void unmarshalPreamble(PacketInput in) throws IOException {
+        // Fixed array
+    }
+
+    @Override
+    public void unmarshalEntity(PacketInput in) throws IOException {
         in.readFully(this.handle);
     }
 
     @Override
-    public void unmarshallDeferrals(PacketInput in) throws IOException {
+    public void unmarshalDeferrals(PacketInput in) throws IOException {
         // Fixed array
     }
 

@@ -18,16 +18,23 @@
  */
 package com.rapid7.client.dcerpc.mslsad.objects;
 
-public enum PolicyInformationClass {
-    POLICY_AUDIT_EVENTS_INFORMATION(2);
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
-    private PolicyInformationClass(final int infoLevel) {
-        this.infoLevel = infoLevel;
+import static org.testng.Assert.assertEquals;
+
+public class Test_POLICY_INFORMATION_CLASS {
+
+    @DataProvider
+    public Object[][] data_getInfoLevel() {
+        return new Object[][] {
+                {POLICY_INFORMATION_CLASS.POLICY_AUDIT_EVENTS_INFORMATION, (short) 2},
+                {POLICY_INFORMATION_CLASS.POLICY_PRIMARY_DOMAIN_INFORMATION, (short) 3},
+                {POLICY_INFORMATION_CLASS.POLICY_ACCOUNT_DOMAIN_INFORMATION, (short) 5}
+        };
     }
-
-    public int getInfoLevel() {
-        return infoLevel;
+    @Test(dataProvider = "data_getInfoLevel")
+    public void test_getInfoLevel(POLICY_INFORMATION_CLASS policyInformationClass, short expectedInfoLevel) {
+        assertEquals(policyInformationClass.getInfoLevel(), expectedInfoLevel);
     }
-
-    private final int infoLevel;
 }

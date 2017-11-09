@@ -18,13 +18,37 @@
  */
 package com.rapid7.client.dcerpc.mssamr;
 
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_MORE_ENTRIES;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
-import com.rapid7.client.dcerpc.mssamr.messages.*;
+import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
@@ -37,24 +61,21 @@ public class SecurityAccountManagerService {
         this.transport = transport;
     }
 
-    public ServerHandle getServerHandle(String serverName) throws IOException {
+    public ServerHandle openServerHandle(String serverName) throws IOException {
         final SamrConnect2Request request = new SamrConnect2Request(serverName, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
         final SamrConnect2Response response = transport.call(request);
         return response.getHandle();
     }
 
-    public DomainHandle openDomain(String serverName, SID sid) throws IOException {
-        final ServerHandle handle = getServerHandle(serverName);
-        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(handle, sid,
-            EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+    public DomainHandle openDomain(ServerHandle serverHandle, SID sid) throws IOException {
+        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, sid, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
         final SamrOpenDomainResponse response = transport.call(request);
         return response.getHandle();
     }
 
-    public DomainHandle openDomain(ServerHandle serverHandle, SID sid) throws IOException {
-        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, sid,
-            EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        final SamrOpenDomainResponse response = transport.call(request);
+    public GroupHandle openGroup(DomainHandle domainHandle, int groupRID) throws IOException {
+        final SamrOpenGroupRequest request = new SamrOpenGroupRequest(domainHandle, EnumSet.of(AccessMask.MAXIMUM_ALLOWED), groupRID);
+        final SamrOpenGroupResponse response = transport.call(request);
         return response.getHandle();
     }
 
@@ -88,5 +109,25 @@ public class SecurityAccountManagerService {
 
         if (response.getReturnValue() != 0)
             throw new IOException("Failed to close handle: " + new String(handle.getBytes()));
+    }
+
+    public List<DomainInfo> getDomainsForServer(ServerHandle serverHandle) throws IOException {
+        final int bufferSize = 0xffff;
+        List<DomainInfo> domains = new ArrayList<>();
+        for (int enumContext = 0;;) {
+            SamrEnumerateDomainsInSamServerRequest request = new SamrEnumerateDomainsInSamServerRequest(serverHandle,
+                enumContext, bufferSize);
+            final SamrEnumerateDomainsInSamServerResponse response = transport.call(request);
+            final int returnCode = response.getReturnValue();
+            enumContext = response.getResumeHandle();
+            if (ERROR_MORE_ENTRIES.is(returnCode)) {
+                domains.addAll(response.getDomainList());
+            } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
+                domains.addAll(response.getDomainList());
+                return Collections.unmodifiableList(domains);
+            } else {
+                throw new RPCException("EnumDomainsInSamServer", returnCode);
+            }
+        }
     }
 }
