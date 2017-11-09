@@ -32,6 +32,7 @@ import com.rapid7.client.dcerpc.objects.RPC_SID;
 import com.rapid7.client.dcerpc.objects.RPC_UNICODE_STRING;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
@@ -124,6 +125,33 @@ public class Test_LSAPR_POLICY_ACCOUNT_DOM_INFO {
         assertEquals(bin.available(), 0);
         assertEquals(obj.getDomainName(), expectedName);
         assertEquals(obj.getDomainSid(), expectedSid);
+    }
+
+    @Test
+    public void test_hashCode() {
+        LSAPR_POLICY_ACCOUNT_DOM_INFO obj = new LSAPR_POLICY_ACCOUNT_DOM_INFO();
+        assertEquals(obj.hashCode(), 961);
+        obj.setDomainName(RPC_UNICODE_STRING.of(false));
+        assertEquals(obj.hashCode(), 1219509);
+        obj.setDomainSid(new RPC_SID());
+        assertEquals(obj.hashCode(), 2143030);
+    }
+
+    @Test
+    public void test_equals() {
+        LSAPR_POLICY_ACCOUNT_DOM_INFO obj1 = new LSAPR_POLICY_ACCOUNT_DOM_INFO();
+        assertEquals(obj1, obj1);
+        assertNotEquals(obj1, null);
+        LSAPR_POLICY_ACCOUNT_DOM_INFO obj2 = new LSAPR_POLICY_ACCOUNT_DOM_INFO();
+        assertEquals(obj1, obj2);
+        obj1.setDomainName(RPC_UNICODE_STRING.of(false));
+        assertNotEquals(obj1, obj2);
+        obj2.setDomainName(RPC_UNICODE_STRING.of(false));
+        assertEquals(obj1, obj2);
+        obj1.setDomainSid(new RPC_SID());
+        assertNotEquals(obj1, obj2);
+        obj2.setDomainSid(new RPC_SID());
+        assertEquals(obj1, obj2);
     }
 
     @Test
