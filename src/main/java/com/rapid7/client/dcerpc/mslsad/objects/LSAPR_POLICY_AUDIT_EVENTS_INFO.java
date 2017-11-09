@@ -131,7 +131,7 @@ public class LSAPR_POLICY_AUDIT_EVENTS_INFO implements Unmarshallable {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
-            return false;
+            return true;
         } else if (!(obj instanceof LSAPR_POLICY_AUDIT_EVENTS_INFO)) {
             return false;
         }
