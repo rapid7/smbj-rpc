@@ -222,16 +222,25 @@ public class Test_RPCSID {
 
     @Test
     public void test_hashCode() {
-        RPCSID rpc_sid = new RPCSID();
-        assertEquals(rpc_sid.hashCode(), 923521);
-        rpc_sid.setRevision((char) 200);
-        assertEquals(rpc_sid.hashCode(), 6881721);
-        rpc_sid.setSubAuthorityCount((char) 5);
-        assertEquals(rpc_sid.hashCode(), 6886526);
-        rpc_sid.setIdentifierAuthority(new byte[]{1, 2});
-        assertEquals(rpc_sid.hashCode(), 6917340);
-        rpc_sid.setSubAuthority(new long[]{2, 5, 7});
-        assertEquals(rpc_sid.hashCode(), 6949215);
+        RPCSID rpc_sid1 = new RPCSID();
+        RPCSID rpc_sid2 = new RPCSID();
+        assertEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
+        rpc_sid1.setRevision((char) 200);
+        assertNotEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
+        rpc_sid2.setRevision((char) 200);
+        assertEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
+        rpc_sid1.setSubAuthorityCount((char) 5);
+        assertNotEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
+        rpc_sid2.setSubAuthorityCount((char) 5);
+        assertEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
+        rpc_sid1.setIdentifierAuthority(new byte[]{1, 2});
+        assertNotEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
+        rpc_sid2.setIdentifierAuthority(new byte[]{1, 2});
+        assertEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
+        rpc_sid1.setSubAuthority(new long[]{2, 5, 7});
+        assertNotEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
+        rpc_sid2.setSubAuthority(new long[]{2, 5, 7});
+        assertEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
     }
 
     @Test

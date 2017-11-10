@@ -169,14 +169,21 @@ public class Test_LSAPRPolicyAuditEventsInfo {
 
     @Test
     public void test_hashCode() {
-        LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
-        assertEquals(obj.hashCode(), 1188757);
-        obj.setAuditingMode(true);
-        assertEquals(obj.hashCode(), 1182991);
-        obj.setEventAuditingOptions(new int[]{1, 2, 3});
-        assertEquals(obj.hashCode(), 2138318);
-        obj.setMaximumAuditEventCount(5);
-        assertEquals(obj.hashCode(), 2138323);
+        LSAPRPolicyAuditEventsInfo obj1 = new LSAPRPolicyAuditEventsInfo();
+        LSAPRPolicyAuditEventsInfo obj2 = new LSAPRPolicyAuditEventsInfo();
+        assertEquals(obj1.hashCode(), obj2.hashCode());
+        obj1.setAuditingMode(true);
+        assertNotEquals(obj1.hashCode(), obj2.hashCode());
+        obj2.setAuditingMode(true);
+        assertEquals(obj1.hashCode(), obj2.hashCode());
+        obj1.setEventAuditingOptions(new int[]{1, 2, 3});
+        assertNotEquals(obj1.hashCode(), obj2.hashCode());
+        obj2.setEventAuditingOptions(new int[]{1, 2, 3});
+        assertEquals(obj1.hashCode(), obj2.hashCode());
+        obj1.setMaximumAuditEventCount(5);
+        assertNotEquals(obj1.hashCode(), obj2.hashCode());
+        obj2.setMaximumAuditEventCount(5);
+        assertEquals(obj1.hashCode(), obj2.hashCode());
     }
 
     @Test
