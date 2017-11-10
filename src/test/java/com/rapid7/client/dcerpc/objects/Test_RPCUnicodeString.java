@@ -216,21 +216,26 @@ public class Test_RPCUnicodeString {
         assertEquals(obj.getValue(), value);
     }
 
-
     @Test
     public void test_hashCode_NotNullTerminated() {
-        RPCUnicodeString obj = RPCUnicodeString.of(false);
-        assertEquals(obj.hashCode(), 39308);
-        obj.setValue("testƟ123");
-        assertEquals(obj.hashCode(), -1136940719);
+        RPCUnicodeString obj1 = RPCUnicodeString.of(false);
+        RPCUnicodeString obj2 = RPCUnicodeString.of(false);
+        assertEquals(obj1.hashCode(), obj2.hashCode());
+        obj1.setValue("testƟ123");
+        assertNotEquals(obj1.hashCode(), obj2.hashCode());
+        obj2.setValue("testƟ123");
+        assertEquals(obj1.hashCode(), obj2.hashCode());
     }
 
     @Test
     public void test_hashCode_NullTerminated() {
-        RPCUnicodeString obj = RPCUnicodeString.of(true);
-        assertEquals(obj.hashCode(), 39122);
-        obj.setValue("testƟ123");
-        assertEquals(obj.hashCode(), -1136940905);
+        RPCUnicodeString obj1 = RPCUnicodeString.of(true);
+        RPCUnicodeString obj2 = RPCUnicodeString.of(true);
+        assertEquals(obj1.hashCode(), obj2.hashCode());
+        obj1.setValue("testƟ123");
+        assertNotEquals(obj1.hashCode(), obj2.hashCode());
+        obj2.setValue("testƟ123");
+        assertEquals(obj1.hashCode(), obj2.hashCode());
     }
 
     @Test

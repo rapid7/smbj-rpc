@@ -136,12 +136,17 @@ public class Test_LSAPRPolicyPrimaryDomInfo {
 
     @Test
     public void test_hashCode() {
-        LSAPRPolicyPrimaryDomInfo obj = new LSAPRPolicyPrimaryDomInfo();
-        assertEquals(obj.hashCode(), 961);
-        obj.setName(RPCUnicodeString.of(false));
-        assertEquals(obj.hashCode(), 1219509);
-        obj.setSid(new RPCSID());
-        assertEquals(obj.hashCode(), 2143030);
+        LSAPRPolicyPrimaryDomInfo obj1 = new LSAPRPolicyPrimaryDomInfo();
+        LSAPRPolicyPrimaryDomInfo obj2 = new LSAPRPolicyPrimaryDomInfo();
+        assertEquals(obj1.hashCode(), obj2.hashCode());
+        obj1.setName(RPCUnicodeString.of(false));
+        assertNotEquals(obj1.hashCode(), obj2.hashCode());
+        obj2.setName(RPCUnicodeString.of(false));
+        assertEquals(obj1.hashCode(), obj2.hashCode());
+        obj1.setSid(new RPCSID());
+        assertNotEquals(obj1.hashCode(), obj2.hashCode());
+        obj2.setSid(new RPCSID());
+        assertEquals(obj1.hashCode(), obj2.hashCode());
     }
 
     @Test
