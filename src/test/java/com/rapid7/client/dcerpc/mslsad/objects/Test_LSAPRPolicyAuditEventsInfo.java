@@ -34,10 +34,10 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
-public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
+public class Test_LSAPRPolicyAuditEventsInfo {
     @Test
     public void test_getters_default() {
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
         assertFalse(obj.isAuditingMode());
         assertNull(obj.getEventAuditingOptions());
         assertEquals(obj.getMaximumAuditEventCount(), 0);
@@ -45,7 +45,7 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
 
     @Test
     public void test_setters() {
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
         obj.setAuditingMode(true);
         int[] eventAuditingOptions = new int[]{1, 2, 3};
         obj.setEventAuditingOptions(eventAuditingOptions);
@@ -58,7 +58,7 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
     @Test
     public void test_unmarhsalPreamble() throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("0102"));
-        new LSAPR_POLICY_AUDIT_EVENTS_INFO().unmarshalPreamble(new PacketInput(bin));
+        new LSAPRPolicyAuditEventsInfo().unmarshalPreamble(new PacketInput(bin));
         assertEquals(bin.available(), 2);
     }
 
@@ -89,7 +89,7 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
         PacketInput in = new PacketInput(bin);
         in.readFully(new byte[mark]);
 
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
         obj.unmarshalEntity(in);
         assertEquals(obj.isAuditingMode(), isAuditingEnabled);
         assertEquals(obj.getEventAuditingOptions(), eventAuditingOptions);
@@ -100,7 +100,7 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
     public void test_unmarshallEntity_InvalidMaximumAuditEventCount() throws IOException {
         // isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=1
         String hex = "01 777777 00000000 01000000";
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
         IllegalArgumentException actual = null;
         try {
             obj.unmarshalEntity(new PacketInput(new ByteArrayInputStream(Hex.decode(hex))));
@@ -140,7 +140,7 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
         PacketInput in = new PacketInput(bin);
         in.readFully(new byte[mark]);
 
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
         obj.setAuditingMode(true);
         obj.setMaximumAuditEventCount(maximumAuditEventCount);
         obj.setEventAuditingOptions(eventAuditingOptions);
@@ -154,7 +154,7 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
     public void test_ummarshalDeferrals_InvalidMaximumCount() throws IOException {
         // MaximumCount=4
         String hex = "04000000";
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
         obj.setMaximumAuditEventCount(5);
         obj.setEventAuditingOptions(new int[3]);
         IllegalArgumentException actual = null;
@@ -169,7 +169,7 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
 
     @Test
     public void test_hashCode() {
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
         assertEquals(obj.hashCode(), 1188757);
         obj.setAuditingMode(true);
         assertEquals(obj.hashCode(), 1182991);
@@ -181,10 +181,10 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
 
     @Test
     public void test_equals() {
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj1 = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj1 = new LSAPRPolicyAuditEventsInfo();
         assertNotEquals(obj1, null);
         assertEquals(obj1, obj1);
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj2 = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj2 = new LSAPRPolicyAuditEventsInfo();
         assertEquals(obj1, obj2);
         obj1.setAuditingMode(true);
         assertNotEquals(obj1, obj2);
@@ -202,13 +202,13 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
 
     @Test
     public void test_toString_default() {
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
         assertEquals(obj.toString(), "LSAPR_POLICY_AUDIT_EVENTS_INFO{AuditingMode:false, EventAuditingOptions:null, MaximumAuditEventCount:0}");
     }
 
     @Test
     public void test_toString() {
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
         obj.setAuditingMode(true);
         obj.setEventAuditingOptions(new int[]{1, 2, 3});
         obj.setMaximumAuditEventCount(5);
