@@ -32,9 +32,9 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *      [size_is(EntriesRead)] PSAMPR_RID_ENUMERATION;: 4 (Max[4, 4])</pre>
  * This is an abstract class that represents the SAMPR_ENUMERATION_BUFFER. The initEntity
  * method must be overridden to instantiate the instance contained in the buffer.
- * <br/>
+ * <br>
  * <a href="https://msdn.microsoft.com/en-us/library/cc245561.aspx">SAMPR_RID_ENUMERATION</a>
- * <blockquote cite="https://msdn.microsoft.com/en-us/library/cc245561.aspx"><pre>
+ * <blockquote><pre>
  * The SAMPR_ENUMERATION_BUFFER structure holds an array of SAMPR_RID_ENUMERATION elements.
  *      typedef struct _SAMPR_ENUMERATION_BUFFER {
  *          unsigned long EntriesRead;

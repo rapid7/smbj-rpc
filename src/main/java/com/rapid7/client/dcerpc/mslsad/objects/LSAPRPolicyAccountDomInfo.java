@@ -34,7 +34,7 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
  *      RPC_UNICODE_STRING DomainName;: 4
  *      PRPC_SID DomainSid;: 4</pre>
  * <a href="https://msdn.microsoft.com/en-us/library/cc234266.aspx?f=255&MSPPError=-2147217396">LSAPR_POLICY_ACCOUNT_DOM_INFO</a>
- * <blockquote cite="https://msdn.microsoft.com/en-us/library/cc234266.aspx?f=255&MSPPError=-2147217396"><pre>
+ * <blockquote><pre>
  * The LSAPR_POLICY_ACCOUNT_DOM_INFO structure contains information about the server's account domain. The following structure corresponds to the PolicyAccountDomainInformation and PolicyLocalAccountDomainInformation information classes.
  *      typedef struct _LSAPR_POLICY_ACCOUNT_DOM_INFO {
  *          RPC_UNICODE_STRING DomainName;

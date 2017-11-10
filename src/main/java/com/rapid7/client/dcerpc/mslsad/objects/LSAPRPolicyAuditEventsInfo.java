@@ -31,7 +31,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *      [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;: 4
  *      [range(0,1000)] unsigned long MaximumAuditEventCount;: 4</pre>
  * <a href="https://msdn.microsoft.com/en-us/library/cc234264.aspx?f=255&MSPPError=-2147217396">LSAPR_POLICY_AUDIT_EVENTS_INFO</a>
- * <blockquote cite="https://msdn.microsoft.com/en-us/library/cc234264.aspx?f=255&MSPPError=-2147217396"><pre>
+ * <blockquote><pre>
  * The LSAPR_POLICY_AUDIT_EVENTS_INFO structure contains auditing options on the server.
  *      typedef struct _LSAPR_POLICY_AUDIT_EVENTS_INFO {
  *          unsigned char AuditingMode;
@@ -44,7 +44,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *  AuditingMode: 0 indicates that auditing is disabled. All other values indicate that auditing is enabled.
  *  EventAuditingOptions: An array of values specifying the auditing options for a particular audit type. The auditing type of an element is represented by its index in the array, which is identified by the POLICY_AUDIT_EVENT_TYPE enumeration (see section 2.2.4.20). Each element MUST contain one or more of the values in the table below.
  *      If the MaximumAuditEventCount field has a value other than 0, this field MUST NOT be NULL.
- *  MaximumAuditEventCount: The number of entries in the EventAuditingOptions array.<17></pre></blockquote>
+ *  MaximumAuditEventCount: The number of entries in the EventAuditingOptions array.</pre></blockquote>
  */
 public class LSAPRPolicyAuditEventsInfo implements Unmarshallable {
     // <NDR: unsigned char> unsigned char AuditingMode;

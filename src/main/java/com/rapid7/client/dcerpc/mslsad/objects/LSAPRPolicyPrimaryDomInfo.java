@@ -34,7 +34,7 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
  *      RPC_UNICODE_STRING Name;: 4
  *      PRPC_SID Sid;: 4</pre>
  * <a href="https://msdn.microsoft.com/en-us/library/cc234265.aspx">LSAPR_POLICY_PRIMARY_DOM_INFO</a>
- * <blockquote cite="https://msdn.microsoft.com/en-us/library/cc234265.aspx"><pre>
+ * <blockquote><pre>
  * The LSAPR_POLICY_PRIMARY_DOM_INFO structure defines the server's primary domain.
  *  The following structure corresponds to the PolicyPrimaryDomainInformation information class.
  *      typedef struct _LSAPR_POLICY_PRIMARY_DOM_INFO {

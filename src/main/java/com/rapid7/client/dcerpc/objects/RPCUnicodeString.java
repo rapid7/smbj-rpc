@@ -28,12 +28,12 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
  * Represents a UTF-16 encoded unicode string in dcerpc.
- * <br/>
+ * <br>
  * <b>Alignment: 4</b><pre>
  *      unsigned short Length;: 2
  *      unsigned short MaximumLength;: 2
  *      [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;: 4 (Max[4, 1])</pre>
- * <br/>
+ * <br>
  * <a href="https://msdn.microsoft.com/en-us/library/cc230365.aspx">RPC_UNICODE_STRING</a>:
  * <blockquote><pre>
  *  The RPC_UNICODE_STRING structure specifies a Unicode string. This structure is defined in IDL as follows:
@@ -47,16 +47,16 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *  Length: The length, in bytes, of the string pointed to by the Buffer member, not including the terminating null character if any. The length MUST be a multiple of 2. The length SHOULD equal the entire size of the Buffer, in which case there is no terminating null character. Any method that accesses this structure MUST use the Length specified instead of relying on the presence or absence of a null character.
  *  MaximumLength: The maximum size, in bytes, of the string pointed to by Buffer. The size MUST be a multiple of 2. If not, the size MUST be decremented by 1 prior to use. This value MUST not be less than Length.
  *  Buffer: A pointer to a string buffer. If MaximumLength is greater than zero, the buffer MUST contain a non-null value.
- * </pre></blockquote cite="https://msdn.microsoft.com/en-us/library/cc230365.aspx">
+ * </pre></blockquote>
  * NOTE: This structure has purposely not been mapped 1-1 with the dcerpc struct.
  * There is no practical reason for a client to access the Length, MaximumLength, or raw byte[] of this
  * struct, and so this class only stores the UTF-16 Java String. Conversions are done during marshalling/unmarshalling.
- * <br/>
+ * <br>
  * An RPC_UNICODE_STRING can be null terminated. However this is abstracted away from the client and is only
  * used during marshalling or unmarshalling.
  * You should not provide a null terminator to your String when marshalling this object, and should
  * not expect one in return.
- * <br/>
+ * <br>
  * <b>Marshalling Usage:</b><pre>
  *      String myValue = "some string";
  *      RPC_UNICODE_STRING rpcUnicodeString = RPC_UNICODE_STRING.of(true, myValue);

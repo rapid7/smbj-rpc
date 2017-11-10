@@ -29,9 +29,9 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
  *      unsigned long RelativeId: 4
  *      RPC_UNICODE_STRING Name: 4</pre>
  * This class represents the structure returned with {@link EnumeratedDomains}.
- * <br/>
+ * <br>
  * <a href="https://msdn.microsoft.com/en-us/library/cc245560.aspx">SAMPR_RID_ENUMERATION</a>
- * <blockquote cite="https://msdn.microsoft.com/en-us/library/cc245560.aspx"><pre>
+ * <blockquote><pre>
  *  The SAMPR_RID_ENUMERATION structure holds the name and RID information about an account.
  *      typedef struct _SAMPR_RID_ENUMERATION {
  *          unsigned long RelativeId;

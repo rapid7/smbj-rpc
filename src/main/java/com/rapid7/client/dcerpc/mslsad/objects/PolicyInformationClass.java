@@ -20,9 +20,9 @@ package com.rapid7.client.dcerpc.mslsad.objects;
 
 /**
  * <b>Alignment: 2</b>
- * <br/>
+ * <br>
  * <a href="https://msdn.microsoft.com/en-us/library/cc234262.aspx">POLICY_INFORMATION_CLASS</a>:
- * <blockquote cite="https://msdn.microsoft.com/en-us/library/cc234262.aspx"><pre>
+ * <blockquote><pre>
  * The POLICY_INFORMATION_CLASS enumeration type contains values that specify the type of policy being queried or set by the client.
  *      typedef  enum _POLICY_INFORMATION_CLASS
  *      {
@@ -58,7 +58,7 @@ package com.rapid7.client.dcerpc.mslsad.objects;
  *  PolicyDnsDomainInformationInt: DNS domain information.
  *  PolicyLocalAccountDomainInformation: Local account domain information.
  *  PolicyLastEntry: Not used in this protocol. Present to mark the end of the enumeration.
- *  The following citation contains a timeline of when each enumeration value was introduced.<16>
+ *  The following citation contains a timeline of when each enumeration value was introduced.
  *  The values in this enumeration are used to define the contents of the LSAPR_POLICY_INFORMATION (section 2.2.4.2) union, where the structure associated with each enumeration value is specified. The structure associated with each enumeration value defines the meaning of that value to this protocol.
  *  </pre></blockquote>
  */

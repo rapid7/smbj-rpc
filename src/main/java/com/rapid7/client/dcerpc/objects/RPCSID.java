@@ -36,7 +36,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *      RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;: 1
  *      [size_is(SubAuthorityCount)] unsigned long SubAuthority[];: 4 (Max[4, 4])</pre>
  * <a href="https://msdn.microsoft.com/en-us/library/cc230364.aspx">RPC_SID</a>:
- * <blockquote cite="https://msdn.microsoft.com/en-us/library/cc230364.aspx"><pre>
+ * <blockquote><pre>
  * The RPC_SID structure is an IDL representation of the SID type (as specified in  section 2.4.2) for use by RPC-based protocols.
  *      typedef struct _RPC_SID {
  *          unsigned char Revision;
