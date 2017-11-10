@@ -44,13 +44,13 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 public class SAMPRRIDEnumeration implements Unmarshallable {
 
     private int relativeId;
-    private RPCUnicodeString name;
+    private RPCUnicodeString.NonNullTerminated name;
 
-    public String getName() {
-        return name.getValue();
+    public RPCUnicodeString.NonNullTerminated getName() {
+        return name;
     }
 
-    public void setName(final RPCUnicodeString name) {
+    public void setName(final RPCUnicodeString.NonNullTerminated name) {
         this.name = name;
     }
 
@@ -73,7 +73,7 @@ public class SAMPRRIDEnumeration implements Unmarshallable {
         // <NDR: unsigned long> unsigned long RelativeId;
         // Alignment: 4 - Already aligned
         relativeId = in.readInt();
-        name = RPCUnicodeString.of(false);
+        name = new RPCUnicodeString.NonNullTerminated();
         name.unmarshalEntity(in);
     }
 

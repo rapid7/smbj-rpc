@@ -48,15 +48,15 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 public class LSAPRPolicyAccountDomInfo implements Unmarshallable {
 
     // <NDR: struct> RPC_UNICODE_STRING DomainName;
-    private RPCUnicodeString domainName;
+    private RPCUnicodeString.NonNullTerminated domainName;
     // <NDR: pointer> PRPC_SID DomainSid;
     private RPCSID domainSid;
 
-    public RPCUnicodeString getDomainName() {
+    public RPCUnicodeString.NonNullTerminated getDomainName() {
         return domainName;
     }
 
-    public void setDomainName(RPCUnicodeString domainName) {
+    public void setDomainName(RPCUnicodeString.NonNullTerminated domainName) {
         this.domainName = domainName;
     }
 
@@ -70,7 +70,7 @@ public class LSAPRPolicyAccountDomInfo implements Unmarshallable {
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
-        domainName = RPCUnicodeString.of(false);
+        domainName = new RPCUnicodeString.NonNullTerminated();
         domainName.unmarshalPreamble(in);
     }
 
@@ -115,6 +115,6 @@ public class LSAPRPolicyAccountDomInfo implements Unmarshallable {
 
     @Override
     public String toString() {
-        return String.format("LSAPR_POLICY_ACCOUNT_DOM_INFO{DomainName:%s, DomainSid:%s}", getDomainName(), getDomainSid());
+        return String.format("LSAPR_POLICY_ACCOUNT_DOM_INFO{DomainName:%s, DomainSid:%s}", this.domainName, this.domainSid);
     }
 }
