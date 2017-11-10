@@ -26,27 +26,30 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
- * The LSAPR_POLICY_AUDIT_EVENTS_INFO structure is used to set and query the system's auditing rules. The
- * LsaQueryInformationPolicy and LsaSetInformationPolicy functions use this structure when their InformationClass
- * parameters are set to PolicyAuditEventsInformation.
- *
- * <pre>
+ * <b>Alignment: 4</b> (Max[1,4,4])<pre>
+ *      unsigned char AuditingMode;: 1
+ *      [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;: 4
+ *      [range(0,1000)] unsigned long MaximumAuditEventCount;: 4</pre>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc234264.aspx?f=255&MSPPError=-2147217396">LSAPR_POLICY_AUDIT_EVENTS_INFO</a>
+ * <blockquote><pre>
+ * The LSAPR_POLICY_AUDIT_EVENTS_INFO structure contains auditing options on the server.
  *      typedef struct _LSAPR_POLICY_AUDIT_EVENTS_INFO {
  *          unsigned char AuditingMode;
- *          [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
+ *          [size_is(MaximumAuditEventCount)]
+ *          unsigned long* EventAuditingOptions;
  *          [range(0,1000)] unsigned long MaximumAuditEventCount;
  *      } LSAPR_POLICY_AUDIT_EVENTS_INFO,
- *       *PLSAPR_POLICY_AUDIT_EVENTS_INFO;
- * </pre>
+ *      *PLSAPR_POLICY_AUDIT_EVENTS_INFO;
  *
- * @see <a href =
- * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms721901(v=vs.85).aspx">POLICY_AUDIT_EVENTS_INFO
- * structure</a>
+ *  AuditingMode: 0 indicates that auditing is disabled. All other values indicate that auditing is enabled.
+ *  EventAuditingOptions: An array of values specifying the auditing options for a particular audit type. The auditing type of an element is represented by its index in the array, which is identified by the POLICY_AUDIT_EVENT_TYPE enumeration (see section 2.2.4.20). Each element MUST contain one or more of the values in the table below.
+ *      If the MaximumAuditEventCount field has a value other than 0, this field MUST NOT be NULL.
+ *  MaximumAuditEventCount: The number of entries in the EventAuditingOptions array.</pre></blockquote>
  */
-public class LSAPR_POLICY_AUDIT_EVENTS_INFO implements Unmarshallable {
+public class LSAPRPolicyAuditEventsInfo implements Unmarshallable {
     // <NDR: unsigned char> unsigned char AuditingMode;
     private boolean auditingMode;
-    // <NDR: *conformant array> [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
+    // <NDR: pointer> [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
     private int[] eventAuditingOptions;
     // <NDR: unsigned long> [range(0,1000)] unsigned long MaximumAuditEventCount;
     private int maximumAuditEventCount;
@@ -76,24 +79,23 @@ public class LSAPR_POLICY_AUDIT_EVENTS_INFO implements Unmarshallable {
     }
 
     @Override
-    public Alignment getAlignment() {
-        // unsigned char AuditingMode: 1
-        // [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions: 4
-        // [range(0,1000)] unsigned long MaximumAuditEventCount: 4
-        return Alignment.FOUR;
-    }
-
-    @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
         // No preamble
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
+        in.align(Alignment.FOUR);
+        // <NDR: unsigned char> unsigned char AuditingMode;: 1
+        // Alignment: 1 - Already aligned
         this.auditingMode = in.readBoolean();
-        // Alignment to pointer (4 bytes)
+        // <NDR: pointer> [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
+        // Alignment: 4 - Pad 3 bytes
         in.fullySkipBytes(3);
         boolean eventAuditingOptionsNull = in.readReferentID() == 0;
+        // <NDR: unsigned long> [range(0,1000)] unsigned long MaximumAuditEventCount;
+        // Alignment: 4 - Already aligned
         this.maximumAuditEventCount = in.readInt();
         if (eventAuditingOptionsNull) {
             if (this.maximumAuditEventCount != 0) {
@@ -107,8 +109,12 @@ public class LSAPR_POLICY_AUDIT_EVENTS_INFO implements Unmarshallable {
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        // MaximumCount
         if (this.eventAuditingOptions != null) {
+            // <NDR: conformant array> [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
+            // Alignment: 4 (Max[4,4])
+            in.align(Alignment.FOUR);
+            // <NDR: unsigned long> MaximumCount
+            // Alignment: 4 - Already aligned
             final int maximumCount = in.readInt();
             if (maximumCount < this.maximumAuditEventCount) {
                 throw new IllegalArgumentException(String.format(
@@ -116,6 +122,8 @@ public class LSAPR_POLICY_AUDIT_EVENTS_INFO implements Unmarshallable {
                         maximumCount, this.maximumAuditEventCount));
             }
             for (int i = 0; i < this.eventAuditingOptions.length; i++) {
+                // <NDR: unsigned long> MaximumCount
+                // Alignment: 4 - Already aligned
                 this.eventAuditingOptions[i] = in.readInt();
             }
         }
@@ -132,10 +140,10 @@ public class LSAPR_POLICY_AUDIT_EVENTS_INFO implements Unmarshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof LSAPR_POLICY_AUDIT_EVENTS_INFO)) {
+        } else if (!(obj instanceof LSAPRPolicyAuditEventsInfo)) {
             return false;
         }
-        LSAPR_POLICY_AUDIT_EVENTS_INFO other = (LSAPR_POLICY_AUDIT_EVENTS_INFO) obj;
+        LSAPRPolicyAuditEventsInfo other = (LSAPRPolicyAuditEventsInfo) obj;
         return Objects.equals(isAuditingMode(), other.isAuditingMode()) &&
                 Arrays.equals(getEventAuditingOptions(), other.getEventAuditingOptions()) &&
                 Objects.equals(getMaximumAuditEventCount(), other.getMaximumAuditEventCount());

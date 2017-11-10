@@ -31,9 +31,6 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc245560.aspx">
  *       https://msdn.microsoft.com/en-us/library/cc245560.aspx</a>
  */
-public class DomainInfo extends SAMPR_RID_ENUMERATION implements Unmarshallable {
-
-    public DomainInfo() {
-    }
+public class DomainInfo extends SAMPRRIDEnumeration implements Unmarshallable {
 
 }

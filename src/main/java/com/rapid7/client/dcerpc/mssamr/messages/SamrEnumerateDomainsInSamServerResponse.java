@@ -21,10 +21,25 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import java.util.List;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.EnumeratedDomains;
 
+/**
+ * <pre>
+ * long SamrEnumerateDomainsInSamServer(
+ *   [in] SAMPR_HANDLE ServerHandle,
+ *   [in, out] unsigned long* EnumerationContext,
+ *   [out] PSAMPR_ENUMERATION_BUFFER* Buffer,
+ *   [in] unsigned long PreferedMaximumLength,
+ *   [out] unsigned long* CountReturned
+ * );
+ * </pre>
+ *
+ * @see <a href="https://msdn.microsoft.com/en-ca/library/cc245755.aspx">
+ *       https://msdn.microsoft.com/en-ca/library/cc245755.aspx</a>
+ */
 public class SamrEnumerateDomainsInSamServerResponse extends RequestResponse {
     private int resumeHandle;
     private EnumeratedDomains domains;
@@ -33,11 +48,17 @@ public class SamrEnumerateDomainsInSamServerResponse extends RequestResponse {
 
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
+        // <NDR: unsigned long> [in, out] unsigned long* EnumerationContext,
+        // Alignment: 4 - Already aligned
         resumeHandle = packetIn.readInt();
-        // Reference ID to the ENUMERATION_BUFFER
-        packetIn.readReferentID();
-        domains = new EnumeratedDomains();
-        packetIn.readUnmarshallable(domains);
+        // <NDR: pointer> [out] PSAMPR_ENUMERATION_BUFFER* Buffer,
+        // Alignment: 4 - Already aligned
+        if (packetIn.readReferentID() != 0) {
+            domains = new EnumeratedDomains();
+            packetIn.readUnmarshallable(domains);
+        }
+        // <NDR: unsigned long> [out] unsigned long* CountReturned
+        packetIn.align(Alignment.FOUR);
         numEntries = packetIn.readInt();
         returnCode = packetIn.readInt();
     }

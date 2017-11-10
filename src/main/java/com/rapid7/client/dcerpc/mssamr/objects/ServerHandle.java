@@ -27,7 +27,4 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
  */
 public class ServerHandle extends ContextHandle {
 
-    public ServerHandle() {
-        super();
-    }
 }

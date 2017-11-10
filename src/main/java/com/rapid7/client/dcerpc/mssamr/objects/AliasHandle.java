@@ -22,7 +22,4 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class AliasHandle extends ContextHandle {
 
-    public AliasHandle() {
-        super();
-    }
 }

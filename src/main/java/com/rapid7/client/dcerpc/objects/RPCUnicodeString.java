@@ -28,7 +28,15 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
  * Represents a UTF-16 encoded unicode string in dcerpc.
- *
+ * <br>
+ * <b>Alignment: 4</b><pre>
+ *      unsigned short Length;: 2
+ *      unsigned short MaximumLength;: 2
+ *      [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;: 4 (Max[4, 1])</pre>
+ * <br>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc230365.aspx">RPC_UNICODE_STRING</a>:
+ * <blockquote><pre>
+ *  The RPC_UNICODE_STRING structure specifies a Unicode string. This structure is defined in IDL as follows:
  *      typedef struct _RPC_UNICODE_STRING {
  *          unsigned short Length;
  *          unsigned short MaximumLength;
@@ -36,33 +44,36 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *          WCHAR* Buffer;
  *      } RPC_UNICODE_STRING,
  *      *PRPC_UNICODE_STRING;
- *
+ *  Length: The length, in bytes, of the string pointed to by the Buffer member, not including the terminating null character if any. The length MUST be a multiple of 2. The length SHOULD equal the entire size of the Buffer, in which case there is no terminating null character. Any method that accesses this structure MUST use the Length specified instead of relying on the presence or absence of a null character.
+ *  MaximumLength: The maximum size, in bytes, of the string pointed to by Buffer. The size MUST be a multiple of 2. If not, the size MUST be decremented by 1 prior to use. This value MUST not be less than Length.
+ *  Buffer: A pointer to a string buffer. If MaximumLength is greater than zero, the buffer MUST contain a non-null value.
+ * </pre></blockquote>
  * NOTE: This structure has purposely not been mapped 1-1 with the dcerpc struct.
  * There is no practical reason for a client to access the Length, MaximumLength, or raw byte[] of this
  * struct, and so this class only stores the UTF-16 Java String. Conversions are done during marshalling/unmarshalling.
- *
+ * <br>
  * An RPC_UNICODE_STRING can be null terminated. However this is abstracted away from the client and is only
  * used during marshalling or unmarshalling.
  * You should not provide a null terminator to your String when marshalling this object, and should
  * not expect one in return.
- *
- * Marshalling Usage:
+ * <br>
+ * <b>Marshalling Usage:</b><pre>
  *      String myValue = "some string";
  *      RPC_UNICODE_STRING rpcUnicodeString = RPC_UNICODE_STRING.of(true, myValue);
- *      packetOut.writeMarshallable(rpcUnicodeString);
- * Unmarshalling Usage:
+ *      packetOut.writeMarshallable(rpcUnicodeString);</pre>
+ * <b>Unmarshalling Usage:</b><pre>
  *      RPC_UNICODE_STRING rpcUnicodeString = RPC_UNICODE_STRING.of(true);
  *      packetIn.readUnmarshallable(rpcUnicodeString);
- *      String myValue = rpcUnicodeString.getValue();
+ *      String myValue = rpcUnicodeString.getValue();</pre>
  */
-public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable {
+public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
 
     /**
      * Convenience method for construction of RPC_UNICODE_STRING.
      * @param nullTerminated Whether or not the RPC_UNICODE_STRING is null terminated.
      * @return A new RPC_UNICODE_STRING with an initial value of null.
      */
-    public static RPC_UNICODE_STRING of(boolean nullTerminated) {
+    public static RPCUnicodeString of(boolean nullTerminated) {
         return (nullTerminated ? new NullTerminated() : new NotNullTerminated());
     }
 
@@ -72,8 +83,8 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
      * @param value The initial value of the RPC_UNICODE_STRING.
      * @return A new RPC_UNICODE_STRING with the provided initial value.
      */
-    public static RPC_UNICODE_STRING of(boolean nullTerminated, String value) {
-        RPC_UNICODE_STRING obj = of(nullTerminated);
+    public static RPCUnicodeString of(boolean nullTerminated, String value) {
+        RPCUnicodeString obj = of(nullTerminated);
         obj.setValue(value);
         return obj;
     }
@@ -81,7 +92,7 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
     /**
      * An RPC_UNICODE_STRING which is expected to be null terminated during marshalling/unmarshalling.
      */
-    static class NullTerminated extends RPC_UNICODE_STRING {
+    static class NullTerminated extends RPCUnicodeString {
         @Override
         boolean isNullTerminated() {
             return true;
@@ -91,7 +102,7 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
     /**
      * An RPC_UNICODE_STRING which is not expected to be null terminated during marshalling/unmarshalling.
      */
-    static class NotNullTerminated extends RPC_UNICODE_STRING {
+    static class NotNullTerminated extends RPCUnicodeString {
         @Override
         boolean isNullTerminated() {
             return false;
@@ -111,32 +122,36 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
     }
 
     @Override
-    public Alignment getAlignment() {
-        /*
-         * unsigned short Length: 2
-         * unsigned short MaximumLength: 2
-         * [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer: 4
-         */
-        return Alignment.FOUR;
-    }
-
-    @Override
     public void marshalPreamble(PacketOutput out) throws IOException {
         // No preamble. Conformant array of `WCHAR*` is a reference, and so preamble is not required.
     }
 
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
+        // Structure Alignment
+        out.align(Alignment.FOUR);
         if (value == null) {
+            // <NDR: unsigned short> unsigned short Length;
+            // Alignment 2 - Already aligned
             out.writeShort((short) 0);
+            // <NDR: unsigned short> unsigned short MaximumLength;
+            // Alignment 2 - Already aligned
             out.writeShort((short) 0);
+            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+            // Alignment 4 - Already aligned
             out.writeNull();
         } else {
             // UTF-16 encoded string is 2 bytes per count point
             // Null terminator must also be considered
             final int byteLength = 2 * value.length() + (isNullTerminated() ? 2 : 0);
+            // <NDR: unsigned short> unsigned short Length;
+            // Alignment 2 - Already aligned
             out.writeShort((short) byteLength);
+            // <NDR: unsigned short> unsigned short MaximumLength;
+            // Alignment 2 - Already aligned
             out.writeShort((short) byteLength);
+            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+            // Alignment 4 - Already aligned
             out.writeReferentID();
         }
     }
@@ -145,23 +160,20 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
     public void marshalDeferrals(PacketOutput out) throws IOException {
         if (value != null) {
             final int codepoints = value.length() + (isNullTerminated() ? 1 : 0);
-            //Preamble
             // MaximumCount for conformant array
+            out.align(Alignment.FOUR);
             out.writeInt(codepoints);
-
-            //Entity
             // Offset for varying array
+            // Alignment 4 - Already aligned
             out.writeInt(0);
             // ActualCount for varying array
+            // Alignment 4 - Already aligned
             out.writeInt(codepoints);
-
-            //Deferrals
             // Entities for conformant+varying array
+            // Alignment 1 - Already aligned
             out.writeChars(value);
             if (isNullTerminated())
                 out.writeShort((short) 0);
-            // Align the conformant+varying array
-            out.align(Alignment.FOUR);
         }
     }
 
@@ -172,8 +184,16 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
+        in.align(Alignment.FOUR);
+        // <NDR: unsigned short> unsigned short Length;
+        // Alignment: 2 - Already aligned
         in.readShort();
+        // <NDR: unsigned short> unsigned short MaximumLength;
+        // Alignment: 2 - Already aligned
         in.readShort();
+        // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+        // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0)
             // This is 0 cost - Compile time constants are internal objects
             value = "";
@@ -183,13 +203,16 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
     public void unmarshalDeferrals(PacketInput in) throws IOException {
         if (value != null) {
             //Preamble
-            // MaximumCount for conformant array - This is *not* the size of the array, so is not useful to us
+            // <NDR: unsigned long> MaximumCount for conformant array - This is *not* the size of the array, so is not useful to us
+            in.align(Alignment.FOUR);
             in.readInt();
 
             //Entity
-            // Offset for varying array
+            // <NDR: unsigned long> Offset for varying array
+            // Alignment: 4 - Already aligned
             final int offset = in.readInt();
-            // ActualCount for varying array
+            // <NDR: unsigned long> ActualCount for varying array
+            // Alignment: 4 - Already aligned
             final int actualCount = in.readInt();
             // If we expect a null terminator, then skip it when reading the string
             final int stringCount = (isNullTerminated() ? (actualCount - 1) : actualCount);
@@ -199,18 +222,22 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
             final StringBuilder result = new StringBuilder(stringCount);
             // Read prefix (if any)
             for (int i = 0; i < offset; i++) {
+                // <NDR: unsigned short>
+                // Alignment: 2 - Already aligned
                 in.readShort();
             }
             // Read subset
             for (int i = 0; i < stringCount; i++) {
+                // <NDR: unsigned short>
+                // Alignment: 2 - Already aligned
                 result.append((char) in.readShort());
             }
             // Read suffix (if any)
             for (int i = stringCount; i < actualCount; i++) {
+                // <NDR: unsigned short>
+                // Alignment: 2 - Already aligned
                 in.readShort();
             }
-            // Align the conformant+varying array
-            in.align(Alignment.FOUR);
             this.value = result.toString();
         }
     }
@@ -224,10 +251,10 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof RPC_UNICODE_STRING)) {
+        } else if (! (obj instanceof RPCUnicodeString)) {
             return false;
         }
-        RPC_UNICODE_STRING other = (RPC_UNICODE_STRING) obj;
+        RPCUnicodeString other = (RPCUnicodeString) obj;
         return Objects.equals(isNullTerminated(), other.isNullTerminated())
                 && Objects.equals(getValue(), other.getValue());
     }

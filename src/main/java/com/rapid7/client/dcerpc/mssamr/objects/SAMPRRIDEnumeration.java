@@ -22,29 +22,35 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-import com.rapid7.client.dcerpc.objects.RPC_UNICODE_STRING;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
+ * <b>Alignment: 4</b> (Max[4, 4])<pre>
+ *      unsigned long RelativeId: 4
+ *      RPC_UNICODE_STRING Name: 4</pre>
  * This class represents the structure returned with {@link EnumeratedDomains}.
- *
- * <pre>
- * Relative ID (idx)  - index
- * RPC_UNICODE_STRING - Domain Name
- * </pre>
- *
- * @see <a href="https://msdn.microsoft.com/en-us/library/cc245560.aspx">
- *       https://msdn.microsoft.com/en-us/library/cc245560.aspx</a>
+ * <br>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc245560.aspx">SAMPR_RID_ENUMERATION</a>
+ * <blockquote><pre>
+ *  The SAMPR_RID_ENUMERATION structure holds the name and RID information about an account.
+ *      typedef struct _SAMPR_RID_ENUMERATION {
+ *          unsigned long RelativeId;
+ *          RPC_UNICODE_STRING Name;
+ *      } SAMPR_RID_ENUMERATION,
+ *      *PSAMPR_RID_ENUMERATION;
+ *  RelativeId: A RID.
+ *  Name: The UTF-16 encoded name of the account that is associated with RelativeId.</pre></blockquote>
  */
-public class SAMPR_RID_ENUMERATION implements Unmarshallable {
+public class SAMPRRIDEnumeration implements Unmarshallable {
 
     private int relativeId;
-    private RPC_UNICODE_STRING name;
+    private RPCUnicodeString name;
 
     public String getName() {
         return name.getValue();
     }
 
-    public void setName(final RPC_UNICODE_STRING name) {
+    public void setName(final RPCUnicodeString name) {
         this.name = name;
     }
 
@@ -57,19 +63,17 @@ public class SAMPR_RID_ENUMERATION implements Unmarshallable {
     }
 
     @Override
-    public Alignment getAlignment() {
-        return Alignment.FOUR;
-    }
-
-    @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
-        // relative ID.
+        // Structure Alignment
+        in.align(Alignment.FOUR);
+        // <NDR: unsigned long> unsigned long RelativeId;
+        // Alignment: 4 - Already aligned
         relativeId = in.readInt();
-        name = RPC_UNICODE_STRING.of(false);
+        name = RPCUnicodeString.of(false);
         name.unmarshalEntity(in);
     }
 

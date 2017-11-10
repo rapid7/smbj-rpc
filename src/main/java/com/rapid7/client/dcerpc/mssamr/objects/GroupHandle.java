@@ -27,7 +27,4 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
  */
 public class GroupHandle extends ContextHandle {
 
-    public GroupHandle() {
-        super();
-    }
 }

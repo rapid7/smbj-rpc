@@ -44,13 +44,17 @@ public class PrimitiveOutput {
     public void align(Alignment alignment) throws IOException {
         if (alignment == Alignment.ONE) return;
         final long alignmentOffset = alignment.getOffByOneAlignment() + dataOutStream.getCount() & ~alignment.getOffByOneAlignment();
-        while (alignmentOffset > dataOutStream.getCount()) {
-            writeByte(0);
-        }
+        pad(alignmentOffset - dataOutStream.getCount());
     }
 
     public long getCount() {
         return dataOutStream.getCount();
+    }
+
+    public void pad(long n) throws IOException {
+        while (n-- > 0) {
+            writeByte(0);
+        }
     }
 
     public void write(final int b) throws IOException {

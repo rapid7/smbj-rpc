@@ -26,68 +26,72 @@ import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-import com.rapid7.client.dcerpc.objects.RPC_SID;
-import com.rapid7.client.dcerpc.objects.RPC_UNICODE_STRING;
+import com.rapid7.client.dcerpc.objects.RPCSID;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
- *  typedef struct _LSAPR_POLICY_ACCOUNT_DOM_INFO {
- *      RPC_UNICODE_STRING DomainName;
- *      PRPC_SID DomainSid;
- *  } LSAPR_POLICY_ACCOUNT_DOM_INFO,
- *  *PLSAPR_POLICY_ACCOUNT_DOM_INFO;
+ * <b>Alignment: 4</b> (Max[4,4])<pre>
+ *      RPC_UNICODE_STRING DomainName;: 4
+ *      PRPC_SID DomainSid;: 4</pre>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc234266.aspx?f=255&MSPPError=-2147217396">LSAPR_POLICY_ACCOUNT_DOM_INFO</a>
+ * <blockquote><pre>
+ * The LSAPR_POLICY_ACCOUNT_DOM_INFO structure contains information about the server's account domain. The following structure corresponds to the PolicyAccountDomainInformation and PolicyLocalAccountDomainInformation information classes.
+ *      typedef struct _LSAPR_POLICY_ACCOUNT_DOM_INFO {
+ *          RPC_UNICODE_STRING DomainName;
+ *          PRPC_SID DomainSid;
+ *      } LSAPR_POLICY_ACCOUNT_DOM_INFO,
+ *      *PLSAPR_POLICY_ACCOUNT_DOM_INFO;
  *
+ *  DomainName: This field contains a name for the account domain that is subjected to the restrictions of a NetBIOS name, as specified in [RFC1088]. This value SHOULD be used (by implementations external to this protocol) to identify the domain  via the NetBIOS API, as specified in [RFC1088].
+ *  DomainSid: The SID of the account domain. This field MUST NOT be NULL.</pre></blockquote>
  */
-public class LSAPR_POLICY_ACCOUNT_DOM_INFO implements Unmarshallable {
+public class LSAPRPolicyAccountDomInfo implements Unmarshallable {
 
     // <NDR: struct> RPC_UNICODE_STRING DomainName;
-    private RPC_UNICODE_STRING domainName;
-    // <NDR: *struct> PRPC_SID DomainSid;
-    private RPC_SID domainSid;
+    private RPCUnicodeString domainName;
+    // <NDR: pointer> PRPC_SID DomainSid;
+    private RPCSID domainSid;
 
-    public RPC_UNICODE_STRING getDomainName() {
+    public RPCUnicodeString getDomainName() {
         return domainName;
     }
 
-    public void setDomainName(RPC_UNICODE_STRING domainName) {
+    public void setDomainName(RPCUnicodeString domainName) {
         this.domainName = domainName;
     }
 
-    public RPC_SID getDomainSid() {
+    public RPCSID getDomainSid() {
         return domainSid;
     }
 
-    public void setDomainSid(RPC_SID domainSid) {
+    public void setDomainSid(RPCSID domainSid) {
         this.domainSid = domainSid;
     }
 
     @Override
-    public Alignment getAlignment() {
-        // RPC_UNICODE_STRING: 4
-        // PRPC_SID: 4
-        return Alignment.FOUR;
-    }
-
-    @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
-        domainName = RPC_UNICODE_STRING.of(false);
+        domainName = RPCUnicodeString.of(false);
         domainName.unmarshalPreamble(in);
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
+        in.align(Alignment.FOUR);
+        // <NDR: struct> RPC_UNICODE_STRING DomainName;
         domainName.unmarshalEntity(in);
-        // RPC_UNICODE_STRING.unmarshalEntity reads exactly 4 bytes, no need for alignment
+        // <NDR: pointer> PRPC_SID DomainSid;
+        // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0) {
-            domainSid = new RPC_SID();
+            domainSid = new RPCSID();
         }
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
         domainName.unmarshalDeferrals(in);
-        // RPC_UNICODE_STRING.unmarshalDeferrals writes a variable number of bytes, align before continuing
         if (domainSid != null) {
-            in.align(domainSid.getAlignment());
+            // <NDR: struct> RPC_SID DomainSid;
             in.readUnmarshallable(domainSid);
         }
     }
@@ -101,10 +105,10 @@ public class LSAPR_POLICY_ACCOUNT_DOM_INFO implements Unmarshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof LSAPR_POLICY_ACCOUNT_DOM_INFO)) {
+        } else if (! (obj instanceof LSAPRPolicyAccountDomInfo)) {
             return false;
         }
-        LSAPR_POLICY_ACCOUNT_DOM_INFO other = (LSAPR_POLICY_ACCOUNT_DOM_INFO) obj;
+        LSAPRPolicyAccountDomInfo other = (LSAPRPolicyAccountDomInfo) obj;
         return Objects.equals(getDomainName(), other.getDomainName())
                 && Objects.equals(getDomainSid(), other.getDomainSid());
     }

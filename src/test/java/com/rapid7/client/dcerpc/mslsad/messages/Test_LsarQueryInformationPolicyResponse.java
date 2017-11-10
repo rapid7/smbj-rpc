@@ -18,7 +18,6 @@
  *
  *
  */
-
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import java.io.ByteArrayInputStream;
@@ -27,13 +26,11 @@ import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-import com.rapid7.client.dcerpc.mslsad.objects.POLICY_INFORMATION_CLASS;
+import com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertSame;
@@ -43,7 +40,7 @@ public class Test_LsarQueryInformationPolicyResponse {
     @Test
     public void test_getters() {
         Unmarshallable obj = mock(Unmarshallable.class);
-        LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(obj, POLICY_INFORMATION_CLASS.POLICY_ACCOUNT_DOMAIN_INFORMATION);
+        LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(obj, PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION);
         assertSame(response.getPolicyInformation(), obj);
     }
 
@@ -51,29 +48,21 @@ public class Test_LsarQueryInformationPolicyResponse {
     public Object[][] data_unmarshal() {
         return new Object[][] {
                 // Reference: 1, POLICY_CLASS_INFORMATION: 3
-                {"01000000 0300", Alignment.ONE},
-                // Reference: 1, POLICY_CLASS_INFORMATION: 3
-                {"01000000 0300", Alignment.TWO},
-                // Test alignments:
-                // Reference: 1, POLICY_CLASS_INFORMATION: 3, alignment: 2b
-                {"01000000 0300 0000", Alignment.FOUR},
-                // Reference: 1, POLICY_CLASS_INFORMATION: 3, alignment: 2b
-                {"01000000 0300 0000", Alignment.EIGHT}
+                {"01000000 0300"},
         };
     }
 
     @Test(dataProvider = "data_unmarshal")
-    public void test_unmarshal(String hex, Alignment alignment) throws IOException {
+    public void test_unmarshal(String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         Unmarshallable unmarshallable = mock(Unmarshallable.class);
-        when(unmarshallable.getAlignment()).thenReturn(alignment);
         doNothing().when(unmarshallable).unmarshalPreamble(in);
         doNothing().when(unmarshallable).unmarshalEntity(in);
         doNothing().when(unmarshallable).unmarshalDeferrals(in);
         LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(
                 unmarshallable,
-                POLICY_INFORMATION_CLASS.POLICY_PRIMARY_DOMAIN_INFORMATION);
+                PolicyInformationClass.POLICY_PRIMARY_DOMAIN_INFORMATION);
         response.unmarshal(in);
         assertEquals(bin.available(), 0);
     }
@@ -86,7 +75,7 @@ public class Test_LsarQueryInformationPolicyResponse {
         PacketInput in = new PacketInput(bin);
         LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(
                 null,
-                POLICY_INFORMATION_CLASS.POLICY_ACCOUNT_DOMAIN_INFORMATION);
+                PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION);
         response.unmarshal(in);
         assertEquals(bin.available(), 0);
     }
@@ -99,7 +88,7 @@ public class Test_LsarQueryInformationPolicyResponse {
         PacketInput in = new PacketInput(bin);
         LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(
                 null,
-                POLICY_INFORMATION_CLASS.POLICY_ACCOUNT_DOMAIN_INFORMATION);
+                PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION);
         IllegalArgumentException actual = null;
         try {
             response.unmarshal(in);
