@@ -30,14 +30,20 @@ import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
- * typedef struct _RPC_SID {
- * unsigned char Revision;
- * unsigned char SubAuthorityCount;
- * RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
- * [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
- * } RPC_SID,
- * *PRPC_SID,
- * *PSID;
+ *  typedef struct _RPC_SID {
+ *      unsigned char Revision;
+ *      unsigned char SubAuthorityCount;
+ *      RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
+ *      [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
+ *  } RPC_SID,
+ *  *PRPC_SID,
+ *  *PSID;
+ *
+ *  Alignment: 4 (Max[4, 4])
+ *      unsigned char Revision;: 1
+ *      unsigned char SubAuthorityCount;: 1
+ *      RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;: 1
+ *      [size_is(SubAuthorityCount)] unsigned long SubAuthority[];: 4 (Max[4, 4])
  */
 public class RPC_SID implements Unmarshallable, Marshallable {
     // <NDR: unsigned char> unsigned char Revision;
@@ -87,36 +93,33 @@ public class RPC_SID implements Unmarshallable, Marshallable {
     }
 
     @Override
-    public Alignment getAlignment() {
-        // Revision: 1 (size of char)
-        // SubAuthorityCount: 1 (size of char)
-        // IdentifierAuthority: 1 (size of byte)
-        // SubAuthority[]: 4 (size repr: 4, entry repr: 4)
-        return Alignment.FOUR;
-    }
-
-    @Override
     public void marshalPreamble(PacketOutput out) throws IOException {
         // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
+        out.align(Alignment.FOUR);
         out.writeInt(this.subAuthority.length);
     }
 
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
         checkSubAuthorityCount();
+        // Structure alignment
+        out.align(Alignment.FOUR);
         // <NDR: unsigned char> unsigned char Revision;
+        // Alignment: 1 - Already aligned
         out.writeByte(getRevision());
         // <NDR: unsigned char> unsigned char SubAuthorityCount;
+        // Alignment: 1 - Already aligned
         out.writeByte(getSubAuthorityCount());
         // <NDR: fixed array> RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
+        // Alignment: 1 - Already aligned
         out.write(this.identifierAuthority, 0, 6);
-
         // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
+        // Alignment: 4 - Already aligned, we wrote 8 bytes above
         for (long subAuthority : this.subAuthority) {
+            // <NDR: unsigned long>
+            // Alignment: 4 - Already aligned
             out.writeInt((int) subAuthority);
         }
-        // Alignment not required as the total bytes written by this class are always a multiple of 4
-        // out.align(Alignment.FOUR);
     }
 
     @Override
@@ -127,25 +130,32 @@ public class RPC_SID implements Unmarshallable, Marshallable {
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
         // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
+        in.align(Alignment.FOUR);
         this.subAuthority = new long[in.readInt()];
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure alignment
+        in.align(Alignment.FOUR);
         // <NDR: unsigned char> unsigned char Revision;
+        // Alignment: 1 - Already aligned
         this.revision = (char) UnsignedBytes.toInt(in.readByte());
         // <NDR: unsigned char> unsigned char SubAuthorityCount;
+        // Alignment: 1 - Already aligned
         this.subAuthorityCount = (char) UnsignedBytes.toInt(in.readByte());
         checkSubAuthorityCount();
         // <NDR: fixed array> RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
+        // Alignment: 1 - Already aligned
         this.identifierAuthority = new byte[6];
         in.readRawBytes(this.identifierAuthority);
         // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
+        // Alignment: 4 - Already aligned, we read 8 bytes above
         for (int i = 0; i < this.subAuthority.length; i++) {
+            // <NDR: unsigned long>
+            // Alignment: 4 - Already aligned
             this.subAuthority[i] = UnsignedInts.toLong(in.readInt());
         }
-        // Alignment not required as the total bytes written by this class are always a multiple of 4
-        // in.align(Alignment.FOUR);
     }
 
     @Override

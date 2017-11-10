@@ -42,6 +42,10 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc245561.aspx">
  *       https://msdn.microsoft.com/en-us/library/cc245561.aspx</a>
+ *
+ * Alignment: 4 (Max[4, 4])
+ *      unsigned long EntriesRead;: 4
+ *      [size_is(EntriesRead)] PSAMPR_RID_ENUMERATION;: 4 (Max[4, 4])
  */
 public abstract class SAMPR_ENUMERATION_BUFFER<T extends Unmarshallable> implements Unmarshallable {
 
@@ -72,24 +76,23 @@ public abstract class SAMPR_ENUMERATION_BUFFER<T extends Unmarshallable> impleme
     }
 
     @Override
-    public Alignment getAlignment() {
-        return Alignment.FOUR;
-    }
-
-    @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
+
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
-        // Entries of sam_array
+        // Structure Alignment
+        in.align(Alignment.FOUR);
+        // <NDR: unsigned long> unsigned long EntriesRead;
+        // Alignment: 4 - Already aligned
         entriesRead = in.readInt();
-        // Reference ID of domain_list
+        // <NDR: pointer> [size_is(EntriesRead)] PSAMPR_RID_ENUMERATION Buffer;
+        // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0) {
             if (entriesRead > 0)
                 array = new ArrayList<>(entriesRead);
         }
-
     }
 
     @Override
@@ -97,6 +100,7 @@ public abstract class SAMPR_ENUMERATION_BUFFER<T extends Unmarshallable> impleme
         // Entries of domain_list
         if (array != null) {
             // MaximumCount
+            in.align(Alignment.FOUR);
             int count = in.readInt();
             for (int i = 0; i < count; i++) {
                 T t = initEntity();

@@ -42,11 +42,16 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * @see <a href =
  * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms721901(v=vs.85).aspx">POLICY_AUDIT_EVENTS_INFO
  * structure</a>
+ *
+ * Alignment: 4 (Max[1,4,4])
+ *      unsigned char AuditingMode;: 1
+ *      [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;: 4
+ *      [range(0,1000)] unsigned long MaximumAuditEventCount;: 4
  */
 public class LSAPR_POLICY_AUDIT_EVENTS_INFO implements Unmarshallable {
     // <NDR: unsigned char> unsigned char AuditingMode;
     private boolean auditingMode;
-    // <NDR: *conformant array> [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
+    // <NDR: pointer> [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
     private int[] eventAuditingOptions;
     // <NDR: unsigned long> [range(0,1000)] unsigned long MaximumAuditEventCount;
     private int maximumAuditEventCount;
@@ -76,24 +81,23 @@ public class LSAPR_POLICY_AUDIT_EVENTS_INFO implements Unmarshallable {
     }
 
     @Override
-    public Alignment getAlignment() {
-        // unsigned char AuditingMode: 1
-        // [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions: 4
-        // [range(0,1000)] unsigned long MaximumAuditEventCount: 4
-        return Alignment.FOUR;
-    }
-
-    @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
         // No preamble
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
+        in.align(Alignment.FOUR);
+        // <NDR: unsigned char> unsigned char AuditingMode;: 1
+        // Alignment: 1 - Already aligned
         this.auditingMode = in.readBoolean();
-        // Alignment to pointer (4 bytes)
+        // <NDR: pointer> [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
+        // Alignment: 4 - Pad 3 bytes
         in.fullySkipBytes(3);
         boolean eventAuditingOptionsNull = in.readReferentID() == 0;
+        // <NDR: unsigned long> [range(0,1000)] unsigned long MaximumAuditEventCount;
+        // Alignment: 4 - Already aligned
         this.maximumAuditEventCount = in.readInt();
         if (eventAuditingOptionsNull) {
             if (this.maximumAuditEventCount != 0) {
@@ -107,8 +111,12 @@ public class LSAPR_POLICY_AUDIT_EVENTS_INFO implements Unmarshallable {
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        // MaximumCount
         if (this.eventAuditingOptions != null) {
+            // <NDR: conformant array> [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
+            // Alignment: 4 (Max[4,4])
+            in.align(Alignment.FOUR);
+            // <NDR: unsigned long> MaximumCount
+            // Alignment: 4 - Already aligned
             final int maximumCount = in.readInt();
             if (maximumCount < this.maximumAuditEventCount) {
                 throw new IllegalArgumentException(String.format(
@@ -116,6 +124,8 @@ public class LSAPR_POLICY_AUDIT_EVENTS_INFO implements Unmarshallable {
                         maximumCount, this.maximumAuditEventCount));
             }
             for (int i = 0; i < this.eventAuditingOptions.length; i++) {
+                // <NDR: unsigned long> MaximumCount
+                // Alignment: 4 - Already aligned
                 this.eventAuditingOptions[i] = in.readInt();
             }
         }

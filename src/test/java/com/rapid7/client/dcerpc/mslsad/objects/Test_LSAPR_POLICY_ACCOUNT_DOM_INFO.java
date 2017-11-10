@@ -18,7 +18,6 @@
  *
  *
  */
-
 package com.rapid7.client.dcerpc.mslsad.objects;
 
 import java.io.ByteArrayInputStream;
@@ -27,7 +26,6 @@ import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.objects.RPC_SID;
 import com.rapid7.client.dcerpc.objects.RPC_UNICODE_STRING;
 
@@ -40,7 +38,6 @@ public class Test_LSAPR_POLICY_ACCOUNT_DOM_INFO {
     @Test
     public void test_getters_default() {
         LSAPR_POLICY_ACCOUNT_DOM_INFO obj = new LSAPR_POLICY_ACCOUNT_DOM_INFO();
-        assertEquals(obj.getAlignment(), Alignment.FOUR);
         assertNull(obj.getDomainName());
         assertNull(obj.getDomainSid());
     }
@@ -70,18 +67,27 @@ public class Test_LSAPR_POLICY_ACCOUNT_DOM_INFO {
     public Object[][] data_unmarshalEntity() {
         return new Object[][] {
                 // Name Length: 2, Name MaximumLength: 3, Name Reference: 1, SID Reference: 0
-                {"0200 0300 01000000 00000000", RPC_UNICODE_STRING.of(false, ""), null},
+                {"0200 0300 01000000 00000000", 0, RPC_UNICODE_STRING.of(false, ""), null},
+                // Alignment: 1, Name Length: 2, Name MaximumLength: 3, Name Reference: 1, SID Reference: 0
+                {"ffffffff 0200 0300 01000000 00000000", 3, RPC_UNICODE_STRING.of(false, ""), null},
+                // Alignment: 2, Name Length: 2, Name MaximumLength: 3, Name Reference: 1, SID Reference: 0
+                {"ffffffff 0200 0300 01000000 00000000", 2, RPC_UNICODE_STRING.of(false, ""), null},
+                // Alignment: 3, Name Length: 2, Name MaximumLength: 3, Name Reference: 1, SID Reference: 0
+                {"ffffffff 0200 0300 01000000 00000000", 1, RPC_UNICODE_STRING.of(false, ""), null},
                 // Name Length: 2, Name MaximumLength: 3, Name Reference: 1, SID Reference: 2
-                {"0200 0300 01000000 02000000", RPC_UNICODE_STRING.of(false, ""), new RPC_SID()},
+                {"0200 0300 01000000 02000000", 0, RPC_UNICODE_STRING.of(false, ""), new RPC_SID()},
         };
     }
 
     @Test(dataProvider = "data_unmarshalEntity")
-    public void test_unmarshalEntity(String hex, RPC_UNICODE_STRING expectedName, RPC_SID expectedSid) throws Exception {
+    public void test_unmarshalEntity(String hex, int mark, RPC_UNICODE_STRING expectedName, RPC_SID expectedSid) throws Exception {
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
+        PacketInput in = new PacketInput(bin);
+        in.readFully(new byte[mark]);
+
         LSAPR_POLICY_ACCOUNT_DOM_INFO obj = new LSAPR_POLICY_ACCOUNT_DOM_INFO();
         obj.setDomainName(RPC_UNICODE_STRING.of(false));
-        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
-        obj.unmarshalEntity(new PacketInput(bin));
+        obj.unmarshalEntity(in);
         assertEquals(bin.available(), 0);
         assertEquals(obj.getDomainName(), expectedName);
         assertEquals(obj.getDomainSid(), expectedSid);

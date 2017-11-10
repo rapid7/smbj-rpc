@@ -22,10 +22,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.io.ndr.Alignment;
 
 import static org.testng.Assert.*;
 
@@ -36,13 +36,30 @@ public class Test_RPC_SID {
         new RPC_SID().marshalPreamble(new PacketOutput(new ByteArrayOutputStream()));
     }
 
-    @Test
-    public void test_marshalPreamble() throws IOException {
+    @DataProvider
+    public Object[][] data_marshalPreamble() {
+        return new Object[][] {
+                // Alignment: 0
+                {"", "02000000"},
+                // Alignment: 3
+                {"ff", "ff00000002000000"},
+                // Alignment: 2
+                {"ffff", "ffff000002000000"},
+                // Alignment: 1
+                {"ffffff", "ffffff0002000000"},
+        };
+    }
+
+    @Test(dataProvider = "data_marshalPreamble")
+    public void test_marshalPreamble(String writeHex, String expectHex) throws IOException {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        PacketOutput out = new PacketOutput(bout);
+        out.write(Hex.decode(writeHex));
+
         RPC_SID rpc_sid = new RPC_SID();
         rpc_sid.setSubAuthority(new long[]{5, 10});
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        rpc_sid.marshalPreamble(new PacketOutput(outputStream));
-        assertEquals(Hex.toHexString(outputStream.toByteArray()), "02000000");
+        rpc_sid.marshalPreamble(out);
+        assertEquals(Hex.toHexString(bout.toByteArray()), expectHex);
     }
 
     @Test(expectedExceptions = {NullPointerException.class})
@@ -50,16 +67,33 @@ public class Test_RPC_SID {
         new RPC_SID().marshalEntity(new PacketOutput(new ByteArrayOutputStream()));
     }
 
-    @Test
-    public void test_marshalEntity() throws IOException {
+    @DataProvider
+    public Object[][] data_marshalEntity() {
+        return new Object[][] {
+                // Alignment: 0
+                {"", "1902010203040506050000000a000000"},
+                // Alignment: 1
+                {"ff", "ff0000001902010203040506050000000a000000"},
+                // Alignment: 2
+                {"ffff", "ffff00001902010203040506050000000a000000"},
+                // Alignment: 3
+                {"ffffff", "ffffff001902010203040506050000000a000000"}
+        };
+    }
+
+    @Test(dataProvider = "data_marshalEntity")
+    public void test_marshalEntity(String writeHex, String expectHex) throws IOException {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        PacketOutput out = new PacketOutput(bout);
+        out.write(Hex.decode(writeHex));
+
         RPC_SID rpc_sid = new RPC_SID();
         rpc_sid.setRevision((char) 25);
         rpc_sid.setSubAuthorityCount((char) 2);
         rpc_sid.setIdentifierAuthority(new byte[]{1, 2, 3, 4, 5, 6});
         rpc_sid.setSubAuthority(new long[]{5, 10});
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        rpc_sid.marshalEntity(new PacketOutput(outputStream));
-        assertEquals(Hex.toHexString(outputStream.toByteArray()), "1902010203040506050000000a000000");
+        rpc_sid.marshalEntity(out);
+        assertEquals(Hex.toHexString(bout.toByteArray()), expectHex);
     }
 
     @Test
@@ -87,20 +121,52 @@ public class Test_RPC_SID {
         assertEquals(outputStream.toByteArray(), new byte[0]);
     }
 
-    @Test
-    public void test_unmarshalPremable() throws IOException {
-        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("02000000"));
+    @DataProvider
+    public Object[][] data_unmarshalPremable() {
+        return new Object[][] {
+                {"02000000", 0},
+                {"ffffffff02000000", 1},
+                {"ffffffff02000000", 2},
+                {"ffffffff02000000", 3}
+        };
+    }
+
+    @Test(dataProvider = "data_unmarshalPremable")
+    public void test_unmarshalPremable(String hex, int mark) throws IOException {
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
+        PacketInput in = new PacketInput(bin);
+        in.readFully(new byte[mark]);
+
         RPC_SID rpc_sid = new RPC_SID();
-        rpc_sid.unmarshalPreamble(new PacketInput(bin));
+        rpc_sid.unmarshalPreamble(in);
+        assertEquals(bin.available(), 0);
         assertEquals(rpc_sid.getSubAuthority(), new long[2]);
     }
 
-    @Test
-    public void test_unmarshalEntity() throws IOException {
-        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("1902010203040506050000000a000000"));
+    @DataProvider
+    public Object[][] data_unmarshalEntity() {
+        return new Object[][] {
+                // Alignment: 0
+                {"1902010203040506050000000a000000", 0},
+                // Alignment: 3
+                {"ffffffff1902010203040506050000000a000000", 1},
+                // Alignment: 2
+                {"ffffffff1902010203040506050000000a000000", 2},
+                // Alignment: 1
+                {"ffffffff1902010203040506050000000a000000", 3},
+        };
+    }
+
+    @Test(dataProvider = "data_unmarshalEntity")
+    public void test_unmarshalEntity(String hex, int mark) throws IOException {
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
+        PacketInput in = new PacketInput(bin);
+        in.readFully(new byte[mark]);
+
         RPC_SID rpc_sid = new RPC_SID();
         rpc_sid.setSubAuthority(new long[2]);
-        rpc_sid.unmarshalEntity(new PacketInput(bin));
+        rpc_sid.unmarshalEntity(in);
+        assertEquals(bin.available(), 0);
         assertEquals(rpc_sid.getRevision(), (char) 25);
         assertEquals(rpc_sid.getSubAuthorityCount(), (char) 2);
         assertEquals(rpc_sid.getIdentifierAuthority(), new byte[]{1, 2, 3, 4, 5, 6});
@@ -137,7 +203,6 @@ public class Test_RPC_SID {
         assertEquals(rpc_sid.getSubAuthorityCount(), 0);
         assertNull(rpc_sid.getIdentifierAuthority());
         assertNull(rpc_sid.getSubAuthority());
-        assertEquals(rpc_sid.getAlignment(), Alignment.FOUR);
     }
 
     @Test

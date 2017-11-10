@@ -27,7 +27,6 @@ import org.testng.annotations.Test;
 
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.io.ndr.Alignment;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -49,7 +48,6 @@ public class Test_RPC_UNICODE_STRING {
         assertEquals(obj.getClass(), clazz);
         assertEquals(obj.isNullTerminated(), nullTerminated);
         assertNull(obj.getValue());
-        assertEquals(obj.getAlignment(), Alignment.FOUR);
     }
 
     @DataProvider
@@ -68,7 +66,6 @@ public class Test_RPC_UNICODE_STRING {
         assertEquals(obj.getClass(), clazz);
         assertEquals(obj.isNullTerminated(), nullTerminated);
         assertEquals(obj.getValue(), value);
-        assertEquals(obj.getAlignment(), Alignment.FOUR);
     }
 
     @DataProvider
@@ -92,38 +89,56 @@ public class Test_RPC_UNICODE_STRING {
     @DataProvider
     public Object[][] data_marshal_entity() {
         return new Object[][] {
-                {false, null, "0000000000000000"},
-                {true, null, "0000000000000000"},
-                {false, "testƟ123", "1000100000000200"},
-                {true, "testƟ123", "1200120000000200"},
+                {false, null, "", "0000000000000000"},
+                {true, null, "", "0000000000000000"},
+                {false, "testƟ123", "", "1000100000000200"},
+                {true, "testƟ123", "", "1200120000000200"},
+                // Alignment: 3
+                {true, "testƟ123", "ff", "ff0000001200120000000200"},
+                // Alignment: 2
+                {true, "testƟ123", "ffff", "ffff00001200120000000200"},
+                // Alignment: 1
+                {true, "testƟ123", "ffffff", "ffffff001200120000000200"},
         };
     }
 
     @Test(dataProvider = "data_marshal_entity")
-    public void test_marshal_entity(boolean nullTerminated, String value, String expectedHex) throws IOException {
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated, value);
+    public void test_marshal_entity(boolean nullTerminated, String value, String writeHex, String expectedHex) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        obj.marshalEntity(new PacketOutput(bout));
+        PacketOutput out = new PacketOutput(bout);
+        out.write(Hex.decode(writeHex));
+
+        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated, value);
+        obj.marshalEntity(out);
         assertEquals(Hex.toHexString(bout.toByteArray()), expectedHex);
     }
 
     @DataProvider
     public Object[][] data_marshal_deferrals() {
         return new Object[][] {
-                {false, null, ""},
-                {true, null, ""},
-                // MaximumCount=8, Offset=0, ActualCount=8, Alignment=0
-                {false, "testƟ123", "08000000000000000800000074006500730074009f01310032003300"},
-                // MaximumCount=9, Offset=0, ActualCount=9, Alignment=2b
-                {true, "testƟ123", "09000000000000000900000074006500730074009f0131003200330000000000"},
+                {false, null, "", ""},
+                {true, null, "", ""},
+                // MaximumCount=8, Offset=0, ActualCount=8
+                {false, "testƟ123", "", "08000000000000000800000074006500730074009f01310032003300"},
+                // MaximumCount=9, Offset=0, ActualCount=9
+                {true, "testƟ123", "", "09000000000000000900000074006500730074009f013100320033000000"},
+                // Alignment: 3, MaximumCount=8, Offset=0, ActualCount=8
+                {false, "testƟ123", "ff", "ff00000008000000000000000800000074006500730074009f01310032003300"},
+                // Alignment: 2, MaximumCount=8, Offset=0, ActualCount=8
+                {false, "testƟ123", "ffff", "ffff000008000000000000000800000074006500730074009f01310032003300"},
+                // Alignment: 1, MaximumCount=8, Offset=0, ActualCount=8
+                {false, "testƟ123", "ffffff", "ffffff0008000000000000000800000074006500730074009f01310032003300"},
         };
     }
 
     @Test(dataProvider = "data_marshal_deferrals")
-    public void test_marshal_deferrals(boolean nullTerminated, String value, String expectedHex) throws IOException {
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated, value);
+    public void test_marshal_deferrals(boolean nullTerminated, String value, String writeHex, String expectedHex) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        obj.marshalDeferrals(new PacketOutput(bout));
+        PacketOutput out = new PacketOutput(bout);
+        out.write(Hex.decode(writeHex));
+
+        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated, value);
+        obj.marshalDeferrals(out);
         assertEquals(Hex.toHexString(bout.toByteArray()), expectedHex);
     }
 
@@ -138,19 +153,27 @@ public class Test_RPC_UNICODE_STRING {
     @DataProvider
     public Object[][] data_unmarshal_entity() {
         return new Object[][] {
-                {false, "0000000000000000", null},
-                {true, "0000000000000000", null},
+                {false, "0000000000000000", 0, null},
+                {true, "0000000000000000", 0, null},
                 // We use an empty string as as placeholder to indicate the referent is non-null
-                {false, "1000100000000200", ""},
-                {true, "1000100000000200", ""}
+                {false, "1000100000000200", 0, ""},
+                {true, "1000100000000200", 0, ""},
+                // Alignment: 3
+                {true, "ffffffff1000100000000200", 1, ""},
+                // Alignment: 2
+                {true, "ffffffff1000100000000200", 2, ""},
+                // Alignment: 1
+                {true, "ffffffff1000100000000200", 3, ""}
         };
     }
 
     @Test(dataProvider = "data_unmarshal_entity")
-    public void test_unmarshal_entity(boolean nullTerminated, String hex, String value) throws IOException {
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated);
+    public void test_unmarshal_entity(boolean nullTerminated, String hex, int mark, String value) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
+        in.readFully(new byte[mark]);
+
+        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated);
         obj.unmarshalEntity(in);
         assertEquals(obj.isNullTerminated(), nullTerminated);
         assertEquals(obj.getValue(), value);
@@ -160,28 +183,37 @@ public class Test_RPC_UNICODE_STRING {
     @DataProvider
     public Object[][] data_unmarshal_deferrals() {
         return new Object[][] {
-                // not null terminated, no subset, MaximumCount=8, Offset=8, ActualCount=8, Alignment=0b
-                {false, "08000000000000000800000074006500730074009f01310032003300", "testƟ123"},
-                // null terminated, no subset, MaximumCount=9, Offset=0, ActualCount=9, Alignment=2b
-                {true, "09000000000000000900000074006500730074009f0131003200330000000000", "testƟ123"},
-                // not null terminated, lefthand subset MaximumCount=0, Offset=4, ActualCount=8, Alignment=0b(testtestƟ123)
-                {false, "000000000400000008000000740065007300740074006500730074009f01310032003300", "testƟ123"},
-                // null terminated, lefthand subset MaximumCount=0, Offset=4, ActualCount=9, Alignment=2b (testtestƟ123)
-                {true, "000000000400000009000000740065007300740074006500730074009f0131003200330000000000", "testƟ123"},
+                // not null terminated, no subset, MaximumCount=8, Offset=8, ActualCount=8
+                {false, "08000000000000000800000074006500730074009f01310032003300", 0, "testƟ123"},
+                // null terminated, no subset, MaximumCount=9, Offset=0, ActualCount=9
+                {true, "09000000000000000900000074006500730074009f013100320033000000", 0, "testƟ123"},
+                // not null terminated, lefthand subset MaximumCount=0, Offset=4, ActualCount=8
+                {false, "000000000400000008000000740065007300740074006500730074009f01310032003300", 0, "testƟ123"},
+                // null terminated, lefthand subset MaximumCount=0, Offset=4, ActualCount=9
+                {true, "000000000400000009000000740065007300740074006500730074009f013100320033000000", 0, "testƟ123"},
+                // Alignment=3, not null terminated, no subset, MaximumCount=8, Offset=8, ActualCount=8
+                {false, "ffffffff08000000000000000800000074006500730074009f01310032003300", 1, "testƟ123"},
+                // Alignment=2, not null terminated, no subset, MaximumCount=8, Offset=8, ActualCount=8
+                {false, "ffffffff08000000000000000800000074006500730074009f01310032003300", 2, "testƟ123"},
+                // Alignment=1, not null terminated, no subset, MaximumCount=8, Offset=8, ActualCount=8
+                {false, "ffffffff08000000000000000800000074006500730074009f01310032003300", 3, "testƟ123"},
+
         };
     }
 
     @Test(dataProvider = "data_unmarshal_deferrals")
-    public void test_unmarshal_deferrals(boolean nullTerminated, String hex, String value) throws IOException {
+    public void test_unmarshal_deferrals(boolean nullTerminated, String hex, int mark, String value) throws IOException {
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
+        PacketInput in = new PacketInput(bin);
+        in.readFully(new byte[mark]);
+
         RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated);
         // Value must be non-null for deferrals to read the ref
         obj.setValue("");
-        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
-        PacketInput in = new PacketInput(bin);
         obj.unmarshalDeferrals(in);
+        assertEquals(bin.available(), 0);
         assertEquals(obj.isNullTerminated(), nullTerminated);
         assertEquals(obj.getValue(), value);
-        assertEquals(bin.available(), 0);
     }
 
 

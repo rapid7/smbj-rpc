@@ -30,18 +30,23 @@ import com.rapid7.client.dcerpc.objects.RPC_SID;
 import com.rapid7.client.dcerpc.objects.RPC_UNICODE_STRING;
 
 /**
- *  typedef struct _LSAPR_POLICY_ACCOUNT_DOM_INFO {
- *      RPC_UNICODE_STRING DomainName;
- *      PRPC_SID DomainSid;
- *  } LSAPR_POLICY_ACCOUNT_DOM_INFO,
- *  *PLSAPR_POLICY_ACCOUNT_DOM_INFO;
- *
+ * Structure: LSAPR_POLICY_ACCOUNT_DOM_INFO
+ * <pre>
+ *      typedef struct _LSAPR_POLICY_ACCOUNT_DOM_INFO {
+ *          RPC_UNICODE_STRING DomainName;
+ *          PRPC_SID DomainSid;
+ *      } LSAPR_POLICY_ACCOUNT_DOM_INFO,
+ *      *PLSAPR_POLICY_ACCOUNT_DOM_INFO;
+ * </pre>
+ * Alignment: 4 (Max[4,4])
+ *      RPC_UNICODE_STRING DomainName;: 4
+ *      PRPC_SID DomainSid;: 4
  */
 public class LSAPR_POLICY_ACCOUNT_DOM_INFO implements Unmarshallable {
 
     // <NDR: struct> RPC_UNICODE_STRING DomainName;
     private RPC_UNICODE_STRING domainName;
-    // <NDR: *struct> PRPC_SID DomainSid;
+    // <NDR: pointer> PRPC_SID DomainSid;
     private RPC_SID domainSid;
 
     public RPC_UNICODE_STRING getDomainName() {
@@ -61,13 +66,6 @@ public class LSAPR_POLICY_ACCOUNT_DOM_INFO implements Unmarshallable {
     }
 
     @Override
-    public Alignment getAlignment() {
-        // RPC_UNICODE_STRING: 4
-        // PRPC_SID: 4
-        return Alignment.FOUR;
-    }
-
-    @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
         domainName = RPC_UNICODE_STRING.of(false);
         domainName.unmarshalPreamble(in);
@@ -75,8 +73,12 @@ public class LSAPR_POLICY_ACCOUNT_DOM_INFO implements Unmarshallable {
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
+        in.align(Alignment.FOUR);
+        // <NDR: struct> RPC_UNICODE_STRING DomainName;
         domainName.unmarshalEntity(in);
-        // RPC_UNICODE_STRING.unmarshalEntity reads exactly 4 bytes, no need for alignment
+        // <NDR: pointer> PRPC_SID DomainSid;
+        // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0) {
             domainSid = new RPC_SID();
         }
@@ -85,9 +87,8 @@ public class LSAPR_POLICY_ACCOUNT_DOM_INFO implements Unmarshallable {
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
         domainName.unmarshalDeferrals(in);
-        // RPC_UNICODE_STRING.unmarshalDeferrals writes a variable number of bytes, align before continuing
         if (domainSid != null) {
-            in.align(domainSid.getAlignment());
+            // <NDR: struct> RPC_SID DomainSid;
             in.readUnmarshallable(domainSid);
         }
     }
