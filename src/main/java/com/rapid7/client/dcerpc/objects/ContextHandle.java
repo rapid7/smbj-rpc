@@ -30,14 +30,15 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 /***
  * This class represents any NDR context handle. It is defined to be a struct of 16 bytes:
  *
- *   typedef struct ndr_context_handle
- *   {
+ *   typedef struct ndr_context_handle {
  *      ULONG      attributes;
  *      GUID       uuid;
  *   } ndr_context_handle;
  *
  * However, since the server will be computing these handles, DCERPC will treat these as:
  *   byte[20]
+ *
+ * Alignment: 1
  */
 public class ContextHandle implements Unmarshallable, Marshallable {
     private final byte[] handle;
@@ -81,19 +82,13 @@ public class ContextHandle implements Unmarshallable, Marshallable {
     }
 
     @Override
-    public Alignment getAlignment() {
-        // Size Alignment: N/A
-        // Element Alignment: 1
-        return Alignment.ONE;
-    }
-
-    @Override
     public void marshalPreamble(PacketOutput out) throws IOException {
         // Fixed array
     }
 
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
+        // Structure is aligned
         out.write(this.handle);
     }
 
@@ -109,6 +104,9 @@ public class ContextHandle implements Unmarshallable, Marshallable {
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 1
+        // <NDR: fixed array> byte[]
+        // Alignment: 1
         in.readFully(this.handle);
     }
 

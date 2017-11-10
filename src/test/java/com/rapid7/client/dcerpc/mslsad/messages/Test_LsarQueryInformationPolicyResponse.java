@@ -18,7 +18,6 @@
  *
  *
  */
-
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import java.io.ByteArrayInputStream;
@@ -33,7 +32,6 @@ import com.rapid7.client.dcerpc.mslsad.objects.POLICY_INFORMATION_CLASS;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertSame;
@@ -51,23 +49,15 @@ public class Test_LsarQueryInformationPolicyResponse {
     public Object[][] data_unmarshal() {
         return new Object[][] {
                 // Reference: 1, POLICY_CLASS_INFORMATION: 3
-                {"01000000 0300", Alignment.ONE},
-                // Reference: 1, POLICY_CLASS_INFORMATION: 3
-                {"01000000 0300", Alignment.TWO},
-                // Test alignments:
-                // Reference: 1, POLICY_CLASS_INFORMATION: 3, alignment: 2b
-                {"01000000 0300 0000", Alignment.FOUR},
-                // Reference: 1, POLICY_CLASS_INFORMATION: 3, alignment: 2b
-                {"01000000 0300 0000", Alignment.EIGHT}
+                {"01000000 0300"},
         };
     }
 
     @Test(dataProvider = "data_unmarshal")
-    public void test_unmarshal(String hex, Alignment alignment) throws IOException {
+    public void test_unmarshal(String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         Unmarshallable unmarshallable = mock(Unmarshallable.class);
-        when(unmarshallable.getAlignment()).thenReturn(alignment);
         doNothing().when(unmarshallable).unmarshalPreamble(in);
         doNothing().when(unmarshallable).unmarshalEntity(in);
         doNothing().when(unmarshallable).unmarshalDeferrals(in);

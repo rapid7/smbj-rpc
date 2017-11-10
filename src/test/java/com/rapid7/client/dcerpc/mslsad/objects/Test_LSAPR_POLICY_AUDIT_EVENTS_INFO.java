@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
@@ -25,7 +25,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.io.ndr.Alignment;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -39,7 +38,6 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
     @Test
     public void test_getters_default() {
         LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
-        assertEquals(obj.getAlignment(), Alignment.FOUR);
         assertFalse(obj.isAuditingMode());
         assertNull(obj.getEventAuditingOptions());
         assertEquals(obj.getMaximumAuditEventCount(), 0);
@@ -55,6 +53,118 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
         assertTrue(obj.isAuditingMode());
         assertSame(obj.getEventAuditingOptions(), eventAuditingOptions);
         assertEquals(obj.getMaximumAuditEventCount(), 5);
+    }
+
+    @Test
+    public void test_unmarhsalPreamble() throws IOException {
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("0102"));
+        new LSAPR_POLICY_AUDIT_EVENTS_INFO().unmarshalPreamble(new PacketInput(bin));
+        assertEquals(bin.available(), 2);
+    }
+
+    @DataProvider
+    public Object[][] data_unmarshalEntity() {
+        return new Object[][] {
+                // isAuditingEnabled=false, alignment=3b, referentId=2, MaximumAuditEventCount=3
+                {"00 777777 02000000 03000000",
+                        0, false, new int[]{0, 0, 0}, 3},
+                // isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=3
+                {"01 777777 00000000 00000000",
+                        0, true, null, 0},
+                // alignment: 3, isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=3
+                {"ffffffff 01 777777 00000000 00000000",
+                        1, true, null, 0},
+                // alignment: 2, isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=3
+                {"ffffffff 01 777777 00000000 00000000",
+                        2, true, null, 0},
+                // alignment: 1, isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=3
+                {"ffffffff 01 777777 00000000 00000000",
+                        3, true, null, 0}
+        };
+    }
+
+    @Test(dataProvider = "data_unmarshalEntity")
+    public void test_unmarsalEntity(String hex, int mark, boolean isAuditingEnabled, int[] eventAuditingOptions, int maximumAuditEventCount) throws IOException {
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
+        PacketInput in = new PacketInput(bin);
+        in.readFully(new byte[mark]);
+
+        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        obj.unmarshalEntity(in);
+        assertEquals(obj.isAuditingMode(), isAuditingEnabled);
+        assertEquals(obj.getEventAuditingOptions(), eventAuditingOptions);
+        assertEquals(obj.getMaximumAuditEventCount(), maximumAuditEventCount);
+    }
+
+    @Test
+    public void test_unmarshallEntity_InvalidMaximumAuditEventCount() throws IOException {
+        // isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=1
+        String hex = "01 777777 00000000 01000000";
+        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        IllegalArgumentException actual = null;
+        try {
+            obj.unmarshalEntity(new PacketInput(new ByteArrayInputStream(Hex.decode(hex))));
+        } catch (IllegalArgumentException e) {
+            actual = e;
+        }
+        assertNotNull(actual);
+        assertEquals(actual.getMessage(), "If the MaximumAuditingEventCount field has a value other than 0, EventAuditingOptions MUST NOT be NULL.");
+    }
+
+    @DataProvider
+    public Object[][] data_unmarshalDeferrals() {
+        return new Object[][] {
+                // MaximumCount=3 EventAuditingOptions={1, 2, 3}
+                {"03000000 01000000 02000000 03000000",
+                        0, 3, new int[3], new int[]{1, 2, 3}},
+                // MaximumCount=3 EventAuditingOptions={1, 2, 3}
+                {"03000000 01000000 02000000 03000000",
+                        0, 2, new int[2], new int[]{1, 2}},
+                // Alignment=3 MaximumCount=3 EventAuditingOptions={1, 2, 3}
+                {"ffffffff 03000000 01000000 02000000 03000000",
+                        1, 2, new int[2], new int[]{1, 2}},
+                // Alignment=2 MaximumCount=3 EventAuditingOptions={1, 2, 3}
+                {"ffffffff 03000000 01000000 02000000 03000000",
+                        2, 2, new int[2], new int[]{1, 2}},
+                // Alignment=1 MaximumCount=3 EventAuditingOptions={1, 2, 3}
+                {"ffffffff 03000000 01000000 02000000 03000000",
+                        3, 2, new int[2], new int[]{1, 2}},
+                // Empty
+                {"", 0, 3, null, null},
+        };
+    }
+
+    @Test(dataProvider = "data_unmarshalDeferrals")
+    public void test_unmarshalDeferrals(String hex, int mark, int maximumAuditEventCount, int[] eventAuditingOptions, int[] expectedEventAuditingOptions) throws IOException {
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
+        PacketInput in = new PacketInput(bin);
+        in.readFully(new byte[mark]);
+
+        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        obj.setAuditingMode(true);
+        obj.setMaximumAuditEventCount(maximumAuditEventCount);
+        obj.setEventAuditingOptions(eventAuditingOptions);
+        obj.unmarshalDeferrals(in);
+        assertTrue(obj.isAuditingMode());
+        assertEquals(obj.getEventAuditingOptions(), expectedEventAuditingOptions);
+        assertEquals(obj.getMaximumAuditEventCount(), maximumAuditEventCount);
+    }
+
+    @Test
+    public void test_ummarshalDeferrals_InvalidMaximumCount() throws IOException {
+        // MaximumCount=4
+        String hex = "04000000";
+        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
+        obj.setMaximumAuditEventCount(5);
+        obj.setEventAuditingOptions(new int[3]);
+        IllegalArgumentException actual = null;
+        try {
+            obj.unmarshalDeferrals(new PacketInput(new ByteArrayInputStream(Hex.decode(hex))));
+        } catch (IllegalArgumentException e) {
+            actual = e;
+        }
+        assertNotNull(actual);
+        assertEquals(actual.getMessage(), "Expected MaximumAuditingEventCount (4) >= EventAuditingOptions.MaximumCount (5)");
     }
 
     @Test
@@ -88,92 +198,6 @@ public class Test_LSAPR_POLICY_AUDIT_EVENTS_INFO {
         assertNotEquals(obj1, obj2);
         obj2.setMaximumAuditEventCount(5);
         assertEquals(obj1, obj2);
-    }
-
-    @Test
-    public void test_unmarhsalPreamble() throws IOException {
-        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("0102"));
-        new LSAPR_POLICY_AUDIT_EVENTS_INFO().unmarshalPreamble(new PacketInput(bin));
-        assertEquals(bin.available(), 2);
-    }
-
-    @DataProvider
-    public Object[][] data_unmarshalEntity() {
-        return new Object[][] {
-                // isAuditingEnabled=false, alignment=3b, referentId=2, MaximumAuditEventCount=3
-                {"00 777777 02000000 03000000",
-                    false, new int[]{0, 0, 0}, 3},
-                // isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=3
-                {"01 777777 00000000 00000000",
-                        true, null, 0}
-        };
-    }
-
-    @Test(dataProvider = "data_unmarshalEntity")
-    public void test_unmarsalEntity(String hex, boolean isAuditingEnabled, int[] eventAuditingOptions, int maximumAuditEventCount) throws IOException {
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
-        obj.unmarshalEntity(new PacketInput(new ByteArrayInputStream(Hex.decode(hex))));
-        assertEquals(obj.isAuditingMode(), isAuditingEnabled);
-        assertEquals(obj.getEventAuditingOptions(), eventAuditingOptions);
-        assertEquals(obj.getMaximumAuditEventCount(), maximumAuditEventCount);
-    }
-
-    @Test
-    public void test_unmarshallEntity_InvalidMaximumAuditEventCount() throws IOException {
-        // isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=1
-        String hex = "01 777777 00000000 01000000";
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
-        IllegalArgumentException actual = null;
-        try {
-            obj.unmarshalEntity(new PacketInput(new ByteArrayInputStream(Hex.decode(hex))));
-        } catch (IllegalArgumentException e) {
-            actual = e;
-        }
-        assertNotNull(actual);
-        assertEquals(actual.getMessage(), "If the MaximumAuditingEventCount field has a value other than 0, EventAuditingOptions MUST NOT be NULL.");
-    }
-
-    @DataProvider
-    public Object[][] data_unmarshalDeferrals() {
-        return new Object[][] {
-                // MaximumCount=3 EventAuditingOptions={1, 2, 3}
-                {"03000000 01000000 02000000 03000000",
-                    3, new int[3], new int[]{1, 2, 3}},
-                // MaximumCount=3 EventAuditingOptions={1, 2, 3}
-                {"03000000 01000000 02000000 03000000",
-                        2, new int[2], new int[]{1, 2}},
-                // Empty
-                {"", 3, null, null},
-        };
-    }
-
-    @Test(dataProvider = "data_unmarshalDeferrals")
-    public void test_unmarshalDeferrals(String hex, int maximumAuditEventCount, int[] eventAuditingOptions, int[] expectedEventAuditingOptions) throws IOException {
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
-        obj.setAuditingMode(true);
-        obj.setMaximumAuditEventCount(maximumAuditEventCount);
-        obj.setEventAuditingOptions(eventAuditingOptions);
-        obj.unmarshalDeferrals(new PacketInput(new ByteArrayInputStream(Hex.decode(hex))));
-        assertTrue(obj.isAuditingMode());
-        assertEquals(obj.getEventAuditingOptions(), expectedEventAuditingOptions);
-        assertEquals(obj.getMaximumAuditEventCount(), maximumAuditEventCount);
-    }
-
-    @Test
-    public void test_ummarshalDeferrals_InvalidMaximumCount() throws IOException {
-        // MaximumCount=4
-        String hex = "04000000";
-        LSAPR_POLICY_AUDIT_EVENTS_INFO obj = new LSAPR_POLICY_AUDIT_EVENTS_INFO();
-        obj.setMaximumAuditEventCount(5);
-        obj.setEventAuditingOptions(new int[3]);
-        IllegalArgumentException actual = null;
-        try {
-            obj.unmarshalDeferrals(new PacketInput(new ByteArrayInputStream(Hex.decode(hex))));
-        } catch (IllegalArgumentException e) {
-            actual = e;
-        }
-        assertNotNull(actual);
-        assertEquals(actual.getMessage(), "Expected MaximumAuditingEventCount (4) >= EventAuditingOptions.MaximumCount (5)");
     }
 
     @Test

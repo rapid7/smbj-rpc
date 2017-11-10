@@ -21,6 +21,7 @@ Table of contents
   * [Array Alignment](#array-alignment)
   * [Structure Alignment](#structure-alignment)
   * [Union Alignment](#union-alignment)
+* [Marshalling Example](#marshalling-example)
 
 # Usage Examples
 
@@ -161,45 +162,9 @@ Standard rules for marshalling any NDR construct are as follows:
 
 All NDR objects must be prefixed aligned a fixed number of bytes N, where N is one of the following: {1, 2, 4, 8}.
 
-Objects should not align themselves, but rather, align the next object that is to be written/read.
-By following this pattern, you can optimally chose whether or not to check for alignment based on your static knowledge of the object structure.
-
-If the marshalling code for the construct assumes that the caller has properly aligned the stream before attempting to marhsall the object, it can avoid wasting cycles checking that it is properly aligned before marshalling.
-
-*Example: Marshalling static constructs*
-
-If the contents of the construct are static and known to the author, then a dynamic align is not required. Instead, the bytes can be padded/skipped by fixed sizes. For example:
-```
-typedef struct {
-    unsigned char Field1;
-    unsigned long Field2;
-} MyStruct
-```
-```java
-public void marshalEntity(PacketOutput out) throws IOException {
-    out.writeBoolean(field1);
-    out.pad(3);
-    out.writeInt(field2);
-}
-```
-
-Within the marshalling code of MyStruct, a call to `align` is not required. The structure knows that it has written exactly 1 byte for Field1, and that the stream needs to be padded by exactly 3 bytes to satisfy the alignment requirements of Field2.
-
-*Example: Marshalling dynamic constructs*
-
-There are times that for the purpose of abstraction, structure contents are not known until runtime. For example:
-
-```java
-public class MyStruct implements Marshallable {
-    private Unmarshallable field1;
-    public void marshalEntity(PacketOutput out) throws IOException {
-        out.align(field1.getAlignment());
-        out.writeMarshallable(field1);
-    }
-}
-```
-
-In this case, since all `Marshallable` and `Unmarshallable` objects implement `getAlignment()`, you can ask the object for its alignment requirement at runtime, allowing you to dynamically align the stream to any following object.
+*Objects should always align themselves before writing their representation.*
+While this can lead to inefficient behavior if the caller knows that the object is already aligned, it results in a simpler framework design.
+By following this pattern, you can be assured that you can safely call marshall/unmarshall on any `DataType` and it will be aligned automatically.
 
 ## Primitive Alignment
 
@@ -217,40 +182,57 @@ Examples:
 
 Since the alignment of a short is 2, the alignment of this array is 4 when using NDR20:
 ```
-[size_of(range(1,200))] short SomeArray;
+[size_of(range(1,200))] short someArray;
 ```
 
 Since the alignment of a hyper is 8, the alignment of this array is 8:
 ```
-[size_of(range(1,200))] hyper SomeArray;
+[size_of(range(1,200))] hyper someArray;
+```
+
+However, you must also take care to align at each stage of the marshalling process.
+The subsequent marshalling code for a conformant array above should look like this if you are part of an embedding struct:
+```java
+public void marshalPreamble(PacketOutput out) throws IOException {
+    // MaximumCount
+    out.align(Alignment.FOUR);
+    out.writeInt(this.array.length);
+}
+public void marshalEntity(PacketOutput out) throws IOException {
+    // <NDR conformant array> [size_of(range(1,200))] hyper someArray;
+    out.align(Alignment.EIGHT);
+    for (long hyper : this.array) {
+        // Alignment: 8 - Already aligned
+        out.writeLong(hyper);
+    }
+}
 ```
 
 ## Structure Alignment
 
 A structure itself must be aligned to the largest alignment for all of its fields (regardless of their type).
+This alignment is performed at the beginning of `marshalEntity`.
 
 For example the alignment of this struct is 4:
 ```
 typedef struct {
-    unsigned boolean Field1;
-    unsigned long Field2;
+    boolean field1;
+    unsigned long field2;
 } MyStruct
-```
-
-As for where you would use this, take the following struct as an example:
-```
-typedef struct {
-    unsigned boolean OuterField1;
-    MyStruct OuterField2;
-} OuterStruct
 ```
 
 The subsequent marshalling code should look like this:
 ```java
-public void marshal(PacketOutput out) throws IOException {
-    out.writeBoolean(OuterField1);
-    out.pad(3); // Bad three bytes to reach alignment of 4
-    out.writeMarshallable(OuterField2);
+public void marshalEntity(PacketOutput out) throws IOException {
+    // Our Structure Alignment: 4
+    out.align(Alignment.FOUR);
+    // <NDR: boolean> unsigned boolean field1;
+    // Alignment: 1 - Already aligned
+    out.writeBoolean(field1);
+    // <NDR: unsigned long> unsigned long field2;
+    // Alignment: 4 - We pad 3 bytes as we wrote exactly 1 since the known 4 byte alignment
+    out.pad(3);
+    out.writeEntity(field2);
 }
 ```
 
@@ -268,4 +250,98 @@ typedef
    [case(2)] 
      hyper MyHyper;
  } MyUnion;
+```
+
+# Marshalling Example
+
+Signature:
+```
+typedef struct {
+    boolean field1;
+    [size_of(range(1,200))] hyper field2;
+    unsigned long* field3;
+} MyStruct
+```
+
+Java Implementation:
+```java
+public class MyStruct implements Marshallable {
+    private boolean field1;
+    private long[] field2;
+    private Long field3;
+    
+    @Override
+    public void marshalPreamble(PacketOutput out) throws IOException {
+        // <NDR unsigned long> MaximumCount - [size_of(range(1,200))] hyper field2;
+        out.align(Alignment.FOUR);
+        out.write(this.field2.length);
+    }
+    
+    @Override
+    public void marshalEntity(PacketOutput out) throws IOException {
+        // Structure Alignment: 8
+        out.align(Alignment.EIGHT);
+        // <NDR boolean> boolean field1;
+        // Alignment: 1 - Already aligned
+        out.writeBoolean(this.field1);
+        // field2 entires are deferred to end of struct
+        // <NDR pointer> unsigned long field3;
+        out.pad(3); // Alignment: 4 - We wrote exactly 1 byte above since an eight byte alignment
+        if (this.field3 != null)
+            out.writeReferenceID();
+        // <NDR unsigned long> MaximumCount - [size_of(range(1,200))] hyper field2;
+        // Alignment: 8 - Already aligned. We wrote 8 bytes above since an eight byte alignment
+        for (long entry : this.field2) {
+            out.writeLong(entry);
+        }
+    }
+    
+    @Override
+    public void marshalDeferrals(PacketOutput out) throws IOException {
+        if (this.field3 != null) {
+            // <NDR: unsigned long> unsigned long* field3;
+            out.align(Alignment.FOUR);
+            out.writeInt(this.field3);
+        }
+    }
+}
+```
+
+Signature:
+```
+typedef struct {
+    MyStruct field1;
+    unsigned long field2;
+} OuterStruct
+```
+
+Java Implementation:
+```java
+public class OuterStruct implements Marshallable {
+    private MyStruct field1;
+    private long field2;
+    
+    @Override
+    public void marshalPreamble(PacketOutput out) throws IOException {
+        // MyStruct will align itself
+        field1.marshalPremable(out);
+    }
+    
+    @Override
+    public void marshalEntity(PacketOutput out) throws IOException {
+        // Structure Alignment: 8
+        out.align(Alignment.EIGHT);
+        // <NDR: struct> MyStruct field1;
+        // Alignment: Will align itself
+        field1.marshalEntity(out);
+        // <NDR: unsigned long> unsigned long field2;
+        out.align(Alignment.FOUR);
+        out.writeInt(this.field2);
+    }
+    
+    @Override
+    public void marshalDeferrals(PacketOutput out) throws IOException {
+        // No pointer deferrals
+    }
+}
 ```

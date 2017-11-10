@@ -47,8 +47,6 @@ public class LsarQueryInformationPolicyResponse<T extends Unmarshallable> extend
                         "Incoming POLICY_INFORMATION_CLASS %d does not match expected: %d",
                         infoLevel, this.policyInformationClass.getInfoLevel()));
             }
-            // Alignment for structure - It's of unknown size so ask it what its alignment is
-            packetIn.align(this.policyInformation.getAlignment());
             packetIn.readUnmarshallable(this.policyInformation);
         }
     }
