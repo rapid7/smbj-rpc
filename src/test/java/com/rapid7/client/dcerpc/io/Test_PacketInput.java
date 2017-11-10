@@ -18,12 +18,13 @@
  */
 package com.rapid7.client.dcerpc.io;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class Test_PacketInput {
     @Test
@@ -132,6 +133,19 @@ public class Test_PacketInput {
         assertEquals("??", getPacketInput("0000000100000000000000010000000000000000020000003F003F00").readStringBufRef(true));
         // Single offset ? character
         assertEquals("\u0000?", getPacketInput("0000000100000000000000010000000001000000010000003F000000").readStringBufRef(true));
+    }
+
+    @Test
+    public void readInterval() throws IOException {
+        // MaxAge value
+        assertEquals(3710851, getPacketInput("0000000040DEFFFF").readInterval());
+        assertEquals(3628800, getPacketInput("0080a60affdeffff").readInterval());
+        // MinAge value
+        assertEquals(0, getPacketInput("0000000000000000").readInterval());
+        // Lockout value
+        assertEquals(1800, getPacketInput("00cc1dcffbffffff").readInterval());
+        // -1, infinite duration (never expire)
+        assertEquals(-1, getPacketInput("ffffffffffffffff").readInterval());
     }
 
     private PacketInput getPacketInput(final String hexString) {

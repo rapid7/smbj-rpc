@@ -20,33 +20,60 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.mslsad.objects.DOMAIN_INFORMATION_CLASS;
+import com.rapid7.client.dcerpc.mslsad.objects.SAMPR_DOMAIN_LOGOFF_INFO;
+import com.rapid7.client.dcerpc.mslsad.objects.SAMPR_DOMAIN_PASSWORD_INFO;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
 //https://msdn.microsoft.com/en-us/library/cc245779.aspx
-public class SamrQueryInformationDomainRequest extends RequestCall<SamrQueryInformationDomainResponse> {
+public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable>
+        extends RequestCall<SamrQueryInformationDomainResponse<T>> {
     public final static short OP_NUM = 8;
-
-    public static final short DOMAIN_PASSWORD_INFORMATION = 1;
-    public static final short DOMAIN_LOGOFF_INFORMATION = 3;
-
     private final DomainHandle handle;
-    private final short domainInformationClass;
+    private final DOMAIN_INFORMATION_CLASS infoLevel;
 
-    public SamrQueryInformationDomainRequest(final DomainHandle handle, final short domainInformationClass) {
+    public SamrQueryInformationDomainRequest(final DomainHandle handle, final DOMAIN_INFORMATION_CLASS infoLevel) {
         super(OP_NUM);
         this.handle = handle;
-        this.domainInformationClass = domainInformationClass;
+        this.infoLevel = infoLevel;
+    }
+
+    abstract T newDomainInformation();
+
+    @Override
+    public SamrQueryInformationDomainResponse<T> getResponseObject() {
+        return new SamrQueryInformationDomainResponse<T>(newDomainInformation(), infoLevel);
+
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         packetOut.write(handle.getBytes());
-        packetOut.writeShort(domainInformationClass);
+        packetOut.writeShort(infoLevel.getInfoLevel());
     }
 
-    @Override
-    public SamrQueryInformationDomainResponse getResponseObject() {
-        return new SamrQueryInformationDomainResponse();
+    public static class DomainPasswordInformation extends SamrQueryInformationDomainRequest<SAMPR_DOMAIN_PASSWORD_INFO> {
+        public DomainPasswordInformation(final DomainHandle handle) {
+            super(handle, DOMAIN_INFORMATION_CLASS.DOMAIN_PASSWORD_INFORMATION);
+        }
+
+        @Override
+        SAMPR_DOMAIN_PASSWORD_INFO newDomainInformation() {
+            return new SAMPR_DOMAIN_PASSWORD_INFO();
+        }
     }
+
+    public static class DomainLogOffInformation extends SamrQueryInformationDomainRequest<SAMPR_DOMAIN_LOGOFF_INFO> {
+        public DomainLogOffInformation(final DomainHandle handle) {
+            super(handle, DOMAIN_INFORMATION_CLASS.DOMAIN_LOGOFF_INFORMATION);
+        }
+
+        @Override
+        SAMPR_DOMAIN_LOGOFF_INFO newDomainInformation() {
+            return new SAMPR_DOMAIN_LOGOFF_INFO();
+        }
+    }
+
 }

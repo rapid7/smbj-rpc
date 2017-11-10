@@ -43,8 +43,6 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
@@ -93,14 +91,6 @@ public class SecurityAccountManagerService {
         final SamrOpenAliasRequest request = new SamrOpenAliasRequest(domainHandle, sid, 0x0002000C);
         final SamrOpenAliasResponse response = transport.call(request);
         return response.getHandle();
-    }
-
-    public void infoDomain(DomainHandle domainHandle, short infoLevel) throws IOException {
-        // SamrQueryInformationDomainRequest.DOMAIN_PASSWORD_INFORMATION
-        final SamrQueryInformationDomainRequest request = new SamrQueryInformationDomainRequest(domainHandle,
-            infoLevel);
-        final SamrQueryInformationDomainResponse response = transport.call(request);
-
     }
 
     public void closeHandle(ContextHandle handle) throws IOException {
