@@ -28,45 +28,52 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
  * Represents a UTF-16 encoded unicode string in dcerpc.
- *
+ * <br/>
+ * <b>Alignment: 4</b><pre>
+ *      unsigned short Length;: 2
+ *      unsigned short MaximumLength;: 2
+ *      [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;: 4 (Max[4, 1])</pre>
+ * <br/>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc230365.aspx">RPC_UNICODE_STRING</a>:
+ * <blockquote><pre>
+ *  The RPC_UNICODE_STRING structure specifies a Unicode string. This structure is defined in IDL as follows:
  *      typedef struct _RPC_UNICODE_STRING {
  *          unsigned short Length;
  *          unsigned short MaximumLength;
- *          [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+ *          [size_is(MaximumLength/2), length_is(Length/2)]
+ *          WCHAR* Buffer;
  *      } RPC_UNICODE_STRING,
  *      *PRPC_UNICODE_STRING;
- *
+ *  Length: The length, in bytes, of the string pointed to by the Buffer member, not including the terminating null character if any. The length MUST be a multiple of 2. The length SHOULD equal the entire size of the Buffer, in which case there is no terminating null character. Any method that accesses this structure MUST use the Length specified instead of relying on the presence or absence of a null character.
+ *  MaximumLength: The maximum size, in bytes, of the string pointed to by Buffer. The size MUST be a multiple of 2. If not, the size MUST be decremented by 1 prior to use. This value MUST not be less than Length.
+ *  Buffer: A pointer to a string buffer. If MaximumLength is greater than zero, the buffer MUST contain a non-null value.
+ * </pre></blockquote cite="https://msdn.microsoft.com/en-us/library/cc230365.aspx">
  * NOTE: This structure has purposely not been mapped 1-1 with the dcerpc struct.
  * There is no practical reason for a client to access the Length, MaximumLength, or raw byte[] of this
  * struct, and so this class only stores the UTF-16 Java String. Conversions are done during marshalling/unmarshalling.
- *
+ * <br/>
  * An RPC_UNICODE_STRING can be null terminated. However this is abstracted away from the client and is only
  * used during marshalling or unmarshalling.
  * You should not provide a null terminator to your String when marshalling this object, and should
  * not expect one in return.
- *
- * Marshalling Usage:
+ * <br/>
+ * <b>Marshalling Usage:</b><pre>
  *      String myValue = "some string";
  *      RPC_UNICODE_STRING rpcUnicodeString = RPC_UNICODE_STRING.of(true, myValue);
- *      packetOut.writeMarshallable(rpcUnicodeString);
- * Unmarshalling Usage:
+ *      packetOut.writeMarshallable(rpcUnicodeString);</pre>
+ * <b>Unmarshalling Usage:</b><pre>
  *      RPC_UNICODE_STRING rpcUnicodeString = RPC_UNICODE_STRING.of(true);
  *      packetIn.readUnmarshallable(rpcUnicodeString);
- *      String myValue = rpcUnicodeString.getValue();
- *
- * Alignment: 4
- *      unsigned short Length;: 2
- *      unsigned short MaximumLength;: 2
- *      [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;: 4 (Max[4, 1])
+ *      String myValue = rpcUnicodeString.getValue();</pre>
  */
-public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable {
+public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
 
     /**
      * Convenience method for construction of RPC_UNICODE_STRING.
      * @param nullTerminated Whether or not the RPC_UNICODE_STRING is null terminated.
      * @return A new RPC_UNICODE_STRING with an initial value of null.
      */
-    public static RPC_UNICODE_STRING of(boolean nullTerminated) {
+    public static RPCUnicodeString of(boolean nullTerminated) {
         return (nullTerminated ? new NullTerminated() : new NotNullTerminated());
     }
 
@@ -76,8 +83,8 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
      * @param value The initial value of the RPC_UNICODE_STRING.
      * @return A new RPC_UNICODE_STRING with the provided initial value.
      */
-    public static RPC_UNICODE_STRING of(boolean nullTerminated, String value) {
-        RPC_UNICODE_STRING obj = of(nullTerminated);
+    public static RPCUnicodeString of(boolean nullTerminated, String value) {
+        RPCUnicodeString obj = of(nullTerminated);
         obj.setValue(value);
         return obj;
     }
@@ -85,7 +92,7 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
     /**
      * An RPC_UNICODE_STRING which is expected to be null terminated during marshalling/unmarshalling.
      */
-    static class NullTerminated extends RPC_UNICODE_STRING {
+    static class NullTerminated extends RPCUnicodeString {
         @Override
         boolean isNullTerminated() {
             return true;
@@ -95,7 +102,7 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
     /**
      * An RPC_UNICODE_STRING which is not expected to be null terminated during marshalling/unmarshalling.
      */
-    static class NotNullTerminated extends RPC_UNICODE_STRING {
+    static class NotNullTerminated extends RPCUnicodeString {
         @Override
         boolean isNullTerminated() {
             return false;
@@ -244,10 +251,10 @@ public abstract class RPC_UNICODE_STRING implements Unmarshallable, Marshallable
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof RPC_UNICODE_STRING)) {
+        } else if (! (obj instanceof RPCUnicodeString)) {
             return false;
         }
-        RPC_UNICODE_STRING other = (RPC_UNICODE_STRING) obj;
+        RPCUnicodeString other = (RPCUnicodeString) obj;
         return Objects.equals(isNullTerminated(), other.isNullTerminated())
                 && Objects.equals(getValue(), other.getValue());
     }

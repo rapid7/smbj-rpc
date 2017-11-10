@@ -27,32 +27,29 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
- * This is an abstract class that represents the SAMPR_ENUMERATION_BUFFER. The initEntity
- * method must be overriden to instantiate the instance contained in the buffer.
- *
- * The SAMPR_ENUMERATION_BUFFER structure holds an array of SAMPR_RID_ENUMERATION elements.
- *
- * <pre>
- * typedef struct _SAMPR_ENUMERATION_BUFFER {
- *   unsigned long EntriesRead;
- *   [size_is(EntriesRead)] PSAMPR_RID_ENUMERATION Buffer;
- * } SAMPR_ENUMERATION_BUFFER,
- *   *PSAMPR_ENUMERATION_BUFFER;
- * </pre>
- *
- * @see <a href="https://msdn.microsoft.com/en-us/library/cc245561.aspx">
- *       https://msdn.microsoft.com/en-us/library/cc245561.aspx</a>
- *
- * Alignment: 4 (Max[4, 4])
+ * <b>Alignment: 4</b> (Max[4, 4])<pre>
  *      unsigned long EntriesRead;: 4
- *      [size_is(EntriesRead)] PSAMPR_RID_ENUMERATION;: 4 (Max[4, 4])
+ *      [size_is(EntriesRead)] PSAMPR_RID_ENUMERATION;: 4 (Max[4, 4])</pre>
+ * This is an abstract class that represents the SAMPR_ENUMERATION_BUFFER. The initEntity
+ * method must be overridden to instantiate the instance contained in the buffer.
+ * <br/>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc245561.aspx">SAMPR_RID_ENUMERATION</a>
+ * <blockquote cite="https://msdn.microsoft.com/en-us/library/cc245561.aspx"><pre>
+ * The SAMPR_ENUMERATION_BUFFER structure holds an array of SAMPR_RID_ENUMERATION elements.
+ *      typedef struct _SAMPR_ENUMERATION_BUFFER {
+ *          unsigned long EntriesRead;
+ *          [size_is(EntriesRead)] PSAMPR_RID_ENUMERATION Buffer;
+ *      } SAMPR_ENUMERATION_BUFFER,
+ *      *PSAMPR_ENUMERATION_BUFFER;
+ *  EntriesRead: The number of elements in Buffer. If zero, Buffer MUST be ignored. If nonzero, Buffer MUST point to at least EntriesRead * sizeof(SAMPR_RID_ENUMERATION) bytes of memory.
+ *  Buffer: An array of SAMPR_RID_ENUMERATION elements.</pre></blockquote>
  */
-public abstract class SAMPR_ENUMERATION_BUFFER<T extends Unmarshallable> implements Unmarshallable {
+public abstract class SAMPREnumerationBuffer<T extends Unmarshallable> implements Unmarshallable {
 
     private Integer entriesRead;
     private List<T> array;
 
-    public SAMPR_ENUMERATION_BUFFER() {
+    public SAMPREnumerationBuffer() {
     }
 
     /**

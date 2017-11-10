@@ -23,18 +23,18 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 
-public class Test_POLICY_INFORMATION_CLASS {
+public class Test_PolicyInformationClass {
 
     @DataProvider
     public Object[][] data_getInfoLevel() {
         return new Object[][] {
-                {POLICY_INFORMATION_CLASS.POLICY_AUDIT_EVENTS_INFORMATION, (short) 2},
-                {POLICY_INFORMATION_CLASS.POLICY_PRIMARY_DOMAIN_INFORMATION, (short) 3},
-                {POLICY_INFORMATION_CLASS.POLICY_ACCOUNT_DOMAIN_INFORMATION, (short) 5}
+                {PolicyInformationClass.POLICY_AUDIT_EVENTS_INFORMATION, (short) 2},
+                {PolicyInformationClass.POLICY_PRIMARY_DOMAIN_INFORMATION, (short) 3},
+                {PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION, (short) 5}
         };
     }
     @Test(dataProvider = "data_getInfoLevel")
-    public void test_getInfoLevel(POLICY_INFORMATION_CLASS policyInformationClass, short expectedInfoLevel) {
+    public void test_getInfoLevel(PolicyInformationClass policyInformationClass, short expectedInfoLevel) {
         assertEquals(policyInformationClass.getInfoLevel(), expectedInfoLevel);
     }
 }

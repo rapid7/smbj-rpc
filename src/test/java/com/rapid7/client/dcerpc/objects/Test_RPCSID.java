@@ -29,11 +29,11 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 
 import static org.testng.Assert.*;
 
-public class Test_RPC_SID {
+public class Test_RPCSID {
 
     @Test(expectedExceptions = {NullPointerException.class})
     public void test_marshalPreamble_null() throws IOException {
-        new RPC_SID().marshalPreamble(new PacketOutput(new ByteArrayOutputStream()));
+        new RPCSID().marshalPreamble(new PacketOutput(new ByteArrayOutputStream()));
     }
 
     @DataProvider
@@ -56,7 +56,7 @@ public class Test_RPC_SID {
         PacketOutput out = new PacketOutput(bout);
         out.write(Hex.decode(writeHex));
 
-        RPC_SID rpc_sid = new RPC_SID();
+        RPCSID rpc_sid = new RPCSID();
         rpc_sid.setSubAuthority(new long[]{5, 10});
         rpc_sid.marshalPreamble(out);
         assertEquals(Hex.toHexString(bout.toByteArray()), expectHex);
@@ -64,7 +64,7 @@ public class Test_RPC_SID {
 
     @Test(expectedExceptions = {NullPointerException.class})
     public void test_marshalEntity_null() throws IOException {
-        new RPC_SID().marshalEntity(new PacketOutput(new ByteArrayOutputStream()));
+        new RPCSID().marshalEntity(new PacketOutput(new ByteArrayOutputStream()));
     }
 
     @DataProvider
@@ -87,7 +87,7 @@ public class Test_RPC_SID {
         PacketOutput out = new PacketOutput(bout);
         out.write(Hex.decode(writeHex));
 
-        RPC_SID rpc_sid = new RPC_SID();
+        RPCSID rpc_sid = new RPCSID();
         rpc_sid.setRevision((char) 25);
         rpc_sid.setSubAuthorityCount((char) 2);
         rpc_sid.setIdentifierAuthority(new byte[]{1, 2, 3, 4, 5, 6});
@@ -98,7 +98,7 @@ public class Test_RPC_SID {
 
     @Test
     public void test_marshalEntity_SubAuthorityCountInvalid() throws IOException {
-        RPC_SID rpc_sid = new RPC_SID();
+        RPCSID rpc_sid = new RPCSID();
         rpc_sid.setRevision((char) 25);
         rpc_sid.setSubAuthorityCount((char) 30);
         rpc_sid.setIdentifierAuthority(new byte[]{1, 2, 3, 4, 5, 6});
@@ -117,7 +117,7 @@ public class Test_RPC_SID {
     @Test
     public void test_marshalDeferrals() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        new RPC_SID().marshalDeferrals(new PacketOutput(outputStream));
+        new RPCSID().marshalDeferrals(new PacketOutput(outputStream));
         assertEquals(outputStream.toByteArray(), new byte[0]);
     }
 
@@ -137,7 +137,7 @@ public class Test_RPC_SID {
         PacketInput in = new PacketInput(bin);
         in.readFully(new byte[mark]);
 
-        RPC_SID rpc_sid = new RPC_SID();
+        RPCSID rpc_sid = new RPCSID();
         rpc_sid.unmarshalPreamble(in);
         assertEquals(bin.available(), 0);
         assertEquals(rpc_sid.getSubAuthority(), new long[2]);
@@ -163,7 +163,7 @@ public class Test_RPC_SID {
         PacketInput in = new PacketInput(bin);
         in.readFully(new byte[mark]);
 
-        RPC_SID rpc_sid = new RPC_SID();
+        RPCSID rpc_sid = new RPCSID();
         rpc_sid.setSubAuthority(new long[2]);
         rpc_sid.unmarshalEntity(in);
         assertEquals(bin.available(), 0);
@@ -176,7 +176,7 @@ public class Test_RPC_SID {
     @Test
     public void test_unmarshalEntity_SubAuthorityCountInvalid() throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("191e010203040506050000000a000000"));
-        RPC_SID rpc_sid = new RPC_SID();
+        RPCSID rpc_sid = new RPCSID();
         rpc_sid.setSubAuthority(new long[2]);
         IllegalArgumentException actual = null;
         try {
@@ -192,13 +192,13 @@ public class Test_RPC_SID {
     public void test_unmarshalDeferrals() throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("191e"));
         assertEquals(bin.available(), 2);
-        new RPC_SID().unmarshalDeferrals(new PacketInput(bin));
+        new RPCSID().unmarshalDeferrals(new PacketInput(bin));
         assertEquals(bin.available(), 2);
     }
 
     @Test
     public void test_getters() {
-        RPC_SID rpc_sid = new RPC_SID();
+        RPCSID rpc_sid = new RPCSID();
         assertEquals(rpc_sid.getRevision(), 0);
         assertEquals(rpc_sid.getSubAuthorityCount(), 0);
         assertNull(rpc_sid.getIdentifierAuthority());
@@ -207,7 +207,7 @@ public class Test_RPC_SID {
 
     @Test
     public void test_setters() {
-        RPC_SID rpc_sid = new RPC_SID();
+        RPCSID rpc_sid = new RPCSID();
         rpc_sid.setRevision((char) 200);
         rpc_sid.setSubAuthorityCount((char) 5);
         byte[] identifierAuthority = new byte[]{1, 2};
@@ -222,7 +222,7 @@ public class Test_RPC_SID {
 
     @Test
     public void test_hashCode() {
-        RPC_SID rpc_sid = new RPC_SID();
+        RPCSID rpc_sid = new RPCSID();
         assertEquals(rpc_sid.hashCode(), 923521);
         rpc_sid.setRevision((char) 200);
         assertEquals(rpc_sid.hashCode(), 6881721);
@@ -236,8 +236,8 @@ public class Test_RPC_SID {
 
     @Test
     public void test_equals() {
-        RPC_SID sid1 = new RPC_SID();
-        RPC_SID sid2 = new RPC_SID();
+        RPCSID sid1 = new RPCSID();
+        RPCSID sid2 = new RPCSID();
         assertEquals(sid1, sid2);
         sid1.setRevision((char) 200);
         assertNotEquals(sid1, sid2);
@@ -259,7 +259,7 @@ public class Test_RPC_SID {
 
     @Test
     public void test_toString() {
-        RPC_SID rpc_sid = new RPC_SID();
+        RPCSID rpc_sid = new RPCSID();
         assertEquals(rpc_sid.toString(), "RPC_SID{Revision:0, SubAuthorityCount:0, IdentifierAuthority:null, SubAuthority: null}");
         rpc_sid.setRevision((char) 200);
         rpc_sid.setSubAuthorityCount((char) 5);

@@ -22,13 +22,13 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.mslsad.objects.POLICY_INFORMATION_CLASS;
+import com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass;
 
 public class LsarQueryInformationPolicyResponse<T extends Unmarshallable> extends RequestResponse {
     private final T policyInformation;
-    private final POLICY_INFORMATION_CLASS policyInformationClass;
+    private final PolicyInformationClass policyInformationClass;
 
-    public LsarQueryInformationPolicyResponse(T policyInformation, POLICY_INFORMATION_CLASS policyInformationClass) {
+    public LsarQueryInformationPolicyResponse(T policyInformation, PolicyInformationClass policyInformationClass) {
         this.policyInformation = policyInformation;
         this.policyInformationClass = policyInformationClass;
     }

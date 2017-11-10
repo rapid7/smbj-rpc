@@ -26,9 +26,8 @@ import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-import com.rapid7.client.dcerpc.mslsad.objects.POLICY_INFORMATION_CLASS;
+import com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -41,7 +40,7 @@ public class Test_LsarQueryInformationPolicyResponse {
     @Test
     public void test_getters() {
         Unmarshallable obj = mock(Unmarshallable.class);
-        LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(obj, POLICY_INFORMATION_CLASS.POLICY_ACCOUNT_DOMAIN_INFORMATION);
+        LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(obj, PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION);
         assertSame(response.getPolicyInformation(), obj);
     }
 
@@ -63,7 +62,7 @@ public class Test_LsarQueryInformationPolicyResponse {
         doNothing().when(unmarshallable).unmarshalDeferrals(in);
         LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(
                 unmarshallable,
-                POLICY_INFORMATION_CLASS.POLICY_PRIMARY_DOMAIN_INFORMATION);
+                PolicyInformationClass.POLICY_PRIMARY_DOMAIN_INFORMATION);
         response.unmarshal(in);
         assertEquals(bin.available(), 0);
     }
@@ -76,7 +75,7 @@ public class Test_LsarQueryInformationPolicyResponse {
         PacketInput in = new PacketInput(bin);
         LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(
                 null,
-                POLICY_INFORMATION_CLASS.POLICY_ACCOUNT_DOMAIN_INFORMATION);
+                PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION);
         response.unmarshal(in);
         assertEquals(bin.available(), 0);
     }
@@ -89,7 +88,7 @@ public class Test_LsarQueryInformationPolicyResponse {
         PacketInput in = new PacketInput(bin);
         LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(
                 null,
-                POLICY_INFORMATION_CLASS.POLICY_ACCOUNT_DOMAIN_INFORMATION);
+                PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION);
         IllegalArgumentException actual = null;
         try {
             response.unmarshal(in);

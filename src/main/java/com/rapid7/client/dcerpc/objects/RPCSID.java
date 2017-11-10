@@ -30,22 +30,29 @@ import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
- *  typedef struct _RPC_SID {
- *      unsigned char Revision;
- *      unsigned char SubAuthorityCount;
- *      RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
- *      [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
- *  } RPC_SID,
- *  *PRPC_SID,
- *  *PSID;
- *
- *  Alignment: 4 (Max[4, 4])
+ * <b>Alignment: 4</b> (Max[4, 4])<pre>
  *      unsigned char Revision;: 1
  *      unsigned char SubAuthorityCount;: 1
  *      RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;: 1
- *      [size_is(SubAuthorityCount)] unsigned long SubAuthority[];: 4 (Max[4, 4])
+ *      [size_is(SubAuthorityCount)] unsigned long SubAuthority[];: 4 (Max[4, 4])</pre>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc230364.aspx">RPC_SID</a>:
+ * <blockquote cite="https://msdn.microsoft.com/en-us/library/cc230364.aspx"><pre>
+ * The RPC_SID structure is an IDL representation of the SID type (as specified in  section 2.4.2) for use by RPC-based protocols.
+ *      typedef struct _RPC_SID {
+ *          unsigned char Revision;
+ *          unsigned char SubAuthorityCount;
+ *          RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
+ *          [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
+ *      } RPC_SID,
+ *      *PRPC_SID,
+ *      *PSID;
+ *  Revision: An 8-bit unsigned integer that specifies the revision level of the SID. This value MUST be set to 0x01.
+ *  SubAuthorityCount: An 8-bit unsigned integer that specifies the number of elements in the SubAuthority array. The maximum number of elements allowed is 15.
+ *  IdentifierAuthority: An RPC_SID_IDENTIFIER_AUTHORITY structure that indicates the authority under which the SID was created. It describes the entity that created the SID. The Identifier Authority value {0,0,0,0,0,5} denotes SIDs created by the NT SID authority.
+ *  SubAuthority: A variable length array of unsigned 32-bit integers that uniquely identifies a principal relative to the IdentifierAuthority. Its length is determined by SubAuthorityCount.
+ * </pre></blockquote>
  */
-public class RPC_SID implements Unmarshallable, Marshallable {
+public class RPCSID implements Unmarshallable, Marshallable {
     // <NDR: unsigned char> unsigned char Revision;
     private char revision;
     // <NDR: unsigned char> unsigned char SubAuthorityCount
@@ -175,10 +182,10 @@ public class RPC_SID implements Unmarshallable, Marshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof RPC_SID)) {
+        } else if (!(obj instanceof RPCSID)) {
             return false;
         }
-        RPC_SID other = (RPC_SID) obj;
+        RPCSID other = (RPCSID) obj;
         return getRevision() == other.getRevision() && getSubAuthorityCount() == other.getSubAuthorityCount() && Arrays.equals(getIdentifierAuthority(), other.getIdentifierAuthority()) && Arrays.equals(getSubAuthority(), other.getSubAuthority());
     }
 

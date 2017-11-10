@@ -26,48 +26,53 @@ import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-import com.rapid7.client.dcerpc.objects.RPC_SID;
-import com.rapid7.client.dcerpc.objects.RPC_UNICODE_STRING;
+import com.rapid7.client.dcerpc.objects.RPCSID;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
- * Structure: LSAPR_POLICY_PRIMARY_DOM_INFO
- *  typedef struct _LSAPR_POLICY_PRIMARY_DOM_INFO {
- *      RPC_UNICODE_STRING Name;
- *      PRPC_SID Sid;
- *  } LSAPR_POLICY_PRIMARY_DOM_INFO,
- *  *PLSAPR_POLICY_PRIMARY_DOM_INFO;
- *
- * Alignment: 4 (Max[4,4])
+ * <b>Alignment: 4</b> (Max[4,4])<pre>
  *      RPC_UNICODE_STRING Name;: 4
- *      PRPC_SID Sid;: 4
+ *      PRPC_SID Sid;: 4</pre>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc234265.aspx">LSAPR_POLICY_PRIMARY_DOM_INFO</a>
+ * <blockquote cite="https://msdn.microsoft.com/en-us/library/cc234265.aspx"><pre>
+ * The LSAPR_POLICY_PRIMARY_DOM_INFO structure defines the server's primary domain.
+ *  The following structure corresponds to the PolicyPrimaryDomainInformation information class.
+ *      typedef struct _LSAPR_POLICY_PRIMARY_DOM_INFO {
+ *          RPC_UNICODE_STRING Name;
+ *          PRPC_SID Sid;
+ *      } LSAPR_POLICY_PRIMARY_DOM_INFO,
+ *      *PLSAPR_POLICY_PRIMARY_DOM_INFO;
+ *  Name: This field contains a name for the primary domain that is subject to the restrictions of a NetBIOS name, as specified in [RFC1088]. The value SHOULD be used (by implementations external to this protocol) to identify the domain via the NetBIOS API, as specified in [RFC1088].
+ *  Sid: The SID of the primary domain.
+ * </pre></blockquote>
  */
-public class LSAPR_POLICY_PRIMARY_DOM_INFO implements Unmarshallable {
+public class LSAPRPolicyPrimaryDomInfo implements Unmarshallable {
 
     // <NDR: struct> RPC_UNICODE_STRING Name;
-    private RPC_UNICODE_STRING name;
+    private RPCUnicodeString name;
     // <NDR: pointer> PRPC_SID Sid;
-    private RPC_SID sid;
+    private RPCSID sid;
 
-    public RPC_UNICODE_STRING getName() {
+    public RPCUnicodeString getName() {
         return name;
     }
 
-    public void setName(RPC_UNICODE_STRING name) {
+    public void setName(RPCUnicodeString name) {
         this.name = name;
     }
 
-    public RPC_SID getSid() {
+    public RPCSID getSid() {
         return sid;
     }
 
-    public void setSid(RPC_SID sid) {
+    public void setSid(RPCSID sid) {
         this.sid = sid;
     }
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
         // <NDR: struct> RPC_UNICODE_STRING Name;
-        name = RPC_UNICODE_STRING.of(false);
+        name = RPCUnicodeString.of(false);
         name.unmarshalPreamble(in);
     }
 
@@ -80,7 +85,7 @@ public class LSAPR_POLICY_PRIMARY_DOM_INFO implements Unmarshallable {
         // <NDR: pointer> PRPC_SID Sid;
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0) {
-            sid = new RPC_SID();
+            sid = new RPCSID();
         }
     }
 
@@ -102,10 +107,10 @@ public class LSAPR_POLICY_PRIMARY_DOM_INFO implements Unmarshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof LSAPR_POLICY_PRIMARY_DOM_INFO)) {
+        } else if (! (obj instanceof LSAPRPolicyPrimaryDomInfo)) {
             return false;
         }
-        LSAPR_POLICY_PRIMARY_DOM_INFO other = (LSAPR_POLICY_PRIMARY_DOM_INFO) obj;
+        LSAPRPolicyPrimaryDomInfo other = (LSAPRPolicyPrimaryDomInfo) obj;
         return Objects.equals(getName(), other.getName())
                 && Objects.equals(getSid(), other.getSid());
     }

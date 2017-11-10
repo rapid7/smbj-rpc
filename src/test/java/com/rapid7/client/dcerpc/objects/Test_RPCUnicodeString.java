@@ -32,19 +32,19 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
-public class Test_RPC_UNICODE_STRING {
+public class Test_RPCUnicodeString {
 
     @DataProvider
     public Object[][] data_of_null() {
         return new Object[][] {
-                {false, RPC_UNICODE_STRING.NotNullTerminated.class},
-                {true, RPC_UNICODE_STRING.NullTerminated.class}
+                {false, RPCUnicodeString.NotNullTerminated.class},
+                {true, RPCUnicodeString.NullTerminated.class}
         };
     }
 
     @Test(dataProvider = "data_of_null")
     public void test_of_null(boolean nullTerminated, Class<?> clazz) {
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated);
+        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated);
         assertEquals(obj.getClass(), clazz);
         assertEquals(obj.isNullTerminated(), nullTerminated);
         assertNull(obj.getValue());
@@ -53,16 +53,16 @@ public class Test_RPC_UNICODE_STRING {
     @DataProvider
     public Object[][] data_of() {
         return new Object[][] {
-                {false, null, RPC_UNICODE_STRING.NotNullTerminated.class},
-                {false, "test123", RPC_UNICODE_STRING.NotNullTerminated.class},
-                {true, null, RPC_UNICODE_STRING.NullTerminated.class},
-                {true, "test123", RPC_UNICODE_STRING.NullTerminated.class},
+                {false, null, RPCUnicodeString.NotNullTerminated.class},
+                {false, "test123", RPCUnicodeString.NotNullTerminated.class},
+                {true, null, RPCUnicodeString.NullTerminated.class},
+                {true, "test123", RPCUnicodeString.NullTerminated.class},
         };
     }
 
     @Test(dataProvider = "data_of")
     public void test_of(boolean nullTerminated, String value, Class<?> clazz) {
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated, value);
+        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated, value);
         assertEquals(obj.getClass(), clazz);
         assertEquals(obj.isNullTerminated(), nullTerminated);
         assertEquals(obj.getValue(), value);
@@ -80,7 +80,7 @@ public class Test_RPC_UNICODE_STRING {
 
     @Test(dataProvider = "data_marshal_preamble")
     public void test_marshal_preamble(boolean nullTerminated, String value) throws IOException {
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated, value);
+        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated, value);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         obj.marshalPreamble(new PacketOutput(bout));
         assertEquals(bout.toByteArray(), new byte[0]);
@@ -108,7 +108,7 @@ public class Test_RPC_UNICODE_STRING {
         PacketOutput out = new PacketOutput(bout);
         out.write(Hex.decode(writeHex));
 
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated, value);
+        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated, value);
         obj.marshalEntity(out);
         assertEquals(Hex.toHexString(bout.toByteArray()), expectedHex);
     }
@@ -137,14 +137,14 @@ public class Test_RPC_UNICODE_STRING {
         PacketOutput out = new PacketOutput(bout);
         out.write(Hex.decode(writeHex));
 
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated, value);
+        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated, value);
         obj.marshalDeferrals(out);
         assertEquals(Hex.toHexString(bout.toByteArray()), expectedHex);
     }
 
     @Test(dataProvider = "data_marshal_preamble")
     public void test_unmarshal_preamble(boolean nullTerminated, String value) throws IOException {
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated, value);
+        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated, value);
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("1a2e"));
         obj.unmarshalPreamble(new PacketInput(bin));
         assertEquals(bin.available(), 2);
@@ -173,7 +173,7 @@ public class Test_RPC_UNICODE_STRING {
         PacketInput in = new PacketInput(bin);
         in.readFully(new byte[mark]);
 
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated);
+        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated);
         obj.unmarshalEntity(in);
         assertEquals(obj.isNullTerminated(), nullTerminated);
         assertEquals(obj.getValue(), value);
@@ -207,7 +207,7 @@ public class Test_RPC_UNICODE_STRING {
         PacketInput in = new PacketInput(bin);
         in.readFully(new byte[mark]);
 
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(nullTerminated);
+        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated);
         // Value must be non-null for deferrals to read the ref
         obj.setValue("");
         obj.unmarshalDeferrals(in);
@@ -219,7 +219,7 @@ public class Test_RPC_UNICODE_STRING {
 
     @Test
     public void test_hashCode_NotNullTerminated() {
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(false);
+        RPCUnicodeString obj = RPCUnicodeString.of(false);
         assertEquals(obj.hashCode(), 39308);
         obj.setValue("testƟ123");
         assertEquals(obj.hashCode(), -1136940719);
@@ -227,7 +227,7 @@ public class Test_RPC_UNICODE_STRING {
 
     @Test
     public void test_hashCode_NullTerminated() {
-        RPC_UNICODE_STRING obj = RPC_UNICODE_STRING.of(true);
+        RPCUnicodeString obj = RPCUnicodeString.of(true);
         assertEquals(obj.hashCode(), 39122);
         obj.setValue("testƟ123");
         assertEquals(obj.hashCode(), -1136940905);
@@ -235,10 +235,10 @@ public class Test_RPC_UNICODE_STRING {
 
     @Test
     public void test_equals() {
-        RPC_UNICODE_STRING obj_nt1 = RPC_UNICODE_STRING.of(true);
-        RPC_UNICODE_STRING obj_nt2 = RPC_UNICODE_STRING.of(true);
-        RPC_UNICODE_STRING obj_ntn1 = RPC_UNICODE_STRING.of(false);
-        RPC_UNICODE_STRING obj_ntn2 = RPC_UNICODE_STRING.of(false);
+        RPCUnicodeString obj_nt1 = RPCUnicodeString.of(true);
+        RPCUnicodeString obj_nt2 = RPCUnicodeString.of(true);
+        RPCUnicodeString obj_ntn1 = RPCUnicodeString.of(false);
+        RPCUnicodeString obj_ntn2 = RPCUnicodeString.of(false);
         assertEquals(obj_nt1, obj_nt2);
         assertEquals(obj_ntn1, obj_ntn2);
         assertNotEquals(obj_nt1, obj_ntn1);
@@ -263,7 +263,7 @@ public class Test_RPC_UNICODE_STRING {
 
     @Test(dataProvider = "data_toString")
     public void test_toString(boolean nullTerminated, String value, String expected) {
-        RPC_UNICODE_STRING str = RPC_UNICODE_STRING.of(nullTerminated, value);
+        RPCUnicodeString str = RPCUnicodeString.of(nullTerminated, value);
         assertEquals(str.toString(), expected);
     }
 }
