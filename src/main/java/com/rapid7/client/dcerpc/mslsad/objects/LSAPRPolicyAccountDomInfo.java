@@ -115,6 +115,6 @@ public class LSAPRPolicyAccountDomInfo implements Unmarshallable {
 
     @Override
     public String toString() {
-        return String.format("LSAPR_POLICY_ACCOUNT_DOM_INFO{DomainName:%s, DomainSid:%s}", this.domainName, this.domainSid);
+        return String.format("LSAPR_POLICY_ACCOUNT_DOM_INFO{DomainName:%s, DomainSid:%s}", getDomainName(), getDomainSid());
     }
 }
