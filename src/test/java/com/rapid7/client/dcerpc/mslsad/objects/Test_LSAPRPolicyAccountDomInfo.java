@@ -45,7 +45,7 @@ public class Test_LSAPRPolicyAccountDomInfo {
     @Test
     public void test_setters() {
         LSAPRPolicyAccountDomInfo obj = new LSAPRPolicyAccountDomInfo();
-        RPCUnicodeString name = RPCUnicodeString.of(false, "test 123");
+        RPCUnicodeString.NonNullTerminated name = RPCUnicodeString.NonNullTerminated.of("test 123");
         obj.setDomainName(name);
         RPCSID sid = new RPCSID();
         obj.setDomainSid(sid);
@@ -59,7 +59,7 @@ public class Test_LSAPRPolicyAccountDomInfo {
         assertNull(obj.getDomainName());
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("010203"));
         obj.unmarshalPreamble(new PacketInput(bin));
-        assertEquals(obj.getDomainName(), RPCUnicodeString.of(false));
+        assertEquals(obj.getDomainName(), new RPCUnicodeString.NonNullTerminated());
         assertEquals(bin.available(), 3);
     }
 
@@ -67,41 +67,41 @@ public class Test_LSAPRPolicyAccountDomInfo {
     public Object[][] data_unmarshalEntity() {
         return new Object[][] {
                 // Name Length: 2, Name MaximumLength: 3, Name Reference: 1, SID Reference: 0
-                {"0200 0300 01000000 00000000", 0, RPCUnicodeString.of(false, ""), null},
+                {"0200 0300 01000000 00000000", 0, null},
                 // Alignment: 1, Name Length: 2, Name MaximumLength: 3, Name Reference: 1, SID Reference: 0
-                {"ffffffff 0200 0300 01000000 00000000", 3, RPCUnicodeString.of(false, ""), null},
+                {"ffffffff 0200 0300 01000000 00000000", 3, null},
                 // Alignment: 2, Name Length: 2, Name MaximumLength: 3, Name Reference: 1, SID Reference: 0
-                {"ffffffff 0200 0300 01000000 00000000", 2, RPCUnicodeString.of(false, ""), null},
+                {"ffffffff 0200 0300 01000000 00000000", 2, null},
                 // Alignment: 3, Name Length: 2, Name MaximumLength: 3, Name Reference: 1, SID Reference: 0
-                {"ffffffff 0200 0300 01000000 00000000", 1, RPCUnicodeString.of(false, ""), null},
+                {"ffffffff 0200 0300 01000000 00000000", 1, null},
                 // Name Length: 2, Name MaximumLength: 3, Name Reference: 1, SID Reference: 2
-                {"0200 0300 01000000 02000000", 0, RPCUnicodeString.of(false, ""), new RPCSID()},
+                {"0200 0300 01000000 02000000", 0, new RPCSID()},
         };
     }
 
     @Test(dataProvider = "data_unmarshalEntity")
-    public void test_unmarshalEntity(String hex, int mark, RPCUnicodeString expectedName, RPCSID expectedSid) throws Exception {
+    public void test_unmarshalEntity(String hex, int mark, RPCSID expectedSid) throws Exception {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         in.readFully(new byte[mark]);
 
         LSAPRPolicyAccountDomInfo obj = new LSAPRPolicyAccountDomInfo();
-        obj.setDomainName(RPCUnicodeString.of(false));
+        obj.setDomainName(new RPCUnicodeString.NonNullTerminated());
         obj.unmarshalEntity(in);
         assertEquals(bin.available(), 0);
-        assertEquals(obj.getDomainName(), expectedName);
+        assertEquals(obj.getDomainName(), RPCUnicodeString.NonNullTerminated.of(""));
         assertEquals(obj.getDomainSid(), expectedSid);
     }
 
     @DataProvider
     public Object[][] data_unmarshalDeferrals() {
-        RPCUnicodeString name1 = RPCUnicodeString.of(false, "test 123");
+        RPCUnicodeString.NonNullTerminated name1 = RPCUnicodeString.NonNullTerminated.of("test 123");
         RPCSID sid1 = new RPCSID();
         sid1.setRevision((char) 1);
         sid1.setSubAuthorityCount((char) 4);
         sid1.setIdentifierAuthority(new byte[]{0,0,0,0,0,5});
         sid1.setSubAuthority(new long[]{1,2,3,4});
-        RPCUnicodeString name2 = RPCUnicodeString.of(false, "test 1234");
+        RPCUnicodeString.NonNullTerminated name2 = RPCUnicodeString.NonNullTerminated.of("test 1234");
         return new Object[][] {
                 // Name MaximumCount: 9, Offset: 0, ActualCount: 8, Value: "test 123"
                 // SID MaximumCount: 4, Revision: 1, SubAuthorityCount: 4, IdentifierAuthority:{0,0,0,0,0,5}, SubAuthority:{1,2,3,4}
@@ -122,9 +122,9 @@ public class Test_LSAPRPolicyAccountDomInfo {
     }
 
     @Test(dataProvider = "data_unmarshalDeferrals")
-    public void test_unmarshalDeferrals(String hex, RPCSID sid, RPCUnicodeString expectedName, RPCSID expectedSid) throws Exception {
+    public void test_unmarshalDeferrals(String hex, RPCSID sid, RPCUnicodeString.NonNullTerminated expectedName, RPCSID expectedSid) throws Exception {
         LSAPRPolicyAccountDomInfo obj = new LSAPRPolicyAccountDomInfo();
-        obj.setDomainName(RPCUnicodeString.of(false, ""));
+        obj.setDomainName(RPCUnicodeString.NonNullTerminated.of(""));
         obj.setDomainSid(sid);
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         obj.unmarshalDeferrals(new PacketInput(bin));
@@ -138,9 +138,9 @@ public class Test_LSAPRPolicyAccountDomInfo {
         LSAPRPolicyAccountDomInfo obj1 = new LSAPRPolicyAccountDomInfo();
         LSAPRPolicyAccountDomInfo obj2 = new LSAPRPolicyAccountDomInfo();
         assertEquals(obj1.hashCode(), obj2.hashCode());
-        obj1.setDomainName(RPCUnicodeString.of(false));
+        obj1.setDomainName(new RPCUnicodeString.NonNullTerminated());
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
-        obj2.setDomainName(RPCUnicodeString.of(false));
+        obj2.setDomainName(new RPCUnicodeString.NonNullTerminated());
         assertEquals(obj1.hashCode(), obj2.hashCode());
         obj1.setDomainSid(new RPCSID());
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
@@ -155,9 +155,9 @@ public class Test_LSAPRPolicyAccountDomInfo {
         assertNotEquals(obj1, null);
         LSAPRPolicyAccountDomInfo obj2 = new LSAPRPolicyAccountDomInfo();
         assertEquals(obj1, obj2);
-        obj1.setDomainName(RPCUnicodeString.of(false));
+        obj1.setDomainName(new RPCUnicodeString.NonNullTerminated());
         assertNotEquals(obj1, obj2);
-        obj2.setDomainName(RPCUnicodeString.of(false));
+        obj2.setDomainName(new RPCUnicodeString.NonNullTerminated());
         assertEquals(obj1, obj2);
         obj1.setDomainSid(new RPCSID());
         assertNotEquals(obj1, obj2);
@@ -174,7 +174,7 @@ public class Test_LSAPRPolicyAccountDomInfo {
     @Test
     public void test_toString() {
         LSAPRPolicyAccountDomInfo obj = new LSAPRPolicyAccountDomInfo();
-        obj.setDomainName(RPCUnicodeString.of(false, "test 123"));
+        obj.setDomainName(RPCUnicodeString.NonNullTerminated.of("test 123"));
         RPCSID sid = new RPCSID();
         sid.setRevision((char) 1);
         sid.setSubAuthorityCount((char) 4);
