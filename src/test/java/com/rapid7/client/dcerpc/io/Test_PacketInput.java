@@ -136,16 +136,9 @@ public class Test_PacketInput {
     }
 
     @Test
-    public void readInterval() throws IOException {
-        // MaxAge value
-        assertEquals(3710851, getPacketInput("0000000040DEFFFF").readInterval());
-        assertEquals(3628800, getPacketInput("0080a60affdeffff").readInterval());
-        // MinAge value
-        assertEquals(0, getPacketInput("0000000000000000").readInterval());
-        // Lockout value
-        assertEquals(1800, getPacketInput("00cc1dcffbffffff").readInterval());
-        // -1, infinite duration (never expire)
-        assertEquals(-1, getPacketInput("ffffffffffffffff").readInterval());
+    public void readLong() throws IOException {
+        // MaximumPasswordAge
+        assertEquals(-37108517437440L, getPacketInput("0000000040DEFFFF").readLong());
     }
 
     private PacketInput getPacketInput(final String hexString) {

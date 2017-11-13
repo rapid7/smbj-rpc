@@ -19,11 +19,12 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mslsad.objects;
+package com.rapid7.client.dcerpc.mssamr;
 
 import java.io.IOException;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
@@ -67,11 +68,11 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
      * | 0x00000020                      |                                                                          |
      * +---------------------------------+--------------------------------------------------------------------------+
      */
-    private short minimumPasswordLength;
-    private short passwordHistoryLength;
-    private int passwordProperties;
-    private int maximumPasswordAge;
-    private int minimumPasswordAge;
+    private int minimumPasswordLength;
+    private int passwordHistoryLength;
+    private long passwordProperties;
+    private long maximumPasswordAge;
+    private long minimumPasswordAge;
 
     public boolean isDomainPasswordComplex() {
         return (this.passwordProperties & DOMAIN_PASSWORD_COMPLEX) != 0;
@@ -85,23 +86,23 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
         return (this.passwordProperties & DOMAIN_PASSWORD_STORE_CLEARTEXT) != 0;
     }
 
-    public short getMinimumPasswordLength() {
+    public int getMinimumPasswordLength() {
         return minimumPasswordLength;
     }
 
-    public short getPasswordHistoryLength() {
+    public int getPasswordHistoryLength() {
         return passwordHistoryLength;
     }
 
-    public int getPasswordProperties() {
+    public long getPasswordProperties() {
         return passwordProperties;
     }
 
-    public int getMaximumPasswordAge() {
+    public long getMaximumPasswordAge() {
         return maximumPasswordAge;
     }
 
-    public int getMinimumPasswordAge() {
+    public long getMinimumPasswordAge() {
         return minimumPasswordAge;
     }
 
@@ -111,19 +112,16 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
-       /* typedef struct _DOMAIN_PASSWORD_INFORMATION {
-            USHORT        MinPasswordLength;
-            USHORT        PasswordHistoryLength;
-            ULONG         PasswordProperties;
-            LARGE_INTEGER MaxPasswordAge;
-            LARGE_INTEGER MinPasswordAge;
-          } DOMAIN_PASSWORD_INFORMATION, *PDOMAIN_PASSWORD_INFORMATION;
-        */
+        // Structure Alignment: 4
+        in.align(Alignment.FOUR);
+
         this.minimumPasswordLength = in.readShort();
         this.passwordHistoryLength = in.readShort();
         this.passwordProperties = in.readInt();
-        this.maximumPasswordAge = in.readInterval();
-        this.minimumPasswordAge = in.readInterval();
+
+        // See <a href="http://technet.microsoft.com/en-us/library/cc753858(WS.10).aspx>Technet Article</a>
+        this.maximumPasswordAge = in.readLong();
+        this.minimumPasswordAge = in.readLong();
     }
 
     @Override
@@ -133,8 +131,7 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
     @Override
     public int hashCode() {
         return Objects.hash(getMinimumPasswordLength(), getPasswordHistoryLength(), getPasswordProperties(),
-            getMaximumPasswordAge(), getMinimumPasswordAge(), isDomainPasswordComplex(), isDomainPasswordNoAnonChange(),
-            isDomainPasswordStoredClearText());
+            getMaximumPasswordAge(), getMinimumPasswordAge());
     }
 
     @Override
@@ -145,14 +142,11 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
             return false;
         }
         SAMPRDomainPasswordInfo other = (SAMPRDomainPasswordInfo) obj;
-        return Objects.equals(getMinimumPasswordLength(), other.getMinimumPasswordLength()) &&
-               Objects.equals(getPasswordHistoryLength(), other.getPasswordHistoryLength()) &&
-               Objects.equals(getPasswordProperties(), other.getPasswordProperties()) &&
-               Objects.equals(getMaximumPasswordAge(), other.getMaximumPasswordAge()) &&
-               Objects.equals(getMinimumPasswordAge(), other.getMinimumPasswordAge()) &&
-               Objects.equals(isDomainPasswordComplex(), other.isDomainPasswordComplex()) &&
-               Objects.equals(isDomainPasswordNoAnonChange(), other.isDomainPasswordNoAnonChange()) &&
-               Objects.equals(isDomainPasswordStoredClearText(), other.isDomainPasswordStoredClearText());
+        return Objects.equals(getMinimumPasswordLength(), other.getMinimumPasswordLength())
+            && Objects.equals(getPasswordHistoryLength(), other.getPasswordHistoryLength())
+            && Objects.equals(getPasswordProperties(), other.getPasswordProperties())
+            && Objects.equals(getMaximumPasswordAge(), other.getMaximumPasswordAge())
+            && Objects.equals(getMinimumPasswordAge(), other.getMinimumPasswordAge());
     }
 
     @Override

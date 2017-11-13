@@ -19,11 +19,12 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mslsad.objects;
+package com.rapid7.client.dcerpc.mssamr;
 
 import java.io.IOException;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /* typedef struct _DOMAIN_LOGOFF_INFORMATION {
@@ -49,6 +50,8 @@ public class SAMPRDomainLogOffInfo implements Unmarshallable {
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
+        in.align(Alignment.FOUR);
         this.forceLogoff = in.readShort();
     }
 

@@ -47,7 +47,6 @@ public class SamrQueryInformationDomainResponse<T extends Unmarshallable> extend
                         this.domainInformationClass.getInfoLevel()));
             }
 
-            // packetIn.align(this.domainInformation.getAlignment());
             packetIn.readUnmarshallable(this.domainInformation);
         }
     }
