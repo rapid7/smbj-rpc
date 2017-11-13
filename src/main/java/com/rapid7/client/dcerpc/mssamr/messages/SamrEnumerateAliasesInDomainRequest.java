@@ -18,36 +18,33 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import java.io.IOException;
-import java.util.List;
-import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
-import com.rapid7.client.dcerpc.mssamr.objects.EnumeratedDomains;
+import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
 /**
+ * The SamrEnumerateAliasesInDomain method enumerates all aliases.
+ *
  * <pre>
- * long SamrEnumerateDomainsInSamServer(
- *   [in] SAMPR_HANDLE ServerHandle,
+ * long SamrEnumerateAliasesInDomain(
+ *   [in] SAMPR_HANDLE DomainHandle,
  *   [in, out] unsigned long* EnumerationContext,
  *   [out] PSAMPR_ENUMERATION_BUFFER* Buffer,
  *   [in] unsigned long PreferedMaximumLength,
  *   [out] unsigned long* CountReturned
  * );
- * </pre>
+ * <pre>
  *
- * @see <a href="https://msdn.microsoft.com/en-ca/library/cc245755.aspx">
- *       https://msdn.microsoft.com/en-ca/library/cc245755.aspx</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/library/cc245758.aspx">
+ *       https://msdn.microsoft.com/en-us/library/cc245758.aspx</a>
  */
-public class SamrEnumerateDomainsInSamServerResponse extends SamrEnumerateResponse {
-    private EnumeratedDomains domains;
+public class SamrEnumerateAliasesInDomainRequest extends SamrEnumerateRequest<SamrEnumerateAliasesInDomainResponse> {
+    public static final short OP_NUM = 15;
 
-    @Override
-    protected void unmarshallBuffer(PacketInput packetIn) throws IOException {
-        domains = new EnumeratedDomains();
-        packetIn.readUnmarshallable(domains);
+    public SamrEnumerateAliasesInDomainRequest(DomainHandle handle, int enumContext, int maxLength) {
+        super(OP_NUM, handle, enumContext, maxLength);
     }
 
-    public List<DomainInfo> getDomainList() {
-        return domains.getEntries();
+    @Override
+    public SamrEnumerateAliasesInDomainResponse getResponseObject() {
+        return new SamrEnumerateAliasesInDomainResponse();
     }
 }

@@ -33,6 +33,8 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
@@ -44,6 +46,7 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.AliasInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
@@ -115,6 +118,26 @@ public class SecurityAccountManagerService {
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
                 domains.addAll(response.getDomainList());
                 return Collections.unmodifiableList(domains);
+            } else {
+                throw new RPCException("EnumDomainsInSamServer", returnCode);
+            }
+        }
+    }
+
+    public List<AliasInfo> getAliasesForDomain(DomainHandle domainHanlde) throws IOException {
+        final int bufferSize = 0xffff;
+        List<AliasInfo> aliases = new ArrayList<>();
+        for (int enumContext = 0;;) {
+            SamrEnumerateAliasesInDomainRequest request = new SamrEnumerateAliasesInDomainRequest(domainHanlde,
+                    enumContext, bufferSize);
+            final SamrEnumerateAliasesInDomainResponse response = transport.call(request);
+            final int returnCode = response.getReturnValue();
+            enumContext = response.getResumeHandle();
+            if (ERROR_MORE_ENTRIES.is(returnCode)) {
+                aliases.addAll(response.getAliasesInfo());
+            } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
+                aliases.addAll(response.getAliasesInfo());
+                return Collections.unmodifiableList(aliases);
             } else {
                 throw new RPCException("EnumDomainsInSamServer", returnCode);
             }
