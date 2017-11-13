@@ -22,6 +22,7 @@
 package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.IOException;
+import java.util.Arrays;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
@@ -41,8 +42,16 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *  SecurityDescriptor: A binary format per the SECURITY_DESCRIPTOR format in [MS-DTYP] section 2.4.6.</pre></blockquote>
  */
 public class SAMPRSRSecurityDescriptor implements Unmarshallable {
-    private int length;
-    private short[] securityDescriptor;
+    // [size_is(Length)] unsigned char* SecurityDescriptor;
+    private char[] securityDescriptor;
+
+    public char[] getSecurityDescriptor() {
+        return securityDescriptor;
+    }
+
+    public void setSecurityDescriptor(char[] securityDescriptor) {
+        this.securityDescriptor = securityDescriptor;
+    }
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
@@ -60,7 +69,7 @@ public class SAMPRSRSecurityDescriptor implements Unmarshallable {
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0) {
             if (length > 0)
-                securityDescriptor = new short[length];
+                securityDescriptor = new char[length];
         } else {
             securityDescriptor = null;
         }
@@ -74,8 +83,14 @@ public class SAMPRSRSecurityDescriptor implements Unmarshallable {
             // MaximumCount
             in.readInt();
             for (int i = 0; i < securityDescriptor.length; i++) {
-                securityDescriptor[i] = (short) in.readByte();
+                securityDescriptor[i] = (char) in.readByte();
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("SAMPR_SR_SECURITY_DESCRIPTOR{Length:%d,SecurityDescriptor:%s}",
+                securityDescriptor == null ? null : securityDescriptor.length, Arrays.toString(securityDescriptor));
     }
 }
