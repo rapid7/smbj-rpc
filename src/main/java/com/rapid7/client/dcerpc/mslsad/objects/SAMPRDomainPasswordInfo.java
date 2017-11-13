@@ -24,7 +24,6 @@ package com.rapid7.client.dcerpc.mslsad.objects;
 import java.io.IOException;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
@@ -36,7 +35,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
     LARGE_INTEGER MinPasswordAge;
   } DOMAIN_PASSWORD_INFORMATION, *PDOMAIN_PASSWORD_INFORMATION;
   */
-public class SAMPR_DOMAIN_PASSWORD_INFO implements Unmarshallable {
+public class SAMPRDomainPasswordInfo implements Unmarshallable {
     private static final int DOMAIN_PASSWORD_COMPLEX = 0x00000001;
     private static final int DOMAIN_PASSWORD_NO_ANON_CHANGE = 0x00000002;
     private static final int DOMAIN_PASSWORD_STORE_CLEARTEXT = 0x00000010;
@@ -107,11 +106,6 @@ public class SAMPR_DOMAIN_PASSWORD_INFO implements Unmarshallable {
     }
 
     @Override
-    public Alignment getAlignment() {
-        return Alignment.FOUR;
-    }
-
-    @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
     }
 
@@ -147,10 +141,10 @@ public class SAMPR_DOMAIN_PASSWORD_INFO implements Unmarshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof SAMPR_DOMAIN_PASSWORD_INFO)) {
+        } else if (!(obj instanceof SAMPRDomainPasswordInfo)) {
             return false;
         }
-        SAMPR_DOMAIN_PASSWORD_INFO other = (SAMPR_DOMAIN_PASSWORD_INFO) obj;
+        SAMPRDomainPasswordInfo other = (SAMPRDomainPasswordInfo) obj;
         return Objects.equals(getMinimumPasswordLength(), other.getMinimumPasswordLength()) &&
                Objects.equals(getPasswordHistoryLength(), other.getPasswordHistoryLength()) &&
                Objects.equals(getPasswordProperties(), other.getPasswordProperties()) &&
@@ -164,7 +158,7 @@ public class SAMPR_DOMAIN_PASSWORD_INFO implements Unmarshallable {
     @Override
     public String toString() {
         return String.format(
-            "SAMPR_DOMAIN_PASSWORD_INFO{minimumPasswordLength:%s, passwordHistoryLength:%s,passwordProperties:%s, "
+            "SAMPRDomainPasswordInfo{minimumPasswordLength:%s, passwordHistoryLength:%s,passwordProperties:%s, "
                 + "maximumPasswordAge:%s, minimumPasswordAge:%s, isDomainPasswordComplex:%s, isDomainPasswordNoAnonChange:%s, "
                 + "isDomainPasswordStoredClearText:%s}",
             getMinimumPasswordLength(), getPasswordHistoryLength(), getPasswordProperties(), getMaximumPasswordAge(),

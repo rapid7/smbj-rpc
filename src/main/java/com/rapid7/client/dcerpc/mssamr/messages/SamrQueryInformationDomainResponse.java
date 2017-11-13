@@ -22,13 +22,13 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.mslsad.objects.DOMAIN_INFORMATION_CLASS;
+import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
 
 public class SamrQueryInformationDomainResponse<T extends Unmarshallable> extends RequestResponse {
     private final T domainInformation;
-    private final DOMAIN_INFORMATION_CLASS domainInformationClass;
+    private final DomainInformationClass domainInformationClass;
 
-    public SamrQueryInformationDomainResponse(T domainInformation, DOMAIN_INFORMATION_CLASS domainInformationClass) {
+    public SamrQueryInformationDomainResponse(T domainInformation, DomainInformationClass domainInformationClass) {
         this.domainInformation = domainInformation;
         this.domainInformationClass = domainInformationClass;
     }
@@ -47,7 +47,7 @@ public class SamrQueryInformationDomainResponse<T extends Unmarshallable> extend
                         this.domainInformationClass.getInfoLevel()));
             }
 
-            packetIn.align(this.domainInformation.getAlignment());
+            // packetIn.align(this.domainInformation.getAlignment());
             packetIn.readUnmarshallable(this.domainInformation);
         }
     }

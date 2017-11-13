@@ -24,7 +24,6 @@ package com.rapid7.client.dcerpc.mslsad.objects;
 import java.io.IOException;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /* typedef struct _DOMAIN_LOGOFF_INFORMATION {
@@ -32,7 +31,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * } DOMAIN_LOGOFF_INFORMATION,
  *  *PDOMAIN_LOGOFF_INFORMATION;
  */
-public class SAMPR_DOMAIN_LOGOFF_INFO implements Unmarshallable {
+public class SAMPRDomainLogOffInfo implements Unmarshallable {
 
     private int forceLogoff;
 
@@ -42,11 +41,6 @@ public class SAMPR_DOMAIN_LOGOFF_INFO implements Unmarshallable {
 
     public void setForceLogoff(int forceLogoff) {
         this.forceLogoff = forceLogoff;
-    }
-
-    @Override
-    public Alignment getAlignment() {
-        return Alignment.FOUR;
     }
 
     @Override
@@ -71,15 +65,15 @@ public class SAMPR_DOMAIN_LOGOFF_INFO implements Unmarshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof SAMPR_DOMAIN_LOGOFF_INFO)) {
+        } else if (!(obj instanceof SAMPRDomainLogOffInfo)) {
             return false;
         }
-        SAMPR_DOMAIN_LOGOFF_INFO other = (SAMPR_DOMAIN_LOGOFF_INFO) obj;
+        SAMPRDomainLogOffInfo other = (SAMPRDomainLogOffInfo) obj;
         return Objects.equals(getForceLogoff(), other.getForceLogoff());
     }
 
     @Override
     public String toString() {
-        return String.format("SAMPR_DOMAIN_LOGOFF_INFO{forceLogoff:%s}", getForceLogoff());
+        return String.format("SAMPRDomainLogOffInfo{forceLogoff:%s}", getForceLogoff());
     }
 }

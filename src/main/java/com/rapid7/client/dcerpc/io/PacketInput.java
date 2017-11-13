@@ -21,6 +21,7 @@ package com.rapid7.client.dcerpc.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import org.bouncycastle.util.encoders.Hex;
 import com.google.common.primitives.Longs;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
@@ -193,6 +194,9 @@ public class PacketInput extends PrimitiveInput {
      */
     public int readInterval() throws IOException {
         final byte[] rawBytes = Longs.toByteArray(readLong());
+        String s = Hex.toHexString(rawBytes);
+        System.out.println(s);
+
         final BigInteger interval = new BigInteger(rawBytes);
 
         // -1, infinite duration (never expire)
@@ -200,6 +204,10 @@ public class PacketInput extends PrimitiveInput {
             return (int) interval.longValue();
         }
 
-        return (int) (interval.abs().longValue() / 10000000);
+        System.out.println(interval.longValue());
+        int result = (int) (interval.abs().longValue() / 10000000);
+        return result;
+        // return (int) (interval.longValue() / 10000000);
+
     }
 }
