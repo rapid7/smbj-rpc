@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
+import java.util.List;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
@@ -31,6 +32,7 @@ public abstract class SamrEnumerateResponse extends RequestResponse {
 
     protected abstract void unmarshallBuffer(PacketInput packetIn) throws IOException;
 
+    public abstract List getList();
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         // <NDR: unsigned long> [in, out] unsigned long* EnumerationContext,

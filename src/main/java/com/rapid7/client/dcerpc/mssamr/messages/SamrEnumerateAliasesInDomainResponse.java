@@ -33,7 +33,8 @@ public class SamrEnumerateAliasesInDomainResponse extends SamrEnumerateResponse 
         packetIn.readUnmarshallable(aliases);
     }
 
-    public List<AliasInfo> getAliasesInfo() {
+    @Override
+    public List<AliasInfo> getList() {
         return aliases.getEntries();
     }
 

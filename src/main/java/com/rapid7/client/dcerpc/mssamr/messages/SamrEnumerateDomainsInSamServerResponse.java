@@ -47,7 +47,8 @@ public class SamrEnumerateDomainsInSamServerResponse extends SamrEnumerateRespon
         packetIn.readUnmarshallable(domains);
     }
 
-    public List<DomainInfo> getDomainList() {
+    @Override
+    public List<DomainInfo> getList() {
         return domains.getEntries();
     }
 }
