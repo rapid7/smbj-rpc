@@ -69,30 +69,19 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
 
     /**
-     * Convenience method for construction of RPC_UNICODE_STRING.
-     * @param nullTerminated Whether or not the RPC_UNICODE_STRING is null terminated.
-     * @return A new RPC_UNICODE_STRING with an initial value of null.
-     */
-    public static RPCUnicodeString of(boolean nullTerminated) {
-        return (nullTerminated ? new NullTerminated() : new NotNullTerminated());
-    }
-
-    /**
-     * Convenience method for construction of RPC_UNICODE_STRING.
-     * @param nullTerminated Whether or not the RPC_UNICODE_STRING is null terminated.
-     * @param value The initial value of the RPC_UNICODE_STRING.
-     * @return A new RPC_UNICODE_STRING with the provided initial value.
-     */
-    public static RPCUnicodeString of(boolean nullTerminated, String value) {
-        RPCUnicodeString obj = of(nullTerminated);
-        obj.setValue(value);
-        return obj;
-    }
-
-    /**
      * An RPC_UNICODE_STRING which is expected to be null terminated during marshalling/unmarshalling.
      */
-    static class NullTerminated extends RPCUnicodeString {
+    public static class NullTerminated extends RPCUnicodeString {
+        public static NullTerminated of(String value) {
+            NullTerminated str = of();
+            str.setValue(value);
+            return str;
+        }
+
+        public static NullTerminated of() {
+            return new NullTerminated();
+        }
+
         @Override
         boolean isNullTerminated() {
             return true;
@@ -102,7 +91,13 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
     /**
      * An RPC_UNICODE_STRING which is not expected to be null terminated during marshalling/unmarshalling.
      */
-    static class NotNullTerminated extends RPCUnicodeString {
+    public static class NonNullTerminated extends RPCUnicodeString {
+        public static NonNullTerminated of(String value) {
+            NonNullTerminated str = new NonNullTerminated();
+            str.setValue(value);
+            return str;
+        }
+
         @Override
         boolean isNullTerminated() {
             return false;

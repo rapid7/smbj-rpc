@@ -30,42 +30,19 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNull;
 
 public class Test_RPCUnicodeString {
 
-    @DataProvider
-    public Object[][] data_of_null() {
-        return new Object[][] {
-                {false, RPCUnicodeString.NotNullTerminated.class},
-                {true, RPCUnicodeString.NullTerminated.class}
-        };
+    @Test
+    public void test_of_NonNullTerminated() {
+        RPCUnicodeString obj = RPCUnicodeString.NonNullTerminated.of("test123");
+        assertEquals(obj.getValue(), "test123");
     }
 
-    @Test(dataProvider = "data_of_null")
-    public void test_of_null(boolean nullTerminated, Class<?> clazz) {
-        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated);
-        assertEquals(obj.getClass(), clazz);
-        assertEquals(obj.isNullTerminated(), nullTerminated);
-        assertNull(obj.getValue());
-    }
-
-    @DataProvider
-    public Object[][] data_of() {
-        return new Object[][] {
-                {false, null, RPCUnicodeString.NotNullTerminated.class},
-                {false, "test123", RPCUnicodeString.NotNullTerminated.class},
-                {true, null, RPCUnicodeString.NullTerminated.class},
-                {true, "test123", RPCUnicodeString.NullTerminated.class},
-        };
-    }
-
-    @Test(dataProvider = "data_of")
-    public void test_of(boolean nullTerminated, String value, Class<?> clazz) {
-        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated, value);
-        assertEquals(obj.getClass(), clazz);
-        assertEquals(obj.isNullTerminated(), nullTerminated);
-        assertEquals(obj.getValue(), value);
+    @Test
+    public void test_of_NullTerminated() {
+        RPCUnicodeString obj = RPCUnicodeString.NullTerminated.of("test123");
+        assertEquals(obj.getValue(), "test123");
     }
 
     @DataProvider
@@ -80,7 +57,8 @@ public class Test_RPCUnicodeString {
 
     @Test(dataProvider = "data_marshal_preamble")
     public void test_marshal_preamble(boolean nullTerminated, String value) throws IOException {
-        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated, value);
+        RPCUnicodeString obj = create(nullTerminated);
+        obj.setValue(value);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         obj.marshalPreamble(new PacketOutput(bout));
         assertEquals(bout.toByteArray(), new byte[0]);
@@ -108,7 +86,8 @@ public class Test_RPCUnicodeString {
         PacketOutput out = new PacketOutput(bout);
         out.write(Hex.decode(writeHex));
 
-        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated, value);
+        RPCUnicodeString obj = create(nullTerminated);
+        obj.setValue(value);
         obj.marshalEntity(out);
         assertEquals(Hex.toHexString(bout.toByteArray()), expectedHex);
     }
@@ -137,14 +116,16 @@ public class Test_RPCUnicodeString {
         PacketOutput out = new PacketOutput(bout);
         out.write(Hex.decode(writeHex));
 
-        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated, value);
+        RPCUnicodeString obj = create(nullTerminated);
+        obj.setValue(value);
         obj.marshalDeferrals(out);
         assertEquals(Hex.toHexString(bout.toByteArray()), expectedHex);
     }
 
     @Test(dataProvider = "data_marshal_preamble")
     public void test_unmarshal_preamble(boolean nullTerminated, String value) throws IOException {
-        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated, value);
+        RPCUnicodeString obj = create(nullTerminated);
+        obj.setValue(value);
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("1a2e"));
         obj.unmarshalPreamble(new PacketInput(bin));
         assertEquals(bin.available(), 2);
@@ -173,7 +154,8 @@ public class Test_RPCUnicodeString {
         PacketInput in = new PacketInput(bin);
         in.readFully(new byte[mark]);
 
-        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated);
+        RPCUnicodeString obj = create(nullTerminated);
+        obj.setValue(value);
         obj.unmarshalEntity(in);
         assertEquals(obj.isNullTerminated(), nullTerminated);
         assertEquals(obj.getValue(), value);
@@ -207,7 +189,8 @@ public class Test_RPCUnicodeString {
         PacketInput in = new PacketInput(bin);
         in.readFully(new byte[mark]);
 
-        RPCUnicodeString obj = RPCUnicodeString.of(nullTerminated);
+        RPCUnicodeString obj = create(nullTerminated);
+        obj.setValue(value);
         // Value must be non-null for deferrals to read the ref
         obj.setValue("");
         obj.unmarshalDeferrals(in);
@@ -218,8 +201,8 @@ public class Test_RPCUnicodeString {
 
     @Test
     public void test_hashCode_NotNullTerminated() {
-        RPCUnicodeString obj1 = RPCUnicodeString.of(false);
-        RPCUnicodeString obj2 = RPCUnicodeString.of(false);
+        RPCUnicodeString obj1 = new RPCUnicodeString.NonNullTerminated();
+        RPCUnicodeString obj2 = new RPCUnicodeString.NonNullTerminated();
         assertEquals(obj1.hashCode(), obj2.hashCode());
         obj1.setValue("testƟ123");
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
@@ -229,8 +212,9 @@ public class Test_RPCUnicodeString {
 
     @Test
     public void test_hashCode_NullTerminated() {
-        RPCUnicodeString obj1 = RPCUnicodeString.of(true);
-        RPCUnicodeString obj2 = RPCUnicodeString.of(true);
+
+        RPCUnicodeString obj1 = new RPCUnicodeString.NullTerminated();
+        RPCUnicodeString obj2 = new RPCUnicodeString.NullTerminated();
         assertEquals(obj1.hashCode(), obj2.hashCode());
         obj1.setValue("testƟ123");
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
@@ -240,10 +224,10 @@ public class Test_RPCUnicodeString {
 
     @Test
     public void test_equals() {
-        RPCUnicodeString obj_nt1 = RPCUnicodeString.of(true);
-        RPCUnicodeString obj_nt2 = RPCUnicodeString.of(true);
-        RPCUnicodeString obj_ntn1 = RPCUnicodeString.of(false);
-        RPCUnicodeString obj_ntn2 = RPCUnicodeString.of(false);
+        RPCUnicodeString obj_nt1 = new RPCUnicodeString.NullTerminated();
+        RPCUnicodeString obj_nt2 = new RPCUnicodeString.NullTerminated();
+        RPCUnicodeString obj_ntn1 = new RPCUnicodeString.NonNullTerminated();
+        RPCUnicodeString obj_ntn2 = new RPCUnicodeString.NonNullTerminated();
         assertEquals(obj_nt1, obj_nt2);
         assertEquals(obj_ntn1, obj_ntn2);
         assertNotEquals(obj_nt1, obj_ntn1);
@@ -268,7 +252,12 @@ public class Test_RPCUnicodeString {
 
     @Test(dataProvider = "data_toString")
     public void test_toString(boolean nullTerminated, String value, String expected) {
-        RPCUnicodeString str = RPCUnicodeString.of(nullTerminated, value);
+        RPCUnicodeString str = create(nullTerminated);
+        str.setValue(value);
         assertEquals(str.toString(), expected);
+    }
+
+    private RPCUnicodeString create(boolean nullterminated) {
+        return nullterminated ? new RPCUnicodeString.NullTerminated() : new RPCUnicodeString.NonNullTerminated();
     }
 }

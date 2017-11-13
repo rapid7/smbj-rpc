@@ -49,15 +49,15 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 public class LSAPRPolicyPrimaryDomInfo implements Unmarshallable {
 
     // <NDR: struct> RPC_UNICODE_STRING Name;
-    private RPCUnicodeString name;
+    private RPCUnicodeString.NonNullTerminated name;
     // <NDR: pointer> PRPC_SID Sid;
     private RPCSID sid;
 
-    public RPCUnicodeString getName() {
+    public RPCUnicodeString.NonNullTerminated getName() {
         return name;
     }
 
-    public void setName(RPCUnicodeString name) {
+    public void setName(RPCUnicodeString.NonNullTerminated name) {
         this.name = name;
     }
 
@@ -72,7 +72,7 @@ public class LSAPRPolicyPrimaryDomInfo implements Unmarshallable {
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
         // <NDR: struct> RPC_UNICODE_STRING Name;
-        name = RPCUnicodeString.of(false);
+        name = new RPCUnicodeString.NonNullTerminated();
         name.unmarshalPreamble(in);
     }
 

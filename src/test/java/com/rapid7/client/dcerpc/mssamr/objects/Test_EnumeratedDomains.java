@@ -24,6 +24,7 @@ import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 public class Test_EnumeratedDomains {
     @Test
@@ -35,7 +36,7 @@ public class Test_EnumeratedDomains {
         PacketInput in = new PacketInput(inputStream);
         in.readUnmarshallable(domains);
         assertEquals(2, domains.getEntriesRead());
-        assertEquals("windows100", domains.getEntries().get(0).getName());
-        assertEquals("Builtin", domains.getEntries().get(1).getName());
+        assertEquals(RPCUnicodeString.NonNullTerminated.of("windows100"), domains.getEntries().get(0).getName());
+        assertEquals(RPCUnicodeString.NonNullTerminated.of("Builtin"), domains.getEntries().get(1).getName());
     }
 }
