@@ -32,7 +32,7 @@ class PrimitiveInput {
 
     public PrimitiveInput(final InputStream inputStream) {
         if (inputStream == null) {
-            throw new IllegalArgumentException("Invalid InputStream: " + inputStream);
+            throw new IllegalArgumentException("Invalid InputStream: null");
         }
         dataInStream = new CountingInputStream(inputStream);
         dataIn = new LittleEndianDataInputStream(dataInStream);
@@ -94,6 +94,10 @@ class PrimitiveInput {
 
     public int readInt() throws IOException {
         return dataIn.readInt();
+    }
+
+    public long readUnsignedInt() throws IOException {
+        return readInt() & 0xFFFFFFFFL;
     }
 
     public long readLong() throws IOException {

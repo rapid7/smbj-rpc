@@ -33,14 +33,13 @@ public class PacketOutput extends PrimitiveOutput {
         marshallable.marshalPreamble(this);
         marshallable.marshalEntity(this);
         marshallable.marshalDeferrals(this);
-        // TODO Align should be called, but can require resetting the packet counts
         return marshallable;
     }
 
     public void writeIntRef(final Integer value) throws IOException {
         if (value != null) {
             writeReferentID();
-            writeInt(value.intValue());
+            writeInt(value);
             align();
         } else {
             writeNull();
@@ -50,7 +49,7 @@ public class PacketOutput extends PrimitiveOutput {
     public void writeLongRef(final Long value) throws IOException {
         if (value != null) {
             writeReferentID();
-            writeLong(value.longValue());
+            writeLong(value);
             align();
         } else {
             writeNull();
@@ -86,10 +85,6 @@ public class PacketOutput extends PrimitiveOutput {
         } else {
             writeNull();
         }
-    }
-
-    public void writeRPCUnicodeString(final String string, final boolean nullTerminate) throws IOException {
-        writeStringBuffer(string, nullTerminate);
     }
 
     public void writeStringBuffer(final String string, final boolean nullTerminate) throws IOException {

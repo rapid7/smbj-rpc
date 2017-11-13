@@ -73,13 +73,9 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
      */
     public static class NullTerminated extends RPCUnicodeString {
         public static NullTerminated of(String value) {
-            NullTerminated str = of();
+            NullTerminated str = new NullTerminated();
             str.setValue(value);
             return str;
-        }
-
-        public static NullTerminated of() {
-            return new NullTerminated();
         }
 
         @Override

@@ -31,7 +31,7 @@ public class PrimitiveOutput {
 
     public PrimitiveOutput(final OutputStream outputStream) {
         if (outputStream == null) {
-            throw new IllegalArgumentException("Invalid OutputStream: " + outputStream);
+            throw new IllegalArgumentException("Invalid OutputStream: null");
         }
         dataOutStream = new CountingOutputStream(outputStream);
         dataOut = new LittleEndianDataOutputStream(dataOutStream);
@@ -87,6 +87,10 @@ public class PrimitiveOutput {
 
     public void writeInt(final int v) throws IOException {
         dataOut.writeInt(v);
+    }
+
+    public void writeInt(final long v) throws IOException {
+        writeInt((int) v);
     }
 
     public void writeLong(final long v) throws IOException {
