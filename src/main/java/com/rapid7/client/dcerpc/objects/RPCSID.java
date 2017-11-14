@@ -108,15 +108,18 @@ public class RPCSID implements Unmarshallable, Marshallable {
 
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
-        checkSubAuthorityCount();
+        if (this.subAuthorityCount != this.subAuthority.length) {
+            throw new IllegalArgumentException(String.format("SubAuthorityCount (%d) != SubAuthority[] length (%d)",
+                    (int) this.subAuthorityCount, this.subAuthority.length));
+        }
         // Structure alignment
         out.align(Alignment.FOUR);
         // <NDR: unsigned char> unsigned char Revision;
         // Alignment: 1 - Already aligned
-        out.writeByte(getRevision());
+        out.writeByte(this.revision);
         // <NDR: unsigned char> unsigned char SubAuthorityCount;
         // Alignment: 1 - Already aligned
-        out.writeByte(getSubAuthorityCount());
+        out.writeByte(this.subAuthorityCount);
         // <NDR: fixed array> RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
         // Alignment: 1 - Already aligned
         out.write(this.identifierAuthority, 0, 6);
@@ -138,7 +141,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
     public void unmarshalPreamble(PacketInput in) throws IOException {
         // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
         in.align(Alignment.FOUR);
-        this.subAuthority = new long[in.readInt()];
+        in.fullySkipBytes(4); // We don't care about MaximumCount
     }
 
     @Override
@@ -147,17 +150,17 @@ public class RPCSID implements Unmarshallable, Marshallable {
         in.align(Alignment.FOUR);
         // <NDR: unsigned char> unsigned char Revision;
         // Alignment: 1 - Already aligned
-        this.revision = (char) UnsignedBytes.toInt(in.readByte());
+        this.revision = in.readUnsignedByte();
         // <NDR: unsigned char> unsigned char SubAuthorityCount;
         // Alignment: 1 - Already aligned
-        this.subAuthorityCount = (char) UnsignedBytes.toInt(in.readByte());
-        checkSubAuthorityCount();
+        this.subAuthorityCount = in.readUnsignedByte();
         // <NDR: fixed array> RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
         // Alignment: 1 - Already aligned
         this.identifierAuthority = new byte[6];
         in.readRawBytes(this.identifierAuthority);
         // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
         // Alignment: 4 - Already aligned, we read 8 bytes above
+        this.subAuthority = new long[this.subAuthorityCount];
         for (int i = 0; i < this.subAuthority.length; i++) {
             // <NDR: unsigned long>
             // Alignment: 4 - Already aligned
@@ -186,17 +189,16 @@ public class RPCSID implements Unmarshallable, Marshallable {
             return false;
         }
         RPCSID other = (RPCSID) obj;
-        return getRevision() == other.getRevision() && getSubAuthorityCount() == other.getSubAuthorityCount() && Arrays.equals(getIdentifierAuthority(), other.getIdentifierAuthority()) && Arrays.equals(getSubAuthority(), other.getSubAuthority());
+        return getRevision() == other.getRevision()
+                && getSubAuthorityCount() == other.getSubAuthorityCount()
+                && Arrays.equals(getIdentifierAuthority(), other.getIdentifierAuthority())
+                && Arrays.equals(getSubAuthority(), other.getSubAuthority());
     }
 
     @Override
     public String toString() {
-        return String.format("RPC_SID{Revision:%d, SubAuthorityCount:%d, IdentifierAuthority:%s, SubAuthority: %s}", (int) getRevision(), (int) getSubAuthorityCount(), Arrays.toString(getIdentifierAuthority()), Arrays.toString(getSubAuthority()));
-    }
-
-    private void checkSubAuthorityCount() throws IllegalArgumentException {
-        if (this.subAuthorityCount != this.subAuthority.length) {
-            throw new IllegalArgumentException(String.format("SubAuthorityCount (%d) != SubAuthority[] length (%d)", (int) this.subAuthorityCount, this.subAuthority.length));
-        }
+        return String.format("RPC_SID{Revision:%d, SubAuthorityCount:%d, IdentifierAuthority:%s, SubAuthority: %s}",
+                (int) getRevision(), (int) getSubAuthorityCount(),
+                Arrays.toString(getIdentifierAuthority()), Arrays.toString(getSubAuthority()));
     }
 }

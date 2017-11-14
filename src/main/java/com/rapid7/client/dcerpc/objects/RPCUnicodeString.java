@@ -73,13 +73,9 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
      */
     public static class NullTerminated extends RPCUnicodeString {
         public static NullTerminated of(String value) {
-            NullTerminated str = of();
+            NullTerminated str = new NullTerminated();
             str.setValue(value);
             return str;
-        }
-
-        public static NullTerminated of() {
-            return new NullTerminated();
         }
 
         @Override
@@ -128,10 +124,10 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         if (value == null) {
             // <NDR: unsigned short> unsigned short Length;
             // Alignment 2 - Already aligned
-            out.writeShort((short) 0);
+            out.writeShort(0);
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
-            out.writeShort((short) 0);
+            out.writeShort(0);
             // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
             // Alignment 4 - Already aligned
             out.writeNull();
@@ -141,10 +137,10 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
             final int byteLength = 2 * value.length() + (isNullTerminated() ? 2 : 0);
             // <NDR: unsigned short> unsigned short Length;
             // Alignment 2 - Already aligned
-            out.writeShort((short) byteLength);
+            out.writeShort(byteLength);
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
-            out.writeShort((short) byteLength);
+            out.writeShort(byteLength);
             // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
             // Alignment 4 - Already aligned
             out.writeReferentID();
@@ -168,7 +164,7 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
             // Alignment 1 - Already aligned
             out.writeChars(value);
             if (isNullTerminated())
-                out.writeShort((short) 0);
+                out.writeShort(0);
         }
     }
 
@@ -183,10 +179,10 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         in.align(Alignment.FOUR);
         // <NDR: unsigned short> unsigned short Length;
         // Alignment: 2 - Already aligned
-        in.readShort();
+        in.fullySkipBytes(2);
         // <NDR: unsigned short> unsigned short MaximumLength;
         // Alignment: 2 - Already aligned
-        in.readShort();
+        in.fullySkipBytes(2);
         // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0)
@@ -200,15 +196,15 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
             //Preamble
             // <NDR: unsigned long> MaximumCount for conformant array - This is *not* the size of the array, so is not useful to us
             in.align(Alignment.FOUR);
-            in.readInt();
+            in.fullySkipBytes(4);
 
             //Entity
             // <NDR: unsigned long> Offset for varying array
             // Alignment: 4 - Already aligned
-            final int offset = in.readInt();
+            final int offset = readIndex(in);
             // <NDR: unsigned long> ActualCount for varying array
             // Alignment: 4 - Already aligned
-            final int actualCount = in.readInt();
+            final int actualCount = readIndex(in);
             // If we expect a null terminator, then skip it when reading the string
             final int stringCount = (isNullTerminated() ? (actualCount - 1) : actualCount);
 
@@ -216,11 +212,8 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
             // Entities for conformant array
             final StringBuilder result = new StringBuilder(stringCount);
             // Read prefix (if any)
-            for (int i = 0; i < offset; i++) {
-                // <NDR: unsigned short>
-                // Alignment: 2 - Already aligned
-                in.readShort();
-            }
+            // Alignment: 2 - Already aligned
+            in.fullySkipBytes(2 * offset);
             // Read subset
             for (int i = 0; i < stringCount; i++) {
                 // <NDR: unsigned short>
@@ -228,11 +221,8 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
                 result.append((char) in.readShort());
             }
             // Read suffix (if any)
-            for (int i = stringCount; i < actualCount; i++) {
-                // <NDR: unsigned short>
-                // Alignment: 2 - Already aligned
-                in.readShort();
-            }
+            // Alignment: 2 - Already aligned
+            in.fullySkipBytes(2 * (actualCount-stringCount));
             this.value = result.toString();
         }
     }
@@ -259,5 +249,14 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         return String.format("RPC_UNICODE_STRING{value:%s, nullTerminated:%b}",
                 getValue() == null ? "null" : String.format("\"%s\"", getValue()),
                 isNullTerminated());
+    }
+
+    private int readIndex(PacketInput in) throws IOException {
+        final long ret = in.readUnsignedInt();
+        // Don't allow array length or index values bigger than signed int
+        if (ret > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException(String.format("Value %d > %d", ret, Integer.MAX_VALUE));
+        }
+        return (int) ret;
     }
 }

@@ -31,7 +31,6 @@ public class PacketInput extends PrimitiveInput {
         unmarshallable.unmarshalPreamble(this);
         unmarshallable.unmarshalEntity(this);
         unmarshallable.unmarshalDeferrals(this);
-        // TODO Align should be called, but can require resetting the packet counts
         return unmarshallable;
     }
 
@@ -44,6 +43,7 @@ public class PacketInput extends PrimitiveInput {
     }
 
     public int readReferentID() throws IOException {
+        // Currently only supports NDR20
         return readInt();
     }
 
@@ -122,10 +122,6 @@ public class PacketInput extends PrimitiveInput {
         }
 
         return result != null ? result.toString() : null;
-    }
-
-    public String readRPCUnicodeString(final boolean nullTerminated) throws IOException {
-        return readStringBuf(nullTerminated);
     }
 
     public String readStringBuf(final boolean nullTerminated) throws IOException {

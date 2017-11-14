@@ -21,20 +21,15 @@ package com.rapid7.client.dcerpc.io;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class Test_PrimitiveOutput {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid OutputStream: null")
     public void constructorNullByteBuffer() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid OutputStream: null");
         new PacketOutput(null);
     }
 
@@ -61,6 +56,24 @@ public class Test_PrimitiveOutput {
 
         packetOut.align();
         assertEquals(8, packetOut.getCount());
+    }
+
+    @DataProvider
+    public Object[][] data_pad() {
+        return new Object[][] {
+                {0, ""},
+                {1, "00"},
+                {2, "0000"},
+                {4, "00000000"},
+                {8, "0000000000000000"},
+        };
+    }
+
+    @Test(dataProvider = "data_pad")
+    public void pad(long n, String expectedHex) throws IOException {
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        new PacketOutput(outputStream).pad(n);
+        assertEquals(expectedHex, Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
 
     @Test
@@ -110,49 +123,107 @@ public class Test_PrimitiveOutput {
     public void writeByte() throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
-        packetOut.writeByte(0);
-        packetOut.writeByte(0xFF);
+        packetOut.writeByte((byte) 0);
+        packetOut.writeByte((byte) 0xFF);
         assertEquals("00FF", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
 
-    @Test
-    public void writeShort() throws IOException {
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        final PacketOutput packetOut = new PacketOutput(outputStream);
-        packetOut.writeShort(0);
-        packetOut.writeShort(256);
-        packetOut.writeShort(0xFFFF);
-        assertEquals("00000001FFFF", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
+    @DataProvider
+    public Object[][] data_writeShort() {
+        return new Object[][] {
+                // Signed
+                {Short.MIN_VALUE, "0080"},
+                {-50, "CEFF"},
+                {0, "0000"},
+                {256, "0001"},
+                {Short.MAX_VALUE, "FF7F"},
+                // Unsigned
+                {Short.MAX_VALUE+1, "0080"},
+                {Short.MAX_VALUE*2, "FEFF"},
+                {Short.MAX_VALUE*2 + 1, "FFFF"}
+        };
     }
 
-    @Test
-    public void writeChar() throws IOException {
+    @Test(dataProvider = "data_writeShort")
+    public void writeShort(int value, String expectedHex) throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        final PacketOutput packetOut = new PacketOutput(outputStream);
-        packetOut.writeChar(0);
-        packetOut.writeChar(256);
-        packetOut.writeChar(0xFFFF);
-        assertEquals("00000001FFFF", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
+        new PacketOutput(outputStream).writeShort(value);
+        assertEquals(expectedHex, Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
 
-    @Test
-    public void writeInt() throws IOException {
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        final PacketOutput packetOut = new PacketOutput(outputStream);
-        packetOut.writeInt(0);
-        packetOut.writeInt(50462976);
-        packetOut.writeInt(0xFFFFFFFF);
-        assertEquals("0000000000010203FFFFFFFF", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
+    @DataProvider
+    public Object[][] data_writeChar() {
+        return new Object[][] {
+                {Character.MIN_VALUE, "0000"},
+                {50, "3200"},
+                {256, "0001"},
+                {Character.MAX_VALUE, "FFFF"},
+        };
     }
 
-    @Test
-    public void writeLong() throws IOException {
+    @Test(dataProvider = "data_writeChar")
+    public void writeChar(int value, String expectedHex) throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        final PacketOutput packetOut = new PacketOutput(outputStream);
-        packetOut.writeLong(0);
-        packetOut.writeLong(506097522914230528l);
-        packetOut.writeLong(0xFFFFFFFFFFFFFFFFl);
-        assertEquals("00000000000000000001020304050607FFFFFFFFFFFFFFFF", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
+        new PacketOutput(outputStream).writeChar(value);
+        assertEquals(expectedHex, Hex.toHexString(outputStream.toByteArray()).toUpperCase());
+    }
+
+    @DataProvider
+    public Object[][] data_writeInt() {
+        return new Object[][] {
+                {Integer.MIN_VALUE, "00000080"},
+                {0, "00000000"},
+                {50, "32000000"},
+                {50462976, "00010203"},
+                {Integer.MAX_VALUE, "FFFFFF7F"}
+        };
+    }
+
+    @Test(dataProvider = "data_writeInt")
+    public void writeInt(int value, String expectedHex) throws IOException {
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        new PacketOutput(outputStream).writeInt(value);
+        assertEquals(expectedHex, Hex.toHexString(outputStream.toByteArray()).toUpperCase());
+    }
+
+    @DataProvider
+    public Object[][] data_writeInt_long() {
+        return new Object[][] {
+                // Signed
+                {(long) Integer.MIN_VALUE, "00000080"},
+                {0L, "00000000"},
+                {8L, "08000000"},
+                {50462976L, "00010203"},
+                {(long) Integer.MAX_VALUE, "FFFFFF7F"},
+                // Unsigned
+                {(long) Integer.MAX_VALUE+1, "00000080"},
+                {(long) Integer.MAX_VALUE*2, "FEFFFFFF"},
+                {(long) Integer.MAX_VALUE*2 + 1, "FFFFFFFF"}
+        };
+    }
+
+    @Test(dataProvider = "data_writeInt_long")
+    public void writeInt_long(long value, String expectedHex) throws IOException {
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        new PacketOutput(outputStream).writeInt(value);
+        assertEquals(expectedHex, Hex.toHexString(outputStream.toByteArray()).toUpperCase());
+    }
+
+    @DataProvider
+    public Object[][] data_writeLong() {
+        return new Object[][] {
+                {Long.MIN_VALUE, "0000000000000080"},
+                {0L, "0000000000000000"},
+                {50L, "3200000000000000"},
+                {Long.MAX_VALUE, "FFFFFFFFFFFFFF7F"},
+        };
+    }
+
+    @Test(dataProvider = "data_writeLong")
+    public void writeLong(long value, String expectedHex) throws IOException {
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        new PacketOutput(outputStream).writeLong(value);
+        assertEquals(expectedHex, Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
 
     @Test
@@ -168,6 +239,7 @@ public class Test_PrimitiveOutput {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
         packetOut.writeChars("Hello World");
-        assertEquals("480065006C006C006F00200057006F0072006C006400", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
+        assertEquals("480065006C006C006F00200057006F0072006C006400",
+                Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
 }

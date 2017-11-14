@@ -22,21 +22,16 @@ import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class Test_PrimitiveInput {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid InputStream: null")
     public void constructorNullByteBuffer() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid InputStream: null");
         new PacketInput(null);
     }
 
@@ -141,75 +136,76 @@ public class Test_PrimitiveInput {
     }
 
     @Test
+    public void getCount_readUnsignedInt() throws IOException {
+        final PacketInput packetIn = getPacketInput("00000000");
+        packetIn.readInt();
+        assertEquals(4, packetIn.getCount());
+    }
+
+    @Test
     public void getCount_readLong() throws IOException {
         final PacketInput packetIn = getPacketInput("0000000000000000");
         packetIn.readLong();
         assertEquals(8, packetIn.getCount());
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_readFully() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").readFully(new byte[1]);
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_readFullyEx() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").readFully(new byte[1], 0, 1);
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_fullySkipBytes() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").fullySkipBytes(1);
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_readBoolean() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").readBoolean();
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_readByte() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").readByte();
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_readUnsignedByte() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").readUnsignedByte();
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_readShort() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").readShort();
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_readUnsignedShort() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").readUnsignedShort();
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_readChar() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").readChar();
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_readInt() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").readInt();
     }
 
-    @Test
+    @Test(expectedExceptions = {EOFException.class})
+    public void eof_readUnsignedInt() throws IOException {
+        getPacketInput("").readUnsignedInt();
+    }
+
+    @Test(expectedExceptions = {EOFException.class})
     public void eof_readLong() throws IOException {
-        thrown.expect(EOFException.class);
         getPacketInput("").readLong();
     }
 
@@ -227,14 +223,17 @@ public class Test_PrimitiveInput {
         assertArrayEquals(new byte[]{0x00}, result);
     }
 
-    @Test
-    public void readRawBytes() throws IOException {
-        final byte[] result1 = getPacketInput("0001020304").readRawBytes(2);
-        assertArrayEquals(new byte[]{0x00, 0x01}, result1);
+    @DataProvider
+    public Object[][] data_readRawBytes() {
+        return new Object[][] {
+                {new byte[]{0x00, 0x01}, "0001020304", 2},
+                {new byte[]{0x00, 0x01, 0x02}, "0001020304", 3},
+        };
+    }
 
-        final byte[] result2 = getPacketInput("0001020304").readRawBytes(3);
-        assertArrayEquals(new byte[]{0x00, 0x01, 0x02}, result2);
-
+    @Test(dataProvider = "data_readRawBytes")
+    public void readRawBytes(byte[] expected, String hex, int count) throws IOException {
+        assertArrayEquals(expected, getPacketInput(hex).readRawBytes(count));
     }
 
     @Test
@@ -244,58 +243,142 @@ public class Test_PrimitiveInput {
         assertEquals(1, packetIn.getCount());
     }
 
-    @Test
-    public void readBoolean() throws IOException {
-        assertEquals(false, getPacketInput("00").readBoolean());
+    @DataProvider
+    public Object[][] data_readBoolean() {
+        return new Object[][] {
+                {false, "00"},
+                {true, "01"},
+                {true, "FF"},
+        };
+    }
+
+    @Test(dataProvider = "data_readBoolean")
+    public void readBoolean(boolean expected, String hex) throws IOException {
+        assertEquals(expected, getPacketInput(hex).readBoolean());
         assertEquals(true, getPacketInput("01").readBoolean());
         assertEquals(true, getPacketInput("FF").readBoolean());
     }
 
-    @Test
-    public void readByte() throws IOException {
-        assertEquals(0, getPacketInput("00").readByte());
-        assertEquals(-1, getPacketInput("FF").readByte());
+    @DataProvider
+    public Object[][] data_readByte() {
+        return new Object[][] {
+                {Byte.MIN_VALUE, "80"},
+                {(byte) 0, "00"},
+                {(byte) 13, "0D"},
+                {(byte) -1, "FF"},
+                {Byte.MAX_VALUE, "7F"}
+        };
     }
 
-    @Test
-    public void readUnsignedByte() throws IOException {
-        assertEquals(0, getPacketInput("00").readUnsignedByte());
-        assertEquals(255, getPacketInput("FF").readUnsignedByte());
+    @Test(dataProvider = "data_readByte")
+    public void readByte(byte expected, String hex) throws IOException {
+        assertEquals(expected, getPacketInput(hex).readByte());
     }
 
-    @Test
-    public void readShort() throws IOException {
-        assertEquals(0, getPacketInput("0000").readShort());
-        assertEquals(256, getPacketInput("0001").readShort());
-        assertEquals(-1, getPacketInput("FFFF").readShort());
+    @DataProvider
+    public Object[][] data_readUnsignedByte() {
+        return new Object[][] {
+                {(short) 0, "00"},
+                {(short) 13, "0D"},
+                {(short) ((Byte.MAX_VALUE*2)+1), "FF"}
+        };
     }
 
-    @Test
-    public void readUnsignedShort() throws IOException {
-        assertEquals(0, getPacketInput("0000").readUnsignedShort());
-        assertEquals(256, getPacketInput("0001").readUnsignedShort());
-        assertEquals(65535, getPacketInput("FFFF").readUnsignedShort());
+    @Test(dataProvider = "data_readUnsignedByte")
+    public void readUnsignedByte(short expected, String hex) throws IOException {
+        assertEquals(expected, getPacketInput(hex).readUnsignedByte());
     }
 
-    @Test
-    public void readChar() throws IOException {
-        assertEquals(0, getPacketInput("0000").readChar());
-        assertEquals(256, getPacketInput("0001").readChar());
-        assertEquals(65535, getPacketInput("FFFF").readChar());
+    @DataProvider
+    public Object[][] data_readShort() {
+        return new Object[][] {
+                {Short.MIN_VALUE, "0080"},
+                {(short) 0, "0000"},
+                {(short) 256, "0001"},
+                {Short.MAX_VALUE, "FF7F"},
+        };
     }
 
-    @Test
-    public void readInt() throws IOException {
-        assertEquals(0, getPacketInput("00000000").readInt());
-        assertEquals(50462976, getPacketInput("00010203").readInt());
-        assertEquals(-1, getPacketInput("FFFFFFFF").readInt());
+    @Test(dataProvider = "data_readShort")
+    public void readShort(short expected, String hex) throws IOException {
+        assertEquals(expected, getPacketInput(hex).readShort());
     }
 
-    @Test
-    public void readLong() throws IOException {
-        assertEquals(0, getPacketInput("0000000000000000").readLong());
-        assertEquals(506097522914230528l, getPacketInput("0001020304050607").readLong());
-        assertEquals(-1, getPacketInput("FFFFFFFFFFFFFFFF").readLong());
+    @DataProvider
+    public Object[][] data_readUnsignedShort() {
+        return new Object[][] {
+                {0, "0000"},
+                {256, "0001"},
+                {(Short.MAX_VALUE*2) + 1, "FFFF"},
+        };
+    }
+
+    @Test(dataProvider = "data_readUnsignedShort")
+    public void readUnsignedShort(int expected, String hex) throws IOException {
+        assertEquals(expected, getPacketInput(hex).readUnsignedShort());
+    }
+
+    @DataProvider
+    public Object[][] data_readChar() {
+        return new Object[][] {
+                {(char) 0, "0000"},
+                {(char) 256, "0001"},
+                {(char) ((Short.MAX_VALUE*2) + 1), "FFFF"},
+        };
+    }
+
+    @Test(dataProvider = "data_readChar")
+    public void readChar(char expected, String hex) throws IOException {
+        assertEquals(expected, getPacketInput(hex).readChar());
+    }
+
+    @DataProvider
+    public Object[][] data_readInt() {
+        return new Object[][] {
+                {Integer.MIN_VALUE, "00000080"},
+                {0, "00000000"},
+                {50462976, "00010203"},
+                {-1, "FFFFFFFF"},
+                {Integer.MAX_VALUE, "FFFFFF7F"}
+        };
+    }
+
+    @Test(dataProvider = "data_readInt")
+    public void readInt(int expected, String hex) throws IOException {
+        assertEquals(expected, getPacketInput(hex).readInt());
+    }
+
+    @DataProvider
+    public Object[][] data_readUnsignedInt() throws IOException {
+        return new Object[][] {
+                {0L, "00000000"},
+                {8L, "08000000"},
+                {50462976L, "00010203"},
+                {((long)Integer.MAX_VALUE), "FFFFFF7F"},
+                {((long)Integer.MAX_VALUE)+1, "00000080"},
+                {((long)Integer.MAX_VALUE)*2 + 1, "FFFFFFFF"},
+        };
+    }
+
+    @Test(dataProvider = "data_readUnsignedInt")
+    public void readUnsignedInt(long expected, String hex) throws IOException {
+        assertEquals(expected, getPacketInput(hex).readUnsignedInt());
+    }
+
+    @DataProvider
+    public Object[][] data_readLong() {
+        return new Object[][] {
+                {Long.MIN_VALUE, "0000000000000080"},
+                {0, "0000000000000000"},
+                {506097522914230528L, "0001020304050607"},
+                {-1, "FFFFFFFFFFFFFFFF"},
+                {Long.MAX_VALUE, "FFFFFFFFFFFFFF7F"}
+        };
+    }
+
+    @Test(dataProvider = "data_readLong")
+    public void readLong(long expected, String hex) throws IOException {
+        assertEquals(expected, getPacketInput(hex).readLong());
     }
 
     private PacketInput getPacketInput(final String hexString) {

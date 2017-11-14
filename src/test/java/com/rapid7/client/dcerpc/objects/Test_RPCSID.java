@@ -140,20 +140,20 @@ public class Test_RPCSID {
         RPCSID rpc_sid = new RPCSID();
         rpc_sid.unmarshalPreamble(in);
         assertEquals(bin.available(), 0);
-        assertEquals(rpc_sid.getSubAuthority(), new long[2]);
+        assertEquals(rpc_sid.getSubAuthority(), null);
     }
 
     @DataProvider
     public Object[][] data_unmarshalEntity() {
         return new Object[][] {
                 // Alignment: 0
-                {"1902010203040506050000000a000000", 0},
+                {"190201020304050605000000000000a0", 0},
                 // Alignment: 3
-                {"ffffffff1902010203040506050000000a000000", 1},
+                {"ffffffff190201020304050605000000000000a0", 1},
                 // Alignment: 2
-                {"ffffffff1902010203040506050000000a000000", 2},
+                {"ffffffff190201020304050605000000000000a0", 2},
                 // Alignment: 1
-                {"ffffffff1902010203040506050000000a000000", 3},
+                {"ffffffff190201020304050605000000000000a0", 3},
         };
     }
 
@@ -170,22 +170,7 @@ public class Test_RPCSID {
         assertEquals(rpc_sid.getRevision(), (char) 25);
         assertEquals(rpc_sid.getSubAuthorityCount(), (char) 2);
         assertEquals(rpc_sid.getIdentifierAuthority(), new byte[]{1, 2, 3, 4, 5, 6});
-        assertEquals(rpc_sid.getSubAuthority(), new long[]{5L, 10L});
-    }
-
-    @Test
-    public void test_unmarshalEntity_SubAuthorityCountInvalid() throws IOException {
-        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("191e010203040506050000000a000000"));
-        RPCSID rpc_sid = new RPCSID();
-        rpc_sid.setSubAuthority(new long[2]);
-        IllegalArgumentException actual = null;
-        try {
-            rpc_sid.unmarshalEntity(new PacketInput(bin));
-        } catch (IllegalArgumentException e) {
-            actual = e;
-        }
-        assertNotNull(actual);
-        assertEquals(actual.getMessage(), "SubAuthorityCount (30) != SubAuthority[] length (2)");
+        assertEquals(rpc_sid.getSubAuthority(), new long[]{5L, 2684354560L});
     }
 
     @Test
