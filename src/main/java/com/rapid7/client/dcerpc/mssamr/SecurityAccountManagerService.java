@@ -33,8 +33,9 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
@@ -44,6 +45,7 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.AliasInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
@@ -101,23 +103,67 @@ public class SecurityAccountManagerService {
             throw new IOException("Failed to close handle: " + new String(handle.getBytes()));
     }
 
-    public List<DomainInfo> getDomainsForServer(ServerHandle serverHandle) throws IOException {
+    public List<DomainInfo> getDomainsForServer(final ServerHandle serverHandle) throws IOException {
         final int bufferSize = 0xffff;
+        return getDomainsForServer(serverHandle, bufferSize);
+    }
+
+    public List<DomainInfo> getDomainsForServer(final ServerHandle serverHandle, final int bufferSize)
+        throws IOException {
         List<DomainInfo> domains = new ArrayList<>();
+        return enumerate(serverHandle, domains, new EnumerationCallback() {
+            @Override
+            public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
+                final SamrEnumerateDomainsInSamServerRequest request = new SamrEnumerateDomainsInSamServerRequest(
+                        serverHandle, enumContext, bufferSize);
+                return transport.call(request);
+            }
+        });
+    }
+
+    public List<AliasInfo> getAliasesForDomain(final DomainHandle domainHandle)
+        throws IOException {
+        final int bufferSize = 0xffff;
+        return getAliasesForDomain(domainHandle, bufferSize);
+    }
+
+    public List<AliasInfo> getAliasesForDomain(final DomainHandle domainHandle, final int bufferSize)
+        throws IOException {
+        List<AliasInfo> aliases = new ArrayList<>();
+        return enumerate(domainHandle, aliases, new EnumerationCallback() {
+            @Override
+            public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
+                final SamrEnumerateAliasesInDomainRequest request = new SamrEnumerateAliasesInDomainRequest(
+                        domainHandle, enumContext, bufferSize);
+                return transport.call(request);
+            }
+        });
+    }
+
+    /**
+     * Helper method for calling {@link SamrEnumerateRequest}(s) enumerating through the buffers for
+     * {@link SamrEnumerateResponse}.
+     */
+    private <T> List<T> enumerate(ContextHandle handle, List<T> list, EnumerationCallback callback) throws IOException {
         for (int enumContext = 0;;) {
-            SamrEnumerateDomainsInSamServerRequest request = new SamrEnumerateDomainsInSamServerRequest(serverHandle,
-                enumContext, bufferSize);
-            final SamrEnumerateDomainsInSamServerResponse response = transport.call(request);
+            SamrEnumerateResponse response = callback.request(handle, enumContext);
             final int returnCode = response.getReturnValue();
             enumContext = response.getResumeHandle();
             if (ERROR_MORE_ENTRIES.is(returnCode)) {
-                domains.addAll(response.getDomainList());
+                list.addAll(response.getList());
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
-                domains.addAll(response.getDomainList());
-                return Collections.unmodifiableList(domains);
+                list.addAll(response.getList());
+                return Collections.unmodifiableList(list);
             } else {
                 throw new RPCException("EnumDomainsInSamServer", returnCode);
             }
         }
+    }
+
+    /**
+     * Anonymous function for calling the enumeration request.
+     */
+    private interface EnumerationCallback {
+        SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException;
     }
 }

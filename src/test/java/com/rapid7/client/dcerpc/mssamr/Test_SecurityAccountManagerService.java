@@ -43,7 +43,7 @@ public class Test_SecurityAccountManagerService {
         List<DomainInfo> domains = new ArrayList<>();
         domains.add(Mockito.mock(DomainInfo.class));
         domains.add(Mockito.mock(DomainInfo.class));
-        Mockito.when(response.getDomainList()).thenReturn(domains);
+        Mockito.when(response.getList()).thenReturn(domains);
         Mockito.when(transport.call(Mockito.any(SamrEnumerateDomainsInSamServerRequest.class))).thenReturn(response);
         assertEquals(2, service.getDomainsForServer(handle).size());
     }
@@ -63,8 +63,8 @@ public class Test_SecurityAccountManagerService {
         List<DomainInfo> domains2 = new ArrayList<>();
         domains1.add(Mockito.mock(DomainInfo.class));
         domains2.add(Mockito.mock(DomainInfo.class));
-        Mockito.when(response1.getDomainList()).thenReturn(domains1);
-        Mockito.when(response2.getDomainList()).thenReturn(domains2);
+        Mockito.when(response1.getList()).thenReturn(domains1);
+        Mockito.when(response2.getList()).thenReturn(domains2);
         Mockito.when(transport.call(Mockito.any(SamrEnumerateDomainsInSamServerRequest.class))).thenReturn(response1)
             .thenReturn(response2);
         assertEquals(2, service.getDomainsForServer(handle).size());
