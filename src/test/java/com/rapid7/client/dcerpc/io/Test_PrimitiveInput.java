@@ -352,7 +352,10 @@ public class Test_PrimitiveInput {
     public Object[][] data_readUnsignedInt() throws IOException {
         return new Object[][] {
                 {0L, "00000000"},
+                {8L, "08000000"},
                 {50462976L, "00010203"},
+                {((long)Integer.MAX_VALUE), "FFFFFF7F"},
+                {((long)Integer.MAX_VALUE)+1, "00000080"},
                 {((long)Integer.MAX_VALUE)*2 + 1, "FFFFFFFF"},
         };
     }

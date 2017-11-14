@@ -30,6 +30,7 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class Test_RPCUnicodeString {
 
@@ -190,13 +191,40 @@ public class Test_RPCUnicodeString {
         in.readFully(new byte[mark]);
 
         RPCUnicodeString obj = create(nullTerminated);
-        obj.setValue(value);
         // Value must be non-null for deferrals to read the ref
         obj.setValue("");
         obj.unmarshalDeferrals(in);
         assertEquals(bin.available(), 0);
         assertEquals(obj.isNullTerminated(), nullTerminated);
         assertEquals(obj.getValue(), value);
+    }
+
+    @DataProvider
+    public Object[][] data_unmarshal_deferrals_IndexTooLarge() {
+        return new Object[][] {
+                // MaximumCount=0, Offset=2147483648, ActualCount=8
+                {"000000000000008008000000"},
+                // MaximumCount=0, Offset=4, ActualCount=2147483648
+                {"000000000400000000000080"},
+        };
+    }
+
+    @Test(dataProvider = "data_unmarshal_deferrals_IndexTooLarge")
+    public void test_unmarshal_deferrals_IndexTooLarge(String hex) throws IOException {
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
+        PacketInput in = new PacketInput(bin);
+
+        RPCUnicodeString obj = new RPCUnicodeString.NullTerminated();
+        // Value must be non-null for deferrals to read the ref
+        obj.setValue("");
+        IllegalArgumentException actual = null;
+        try {
+            obj.unmarshalDeferrals(in);
+        } catch (IllegalArgumentException e) {
+            actual = e;
+        }
+        assertNotNull(actual);
+        assertEquals(actual.getMessage(), "Value 2147483648 > 2147483647");
     }
 
     @Test

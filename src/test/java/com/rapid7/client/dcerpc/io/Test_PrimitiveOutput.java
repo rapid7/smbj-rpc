@@ -192,6 +192,7 @@ public class Test_PrimitiveOutput {
                 // Signed
                 {(long) Integer.MIN_VALUE, "00000080"},
                 {0L, "00000000"},
+                {8L, "08000000"},
                 {50462976L, "00010203"},
                 {(long) Integer.MAX_VALUE, "FFFFFF7F"},
                 // Unsigned
