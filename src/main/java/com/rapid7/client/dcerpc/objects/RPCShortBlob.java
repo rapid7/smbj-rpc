@@ -155,7 +155,7 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
             // Alignment: 2 - Already aligned
             in.fullySkipBytes(2 * offset);
             // Read subset
-            for (int i = 0; i < actualCount; i++) {
+            for (int i = 0; i < offset; i++) {
                 // <NDR: unsigned short>
                 // Alignment: 2 - Already aligned
                 buffer[i] = in.readUnsignedShort();
