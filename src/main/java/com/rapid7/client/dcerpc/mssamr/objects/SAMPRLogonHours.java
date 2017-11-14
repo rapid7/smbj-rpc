@@ -22,8 +22,7 @@
 package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
@@ -44,61 +43,24 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *  For example, if the UnitsPerWeek value is 168 (that is, the units per week is hours, resulting in a 21-byte bit field), and if the leftmost bit is set and the rightmost bit is set, the user is able to log on for two consecutive hours between Saturday, 11 P.M. and Sunday, 1 A.M.</pre></blockquote>
  */
 public class SAMPRLogonHours implements Unmarshallable {
-    public enum Units {
-        DAYS((short) 7, 8),
-        HOURS((short) 168, 21), // 7 * 24
-        MINUTES((short) 10080, 1260); // 7 * 24 * 60
-
-        private final short unitsPerWeek;
-        private final int byteCount;
-
-        Units(final short unitsPerWeek, final int byteCount) {
-            this.unitsPerWeek = unitsPerWeek;
-            this.byteCount = byteCount;
-        }
-
-        public short getUnitsPerWeek() {
-            return unitsPerWeek;
-        }
-
-        public int getByteCount() {
-            return byteCount;
-        }
-
-        public static Units fromUnitsPerWeek(final short unitsPerWeek) {
-            return valueMap.get(unitsPerWeek);
-        }
-
-        private static final Map<Short, Units> valueMap = new HashMap<>();
-        static {
-            for (Units unit : Units.values()) {
-                valueMap.put(unit.getUnitsPerWeek(), unit);
-            }
-        }
-    }
-
-    private final int DAYS = 7;
-    private final int HOURS = DAYS * 24;
-    private final int MINUTES = HOURS * 60;
-
     // <NDR: unsigned short> unsigned short UnitsPerWeek;
-    private Units unitsPerWeek;
+    private short unitsPerWeek;
     // <NDR: pointer> [size_is(1260), length_is((UnitsPerWeek+7)/8)] unsigned char* LogonHours;
-    private short[] logonHours;
+    private char[] logonHours;
 
-    public Units getUnitsPerWeek() {
+    public short getUnitsPerWeek() {
         return unitsPerWeek;
     }
 
-    public void setUnitsPerWeek(Units unitsPerWeek) {
+    public void setUnitsPerWeek(short unitsPerWeek) {
         this.unitsPerWeek = unitsPerWeek;
     }
 
-    public short[] getLogonHours() {
+    public char[] getLogonHours() {
         return logonHours;
     }
 
-    public void setLogonHours(short[] logonHours) {
+    public void setLogonHours(char[] logonHours) {
         this.logonHours = logonHours;
     }
 
@@ -113,15 +75,11 @@ public class SAMPRLogonHours implements Unmarshallable {
         in.align(Alignment.FOUR);
         // <NDR: unsigned short> unsigned short UnitsPerWeek;
         // Alignment: 2 - Already aligned
-        short unitsPerWeekValue = in.readShort();
-        unitsPerWeek = Units.fromUnitsPerWeek(unitsPerWeekValue);
-        if (unitsPerWeek == null) {
-            throw new IllegalArgumentException(String.format("Unknown UnitsPerWeek: %d", unitsPerWeekValue));
-        }
+        this.unitsPerWeek = in.readShort();
         // <NDR: pointer> [size_is(1260), length_is((UnitsPerWeek+7)/8)] unsigned char* LogonHours;
-        in.readFully(new byte[2]); // Alignment: 4 - Wrote exactly two bytes above since alignment
+        in.fullySkipBytes(2); // Alignment: 4 - Wrote exactly two bytes above since alignment
         if (in.readReferentID() != 0) {
-            logonHours = new short[unitsPerWeek.getByteCount()];
+            logonHours = new char[(unitsPerWeek + 7) / 8]; // Integer division is intended - Adding 7 allows this to round down
         }
     }
 
@@ -133,18 +91,43 @@ public class SAMPRLogonHours implements Unmarshallable {
             in.align(Alignment.FOUR);
             // <NDR: unsigned long> MaximumCount
             // Alignment: 4 - Already aligned
-            in.readInt();
+            in.fullySkipBytes(4);
             // <NDR: unsigned long> Offset
             // Alignment: 4 - Already aligned
-            in.readInt();
-            // <NDR: unsigned long> Offset
+            in.fullySkipBytes(4);
+            // <NDR: unsigned long> ActualCount
             // Alignment: 4 - Already aligned
-            in.readInt();
+            in.fullySkipBytes(4);
             // <NDR: unsigned char> unsigned char
             // Alignment: 1 - Already aligned
             for (int i = 0; i < logonHours.length; i++) {
-                logonHours[i] = (short) in.readByte();
+                logonHours[i] = in.readUnsignedByte();
             }
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int ret = (int) this.unitsPerWeek;
+        ret = 31 * ret + Arrays.hashCode(logonHours);
+        return ret;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof SAMPRLogonHours)) {
+            return false;
+        }
+        SAMPRLogonHours other = (SAMPRLogonHours) obj;
+        return getUnitsPerWeek() == other.getUnitsPerWeek()
+                && Arrays.equals(getLogonHours(), other.getLogonHours());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("SAMPRLogonHours{UnitsPerWeek:%d,size(LogonHours):%s}",
+            this.unitsPerWeek, (this.logonHours == null ? "null" : this.logonHours.length));
     }
 }
