@@ -55,7 +55,7 @@ public class SAMPRSRSecurityDescriptor implements Unmarshallable {
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
-
+        // No preamble
     }
 
     @Override
@@ -64,7 +64,7 @@ public class SAMPRSRSecurityDescriptor implements Unmarshallable {
         in.align(Alignment.FOUR);
         // [range(0, 256 * 1024)] unsigned long Length;
         // Alignment: 4 - Already aligned
-        int length = in.readInt();
+        int length = readLength(in);
         // <NDR: unsigned long> [size_is(Length)] unsigned char* SecurityDescriptor;
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0) {
@@ -81,16 +81,42 @@ public class SAMPRSRSecurityDescriptor implements Unmarshallable {
             // <NDR: unsigned long> [size_is(Length)] unsigned char* SecurityDescriptor;
             in.align(Alignment.FOUR);
             // MaximumCount
-            in.readInt();
+            in.fullySkipBytes(4);
             for (int i = 0; i < securityDescriptor.length; i++) {
-                securityDescriptor[i] = (char) in.readByte();
+                // <NDR: unsigned char>
+                // Alignment: 1 - Already aligned
+                securityDescriptor[i] = in.readUnsignedByte();
             }
         }
     }
 
     @Override
+    public int hashCode() {
+        return Arrays.hashCode(this.securityDescriptor);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof SAMPRSRSecurityDescriptor)) {
+            return false;
+        }
+        return Arrays.equals(getSecurityDescriptor(), ((SAMPRSRSecurityDescriptor) obj).getSecurityDescriptor());
+    }
+
+    @Override
     public String toString() {
-        return String.format("SAMPR_SR_SECURITY_DESCRIPTOR{Length:%d,SecurityDescriptor:%s}",
-                securityDescriptor == null ? null : securityDescriptor.length, Arrays.toString(securityDescriptor));
+        return String.format("SAMPR_SR_SECURITY_DESCRIPTOR{size_of(SecurityDescriptor):%s}",
+                securityDescriptor == null ? "null" : securityDescriptor.length);
+    }
+
+    private int readLength(PacketInput in) throws IOException {
+        final long ret = in.readUnsignedInt();
+        // Don't allow array length or index values bigger than signed int
+        if (ret > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException(String.format("Value %d > %d", ret, Integer.MAX_VALUE));
+        }
+        return (int) ret;
     }
 }
