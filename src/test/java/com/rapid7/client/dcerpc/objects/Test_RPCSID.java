@@ -269,10 +269,15 @@ public class Test_RPCSID {
     @Test
     public void test_fromString() throws MalformedSIDException {
         RPCSID rpc_sid = RPCSID.fromString("S-1-5-32");
-        assertEquals(1, rpc_sid.getRevision());
-        assertEquals(1, rpc_sid.getSubAuthorityCount());
-        assertArrayEquals(new byte[] { 0, 0, 0, 0, 0, 5 }, rpc_sid.getIdentifierAuthority());
-        assertArrayEquals(new long[] { 32 }, rpc_sid.getSubAuthority());
+        assertEquals(rpc_sid.getRevision(), 1);
+        assertEquals(rpc_sid.getSubAuthorityCount(), 1);
+        assertArrayEquals(rpc_sid.getIdentifierAuthority(), new byte[] { 0, 0, 0, 0, 0, 5 });
+        assertArrayEquals(rpc_sid.getSubAuthority(), new long[] { 32 });
+        rpc_sid = RPCSID.fromString("S-1-5-333-444-5");
+        assertEquals(rpc_sid.getRevision(), 1);
+        assertEquals(rpc_sid.getSubAuthorityCount(), 3);
+        assertArrayEquals(rpc_sid.getIdentifierAuthority(), new byte[] { 0, 0, 0, 0, 0, 5 });
+        assertArrayEquals(rpc_sid.getSubAuthority(), new long[] { 333, 444, 5 });
     }
 
     @Test(expectedExceptions = { MalformedSIDException.class })
