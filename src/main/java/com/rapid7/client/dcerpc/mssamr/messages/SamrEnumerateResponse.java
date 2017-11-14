@@ -23,14 +23,12 @@ import java.util.List;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPREnumerationBuffer;
 
 public abstract class SamrEnumerateResponse extends RequestResponse {
 
     private int resumeHandle;
     private int numEntries;
     private int returnCode;
-    private SAMPREnumerationBuffer enumeratedBuffer;
 
     protected abstract void unmarshallBuffer(PacketInput packetIn) throws IOException;
 
