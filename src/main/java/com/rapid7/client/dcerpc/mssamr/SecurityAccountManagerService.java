@@ -144,11 +144,25 @@ public class SecurityAccountManagerService {
         });
     }
 
+    /**
+     * Gets the group names for the provided domain. Max buffer size will be used.
+     *
+     * @param domainHandle The domain handle.
+     * @return The enumerated groups.
+     */
     public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle) throws IOException {
         final int bufferSize = 0xffff;
         return getGroupsForDomain(domainHandle, bufferSize);
     }
 
+    /**
+     * Gets the group names for the provided domain. Multiple request may be sent based on the entries read and buffer
+     * size.
+     *
+     * @param domainHandle The domain handle.
+     * @param bufferSize The buffer size for each request.
+     * @return The enumerated groups.
+     */
     public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
             throws IOException {
         List<GroupInfo> groups = new ArrayList<>();
@@ -162,15 +176,30 @@ public class SecurityAccountManagerService {
         });
     }
 
+    /**
+     * Gets the user names for the provided domain. Max buffer size will be used
+     *
+     * @param domainHandle The domain handle.
+     * @param userAccountContorl The UserAccountControl flags that filters the returned users.
+     * @return The enumerated users.
+     */
     public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl)
             throws IOException {
         final int bufferSize = 0xffff;
         return getUsersForDomain(domainHandle, userAccountContorl, bufferSize);
     }
 
+    /**
+     * Gets the user names for the provided domain. Multiple request may be sent based on the entries read and buffer
+     * size.
+     *
+     * @param domainHandle The domain handle.
+     * @param userAccountContorl The UserAccountControl flags that filters the returned users.
+     * @param bufferSize The buffer size for each request.
+     * @return The enumerated users.
+     */
     public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl,
-            final int bufferSize)
-            throws IOException {
+            final int bufferSize) throws IOException {
         List<UserInfo> users = new ArrayList<>();
         return enumerate(domainHandle, users, new EnumerationCallback() {
             @Override
