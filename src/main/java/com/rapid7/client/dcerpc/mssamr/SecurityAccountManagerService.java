@@ -113,7 +113,7 @@ public class SecurityAccountManagerService {
     }
 
     public List<DomainInfo> getDomainsForServer(final ServerHandle serverHandle, final int bufferSize)
-        throws IOException {
+            throws IOException {
         List<DomainInfo> domains = new ArrayList<>();
         return enumerate(serverHandle, domains, new EnumerationCallback() {
             @Override
@@ -126,13 +126,13 @@ public class SecurityAccountManagerService {
     }
 
     public List<AliasInfo> getAliasesForDomain(final DomainHandle domainHandle)
-        throws IOException {
+            throws IOException {
         final int bufferSize = 0xffff;
         return getAliasesForDomain(domainHandle, bufferSize);
     }
 
     public List<AliasInfo> getAliasesForDomain(final DomainHandle domainHandle, final int bufferSize)
-        throws IOException {
+            throws IOException {
         List<AliasInfo> aliases = new ArrayList<>();
         return enumerate(domainHandle, aliases, new EnumerationCallback() {
             @Override
@@ -150,7 +150,7 @@ public class SecurityAccountManagerService {
     }
 
     public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
-        throws IOException {
+            throws IOException {
         List<GroupInfo> groups = new ArrayList<>();
         return enumerate(domainHandle, groups, new EnumerationCallback() {
             @Override
@@ -163,14 +163,14 @@ public class SecurityAccountManagerService {
     }
 
     public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl)
-        throws IOException {
+            throws IOException {
         final int bufferSize = 0xffff;
         return getUsersForDomain(domainHandle, userAccountContorl, bufferSize);
     }
 
     public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl,
             final int bufferSize)
-        throws IOException {
+            throws IOException {
         List<UserInfo> users = new ArrayList<>();
         return enumerate(domainHandle, users, new EnumerationCallback() {
             @Override

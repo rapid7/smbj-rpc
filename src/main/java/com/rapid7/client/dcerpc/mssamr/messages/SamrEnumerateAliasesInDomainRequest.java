@@ -31,7 +31,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
  *   [in] unsigned long PreferedMaximumLength,
  *   [out] unsigned long* CountReturned
  * );
- * <pre>
+ * </pre>
  *
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc245758.aspx">
  *       https://msdn.microsoft.com/en-us/library/cc245758.aspx</a>
