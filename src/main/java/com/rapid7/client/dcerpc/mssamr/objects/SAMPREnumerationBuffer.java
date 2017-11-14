@@ -68,7 +68,7 @@ public abstract class SAMPREnumerationBuffer<T extends Unmarshallable> implement
      */
     public List<T> getEntries() {
         if (array == null)
-            throw new IllegalStateException("");
+            return null;
         return Collections.unmodifiableList(array);
     }
 
