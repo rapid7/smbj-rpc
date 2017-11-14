@@ -161,7 +161,15 @@ public class Test_SAMPRLogonHours {
                 // MaximumCount: 1, Offset: 2, ActualCount: 3
                 {"01000000 02000000 03000000", 0, new char[0], new char[0]},
                 // MaximumCount: 0, Offset: 0, ActualCount: 0, LogonHours: {1, 2, 3}
-                {"00000000 00000000 00000000 01 02 FF", 0, new char[3], new char[]{1, 2, 255}}
+                {"00000000 00000000 00000000 01 02 FF", 0, new char[3], new char[]{1, 2, 255}},
+
+                // Alignments
+                // MaximumCount: 1, Offset: 2, ActualCount: 3
+                {"00000000 01000000 02000000 03000000", 1, new char[0], new char[0]},
+                // MaximumCount: 1, Offset: 2, ActualCount: 3
+                {"00000000 01000000 02000000 03000000", 2, new char[0], new char[0]},
+                // MaximumCount: 1, Offset: 2, ActualCount: 3
+                {"00000000 01000000 02000000 03000000", 3, new char[0], new char[0]}
         };
     }
 
