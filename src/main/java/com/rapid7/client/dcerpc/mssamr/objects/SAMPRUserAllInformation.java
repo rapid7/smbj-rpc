@@ -22,6 +22,7 @@
 package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.IOException;
+import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
@@ -112,39 +113,72 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
  *  PrivateDataSensitive: Not used. Ignored on receipt at the server and client.</pre></blockquote>
  */
 public class SAMPRUserAllInformation implements Unmarshallable {
+    // <NDR: hyper> OLD_LARGE_INTEGER LastLogon;
     private long lastLogon;
+    // <NDR: hyper> OLD_LARGE_INTEGER LastLogoff;
     private long lastLogoff;
+    // <NDR: hyper> OLD_LARGE_INTEGER PasswordLastSet;
     private long passwordLastSet;
+    // <NDR: hyper> OLD_LARGE_INTEGER AccountExpires;
     private long accountExpires;
+    // <NDR: hyper> OLD_LARGE_INTEGER PasswordCanChange;
     private long passwordCanChange;
+    // <NDR: hyper> OLD_LARGE_INTEGER PasswordMustChange;
     private long passwordMustChange;
+    // <NDR: struct> RPC_UNICODE_STRING UserName;
     private RPCUnicodeString.NonNullTerminated userName;
+    // <NDR: struct> RPC_UNICODE_STRING FullName;
     private RPCUnicodeString.NonNullTerminated fullName;
+    // <NDR: struct> RPC_UNICODE_STRING HomeDirectory;
     private RPCUnicodeString.NonNullTerminated homeDirectory;
+    // <NDR: struct> RPC_UNICODE_STRING HomeDirectoryDrive;
     private RPCUnicodeString.NonNullTerminated homeDirectoryDrive;
+    // <NDR: struct> RPC_UNICODE_STRING ScriptPath;
     private RPCUnicodeString.NonNullTerminated scriptPath;
+    // <NDR: struct> RPC_UNICODE_STRING ProfilePath;
     private RPCUnicodeString.NonNullTerminated profilePath;
+    // <NDR: struct> RPC_UNICODE_STRING AdminComment;
     private RPCUnicodeString.NonNullTerminated adminComment;
+    // <NDR: struct> RPC_UNICODE_STRING WorkStations;
     private RPCUnicodeString.NonNullTerminated workStations;
+    // <NDR: struct> RPC_UNICODE_STRING UserComment;
     private RPCUnicodeString.NonNullTerminated userComment;
+    // <NDR: struct> RPC_UNICODE_STRING Parameters;
     private RPCUnicodeString.NonNullTerminated parameters;
+    // <NDR: struct> RPC_SHORT_BLOB LmOwfPassword;
     private RPCShortBlob lmOwfPassword;
+    // <NDR: struct> RPC_SHORT_BLOB NtOwfPassword;
     private RPCShortBlob ntOwfPassword;
+    // <NDR: struct> RPC_UNICODE_STRING PrivateData;
     private RPCUnicodeString.NonNullTerminated privateData;
+    // <NDR: struct> SAMPR_SR_SECURITY_DESCRIPTOR SecurityDescriptor;
     private SAMPRSRSecurityDescriptor securityDescriptor;
-    private int userId;
-    private int primaryGroupId;
-    private int userAccountControl;
-    private int whichFields;
+    // <NDR: unsigned long> unsigned long UserId;
+    private long userId;
+    // <NDR: unsigned long> unsigned long PrimaryGroupId;
+    private long primaryGroupId;
+    // <NDR: unsigned long> unsigned long UserAccountControl;
+    private long userAccountControl;
+    // <NDR: unsigned long> unsigned long WhichFields;
+    private long whichFields;
+    // <NDR: struct> SAMPR_LOGON_HOURS LogonHours;
     private SAMPRLogonHours logonHours;
-    private short badPasswordCount;
-    private short logonCount;
-    private short countryCode;
-    private short codePage;
-    private boolean lmPasswordPresent;
-    private boolean ntPasswordPresent;
-    private boolean passwordExpired;
-    private boolean privateDataSensitive;
+    // <NDR: unsigned short> unsigned short BadPasswordCount;
+    private int badPasswordCount;
+    // <NDR: unsigned short> unsigned short LogonCount;
+    private int logonCount;
+    // <NDR: unsigned short> unsigned short CountryCode;
+    private int countryCode;
+    // <NDR: unsigned short> unsigned short CodePage;
+    private int codePage;
+    // <NDR: boolean> unsigned char LmPasswordPresent;
+    private char lmPasswordPresent;
+    // <NDR: boolean> unsigned char NtPasswordPresent;
+    private char ntPasswordPresent;
+    // <NDR: boolean> unsigned char PasswordExpired;
+    private char passwordExpired;
+    // <NDR: boolean> unsigned char PrivateDataSensitive;
+    private char privateDataSensitive;
 
     public long getLastLogon() {
         return lastLogon;
@@ -306,35 +340,35 @@ public class SAMPRUserAllInformation implements Unmarshallable {
         this.securityDescriptor = securityDescriptor;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    public int getPrimaryGroupId() {
+    public long getPrimaryGroupId() {
         return primaryGroupId;
     }
 
-    public void setPrimaryGroupId(int primaryGroupId) {
+    public void setPrimaryGroupId(long primaryGroupId) {
         this.primaryGroupId = primaryGroupId;
     }
 
-    public int getUserAccountControl() {
+    public long getUserAccountControl() {
         return userAccountControl;
     }
 
-    public void setUserAccountControl(int userAccountControl) {
+    public void setUserAccountControl(long userAccountControl) {
         this.userAccountControl = userAccountControl;
     }
 
-    public int getWhichFields() {
+    public long getWhichFields() {
         return whichFields;
     }
 
-    public void setWhichFields(int whichFields) {
+    public void setWhichFields(long whichFields) {
         this.whichFields = whichFields;
     }
 
@@ -346,100 +380,131 @@ public class SAMPRUserAllInformation implements Unmarshallable {
         this.logonHours = logonHours;
     }
 
-    public short getBadPasswordCount() {
+    public int getBadPasswordCount() {
         return badPasswordCount;
     }
 
-    public void setBadPasswordCount(short badPasswordCount) {
+    public void setBadPasswordCount(int badPasswordCount) {
         this.badPasswordCount = badPasswordCount;
     }
 
-    public short getLogonCount() {
+    public int getLogonCount() {
         return logonCount;
     }
 
-    public void setLogonCount(short logonCount) {
+    public void setLogonCount(int logonCount) {
         this.logonCount = logonCount;
     }
 
-    public short getCountryCode() {
+    public int getCountryCode() {
         return countryCode;
     }
 
-    public void setCountryCode(short countryCode) {
+    public void setCountryCode(int countryCode) {
         this.countryCode = countryCode;
     }
 
-    public short getCodePage() {
+    public int getCodePage() {
         return codePage;
     }
 
-    public void setCodePage(short codePage) {
+    public void setCodePage(int codePage) {
         this.codePage = codePage;
     }
 
-    public boolean isLmPasswordPresent() {
+    public char getLmPasswordPresent() {
         return lmPasswordPresent;
     }
 
-    public void setLmPasswordPresent(boolean lmPasswordPresent) {
+    public boolean isLmPasswordPresent() {
+        return getLmPasswordPresent() != 0;
+    }
+
+    public void setLmPasswordPresent(char lmPasswordPresent) {
         this.lmPasswordPresent = lmPasswordPresent;
     }
 
-    public boolean isNtPasswordPresent() {
+    public char getNtPasswordPresent() {
         return ntPasswordPresent;
     }
 
-    public void setNtPasswordPresent(boolean ntPasswordPresent) {
+    public boolean isNtPasswordPresent() {
+        return getNtPasswordPresent() != 0;
+    }
+
+    public void setNtPasswordPresent(char ntPasswordPresent) {
         this.ntPasswordPresent = ntPasswordPresent;
     }
 
-    public boolean isPasswordExpired() {
+    public char getPasswordExpired() {
         return passwordExpired;
     }
 
-    public void setPasswordExpired(boolean passwordExpired) {
+    public boolean isPasswordExpired() {
+        return getPasswordExpired() != 0;
+    }
+
+    public void setPasswordExpired(char passwordExpired) {
         this.passwordExpired = passwordExpired;
     }
 
-    public boolean isPrivateDataSensitive() {
+    public char getPrivateDataSensitive() {
         return privateDataSensitive;
     }
 
-    public void setPrivateDataSensitive(boolean privateDataSensitive) {
+    public boolean isPrivateDataSensitive() {
+        return getPrivateDataSensitive() != 0;
+    }
+
+    public void setPrivateDataSensitive(char privateDataSensitive) {
         this.privateDataSensitive = privateDataSensitive;
     }
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
+        // <NDR struct> RPC_UNICODE_STRING UserName;
         userName = new RPCUnicodeString.NonNullTerminated();
         userName.unmarshalPreamble(in);
+        // <NDR struct> RPC_UNICODE_STRING FullName;
         fullName = new RPCUnicodeString.NonNullTerminated();
         fullName.unmarshalPreamble(in);
+        // <NDR struct> RPC_UNICODE_STRING HomeDirectory;
         homeDirectory = new RPCUnicodeString.NonNullTerminated();
         homeDirectory.unmarshalPreamble(in);
+        // <NDR struct> RPC_UNICODE_STRING HomeDirectoryDrive;
         homeDirectoryDrive = new RPCUnicodeString.NonNullTerminated();
         homeDirectoryDrive.unmarshalPreamble(in);
+        // <NDR struct> RPC_UNICODE_STRING ScriptPath;
         scriptPath = new RPCUnicodeString.NonNullTerminated();
         scriptPath.unmarshalPreamble(in);
+        // <NDR struct> RPC_UNICODE_STRING ProfilePath;
         profilePath = new RPCUnicodeString.NonNullTerminated();
         profilePath.unmarshalPreamble(in);
+        // <NDR struct> RPC_UNICODE_STRING AdminComment;
         adminComment = new RPCUnicodeString.NonNullTerminated();
         adminComment.unmarshalPreamble(in);
+        // <NDR struct> RPC_UNICODE_STRING WorkStations;
         workStations = new RPCUnicodeString.NonNullTerminated();
         workStations.unmarshalPreamble(in);
+        // <NDR struct> RPC_UNICODE_STRING UserComment;
         userComment = new RPCUnicodeString.NonNullTerminated();
         userComment.unmarshalPreamble(in);
+        // <NDR struct> RPC_UNICODE_STRING Parameters;
         parameters = new RPCUnicodeString.NonNullTerminated();
         parameters.unmarshalPreamble(in);
+        // <NDR: struct> RPC_SHORT_BLOB LmOwfPassword;
         lmOwfPassword = new RPCShortBlob();
         lmOwfPassword.unmarshalPreamble(in);
+        // <NDR: struct> RPC_SHORT_BLOB NtOwfPassword;
         ntOwfPassword = new RPCShortBlob();
         ntOwfPassword.unmarshalPreamble(in);
+        // <NDR: struct> RPC_UNICODE_STRING PrivateData;
         privateData = new RPCUnicodeString.NonNullTerminated();
         privateData.unmarshalPreamble(in);
+        // <NDR: struct> SAMPR_SR_SECURITY_DESCRIPTOR SecurityDescriptor;
         securityDescriptor = new SAMPRSRSecurityDescriptor();
         securityDescriptor.unmarshalPreamble(in);
+        // <NDR: struct> SAMPR_LOGON_HOURS LogonHours;
         logonHours = new SAMPRLogonHours();
         logonHours.unmarshalPreamble(in);
     }
@@ -448,64 +513,196 @@ public class SAMPRUserAllInformation implements Unmarshallable {
     public void unmarshalEntity(PacketInput in) throws IOException {
         // Structure Alignment: 4
         in.align(Alignment.EIGHT);
-        // TODO
+        // <NDR: hyper> OLD_LARGE_INTEGER LastLogon;
+        // Alignment: 8 - Already aligned
         lastLogon = in.readLong();
-        // TODO
+        // <NDR: hyper> OLD_LARGE_INTEGER LastLogoff;
+        // Alignment: 8 - Already aligned
         lastLogoff = in.readLong();
-        // TODO
+        // <NDR: hyper> OLD_LARGE_INTEGER PasswordLastSet;
+        // Alignment: 8 - Already aligned
         passwordLastSet = in.readLong();
-        // TODO
+        // <NDR: hyper> OLD_LARGE_INTEGER AccountExpires;
+        // Alignment: 8 - Already aligned
         accountExpires = in.readLong();
-        // TODO
+        // <NDR: hyper> OLD_LARGE_INTEGER PasswordCanChange;
+        // Alignment: 8 - Already aligned
         passwordCanChange = in.readLong();
-        // TODO
+        // <NDR: hyper> OLD_LARGE_INTEGER PasswordMustChange;
+        // Alignment: 8 - Already aligned;
         passwordMustChange = in.readLong();
+        // <NDR: struct> RPC_UNICODE_STRING UserName;
+        // Alignment: 4 - Already aligned
         userName.unmarshalEntity(in);
+        // <NDR: struct> RPC_UNICODE_STRING FullName;
+        // Alignment: 4 - Already aligned
         fullName.unmarshalEntity(in);
+        // <NDR: struct> RPC_UNICODE_STRING HomeDirectory;
+        // Alignment: 4 - Already aligned
         homeDirectory.unmarshalEntity(in);
+        // <NDR: struct> RPC_UNICODE_STRING HomeDirectoryDrive;
+        // Alignment: 4 - Already aligned
         homeDirectoryDrive.unmarshalEntity(in);
+        // <NDR: struct> RPC_UNICODE_STRING ScriptPath;
+        // Alignment: 4 - Already aligned
         scriptPath.unmarshalEntity(in);
+        // <NDR: struct> RPC_UNICODE_STRING ProfilePath;
+        // Alignment: 4 - Already aligned
         profilePath.unmarshalEntity(in);
+        // <NDR: struct> RPC_UNICODE_STRING AdminComment;
+        // Alignment: 4 - Already aligned
         adminComment.unmarshalEntity(in);
+        // <NDR: struct> RPC_UNICODE_STRING WorkStations;
+        // Alignment: 4 - Already aligned
         workStations.unmarshalEntity(in);
+        // <NDR: struct> RPC_UNICODE_STRING UserComment;
+        // Alignment: 4 - Already aligned
         userComment.unmarshalEntity(in);
+        // <NDR: struct> RPC_UNICODE_STRING Parameters;
+        // Alignment: 4 - Already aligned
         parameters.unmarshalEntity(in);
+        // <NDR: struct> RPC_SHORT_BLOB LmOwfPassword;
+        // Alignment: 4 - Already aligned
         lmOwfPassword.unmarshalEntity(in);
+        // <NDR: struct> RPC_SHORT_BLOB NtOwfPassword;
+        // Alignment: 4 - Already aligned
         ntOwfPassword.unmarshalEntity(in);
+        // <NDR: struct> RPC_UNICODE_STRING PrivateData;
+        // Alignment: 4 - Already aligned
         privateData.unmarshalEntity(in);
+        // <NDR: struct> SAMPR_SR_SECURITY_DESCRIPTOR SecurityDescriptor;
+        // Alignment: 4 - Already aligned
         securityDescriptor.unmarshalEntity(in);
-
-        userId = in.readInt();
-        primaryGroupId = in.readInt();
-        userAccountControl = in.readInt();
-        whichFields = in.readInt();
+        // <NDR: unsigned long> unsigned long UserId;
+        // Alignment: 4 - Already aligned
+        userId = in.readUnsignedInt();
+        // <NDR: unsigned long> unsigned long PrimaryGroupId;
+        // Alignment: 4 - Already aligned
+        primaryGroupId = in.readUnsignedInt();
+        // <NDR: unsigned long> unsigned long UserAccountControl;
+        // Alignment: 4 - Already aligned
+        userAccountControl = in.readUnsignedInt();
+        // <NDR: unsigned long> unsigned long WhichFields;
+        // Alignment: 4 - Already aligned
+        whichFields = in.readUnsignedInt();
+        // <NDR: struct> SAMPR_LOGON_HOURS LogonHours;
+        // Alignment: 4 - Already aligned
         logonHours.unmarshalEntity(in);
+        // <NDR: unsigned short> unsigned short BadPasswordCount;
         in.align(Alignment.TWO);
-        badPasswordCount = in.readShort();
-        logonCount = in.readShort();
-        countryCode = in.readShort();
-        codePage = in.readShort();
-        lmPasswordPresent = in.readBoolean();
-        ntPasswordPresent = in.readBoolean();
-        passwordExpired = in.readBoolean();
-        privateDataSensitive = in.readBoolean();
+        badPasswordCount = in.readUnsignedShort();
+        // <NDR: unsigned short> unsigned short LogonCount;
+        // Alignment: 2 - Already aligned
+        logonCount = in.readUnsignedShort();
+        // <NDR: unsigned short> unsigned short CountryCode;
+        // Alignment: 2 - Already aligned
+        countryCode = in.readUnsignedShort();
+        // <NDR: unsigned short> unsigned short CodePage;
+        // Alignment: 2 - Already aligned
+        codePage = in.readUnsignedShort();
+        // <NDR: unsigned char> unsigned char LmPasswordPresent;
+        lmPasswordPresent = in.readUnsignedByte();
+        // <NDR: unsigned char> unsigned char NtPasswordPresent;
+        ntPasswordPresent = in.readUnsignedByte();
+        // <NDR: unsigned char> unsigned char PasswordExpired;
+        passwordExpired = in.readUnsignedByte();
+        // <NDR: unsigned char> unsigned char PrivateDataSensitive;
+        privateDataSensitive = in.readUnsignedByte();
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
+        // <NDR: struct> RPC_UNICODE_STRING UserName;
         userName.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_UNICODE_STRING FullName;
         fullName.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_UNICODE_STRING HomeDirectory;
         homeDirectory.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_UNICODE_STRING HomeDirectoryDrive;
         homeDirectoryDrive.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_UNICODE_STRING ScriptPath;
         scriptPath.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_UNICODE_STRING ProfilePath;
         profilePath.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_UNICODE_STRING AdminComment;
         adminComment.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_UNICODE_STRING WorkStations;
         workStations.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_UNICODE_STRING UserComment;
         userComment.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_UNICODE_STRING Parameters;
         parameters.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_SHORT_BLOB LmOwfPassword;
         lmOwfPassword.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_SHORT_BLOB NtOwfPassword;
         ntOwfPassword.unmarshalDeferrals(in);
+        // <NDR: struct> RPC_UNICODE_STRING PrivateData;
+        privateData.unmarshalDeferrals(in);
+        // <NDR: struct> SAMPR_SR_SECURITY_DESCRIPTOR SecurityDescriptor;
         securityDescriptor.unmarshalDeferrals(in);
+        // <NDR: struct> SAMPR_LOGON_HOURS LogonHours;
         logonHours.unmarshalDeferrals(in);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getLastLogon(), getLastLogoff(), getPasswordLastSet(),
+                getAccountExpires(), getPasswordCanChange(), getPasswordMustChange(),
+                getUserName(), getFullName(), getHomeDirectory(), getHomeDirectoryDrive(),
+                getScriptPath(), getProfilePath(), getAdminComment(), getWorkStations(),
+                getUserComment(), getParameters(), getLmOwfPassword(), getNtOwfPassword(),
+                getPrivateData(), getSecurityDescriptor(), getUserId(), getPrimaryGroupId(),
+                getUserAccountControl(), getWhichFields(), getLogonHours(), getBadPasswordCount(),
+                getLogonCount(), getCountryCode(), getCodePage(), getLmPasswordPresent(),
+                getNtPasswordPresent(), getPasswordExpired(), getPrivateDataSensitive());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof SAMPRUserAllInformation)) {
+            return false;
+        }
+        SAMPRUserAllInformation other = (SAMPRUserAllInformation) obj;
+        return Objects.equals(getLastLogon(), other.getLastLogon())
+                && Objects.equals(getLastLogoff(), other.getLastLogoff())
+                && Objects.equals(getPasswordLastSet(), other.getPasswordLastSet())
+                && Objects.equals(getAccountExpires(), other.getAccountExpires())
+                && Objects.equals(getPasswordCanChange(), other.getPasswordCanChange())
+                && Objects.equals(getPasswordMustChange(), other.getPasswordMustChange())
+                && Objects.equals(getUserName(), other.getUserName())
+                && Objects.equals(getFullName(), other.getFullName())
+                && Objects.equals(getHomeDirectory(), other.getHomeDirectory())
+                && Objects.equals(getHomeDirectoryDrive(), other.getHomeDirectoryDrive())
+                && Objects.equals(getScriptPath(), other.getScriptPath())
+                && Objects.equals(getProfilePath(), other.getProfilePath())
+                && Objects.equals(getAdminComment(), other.getAdminComment())
+                && Objects.equals(getWorkStations(), other.getWorkStations())
+                && Objects.equals(getUserComment(), other.getUserComment())
+                && Objects.equals(getParameters(), other.getParameters())
+                && Objects.equals(getLmOwfPassword(), other.getLmOwfPassword())
+                && Objects.equals(getNtOwfPassword(), other.getNtOwfPassword())
+                && Objects.equals(getPrivateData(), other.getPrivateData())
+                && Objects.equals(getSecurityDescriptor(), other.getSecurityDescriptor())
+                && Objects.equals(getUserId(), other.getUserId())
+                && Objects.equals(getPrimaryGroupId(), other.getPrimaryGroupId())
+                && Objects.equals(getUserAccountControl(), other.getUserAccountControl())
+                && Objects.equals(getWhichFields(), other.getWhichFields())
+                && Objects.equals(getLogonHours(), other.getLogonHours())
+                && Objects.equals(getBadPasswordCount(), other.getBadPasswordCount())
+                && Objects.equals(getLogonCount(), other.getLogonCount())
+                && Objects.equals(getCountryCode(), other.getCountryCode())
+                && Objects.equals(getCodePage(), other.getCodePage())
+                && Objects.equals(getLmPasswordPresent(), other.getLmPasswordPresent())
+                && Objects.equals(getNtPasswordPresent(), other.getNtPasswordPresent())
+                && Objects.equals(getPasswordExpired(), other.getPasswordExpired())
+                && Objects.equals(getPrivateDataSensitive(), other.getPrivateDataSensitive());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("SAMPR_USER_ALL_INFORMATION{UserId:%d, PrimaryGroupId:%d, UserName:%s, FullName:%s}",
+            getUserId(), getPrimaryGroupId(), getUserName(), getFullName());
     }
 }
