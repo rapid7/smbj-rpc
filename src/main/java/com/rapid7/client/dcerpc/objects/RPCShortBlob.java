@@ -22,6 +22,7 @@
 package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
+import java.util.Arrays;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
@@ -46,8 +47,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *  Buffer: A buffer containing Length/2 unsigned short values.</pre></blockquote>
  */
 public class RPCShortBlob implements Marshallable, Unmarshallable {
-    private int length;
-    private int maximumLength;
+    // <NDR: conformant varying array> [size_is(MaximumLength/2), length_is(Length/2)] unsigned short* Buffer;
     private int[] buffer;
 
     public int[] getBuffer() {
@@ -60,7 +60,7 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
 
     @Override
     public void marshalPreamble(PacketOutput out) throws IOException {
-        // No preamble. Conformant array of `WCHAR*` is a reference, and so preamble is not required.
+        // No preamble. Conformant varying array of `unsigned short* Buffer` is a reference, and so preamble is not required.
     }
 
     @Override
@@ -70,20 +70,20 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
         if (buffer == null) {
             // <NDR: unsigned short> unsigned short Length;
             // Alignment 2 - Already aligned
-            out.writeShort((short) 0);
+            out.writeShort(0);
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
-            out.writeShort((short) 0);
+            out.writeShort(0);
             // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] unsigned short* Buffer;
             // Alignment 4 - Already aligned
             out.writeNull();
         } else {
             // <NDR: unsigned short> unsigned short Length;
             // Alignment 2 - Already aligned
-            out.writeShort((short) buffer.length);
+            out.writeShort(buffer.length);
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
-            out.writeShort((short) buffer.length);
+            out.writeShort(buffer.length);
             // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] unsigned short* Buffer;
             // Alignment 4 - Already aligned
             out.writeReferentID();
@@ -105,8 +105,7 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
             // Entries for conformant+varying array
             // Alignment 1 - Already aligned
             for (int s : buffer) {
-                // TODO unsigned short
-                out.writeShort((short) s);
+                out.writeShort(s);
             }
         }
     }
@@ -122,14 +121,13 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
         in.align(Alignment.FOUR);
         // <NDR: unsigned short> unsigned short Length;
         // Alignment: 2 - Already aligned
-        int length = in.readShort();
+        int length = in.readUnsignedShort();
         // <NDR: unsigned short> unsigned short MaximumLength;
         // Alignment: 2 - Already aligned
-        in.readShort();
+        in.fullySkipBytes(2);
         // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] unsigned short* Buffer;
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0)
-            // This is 0 cost - Compile time constants are internal objects
             buffer = new int[length];
     }
 
@@ -137,33 +135,61 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
     public void unmarshalDeferrals(PacketInput in) throws IOException {
         if (buffer != null) {
             //Preamble
+            // <NDR: unsigned long> MaximumCount for conformant array - This is *not* the size of the array, so is not useful to us
             in.align(Alignment.FOUR);
-            in.readInt();
+            in.fullySkipBytes(4);
 
             //Entity
             // <NDR: unsigned long> Offset for varying array
             // Alignment: 4 - Already aligned
-            final int offset = in.readInt();
+            final int offset = readIndex(in);
             // <NDR: unsigned long> ActualCount for varying array
             // Alignment: 4 - Already aligned
-            final int actualCount = in.readInt();
+            final int actualCount = readIndex(in);
             if (actualCount != buffer.length) {
                 throw new IllegalArgumentException(String.format("Expected Length == Buffer.ActualCount: %d != %d", actualCount, buffer.length));
             }
             //Deferrals
             // Entities for conformant array
             // Read prefix (if any)
-            for (int i = 0; i < offset; i++) {
-                // <NDR: unsigned short>
-                // Alignment: 2 - Already aligned
-                in.readShort();
-            }
+            // Alignment: 2 - Already aligned
+            in.fullySkipBytes(2 * offset);
             // Read subset
-            for (int i = 0; i < buffer.length; i++) {
+            for (int i = 0; i < actualCount; i++) {
                 // <NDR: unsigned short>
                 // Alignment: 2 - Already aligned
-                buffer[i] = in.readShort();
+                buffer[i] = in.readUnsignedShort();
             }
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(getBuffer());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof RPCShortBlob)) {
+            return false;
+        }
+        return Arrays.equals(getBuffer(), ((RPCShortBlob) obj).getBuffer());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("RPC_SHORT_BLOB{size(Buffer):%s}",
+                (this.buffer == null ? "null" : this.buffer.length));
+    }
+
+    private int readIndex(PacketInput in) throws IOException {
+        final long ret = in.readUnsignedInt();
+        // Don't allow array length or index values bigger than signed int
+        if (ret > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException(String.format("Value %d > %d", ret, Integer.MAX_VALUE));
+        }
+        return (int) ret;
     }
 }

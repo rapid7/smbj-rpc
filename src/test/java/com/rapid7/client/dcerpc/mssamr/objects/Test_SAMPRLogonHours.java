@@ -188,7 +188,7 @@ public class Test_SAMPRLogonHours {
 
     @Test
     public void test_toString_default() {
-        assertEquals(new SAMPRLogonHours().toString(), "SAMPRLogonHours{UnitsPerWeek:0,size(LogonHours):null}");
+        assertEquals(new SAMPRLogonHours().toString(), "SAMPR_LOGON_HOURS{UnitsPerWeek:0,size(LogonHours):null}");
     }
 
     @Test
@@ -196,18 +196,6 @@ public class Test_SAMPRLogonHours {
         SAMPRLogonHours obj = new SAMPRLogonHours();
         obj.setUnitsPerWeek((short) 50);
         obj.setLogonHours(new char[]{1, 2, 3});
-        assertEquals(obj.toString(), "SAMPRLogonHours{UnitsPerWeek:50,size(LogonHours):3}");
-    }
-
-    private void quickArrayCompare(char[] actual, char[] expected) {
-        // Short-circuit some of the equality here - It's expensive for large arrays
-        if (expected != null) {
-            assertEquals(actual.length, expected.length);
-            if (expected.length > 0)
-                // Just assume the rest of the array is initialized
-                assertEquals(actual[0], (short) 0);
-        } else {
-            assertNull(actual);
-        }
+        assertEquals(obj.toString(), "SAMPR_LOGON_HOURS{UnitsPerWeek:50,size(LogonHours):3}");
     }
 }
