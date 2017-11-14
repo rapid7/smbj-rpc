@@ -127,7 +127,7 @@ public class SAMPRLogonHours implements Unmarshallable {
 
     @Override
     public String toString() {
-        return String.format("SAMPRLogonHours{UnitsPerWeek:%d,size(LogonHours):%s}",
+        return String.format("SAMPR_LOGON_HOURS{UnitsPerWeek:%d,size(LogonHours):%s}",
                 this.unitsPerWeek, (this.logonHours == null ? "null" : this.logonHours.length));
     }
 }
