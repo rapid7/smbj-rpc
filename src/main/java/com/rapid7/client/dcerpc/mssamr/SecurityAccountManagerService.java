@@ -35,7 +35,9 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
@@ -49,8 +51,10 @@ import com.rapid7.client.dcerpc.mssamr.objects.AliasInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -135,6 +139,44 @@ public class SecurityAccountManagerService {
             public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
                 final SamrEnumerateAliasesInDomainRequest request = new SamrEnumerateAliasesInDomainRequest(
                         domainHandle, enumContext, bufferSize);
+                return transport.call(request);
+            }
+        });
+    }
+
+    public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle) throws IOException {
+        final int bufferSize = 0xffff;
+        return getGroupsForDomain(domainHandle, bufferSize);
+    }
+
+    public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
+        throws IOException {
+        List<GroupInfo> groups = new ArrayList<>();
+        return enumerate(domainHandle, groups, new EnumerationCallback() {
+            @Override
+            public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
+                final SamrEnumerateGroupsInDomainRequest request = new SamrEnumerateGroupsInDomainRequest(domainHandle,
+                        enumContext, bufferSize);
+                return transport.call(request);
+            }
+        });
+    }
+
+    public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl)
+        throws IOException {
+        final int bufferSize = 0xffff;
+        return getUsersForDomain(domainHandle, userAccountContorl, bufferSize);
+    }
+
+    public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl,
+            final int bufferSize)
+        throws IOException {
+        List<UserInfo> users = new ArrayList<>();
+        return enumerate(domainHandle, users, new EnumerationCallback() {
+            @Override
+            public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
+                final SamrEnumerateUsersInDomainRequest request = new SamrEnumerateUsersInDomainRequest(domainHandle,
+                        enumContext, userAccountContorl, bufferSize);
                 return transport.call(request);
             }
         });
