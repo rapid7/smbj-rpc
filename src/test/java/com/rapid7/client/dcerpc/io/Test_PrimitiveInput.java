@@ -263,29 +263,29 @@ public class Test_PrimitiveInput {
     public Object[][] data_readByte() {
         return new Object[][] {
                 {Byte.MIN_VALUE, "80"},
-                {0, "00"},
-                {13, "0D"},
-                {-1, "FF"},
+                {(byte) 0, "00"},
+                {(byte) 13, "0D"},
+                {(byte) -1, "FF"},
                 {Byte.MAX_VALUE, "7F"}
         };
     }
 
     @Test(dataProvider = "data_readByte")
-    public void readByte(int expected, String hex) throws IOException {
+    public void readByte(byte expected, String hex) throws IOException {
         assertEquals(expected, getPacketInput(hex).readByte());
     }
 
     @DataProvider
     public Object[][] data_readUnsignedByte() {
         return new Object[][] {
-                {0, "00"},
-                {13, "0D"},
-                {(Byte.MAX_VALUE*2)+1, "FF"}
+                {(short) 0, "00"},
+                {(short) 13, "0D"},
+                {(short) ((Byte.MAX_VALUE*2)+1), "FF"}
         };
     }
 
     @Test(dataProvider = "data_readUnsignedByte")
-    public void readUnsignedByte(int expected, String hex) throws IOException {
+    public void readUnsignedByte(short expected, String hex) throws IOException {
         assertEquals(expected, getPacketInput(hex).readUnsignedByte());
     }
 

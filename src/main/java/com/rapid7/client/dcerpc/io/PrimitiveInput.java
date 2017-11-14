@@ -76,8 +76,8 @@ class PrimitiveInput {
         return dataIn.readByte();
     }
 
-    public int readUnsignedByte() throws IOException {
-        return dataIn.readUnsignedByte();
+    public char readUnsignedByte() throws IOException {
+        return (char) dataIn.readUnsignedByte();
     }
 
     public short readShort() throws IOException {
