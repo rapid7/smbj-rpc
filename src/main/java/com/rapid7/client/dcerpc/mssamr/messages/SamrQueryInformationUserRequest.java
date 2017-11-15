@@ -48,42 +48,43 @@ import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
  *      Buffer                SamrQueryInformationUser.Buffer</pre></blockquote>
  */
 public abstract class SamrQueryInformationUserRequest<T extends Unmarshallable> extends RequestCall<SamrQueryInformationUserResponse<T>> {
-    private static final short OP_NUM = 36;
+    public static final short OP_NUM = 36;
 
     private final UserHandle userHandle;
-    private final UserInformationClass userInformationClass;
 
-    public SamrQueryInformationUserRequest(UserHandle userHandle, UserInformationClass userInformationClass) {
+    SamrQueryInformationUserRequest(UserHandle userHandle) {
         super(OP_NUM);
         this.userHandle = userHandle;
-        this.userInformationClass = userInformationClass;
     }
 
-    abstract T newPolicyInformation();
-
-    @Override
-    public SamrQueryInformationUserResponse<T> getResponseObject() {
-        //noinspection unchecked
-        return (SamrQueryInformationUserResponse<T>) new SamrQueryInformationUserResponse(newPolicyInformation(), userInformationClass);
+    public UserHandle getUserHandle() {
+        return userHandle;
     }
+
+    public abstract UserInformationClass getUserInformationClass();
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: struct> [in] SAMPR_HANDLE UserHandle,
-        packetOut.writeMarshallable(userHandle);
+        packetOut.writeMarshallable(getUserHandle());
         // <NDR: unsigned short> [in] USER_INFORMATION_CLASS UserInformationClass,
         // Alignment: 2 - Already aligned. ContextHandle writes 20 bytes above
-        packetOut.writeShort(userInformationClass.getInfoLevel());
+        packetOut.writeShort(getUserInformationClass().getInfoLevel());
     }
 
     public static class UserAllInformation extends SamrQueryInformationUserRequest<SAMPRUserAllInformation> {
         public UserAllInformation(UserHandle userHandle) {
-            super(userHandle, UserInformationClass.USER_ALL_INFORMATION);
+            super(userHandle);
         }
 
         @Override
-        SAMPRUserAllInformation newPolicyInformation() {
-            return new SAMPRUserAllInformation();
+        public UserInformationClass getUserInformationClass() {
+            return UserInformationClass.USER_ALL_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationUserResponse.UserAllInformation getResponseObject() {
+            return new SamrQueryInformationUserResponse.UserAllInformation();
         }
     }
 }

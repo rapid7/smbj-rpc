@@ -25,31 +25,45 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
 
-public class SamrQueryInformationUserResponse<T extends Unmarshallable> extends RequestResponse {
-    private final T userInformation;
-    private final UserInformationClass userInformationClass;
-
-    public SamrQueryInformationUserResponse(T userInformation, UserInformationClass userInformationClass) {
-        this.userInformation = userInformation;
-        this.userInformationClass = userInformationClass;
-    }
+public abstract class SamrQueryInformationUserResponse<T extends Unmarshallable> extends RequestResponse {
+    private T userInformation;
 
     public T getUserInformation() {
         return userInformation;
     }
 
+    public abstract UserInformationClass getUserInformationClass();
+
+    abstract T createUserInformation();
+
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         if(packetIn.readReferentID() != 0) {
-            final int infoLevel = packetIn.readShort();
-            if (infoLevel != this.userInformationClass.getInfoLevel()) {
+            final int infoLevel = packetIn.readUnsignedShort();
+            if (infoLevel != getUserInformationClass().getInfoLevel()) {
                 throw new IllegalArgumentException(String.format(
                         "Incoming USER_INFORMATION_CLASS %d does not match expected: %d",
-                        infoLevel, this.userInformationClass.getInfoLevel()));
+                        infoLevel, getUserInformationClass().getInfoLevel()));
             }
+            this.userInformation = createUserInformation();
             packetIn.readUnmarshallable(this.userInformation);
+        } else {
+            this.userInformation = null;
+        }
+    }
+
+    public static class UserAllInformation extends SamrQueryInformationUserResponse<SAMPRUserAllInformation> {
+        @Override
+        public UserInformationClass getUserInformationClass() {
+            return UserInformationClass.USER_ALL_INFORMATION;
+        }
+
+        @Override
+        SAMPRUserAllInformation createUserInformation() {
+            return new SAMPRUserAllInformation();
         }
     }
 }
