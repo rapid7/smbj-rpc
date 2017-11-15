@@ -157,6 +157,7 @@ public class SecurityAccountManagerService {
      *
      * @param domainHandle The domain handle.
      * @return The enumerated groups.
+     * @throws IOException On issue with communication or marshalling.
      */
     public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle) throws IOException {
         final int bufferSize = 0xffff;
@@ -170,6 +171,7 @@ public class SecurityAccountManagerService {
      * @param domainHandle The domain handle.
      * @param bufferSize The buffer size for each request.
      * @return The enumerated groups.
+     * @throws IOException On issue with communication or marshalling.
      */
     public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
             throws IOException {
@@ -190,6 +192,7 @@ public class SecurityAccountManagerService {
      * @param domainHandle The domain handle.
      * @param userAccountContorl The UserAccountControl flags that filters the returned users.
      * @return The enumerated users.
+     * @throws IOException On issue with communication or marshalling.
      */
     public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl)
             throws IOException {
@@ -205,6 +208,7 @@ public class SecurityAccountManagerService {
      * @param userAccountContorl The UserAccountControl flags that filters the returned users.
      * @param bufferSize The buffer size for each request.
      * @return The enumerated users.
+     * @throws IOException On issue with communication or marshalling.
      */
     public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl,
             final int bufferSize) throws IOException {

@@ -23,6 +23,7 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -93,11 +94,11 @@ public class Test_SamrQueryInformationUserResponse {
     }
 
     @Test(dataProvider = "data_unmarshal_InvalidTag",
-            expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptions = {UnmarshalException.class},
             expectedExceptionsMessageRegExp = "Incoming USER_INFORMATION_CLASS 65535 does not match expected: [0-9]+")
     public void test_unmarshal_InvalidTag(SamrQueryInformationUserResponse response, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
-        PacketInput in = spy(new PacketInput(bin));IllegalArgumentException actual = null;
+        PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);
     }
 }

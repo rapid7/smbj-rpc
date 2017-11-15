@@ -19,9 +19,9 @@
 package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
+import java.rmi.MarshalException;
 import java.util.Arrays;
 import java.util.Objects;
-import com.google.common.primitives.UnsignedInts;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
@@ -108,7 +108,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
         if (this.subAuthorityCount != this.subAuthority.length) {
-            throw new IllegalArgumentException(String.format("SubAuthorityCount (%d) != SubAuthority[] length (%d)",
+            throw new MarshalException(String.format("SubAuthorityCount (%d) != SubAuthority[] length (%d)",
                     (int) this.subAuthorityCount, this.subAuthority.length));
         }
         // Structure alignment
@@ -163,7 +163,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
         for (int i = 0; i < this.subAuthority.length; i++) {
             // <NDR: unsigned long>
             // Alignment: 4 - Already aligned
-            this.subAuthority[i] = UnsignedInts.toLong(in.readInt());
+            this.subAuthority[i] = in.readUnsignedInt();
         }
     }
 

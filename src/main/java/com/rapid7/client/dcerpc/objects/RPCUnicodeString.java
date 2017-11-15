@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
@@ -201,10 +202,10 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
             //Entity
             // <NDR: unsigned long> Offset for varying array
             // Alignment: 4 - Already aligned
-            final int offset = readIndex(in);
+            final int offset = readIndex("Offset", in);
             // <NDR: unsigned long> ActualCount for varying array
             // Alignment: 4 - Already aligned
-            final int actualCount = readIndex(in);
+            final int actualCount = readIndex("ActualCount", in);
             // If we expect a null terminator, then skip it when reading the string
             final int stringCount = (isNullTerminated() ? (actualCount - 1) : actualCount);
 
@@ -251,11 +252,11 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
                 isNullTerminated());
     }
 
-    private int readIndex(PacketInput in) throws IOException {
+    private int readIndex(String name, PacketInput in) throws IOException {
         final long ret = in.readUnsignedInt();
         // Don't allow array length or index values bigger than signed int
         if (ret > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException(String.format("Value %d > %d", ret, Integer.MAX_VALUE));
+            throw new UnmarshalException(String.format("%s %d > %d", name, ret, Integer.MAX_VALUE));
         }
         return (int) ret;
     }

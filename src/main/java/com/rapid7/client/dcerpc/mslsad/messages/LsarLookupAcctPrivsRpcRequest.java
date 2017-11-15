@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import java.io.IOException;
+import java.rmi.MarshalException;
 import com.hierynomus.msdtyp.SID;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
@@ -88,7 +89,7 @@ public class LsarLookupAcctPrivsRpcRequest extends RequestCall<LsarLookupAcctPri
         // SubAuthorityCount (1 byte)
         packetOut.write(sid.getSubAuthorities().length);
         if (sid.getSidIdentifierAuthority().length > 6) {
-            throw new IllegalArgumentException("The IdentifierAuthority can not be larger than 6 bytes");
+            throw new MarshalException("The IdentifierAuthority can not be larger than 6 bytes");
         }
         // IdentifierAuthority (6 bytes)
         packetOut.write(sid.getSidIdentifierAuthority());

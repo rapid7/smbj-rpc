@@ -22,6 +22,7 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
@@ -44,7 +45,7 @@ public abstract class SamrQueryInformationUserResponse<T extends Unmarshallable>
         if(packetIn.readReferentID() != 0) {
             final int infoLevel = packetIn.readUnsignedShort();
             if (infoLevel != getUserInformationClass().getInfoLevel()) {
-                throw new IllegalArgumentException(String.format(
+                throw new UnmarshalException(String.format(
                         "Incoming USER_INFORMATION_CLASS %d does not match expected: %d",
                         infoLevel, getUserInformationClass().getInfoLevel()));
             }

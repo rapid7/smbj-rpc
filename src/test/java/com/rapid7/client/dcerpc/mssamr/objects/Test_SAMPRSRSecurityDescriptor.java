@@ -23,6 +23,7 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -31,6 +32,7 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertSame;
 
 public class Test_SAMPRSRSecurityDescriptor {
@@ -92,6 +94,24 @@ public class Test_SAMPRSRSecurityDescriptor {
 
         assertEquals(obj.getSecurityDescriptor(), expectedSecurityDescriptor);
         assertEquals(bin.available(), 0);
+    }
+
+    @Test
+    public void test_unmarshalEntity_IndexTooLarge() throws IOException {
+        // Length: 2147483648, Reference: 0
+        String hex = "00000080 00000000";
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
+        PacketInput in = new PacketInput(bin);
+        SAMPRSRSecurityDescriptor obj = new SAMPRSRSecurityDescriptor();
+
+        UnmarshalException actual = null;
+        try {
+            obj.unmarshalEntity(in);
+        } catch (UnmarshalException e) {
+            actual = e;
+        }
+        assertNotNull(actual);
+        assertEquals(actual.getMessage(), "Length 2147483648 > 2147483647");
     }
 
     @DataProvider

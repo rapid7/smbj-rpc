@@ -27,6 +27,7 @@ import static org.testng.Assert.assertSame;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.rmi.MarshalException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -108,10 +109,10 @@ public class Test_RPCSID {
         rpc_sid.setIdentifierAuthority(new byte[]{1, 2, 3, 4, 5, 6});
         rpc_sid.setSubAuthority(new long[]{5, 10});
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        IllegalArgumentException actual = null;
+        MarshalException actual = null;
         try {
             rpc_sid.marshalEntity(new PacketOutput(outputStream));
-        } catch (IllegalArgumentException e) {
+        } catch (MarshalException e) {
             actual = e;
         }
         assertNotNull(actual);
