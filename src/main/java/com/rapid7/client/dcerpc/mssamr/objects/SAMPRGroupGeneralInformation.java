@@ -29,7 +29,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
- * <b>Alignment: 8</b><pre>
+ * <b>Alignment: 4</b><pre>
  *     RPC_UNICODE_STRING Name;: 4
  *     unsigned long Attributes;: 4
  *     unsigned long MemberCount;: 4
