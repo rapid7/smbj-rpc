@@ -24,9 +24,7 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.objects.RPCShortBlob;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
@@ -250,54 +248,11 @@ public class Test_SAMPRUserAllInformation {
         assertEquals(obj.getPrivateDataSensitive(), (char) 0);
     }
 
-    @DataProvider
-    public Object[][] data_unmarshalEntity() {
-        SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
-        obj.setLastLogon(1L);
-        obj.setLastLogoff(2L);
-        obj.setPasswordLastSet(3L);
-        obj.setAccountExpires(4L);
-        obj.setPasswordCanChange(5L);
-        obj.setPasswordMustChange(6L);
-        obj.setUserName(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setFullName(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setHomeDirectory(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setHomeDirectoryDrive(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setScriptPath(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setProfilePath(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setAdminComment(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setWorkStations(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setUserComment(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setParameters(RPCUnicodeString.NonNullTerminated.of(""));
-        RPCShortBlob lmOwfPassword = new RPCShortBlob();
-        lmOwfPassword.setBuffer(new int[3]);
-        obj.setLmOwfPassword(lmOwfPassword);
-        RPCShortBlob ntOwfPassword = new RPCShortBlob();
-        ntOwfPassword.setBuffer(new int[4]);
-        obj.setNtOwfPassword(ntOwfPassword);
-        obj.setPrivateData(RPCUnicodeString.NonNullTerminated.of(""));
-        SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
-        securityDescriptor.setSecurityDescriptor(new char[2]);
-        obj.setSecurityDescriptor(securityDescriptor);
-        obj.setUserId(7L);
-        obj.setPrimaryGroupId(8L);
-        obj.setUserAccountControl(9L);
-        obj.setWhichFields(10L);
-        SAMPRLogonHours logonHours = new SAMPRLogonHours();
-        logonHours.setUnitsPerWeek((short) 7);
-        logonHours.setLogonHours(new char[1]);
-        obj.setLogonHours(logonHours);
-        obj.setBadPasswordCount(11);
-        obj.setLogonCount(12);
-        obj.setCountryCode(13);
-        obj.setCodePage(14);
-        obj.setLmPasswordPresent((char) 15);
-        obj.setNtPasswordPresent((char) 16);
-        obj.setPasswordExpired((char) 17);
-        obj.setPrivateDataSensitive((char) 18);
-        return new Object[][] {
+    @Test
+    public void test_unmarshalEntity() throws IOException {
+        String hex =
                 // LastLogon: 1, LastLogoff: 2, PasswordLastSet: 3
-                {"0100000000000000 0200000000000000 0300000000000000 " +
+                "0100000000000000 0200000000000000 0300000000000000 " +
                 // AccountExpires: 4, PasswordCanChange: 5, PasswordMustChange: 6
                 "0400000000000000 0500000000000000 0600000000000000 " +
                 // UserName: testƟ121
@@ -335,13 +290,9 @@ public class Test_SAMPRUserAllInformation {
                 // BadPasswordCount: 11, LogonCount: 12, CountryCode: 13, CodePage: 14
                 "0B00 0C00 0D00 0E00" +
                 // LmPasswordPresent: 15, NtPasswordPresent: 16, PasswordExpired: 17, PrivateDataSensitive: 18
-                "0F 10 11 12",
-                obj}
-        };
-    }
+                "0F 10 11 12";
+        SAMPRUserAllInformation expectedObj = createEntity();
 
-    @Test(dataProvider = "data_unmarshalEntity")
-    public void test_unmarshalEntity(String hex, SAMPRUserAllInformation expectObj) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
@@ -349,142 +300,71 @@ public class Test_SAMPRUserAllInformation {
         obj.unmarshalPreamble(new PacketInput(new ByteArrayInputStream(new byte[0])));
         obj.unmarshalEntity(in);
 
-        assertEquals(obj, expectObj);
+        assertEquals(obj, expectedObj);
     }
 
-    @DataProvider
-    public Object[][] data_unmarshalDeferrals() {
-        SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
-        obj.setLastLogon(1L);
-        obj.setLastLogoff(2L);
-        obj.setPasswordLastSet(3L);
-        obj.setAccountExpires(4L);
-        obj.setPasswordCanChange(5L);
-        obj.setPasswordMustChange(6L);
-        obj.setUserName(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setFullName(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setHomeDirectory(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setHomeDirectoryDrive(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setScriptPath(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setProfilePath(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setAdminComment(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setWorkStations(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setUserComment(RPCUnicodeString.NonNullTerminated.of(""));
-        obj.setParameters(RPCUnicodeString.NonNullTerminated.of(""));
-        RPCShortBlob lmOwfPassword = new RPCShortBlob();
-        lmOwfPassword.setBuffer(new int[3]);
-        obj.setLmOwfPassword(lmOwfPassword);
-        RPCShortBlob ntOwfPassword = new RPCShortBlob();
-        ntOwfPassword.setBuffer(new int[4]);
-        obj.setNtOwfPassword(ntOwfPassword);
-        obj.setPrivateData(RPCUnicodeString.NonNullTerminated.of(""));
-        SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
-        securityDescriptor.setSecurityDescriptor(new char[2]);
-        obj.setSecurityDescriptor(securityDescriptor);
-        obj.setUserId(7L);
-        obj.setPrimaryGroupId(8L);
-        obj.setUserAccountControl(9L);
-        obj.setWhichFields(10L);
-        SAMPRLogonHours logonHours = new SAMPRLogonHours();
-        logonHours.setUnitsPerWeek((short) 7);
-        logonHours.setLogonHours(new char[1]);
-        obj.setLogonHours(logonHours);
-        obj.setBadPasswordCount(11);
-        obj.setLogonCount(12);
-        obj.setCountryCode(13);
-        obj.setCodePage(14);
-        obj.setLmPasswordPresent((char) 15);
-        obj.setNtPasswordPresent((char) 16);
-        obj.setPasswordExpired((char) 17);
-        obj.setPrivateDataSensitive((char) 18);
-        SAMPRUserAllInformation expectObj = new SAMPRUserAllInformation();
-        expectObj.setLastLogon(1L);
-        expectObj.setLastLogoff(2L);
-        expectObj.setPasswordLastSet(3L);
-        expectObj.setAccountExpires(4L);
-        expectObj.setPasswordCanChange(5L);
-        expectObj.setPasswordMustChange(6L);
-        expectObj.setUserName(RPCUnicodeString.NonNullTerminated.of("testƟ121"));
-        expectObj.setFullName(RPCUnicodeString.NonNullTerminated.of("testƟ122"));
-        expectObj.setHomeDirectory(RPCUnicodeString.NonNullTerminated.of("testƟ123"));
-        expectObj.setHomeDirectoryDrive(RPCUnicodeString.NonNullTerminated.of("testƟ124"));
-        expectObj.setScriptPath(RPCUnicodeString.NonNullTerminated.of("testƟ125"));
-        expectObj.setProfilePath(RPCUnicodeString.NonNullTerminated.of("testƟ126"));
-        expectObj.setAdminComment(RPCUnicodeString.NonNullTerminated.of("testƟ127"));
-        expectObj.setWorkStations(RPCUnicodeString.NonNullTerminated.of("testƟ128"));
-        expectObj.setUserComment(RPCUnicodeString.NonNullTerminated.of("testƟ129"));
-        expectObj.setParameters(RPCUnicodeString.NonNullTerminated.of("testƟ130"));
-        RPCShortBlob lmOwfPasswordExpected = new RPCShortBlob();
-        lmOwfPasswordExpected.setBuffer(new int[]{1, 2, 65535});
-        expectObj.setLmOwfPassword(lmOwfPasswordExpected);
-        RPCShortBlob ntOwfPasswordExpected = new RPCShortBlob();
-        ntOwfPasswordExpected.setBuffer(new int[]{1, 2, 3, 5});
-        expectObj.setNtOwfPassword(ntOwfPasswordExpected);
-        expectObj.setPrivateData(RPCUnicodeString.NonNullTerminated.of("testƟ131"));
-        SAMPRSRSecurityDescriptor securityDescriptorExpected = new SAMPRSRSecurityDescriptor();
-        securityDescriptorExpected.setSecurityDescriptor(new char[]{1, 2});
-        expectObj.setSecurityDescriptor(securityDescriptorExpected);
-        expectObj.setUserId(7L);
-        expectObj.setPrimaryGroupId(8L);
-        expectObj.setUserAccountControl(9L);
-        expectObj.setWhichFields(10L);
-        SAMPRLogonHours logonHoursExpected = new SAMPRLogonHours();
-        logonHoursExpected.setUnitsPerWeek((short) 7);
-        logonHoursExpected.setLogonHours(new char[]{3});
-        expectObj.setLogonHours(logonHours);
-        expectObj.setBadPasswordCount(11);
-        expectObj.setLogonCount(12);
-        expectObj.setCountryCode(13);
-        expectObj.setCodePage(14);
-        expectObj.setLmPasswordPresent((char) 15);
-        expectObj.setNtPasswordPresent((char) 16);
-        expectObj.setPasswordExpired((char) 17);
-        expectObj.setPrivateDataSensitive((char) 18);
-        return new Object[][] {
-                {// UserName: testƟ121
-                 "08000000000000000800000074006500730074009f01310032003100 " +
-                 // FullName: testƟ122
-                 "08000000000000000800000074006500730074009f01310032003200 " +
-                 // HomeDirectory: testƟ123
-                 "08000000000000000800000074006500730074009f01310032003300 " +
-                 // HomeDirectoryDrive: testƟ124
-                 "08000000000000000800000074006500730074009f01310032003400 " +
-                 // ScriptPath: testƟ125
-                 "08000000000000000800000074006500730074009f01310032003500 " +
-                 // ProfilePath: testƟ126
-                 "08000000000000000800000074006500730074009f01310032003600 " +
-                 // AdminComment: testƟ127
-                 "08000000000000000800000074006500730074009f01310032003700 " +
-                 // WorkStations: testƟ128
-                 "08000000000000000800000074006500730074009f01310032003800 " +
-                 // UserComment: testƟ129
-                 "08000000000000000800000074006500730074009f01310032003900 " +
-                 // Parameters: testƟ130
-                 "08000000000000000800000074006500730074009f01310033003000 " +
-                 // LmOwfPassword: MaximumCount: 3, Offset: 0, ActualCount: 3, Buffer:{1, 2, 65535}
-                 "03000000 00000000 03000000 0100 0200 ffff" +
-                 // Alignment: 2b
-                 "0000" +
-                 // NtOwfPassword: MaximumCount: 4, Offset: 0, ActualCount: 4, Buffer:{1, 2, 3, 5}
-                 "04000000 00000000 04000000 0100 0200 0300 0500" +
-                 // PrivateData: testƟ131
-                 "08000000000000000800000074006500730074009f01310033003100 " +
-                 // SecurityDescriptor: MaximumCount: 3 SecurityDescriptor: {1, 2}
-                 "02000000 01 02" +
-                 // Alignment: 2b
-                 "0000" +
-                 // LogonHours: MaximumCount: 0, Offset: 0, ActualCount: 0, LogonHours: {3}
-                 "00000000 00000000 00000000 03",
-                 obj, expectObj}
-        };
-    }
+    @Test
+    public void test_unmarshalDeferrals() throws IOException {
+        // Populate the initial entity with what we expect
+        SAMPRUserAllInformation expectedObj = createEntity();
+        expectedObj.getUserName().setValue("testƟ121");
+        expectedObj.getFullName().setValue("testƟ122");
+        expectedObj.getHomeDirectory().setValue("testƟ123");
+        expectedObj.getHomeDirectoryDrive().setValue("testƟ124");
+        expectedObj.getScriptPath().setValue("testƟ125");
+        expectedObj.getProfilePath().setValue("testƟ126");
+        expectedObj.getAdminComment().setValue("testƟ127");
+        expectedObj.getWorkStations().setValue("testƟ128");
+        expectedObj.getUserComment().setValue("testƟ129");
+        expectedObj.getParameters().setValue("testƟ130");
+        expectedObj.getLmOwfPassword().setBuffer(new int[]{1, 2, 65535});
+        expectedObj.getNtOwfPassword().setBuffer(new int[]{1, 2, 3, 5});
+        expectedObj.getPrivateData().setValue("testƟ131");
+        expectedObj.getSecurityDescriptor().setSecurityDescriptor(new char[]{1, 2});
+        expectedObj.getLogonHours().setLogonHours(new char[]{3});
 
-    @Test(dataProvider = "data_unmarshalDeferrals")
-    public void test_unmarshalDeferrals(String hex, SAMPRUserAllInformation obj, SAMPRUserAllInformation expectObj) throws IOException {
+        String hex =
+                // UserName: testƟ121
+                "08000000000000000800000074006500730074009f01310032003100 " +
+                // FullName: testƟ122
+                "08000000000000000800000074006500730074009f01310032003200 " +
+                // HomeDirectory: testƟ123
+                "08000000000000000800000074006500730074009f01310032003300 " +
+                // HomeDirectoryDrive: testƟ124
+                "08000000000000000800000074006500730074009f01310032003400 " +
+                // ScriptPath: testƟ125
+                "08000000000000000800000074006500730074009f01310032003500 " +
+                // ProfilePath: testƟ126
+                "08000000000000000800000074006500730074009f01310032003600 " +
+                // AdminComment: testƟ127
+                "08000000000000000800000074006500730074009f01310032003700 " +
+                // WorkStations: testƟ128
+                "08000000000000000800000074006500730074009f01310032003800 " +
+                // UserComment: testƟ129
+                "08000000000000000800000074006500730074009f01310032003900 " +
+                // Parameters: testƟ130
+                "08000000000000000800000074006500730074009f01310033003000 " +
+                // LmOwfPassword: MaximumCount: 3, Offset: 0, ActualCount: 3, Buffer:{1, 2, 65535}
+                "03000000 00000000 03000000 0100 0200 ffff" +
+                // Alignment: 2b
+                "0000" +
+                // NtOwfPassword: MaximumCount: 4, Offset: 0, ActualCount: 4, Buffer:{1, 2, 3, 5}
+                "04000000 00000000 04000000 0100 0200 0300 0500" +
+                // PrivateData: testƟ131
+                "08000000000000000800000074006500730074009f01310033003100 " +
+                // SecurityDescriptor: MaximumCount: 3 SecurityDescriptor: {1, 2}
+                "02000000 01 02" +
+                // Alignment: 2b
+                "0000" +
+                // LogonHours: MaximumCount: 0, Offset: 0, ActualCount: 0, LogonHours: {3}
+                "00000000 00000000 00000000 03";
+
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
+        // Initial entity to populate
+        SAMPRUserAllInformation obj = createEntity();
         obj.unmarshalDeferrals(in);
-        assertEquals(obj, expectObj);
+        assertEquals(obj, expectedObj);
     }
 
     @Test
@@ -818,5 +698,52 @@ public class Test_SAMPRUserAllInformation {
         obj.setUserName(RPCUnicodeString.NonNullTerminated.of("UserName1"));
         obj.setFullName(RPCUnicodeString.NonNullTerminated.of("FullName1"));
         assertEquals(obj.toString(), "SAMPR_USER_ALL_INFORMATION{UserId:50, PrimaryGroupId:100, UserName:RPC_UNICODE_STRING{value:\"UserName1\", nullTerminated:false}, FullName:RPC_UNICODE_STRING{value:\"FullName1\", nullTerminated:false}}");
+    }
+
+    private SAMPRUserAllInformation createEntity() {
+        SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
+        obj.setLastLogon(1L);
+        obj.setLastLogoff(2L);
+        obj.setPasswordLastSet(3L);
+        obj.setAccountExpires(4L);
+        obj.setPasswordCanChange(5L);
+        obj.setPasswordMustChange(6L);
+        obj.setUserName(RPCUnicodeString.NonNullTerminated.of(""));
+        obj.setFullName(RPCUnicodeString.NonNullTerminated.of(""));
+        obj.setHomeDirectory(RPCUnicodeString.NonNullTerminated.of(""));
+        obj.setHomeDirectoryDrive(RPCUnicodeString.NonNullTerminated.of(""));
+        obj.setScriptPath(RPCUnicodeString.NonNullTerminated.of(""));
+        obj.setProfilePath(RPCUnicodeString.NonNullTerminated.of(""));
+        obj.setAdminComment(RPCUnicodeString.NonNullTerminated.of(""));
+        obj.setWorkStations(RPCUnicodeString.NonNullTerminated.of(""));
+        obj.setUserComment(RPCUnicodeString.NonNullTerminated.of(""));
+        obj.setParameters(RPCUnicodeString.NonNullTerminated.of(""));
+        RPCShortBlob lmOwfPassword = new RPCShortBlob();
+        lmOwfPassword.setBuffer(new int[3]);
+        obj.setLmOwfPassword(lmOwfPassword);
+        RPCShortBlob ntOwfPassword = new RPCShortBlob();
+        ntOwfPassword.setBuffer(new int[4]);
+        obj.setNtOwfPassword(ntOwfPassword);
+        obj.setPrivateData(RPCUnicodeString.NonNullTerminated.of(""));
+        SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
+        securityDescriptor.setSecurityDescriptor(new char[2]);
+        obj.setSecurityDescriptor(securityDescriptor);
+        obj.setUserId(7L);
+        obj.setPrimaryGroupId(8L);
+        obj.setUserAccountControl(9L);
+        obj.setWhichFields(10L);
+        SAMPRLogonHours logonHours = new SAMPRLogonHours();
+        logonHours.setUnitsPerWeek((short) 7);
+        logonHours.setLogonHours(new char[1]);
+        obj.setLogonHours(logonHours);
+        obj.setBadPasswordCount(11);
+        obj.setLogonCount(12);
+        obj.setCountryCode(13);
+        obj.setCodePage(14);
+        obj.setLmPasswordPresent((char) 15);
+        obj.setNtPasswordPresent((char) 16);
+        obj.setPasswordExpired((char) 17);
+        obj.setPrivateDataSensitive((char) 18);
+        return obj;
     }
 }
