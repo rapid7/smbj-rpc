@@ -18,6 +18,12 @@
  */
 package com.rapid7.client.dcerpc.objects;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,8 +33,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
-
-import static org.testng.Assert.*;
 
 public class Test_RPCSID {
 
@@ -261,5 +265,24 @@ public class Test_RPCSID {
         rpc_sid.setIdentifierAuthority(new byte[]{1, 2});
         rpc_sid.setSubAuthority(new long[]{2, 5, 7});
         assertEquals(rpc_sid.toString(), "RPC_SID{Revision:200, SubAuthorityCount:5, IdentifierAuthority:[1, 2], SubAuthority: [2, 5, 7]}");
+    }
+
+    @Test
+    public void test_fromString() throws MalformedSIDException {
+        RPCSID rpc_sid = RPCSID.fromString("S-1-5-32");
+        assertEquals(rpc_sid.getRevision(), 1);
+        assertEquals(rpc_sid.getSubAuthorityCount(), 1);
+        assertArrayEquals(rpc_sid.getIdentifierAuthority(), new byte[] { 0, 0, 0, 0, 0, 5 });
+        assertArrayEquals(rpc_sid.getSubAuthority(), new long[] { 32 });
+        rpc_sid = RPCSID.fromString("S-1-5-333-444-5");
+        assertEquals(rpc_sid.getRevision(), 1);
+        assertEquals(rpc_sid.getSubAuthorityCount(), 3);
+        assertArrayEquals(rpc_sid.getIdentifierAuthority(), new byte[] { 0, 0, 0, 0, 0, 5 });
+        assertArrayEquals(rpc_sid.getSubAuthority(), new long[] { 333, 444, 5 });
+    }
+
+    @Test(expectedExceptions = { MalformedSIDException.class })
+    public void test_fromStringMalformed() throws MalformedSIDException {
+        RPCSID.fromString("MALFORMED");
     }
 }
