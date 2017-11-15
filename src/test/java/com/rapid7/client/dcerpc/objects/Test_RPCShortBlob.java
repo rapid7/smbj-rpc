@@ -24,6 +24,7 @@ package com.rapid7.client.dcerpc.objects;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -186,7 +187,7 @@ public class Test_RPCShortBlob {
     }
 
     @Test
-    public void test_unmarhalDeferrals_InvalidActualCount() throws IOException {
+    public void test_unmarhalDeferrals_MismatchActualCount() throws IOException {
         // MaximumCount: 5, Offset: 0, ActualCount: 3
         String hex = "05000000 00000000 03000000";
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
@@ -194,14 +195,41 @@ public class Test_RPCShortBlob {
 
         RPCShortBlob obj = new RPCShortBlob();
         obj.setBuffer(new int[2]);
-        IllegalArgumentException actual = null;
+        UnmarshalException actual = null;
         try {
             obj.unmarshalDeferrals(in);
-        } catch (IllegalArgumentException e) {
+        } catch (UnmarshalException e) {
             actual = e;
         }
         assertNotNull(actual);
         assertEquals(actual.getMessage(), "Expected Length == Buffer.ActualCount: 3 != 2");
+    }
+
+    @DataProvider
+    public Object[][] data_unmarhalDeferrals_IndexTooLarge() {
+        return new Object[][] {
+                // MaximumCount: 5, Offset: 0, ActualCount: 2147483648
+                {"ActualCount", "05000000 00000000 00000080"},
+                // MaximumCount: 5, Offset: 2147483648, ActualCount: 3
+                {"Offset", "05000000 00000080 03000000"}
+        };
+    }
+
+    @Test(dataProvider = "data_unmarhalDeferrals_IndexTooLarge")
+    public void test_unmarhalDeferrals_IndexTooLarge(String name, String hex) throws IOException {
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
+        PacketInput in = new PacketInput(bin);
+
+        RPCShortBlob obj = new RPCShortBlob();
+        obj.setBuffer(new int[3]);
+        UnmarshalException actual = null;
+        try {
+            obj.unmarshalDeferrals(in);
+        } catch (UnmarshalException e) {
+            actual = e;
+        }
+        assertNotNull(actual);
+        assertEquals(actual.getMessage(), String.format("%s 2147483648 > 2147483647", name));
     }
 
     @Test

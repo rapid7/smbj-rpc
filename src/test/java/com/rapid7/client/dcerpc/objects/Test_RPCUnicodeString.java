@@ -21,6 +21,7 @@ package com.rapid7.client.dcerpc.objects;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -47,7 +48,7 @@ public class Test_RPCUnicodeString {
     }
 
     @DataProvider
-    public Object[][] data_marshal_preamble() {
+    public Object[][] data_marshalPreamble() {
         return new Object[][] {
                 {false, null},
                 {false, "test123"},
@@ -56,8 +57,8 @@ public class Test_RPCUnicodeString {
         };
     }
 
-    @Test(dataProvider = "data_marshal_preamble")
-    public void test_marshal_preamble(boolean nullTerminated, String value) throws IOException {
+    @Test(dataProvider = "data_marshalPreamble")
+    public void test_marshalPreamble(boolean nullTerminated, String value) throws IOException {
         RPCUnicodeString obj = create(nullTerminated);
         obj.setValue(value);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -66,7 +67,7 @@ public class Test_RPCUnicodeString {
     }
 
     @DataProvider
-    public Object[][] data_marshal_entity() {
+    public Object[][] data_marshalEntity() {
         return new Object[][] {
                 {false, null, "", "0000000000000000"},
                 {true, null, "", "0000000000000000"},
@@ -81,8 +82,8 @@ public class Test_RPCUnicodeString {
         };
     }
 
-    @Test(dataProvider = "data_marshal_entity")
-    public void test_marshal_entity(boolean nullTerminated, String value, String writeHex, String expectedHex) throws IOException {
+    @Test(dataProvider = "data_marshalEntity")
+    public void test_marshalEntity(boolean nullTerminated, String value, String writeHex, String expectedHex) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         PacketOutput out = new PacketOutput(bout);
         out.write(Hex.decode(writeHex));
@@ -94,7 +95,7 @@ public class Test_RPCUnicodeString {
     }
 
     @DataProvider
-    public Object[][] data_marshal_deferrals() {
+    public Object[][] data_marshalDeferrals() {
         return new Object[][] {
                 {false, null, "", ""},
                 {true, null, "", ""},
@@ -111,7 +112,7 @@ public class Test_RPCUnicodeString {
         };
     }
 
-    @Test(dataProvider = "data_marshal_deferrals")
+    @Test(dataProvider = "data_marshalDeferrals")
     public void test_marshal_deferrals(boolean nullTerminated, String value, String writeHex, String expectedHex) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         PacketOutput out = new PacketOutput(bout);
@@ -123,8 +124,8 @@ public class Test_RPCUnicodeString {
         assertEquals(Hex.toHexString(bout.toByteArray()), expectedHex);
     }
 
-    @Test(dataProvider = "data_marshal_preamble")
-    public void test_unmarshal_preamble(boolean nullTerminated, String value) throws IOException {
+    @Test(dataProvider = "data_marshalPreamble")
+    public void test_unmarshalPreamble(boolean nullTerminated, String value) throws IOException {
         RPCUnicodeString obj = create(nullTerminated);
         obj.setValue(value);
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode("1a2e"));
@@ -133,7 +134,7 @@ public class Test_RPCUnicodeString {
     }
 
     @DataProvider
-    public Object[][] data_unmarshal_entity() {
+    public Object[][] data_unmarshalEntity() {
         return new Object[][] {
                 {false, "0000000000000000", 0, null},
                 {true, "0000000000000000", 0, null},
@@ -149,8 +150,8 @@ public class Test_RPCUnicodeString {
         };
     }
 
-    @Test(dataProvider = "data_unmarshal_entity")
-    public void test_unmarshal_entity(boolean nullTerminated, String hex, int mark, String value) throws IOException {
+    @Test(dataProvider = "data_unmarshalEntity")
+    public void test_unmarshalEntity(boolean nullTerminated, String hex, int mark, String value) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         in.fullySkipBytes(mark);
@@ -164,7 +165,7 @@ public class Test_RPCUnicodeString {
     }
 
     @DataProvider
-    public Object[][] data_unmarshal_deferrals() {
+    public Object[][] data_unmarshalDeferrals() {
         return new Object[][] {
                 // not null terminated, no subset, MaximumCount=8, Offset=8, ActualCount=8
                 {false, "08000000000000000800000074006500730074009f01310032003300", 0, "testƟ123"},
@@ -184,8 +185,8 @@ public class Test_RPCUnicodeString {
         };
     }
 
-    @Test(dataProvider = "data_unmarshal_deferrals")
-    public void test_unmarshal_deferrals(boolean nullTerminated, String hex, int mark, String value) throws IOException {
+    @Test(dataProvider = "data_unmarshalDeferrals")
+    public void test_unmarshalDeferrals(boolean nullTerminated, String hex, int mark, String value) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         in.fullySkipBytes(mark);
@@ -200,31 +201,31 @@ public class Test_RPCUnicodeString {
     }
 
     @DataProvider
-    public Object[][] data_unmarshal_deferrals_IndexTooLarge() {
+    public Object[][] data_unmarshalDeferrals_IndexTooLarge() {
         return new Object[][] {
                 // MaximumCount=0, Offset=2147483648, ActualCount=8
-                {"000000000000008008000000"},
+                {"Offset", "000000000000008008000000"},
                 // MaximumCount=0, Offset=4, ActualCount=2147483648
-                {"000000000400000000000080"},
+                {"ActualCount", "000000000400000000000080"},
         };
     }
 
-    @Test(dataProvider = "data_unmarshal_deferrals_IndexTooLarge")
-    public void test_unmarshal_deferrals_IndexTooLarge(String hex) throws IOException {
+    @Test(dataProvider = "data_unmarshalDeferrals_IndexTooLarge")
+    public void test_unmarshalDeferrals_IndexTooLarge(String name, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
 
         RPCUnicodeString obj = new RPCUnicodeString.NullTerminated();
         // Value must be non-null for deferrals to read the ref
         obj.setValue("");
-        IllegalArgumentException actual = null;
+        UnmarshalException actual = null;
         try {
             obj.unmarshalDeferrals(in);
-        } catch (IllegalArgumentException e) {
+        } catch (UnmarshalException e) {
             actual = e;
         }
         assertNotNull(actual);
-        assertEquals(actual.getMessage(), "Value 2147483648 > 2147483647");
+        assertEquals(actual.getMessage(), String.format("%s 2147483648 > 2147483647", name));
     }
 
     @Test

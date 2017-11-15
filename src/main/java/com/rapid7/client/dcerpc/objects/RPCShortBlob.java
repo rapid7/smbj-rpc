@@ -22,6 +22,7 @@
 package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import java.util.Arrays;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
@@ -142,12 +143,12 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
             //Entity
             // <NDR: unsigned long> Offset for varying array
             // Alignment: 4 - Already aligned
-            final int offset = readIndex(in);
+            final int offset = readIndex("Offset", in);
             // <NDR: unsigned long> ActualCount for varying array
             // Alignment: 4 - Already aligned
-            final int actualCount = readIndex(in);
+            final int actualCount = readIndex("ActualCount", in);
             if (actualCount != buffer.length) {
-                throw new IllegalArgumentException(String.format("Expected Length == Buffer.ActualCount: %d != %d", actualCount, buffer.length));
+                throw new UnmarshalException(String.format("Expected Length == Buffer.ActualCount: %d != %d", actualCount, buffer.length));
             }
             //Deferrals
             // Entities for conformant array
@@ -184,11 +185,11 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
                 (this.buffer == null ? "null" : this.buffer.length));
     }
 
-    private int readIndex(PacketInput in) throws IOException {
+    private int readIndex(String name, PacketInput in) throws IOException {
         final long ret = in.readUnsignedInt();
         // Don't allow array length or index values bigger than signed int
         if (ret > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException(String.format("Value %d > %d", ret, Integer.MAX_VALUE));
+            throw new UnmarshalException(String.format("%s %d > %d", name, ret, Integer.MAX_VALUE));
         }
         return (int) ret;
     }

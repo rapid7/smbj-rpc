@@ -22,6 +22,7 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -89,10 +90,10 @@ public class Test_LsarQueryInformationPolicyResponse {
         LsarQueryInformationPolicyResponse<Unmarshallable> response = new LsarQueryInformationPolicyResponse<>(
                 null,
                 PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION);
-        IllegalArgumentException actual = null;
+        UnmarshalException actual = null;
         try {
             response.unmarshal(in);
-        } catch (IllegalArgumentException e) {
+        } catch (UnmarshalException e) {
             actual = e;
         }
         assertNotNull(actual);

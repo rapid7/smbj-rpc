@@ -22,6 +22,7 @@
 package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import java.util.Arrays;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
@@ -115,7 +116,7 @@ public class SAMPRSRSecurityDescriptor implements Unmarshallable {
         final long ret = in.readUnsignedInt();
         // Don't allow array length or index values bigger than signed int
         if (ret > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException(String.format("Value %d > %d", ret, Integer.MAX_VALUE));
+            throw new UnmarshalException(String.format("Length %d > %d", ret, Integer.MAX_VALUE));
         }
         return (int) ret;
     }

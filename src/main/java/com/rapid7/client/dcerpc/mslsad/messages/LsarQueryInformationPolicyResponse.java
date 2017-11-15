@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
@@ -40,10 +41,9 @@ public class LsarQueryInformationPolicyResponse<T extends Unmarshallable> extend
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         if(packetIn.readReferentID() != 0) {
-            // TODO Create a separate LSAR_POLICY_INFORMATION union class
-            final int infoLevel = packetIn.readShort();
+            final int infoLevel = packetIn.readUnsignedShort();
             if (infoLevel != this.policyInformationClass.getInfoLevel()) {
-                throw new IllegalArgumentException(String.format(
+                throw new UnmarshalException(String.format(
                         "Incoming POLICY_INFORMATION_CLASS %d does not match expected: %d",
                         infoLevel, this.policyInformationClass.getInfoLevel()));
             }
