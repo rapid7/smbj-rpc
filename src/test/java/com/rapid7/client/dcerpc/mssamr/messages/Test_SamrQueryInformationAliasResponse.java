@@ -29,8 +29,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-import com.rapid7.client.dcerpc.mssamr.objects.GroupInformationClass;
-import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
+import com.rapid7.client.dcerpc.mssamr.objects.AliasInformationClass;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -39,65 +38,65 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
-public class Test_SamrQueryInformationGroupResponse {
+public class Test_SamrQueryInformationAliasResponse {
 
     @DataProvider
     public Object[][] data_getters() {
         return new Object[][] {
-                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), GroupInformationClass.GROUP_GENERAL_INFORMATION}
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), AliasInformationClass.ALIAS_GENERALINFORMATION}
         };
     }
 
     @Test(dataProvider = "data_getters")
-    public void test_getters(SamrQueryInformationGroupResponse response, GroupInformationClass expectedGroupInformationClass) {
-        assertNull(response.getGroupInformation());
-        assertSame(response.getGroupInformationClass(), expectedGroupInformationClass);
+    public void test_getters(SamrQueryInformationAliasResponse response, AliasInformationClass expectedAliasInformationClass) {
+        assertNull(response.getAliasInformation());
+        assertSame(response.getAliasInformationClass(), expectedAliasInformationClass);
     }
 
     @DataProvider
     public Object[][] data_unmarshal() {
         return new Object[][] {
-                // Reference: 1, GROUP_INFORMATION_CLASS: 1
-                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "01000000 0100"}
+                // Reference: 1, ALIAS_INFORMATION_CLASS: 1
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "01000000 0100"}
         };
     }
 
     @Test(dataProvider = "data_unmarshal")
-    public void test_unmarshal(SamrQueryInformationGroupResponse response, String hex) throws IOException {
+    public void test_unmarshal(SamrQueryInformationAliasResponse response, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         doReturn(null).when(in).readUnmarshallable(any(Unmarshallable.class));
         response.unmarshal(in);
-        assertNotNull(response.getGroupInformation());
+        assertNotNull(response.getAliasInformation());
     }
 
     @DataProvider
     public Object[][] data_unmarshall_Null() {
         return new Object[][] {
-                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "00000000 0100"}
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "00000000 0100"}
         };
     }
 
     @Test(dataProvider = "data_unmarshall_Null")
-    public void test_unmarshall_Null(SamrQueryInformationGroupResponse response, String hex) throws IOException {
+    public void test_unmarshall_Null(SamrQueryInformationAliasResponse response, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);
-        assertNull(response.getGroupInformation());
+        assertNull(response.getAliasInformation());
     }
 
     @DataProvider
     public Object[][] data_unmarshal_InvalidTag() {
         return new Object[][] {
                 // Reference: 1, POLICY_CLASS_INFORMATION: 3
-                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "01000000 FFFF"},
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "01000000 FFFF"},
         };
     }
 
     @Test(dataProvider = "data_unmarshal_InvalidTag",
             expectedExceptions = {UnmarshalException.class},
-            expectedExceptionsMessageRegExp = "Incoming GROUP_INFORMATION_CLASS 65535 does not match expected: [0-9]+")
-    public void test_unmarshal_InvalidTag(SamrQueryInformationGroupResponse response, String hex) throws IOException {
+            expectedExceptionsMessageRegExp = "Incoming ALIAS_INFORMATION_CLASS 65535 does not match expected: [0-9]+")
+    public void test_unmarshal_InvalidTag(SamrQueryInformationAliasResponse response, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);
