@@ -36,6 +36,7 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
@@ -46,11 +47,13 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationUserRequest;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
@@ -142,6 +145,11 @@ public class SecurityAccountManagerService {
                 return transport.call(request);
             }
         });
+    }
+
+    public SAMPRUserAllInformation getUserAllInformation(final UserHandle userHandle) throws IOException {
+        SamrQueryInformationUserRequest.UserAllInformation request = new SamrQueryInformationUserRequest.UserAllInformation(userHandle);
+        return transport.call(request).getUserInformation();
     }
 
     /**

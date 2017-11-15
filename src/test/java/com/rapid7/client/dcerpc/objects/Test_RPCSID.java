@@ -135,7 +135,7 @@ public class Test_RPCSID {
     public void test_unmarshalPremable(String hex, int mark) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
-        in.readFully(new byte[mark]);
+        in.fullySkipBytes(mark);
 
         RPCSID rpc_sid = new RPCSID();
         rpc_sid.unmarshalPreamble(in);
@@ -161,7 +161,7 @@ public class Test_RPCSID {
     public void test_unmarshalEntity(String hex, int mark) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
-        in.readFully(new byte[mark]);
+        in.fullySkipBytes(mark);
 
         RPCSID rpc_sid = new RPCSID();
         rpc_sid.setSubAuthority(new long[2]);

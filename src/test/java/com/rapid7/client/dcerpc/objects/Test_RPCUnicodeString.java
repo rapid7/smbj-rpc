@@ -153,7 +153,7 @@ public class Test_RPCUnicodeString {
     public void test_unmarshal_entity(boolean nullTerminated, String hex, int mark, String value) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
-        in.readFully(new byte[mark]);
+        in.fullySkipBytes(mark);
 
         RPCUnicodeString obj = create(nullTerminated);
         obj.setValue(value);
@@ -188,7 +188,7 @@ public class Test_RPCUnicodeString {
     public void test_unmarshal_deferrals(boolean nullTerminated, String hex, int mark, String value) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
-        in.readFully(new byte[mark]);
+        in.fullySkipBytes(mark);
 
         RPCUnicodeString obj = create(nullTerminated);
         // Value must be non-null for deferrals to read the ref
