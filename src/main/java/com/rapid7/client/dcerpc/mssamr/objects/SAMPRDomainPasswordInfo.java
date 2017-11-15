@@ -19,7 +19,7 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mssamr;
+package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -28,6 +28,7 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
+ * Alignment: 8
    typedef struct _DOMAIN_PASSWORD_INFORMATION {
     USHORT        MinPasswordLength;
     USHORT        PasswordHistoryLength;
@@ -112,15 +113,22 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
-        // Structure Alignment: 4
-        in.align(Alignment.FOUR);
-
+        // Structure Alignment: 8
+        in.align(Alignment.EIGHT);
+        // <NDR: unsigned short> MinPasswordLength;
+        // Alignment: 2 - Already aligned
         this.minimumPasswordLength = in.readShort();
+        // <NDR: unsigned short> PasswordHistoryLength;
+        // Alignment: 2 - Already aligned
         this.passwordHistoryLength = in.readShort();
+        // <NDR: unsigned long> unsigned long PasswordProperties;
+        // Alignment: 4 - Already aligned
         this.passwordProperties = in.readInt();
-
-        // See <a href="http://technet.microsoft.com/en-us/library/cc753858(WS.10).aspx>Technet Article</a>
+        // <NDR: hyper> OLD_LARGE_INTEGER MaxPasswordAge;
+        // Alignment: 8 - Already aligned
         this.maximumPasswordAge = in.readLong();
+        // <NDR: hyper> OLD_LARGE_INTEGER MinPasswordAge;
+        // Alignment: 8 - Already aligned
         this.minimumPasswordAge = in.readLong();
     }
 

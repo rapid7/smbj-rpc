@@ -19,7 +19,7 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mssamr;
+package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -27,16 +27,17 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
-/* typedef struct _DOMAIN_LOGOFF_INFORMATION {
+/* Alignment: 8
+ * typedef struct _DOMAIN_LOGOFF_INFORMATION {
  *   OLD_LARGE_INTEGER ForceLogoff;
  * } DOMAIN_LOGOFF_INFORMATION,
  *  *PDOMAIN_LOGOFF_INFORMATION;
  */
 public class SAMPRDomainLogOffInfo implements Unmarshallable {
 
-    private int forceLogoff;
+    private long forceLogoff;
 
-    public int getForceLogoff() {
+    public long getForceLogoff() {
         return forceLogoff;
     }
 
@@ -50,9 +51,11 @@ public class SAMPRDomainLogOffInfo implements Unmarshallable {
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
-        // Structure Alignment: 4
-        in.align(Alignment.FOUR);
-        this.forceLogoff = in.readShort();
+        // Structure Alignment: 8
+        in.align(Alignment.EIGHT);
+        // <NDR: hyper> OLD_LARGE_INTEGER ForceLogoff;
+        // Alignment: 8 - Already aligned
+        this.forceLogoff = in.readLong();
     }
 
     @Override

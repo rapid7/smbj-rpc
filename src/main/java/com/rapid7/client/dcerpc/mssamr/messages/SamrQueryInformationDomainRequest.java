@@ -23,9 +23,9 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
-import com.rapid7.client.dcerpc.mssamr.SAMPRDomainLogOffInfo;
-import com.rapid7.client.dcerpc.mssamr.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 
 //https://msdn.microsoft.com/en-us/library/cc245779.aspx
 public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable>

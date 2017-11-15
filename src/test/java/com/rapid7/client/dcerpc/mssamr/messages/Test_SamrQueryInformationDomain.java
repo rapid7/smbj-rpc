@@ -25,8 +25,8 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
-import com.rapid7.client.dcerpc.mssamr.SAMPRDomainLogOffInfo;
-import com.rapid7.client.dcerpc.mssamr.SAMPRDomainPasswordInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 
 public class Test_SamrQueryInformationDomain {
 
@@ -53,7 +53,8 @@ public class Test_SamrQueryInformationDomain {
             logOffInfo, DomainInformationClass.DOMAIN_LOGOFF_INFORMATION);
         response.unmarshal(getPacketInput(hexString));
 
-        assertEquals(0, logOffInfo.getForceLogoff());
+        // -9223372036854775808(never expire)
+        assertEquals(-9223372036854775808L, logOffInfo.getForceLogoff());
     }
 
 
