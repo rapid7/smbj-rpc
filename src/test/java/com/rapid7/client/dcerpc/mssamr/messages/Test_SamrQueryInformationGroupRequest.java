@@ -28,42 +28,42 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class Test_SamrQueryInformationUserRequest {
+public class Test_SamrQueryInformationGroupRequest {
 
     @DataProvider
     public Object[][] data_requests() {
-        UserHandle handle = new UserHandle();
+        GroupHandle handle = new GroupHandle();
         handle.setBytes(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20});
         return new Object[][] {
-                {new SamrQueryInformationUserRequest.UserAllInformation(handle)}
+                {new SamrQueryInformationGroupRequest.GroupGeneralInformation(handle)}
         };
     }
 
     @Test(dataProvider = "data_requests")
-    public void test_getOpNum(SamrQueryInformationUserRequest request) {
-        assertEquals(request.getOpNum(), SamrQueryInformationUserRequest.OP_NUM);
+    public void test_getOpNum(SamrQueryInformationGroupRequest request) {
+        assertEquals(request.getOpNum(), SamrQueryInformationGroupRequest.OP_NUM);
     }
 
     @Test(dataProvider = "data_requests")
-    public void test_getResponseObject(SamrQueryInformationUserRequest request) {
+    public void test_getResponseObject(SamrQueryInformationGroupRequest request) {
         assertNotNull(request.getResponseObject());
     }
 
     @Test(dataProvider = "data_requests")
-    public void test_marshall(SamrQueryInformationUserRequest request) throws IOException {
+    public void test_marshall(SamrQueryInformationGroupRequest request) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         PacketOutput out = new PacketOutput(bout);
         request.marshal(out);
 
         ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
         PacketInput in = new PacketInput(bin);
-        assertEquals(in.readRawBytes(20), request.getUserHandle().getBytes());
-        assertEquals(in.readUnsignedShort(), request.getUserInformationClass().getInfoLevel());
+        assertEquals(in.readRawBytes(20), request.getGroupHandle().getBytes());
+        assertEquals(in.readUnsignedShort(), request.getGroupInformationClass().getInfoLevel());
         assertEquals(bin.available(), 0);
     }
 }
