@@ -33,4 +33,14 @@ public class Test_SamrEnumerateDomainsInSamServerResponse {
         assertEquals(2, response.getResumeHandle());
         assertEquals(0, response.getReturnValue());
     }
+
+    @Test
+    public void unmarshallZeroEntry() throws IOException {
+        SamrEnumerateDomainsInSamServerResponse response = new SamrEnumerateDomainsInSamServerResponse();
+        response.fromHexString(
+            "00000000000002000000000004000200000000000000000000000000");
+        assertEquals(0, response.getNumEntries());
+        assertEquals(0, response.getResumeHandle());
+        assertEquals(0, response.getReturnValue());
+    }
 }

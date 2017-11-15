@@ -35,7 +35,10 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
@@ -51,8 +54,10 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -111,7 +116,7 @@ public class SecurityAccountManagerService {
     }
 
     public List<DomainInfo> getDomainsForServer(final ServerHandle serverHandle, final int bufferSize)
-        throws IOException {
+            throws IOException {
         List<DomainInfo> domains = new ArrayList<>();
         return enumerate(serverHandle, domains, new EnumerationCallback() {
             @Override
@@ -124,13 +129,13 @@ public class SecurityAccountManagerService {
     }
 
     public List<AliasInfo> getAliasesForDomain(final DomainHandle domainHandle)
-        throws IOException {
+            throws IOException {
         final int bufferSize = 0xffff;
         return getAliasesForDomain(domainHandle, bufferSize);
     }
 
     public List<AliasInfo> getAliasesForDomain(final DomainHandle domainHandle, final int bufferSize)
-        throws IOException {
+            throws IOException {
         List<AliasInfo> aliases = new ArrayList<>();
         return enumerate(domainHandle, aliases, new EnumerationCallback() {
             @Override
@@ -145,6 +150,73 @@ public class SecurityAccountManagerService {
     public SAMPRUserAllInformation getUserAllInformation(final UserHandle userHandle) throws IOException {
         SamrQueryInformationUserRequest.UserAllInformation request = new SamrQueryInformationUserRequest.UserAllInformation(userHandle);
         return transport.call(request).getUserInformation();
+    }
+
+    /**
+     * Gets the group names for the provided domain. Max buffer size will be used.
+     *
+     * @param domainHandle The domain handle.
+     * @return The enumerated groups.
+     */
+    public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle) throws IOException {
+        final int bufferSize = 0xffff;
+        return getGroupsForDomain(domainHandle, bufferSize);
+    }
+
+    /**
+     * Gets the group names for the provided domain. Multiple request may be sent based on the entries read and buffer
+     * size.
+     *
+     * @param domainHandle The domain handle.
+     * @param bufferSize The buffer size for each request.
+     * @return The enumerated groups.
+     */
+    public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
+            throws IOException {
+        List<GroupInfo> groups = new ArrayList<>();
+        return enumerate(domainHandle, groups, new EnumerationCallback() {
+            @Override
+            public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
+                final SamrEnumerateGroupsInDomainRequest request = new SamrEnumerateGroupsInDomainRequest(domainHandle,
+                        enumContext, bufferSize);
+                return transport.call(request);
+            }
+        });
+    }
+
+    /**
+     * Gets the user names for the provided domain. Max buffer size will be used
+     *
+     * @param domainHandle The domain handle.
+     * @param userAccountContorl The UserAccountControl flags that filters the returned users.
+     * @return The enumerated users.
+     */
+    public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl)
+            throws IOException {
+        final int bufferSize = 0xffff;
+        return getUsersForDomain(domainHandle, userAccountContorl, bufferSize);
+    }
+
+    /**
+     * Gets the user names for the provided domain. Multiple request may be sent based on the entries read and buffer
+     * size.
+     *
+     * @param domainHandle The domain handle.
+     * @param userAccountContorl The UserAccountControl flags that filters the returned users.
+     * @param bufferSize The buffer size for each request.
+     * @return The enumerated users.
+     */
+    public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl,
+            final int bufferSize) throws IOException {
+        List<UserInfo> users = new ArrayList<>();
+        return enumerate(domainHandle, users, new EnumerationCallback() {
+            @Override
+            public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
+                final SamrEnumerateUsersInDomainRequest request = new SamrEnumerateUsersInDomainRequest(domainHandle,
+                        enumContext, userAccountContorl, bufferSize);
+                return transport.call(request);
+            }
+        });
     }
 
     /**

@@ -21,30 +21,29 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
 /**
- * The SamrEnumerateAliasesInDomain method enumerates all aliases.
+ * The SamrEnumerateGroupsInDomain method enumerates all groups.
  *
- * <pre>
- * long SamrEnumerateAliasesInDomain(
+ * long SamrEnumerateGroupsInDomain(
  *   [in] SAMPR_HANDLE DomainHandle,
  *   [in, out] unsigned long* EnumerationContext,
  *   [out] PSAMPR_ENUMERATION_BUFFER* Buffer,
  *   [in] unsigned long PreferedMaximumLength,
  *   [out] unsigned long* CountReturned
  * );
- * </pre>
  *
- * @see <a href="https://msdn.microsoft.com/en-us/library/cc245758.aspx">
- *       https://msdn.microsoft.com/en-us/library/cc245758.aspx</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/library/cc245757.aspx">
+ *       https://msdn.microsoft.com/en-us/library/cc245757.aspx</a>
  */
-public class SamrEnumerateAliasesInDomainRequest extends SamrEnumerateRequest<SamrEnumerateAliasesInDomainResponse> {
-    public static final short OP_NUM = 15;
+public class SamrEnumerateGroupsInDomainRequest extends SamrEnumerateRequest<SamrEnumerateGroupsInDomainResponse> {
 
-    public SamrEnumerateAliasesInDomainRequest(DomainHandle handle, int enumContext, int maxLength) {
+    public static final short OP_NUM = 11;
+
+    public SamrEnumerateGroupsInDomainRequest(DomainHandle handle, int enumContext, int maxLength) {
         super(OP_NUM, handle, enumContext, maxLength);
     }
 
     @Override
-    public SamrEnumerateAliasesInDomainResponse getResponseObject() {
-        return new SamrEnumerateAliasesInDomainResponse();
+    public SamrEnumerateGroupsInDomainResponse getResponseObject() {
+        return new SamrEnumerateGroupsInDomainResponse();
     }
 }
