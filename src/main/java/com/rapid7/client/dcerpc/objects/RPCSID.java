@@ -209,6 +209,9 @@ public class RPCSID implements Unmarshallable, Marshallable {
      */
     public static RPCSID fromString(String sidString) throws MalformedSIDException {
         String[] split = sidString.toUpperCase().trim().split("-");
+        if (split.length < 3)
+            throw new MalformedSIDException("Illegal SID format: " + sidString);
+
         if (!split[0].equals("S"))
             throw new MalformedSIDException("SID must start with S:" + sidString);
 
