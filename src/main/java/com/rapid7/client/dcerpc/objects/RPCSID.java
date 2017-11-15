@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.objects;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
-import com.google.common.primitives.UnsignedBytes;
 import com.google.common.primitives.UnsignedInts;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
@@ -200,5 +199,53 @@ public class RPCSID implements Unmarshallable, Marshallable {
         return String.format("RPC_SID{Revision:%d, SubAuthorityCount:%d, IdentifierAuthority:%s, SubAuthority: %s}",
                 (int) getRevision(), (int) getSubAuthorityCount(),
                 Arrays.toString(getIdentifierAuthority()), Arrays.toString(getSubAuthority()));
+    }
+
+
+    /**
+     * @param sidString SID string. Must not be {@code null}.
+     * @return A {@link RPCSID} parsed from the provided string.
+     * @throws MalformedSIDException The provided SID is malformed.
+     */
+    public static RPCSID fromString(String sidString) throws MalformedSIDException {
+        String[] split = sidString.toUpperCase().trim().split("-");
+        if (split.length < 3)
+            throw new MalformedSIDException("Illegal SID format: " + sidString);
+
+        if (!split[0].equals("S"))
+            throw new MalformedSIDException("SID must start with S:" + sidString);
+
+        try {
+            char revision = (char) Integer.parseInt(split[1]);
+
+            String identifierAuthorityString = split[2];
+            long identifierAuthorityValue;
+            if (identifierAuthorityString.startsWith("0x")) {
+                identifierAuthorityValue = Long.parseLong(identifierAuthorityString.substring(2), 16);
+            } else {
+                identifierAuthorityValue = Long.parseLong(identifierAuthorityString);
+            }
+
+            byte[] identifierAuthority = new byte[6];
+            identifierAuthority[0] = (byte) ((identifierAuthorityValue >> 40) & 0xFF);
+            identifierAuthority[1] = (byte) ((identifierAuthorityValue >> 32) & 0xFF);
+            identifierAuthority[2] = (byte) ((identifierAuthorityValue >> 24) & 0xFF);
+            identifierAuthority[3] = (byte) ((identifierAuthorityValue >> 16) & 0xFF);
+            identifierAuthority[4] = (byte) ((identifierAuthorityValue >> 8) & 0xFF);
+            identifierAuthority[5] = (byte) (identifierAuthorityValue & 0xFF);
+
+            long[] subAuthorities = new long[split.length - 3];
+            for (int i = 0; i < subAuthorities.length; i++) {
+                subAuthorities[i] = Long.parseLong(split[i + 3]);
+            }
+            RPCSID rpcSid = new RPCSID();
+            rpcSid.setRevision(revision);
+            rpcSid.setIdentifierAuthority(identifierAuthority);
+            rpcSid.setSubAuthority(subAuthorities);
+            rpcSid.setSubAuthorityCount((char) subAuthorities.length);
+            return rpcSid;
+        } catch (NumberFormatException e) {
+            throw new MalformedSIDException("Unable to parse SID token: " + e.getMessage());
+        }
     }
 }
