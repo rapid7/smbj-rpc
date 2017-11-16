@@ -22,12 +22,18 @@ import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_MORE_ENTRIE
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
+import com.hierynomus.msdtyp.SecurityDescriptor;
+import com.hierynomus.msdtyp.SecurityInformation;
+import com.hierynomus.protocol.commons.EnumWithValue;
+import com.hierynomus.protocol.commons.buffer.Buffer;
+import com.hierynomus.smb.SMBBuffer;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
@@ -47,14 +53,18 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQuerySecurityObjectRequest;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRAliasGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
@@ -159,6 +169,18 @@ public class SecurityAccountManagerService {
         return transport.call(request).getGroupInformation();
     }
 
+    public SAMPRAliasGeneralInformation getAliasGeneralInformation(final AliasHandle aliasHandle) throws IOException {
+        SamrQueryInformationAliasRequest.AliasGeneralInformation request = new SamrQueryInformationAliasRequest.AliasGeneralInformation(aliasHandle);
+        return transport.call(request).getAliasInformation();
+    }
+
+    public SecurityDescriptor getSecurityDescriptor(final ContextHandle objectHandle, EnumSet<SecurityInformation> securityInformation) throws IOException {
+        SamrQuerySecurityObjectRequest request = new SamrQuerySecurityObjectRequest(
+                objectHandle, (int) EnumWithValue.EnumUtils.toLong(securityInformation));
+        SAMPRSRSecurityDescriptor securityDescriptor = transport.call(request).getSecurityDescriptor();
+        return null;
+    }
+
     /**
      * Gets the group names for the provided domain. Max buffer size will be used.
      *
@@ -228,6 +250,33 @@ public class SecurityAccountManagerService {
                 return transport.call(request);
             }
         });
+    }
+
+    public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle,
+            final SecurityInformation ... securityInformation) throws IOException {
+        int securityInformationValue = 0;
+        if (securityInformation != null) {
+            for (SecurityInformation v : securityInformation) {
+                if (v == null)
+                    continue;
+                securityInformationValue |= v.getValue();
+            }
+        }
+        SamrQuerySecurityObjectRequest request = new SamrQuerySecurityObjectRequest(objectHandle, securityInformationValue);
+        return parseSecurityDescriptor(transport.call(request).getSecurityDescriptor());
+    }
+
+    public SecurityDescriptor parseSecurityDescriptor(SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
+        if (securityDescriptor == null)
+            return null;
+        byte[] payload = securityDescriptor.getSecurityDescriptor();
+        if (payload == null)
+            return null;
+        try {
+            return SecurityDescriptor.read(new SMBBuffer(payload));
+        } catch (Buffer.BufferException e) {
+            throw new UnmarshalException(String.format("Failed to parse %s", SAMPRSRSecurityDescriptor.class.getSimpleName()), e);
+        }
     }
 
     /**

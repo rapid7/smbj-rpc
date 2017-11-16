@@ -44,13 +44,14 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  */
 public class SAMPRSRSecurityDescriptor implements Unmarshallable {
     // [size_is(Length)] unsigned char* SecurityDescriptor;
-    private char[] securityDescriptor;
+    // Despite being an unsigned char (char[]), store as byte[] for parsing convenience
+    private byte[] securityDescriptor;
 
-    public char[] getSecurityDescriptor() {
+    public byte[] getSecurityDescriptor() {
         return securityDescriptor;
     }
 
-    public void setSecurityDescriptor(char[] securityDescriptor) {
+    public void setSecurityDescriptor(byte[] securityDescriptor) {
         this.securityDescriptor = securityDescriptor;
     }
 
@@ -70,7 +71,7 @@ public class SAMPRSRSecurityDescriptor implements Unmarshallable {
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0) {
             if (length > 0)
-                securityDescriptor = new char[length];
+                securityDescriptor = new byte[length];
         } else {
             securityDescriptor = null;
         }
@@ -86,7 +87,7 @@ public class SAMPRSRSecurityDescriptor implements Unmarshallable {
             for (int i = 0; i < securityDescriptor.length; i++) {
                 // <NDR: unsigned char>
                 // Alignment: 1 - Already aligned
-                securityDescriptor[i] = in.readUnsignedByte();
+                securityDescriptor[i] = in.readByte();
             }
         }
     }
