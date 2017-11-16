@@ -32,7 +32,6 @@ import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
 import com.hierynomus.msdtyp.SecurityDescriptor;
 import com.hierynomus.msdtyp.SecurityInformation;
-import com.hierynomus.protocol.commons.EnumWithValue;
 import com.hierynomus.protocol.commons.buffer.Buffer;
 import com.hierynomus.smb.SMBBuffer;
 import com.rapid7.client.dcerpc.RPCException;
@@ -175,13 +174,6 @@ public class SecurityAccountManagerService {
     public SAMPRAliasGeneralInformation getAliasGeneralInformation(final AliasHandle aliasHandle) throws IOException {
         SamrQueryInformationAliasRequest.AliasGeneralInformation request = new SamrQueryInformationAliasRequest.AliasGeneralInformation(aliasHandle);
         return transport.call(request).getAliasInformation();
-    }
-
-    public SecurityDescriptor getSecurityDescriptor(final ContextHandle objectHandle, EnumSet<SecurityInformation> securityInformation) throws IOException {
-        SamrQuerySecurityObjectRequest request = new SamrQuerySecurityObjectRequest(
-                objectHandle, (int) EnumWithValue.EnumUtils.toLong(securityInformation));
-        SAMPRSRSecurityDescriptor securityDescriptor = transport.call(request).getSecurityDescriptor();
-        return null;
     }
 
     /**
