@@ -22,7 +22,26 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
-public abstract class SAMPRDisplayInformationBuffer<T extends Unmarshallable> extends SAMPREnumerationBuffer<T>
+/**
+ * <pre>
+ * typedef
+ * [switch_type(DOMAIN_DISPLAY_INFORMATION)]
+ * union _SAMPR_DISPLAY_INFO_BUFFER {
+ *   [case(DomainDisplayUser)]
+ *     SAMPR_DOMAIN_DISPLAY_USER_BUFFER UserInformation;
+ *   [case(DomainDisplayMachine)]
+ *     SAMPR_DOMAIN_DISPLAY_MACHINE_BUFFER MachineInformation;
+ *   [case(DomainDisplayGroup)]
+ *     SAMPR_DOMAIN_DISPLAY_GROUP_BUFFER GroupInformation;
+ *   [case(DomainDisplayOemUser)]
+ *     SAMPR_DOMAIN_DISPLAY_OEM_USER_BUFFER OemUserInformation;
+ *   [case(DomainDisplayOemGroup)]
+ *     SAMPR_DOMAIN_DISPLAY_OEM_GROUP_BUFFER OemGroupInformation;
+ * } SAMPR_DISPLAY_INFO_BUFFER,
+ *  *PSAMPR_DISPLAY_INFO_BUFFER;
+ * </pre>
+ */
+public abstract class SAMPRDisplayInfoBuffer<T extends Unmarshallable> extends SAMPREnumerationBuffer<T>
         implements Unmarshallable {
     protected DisplayInformationClass infoClass;
 

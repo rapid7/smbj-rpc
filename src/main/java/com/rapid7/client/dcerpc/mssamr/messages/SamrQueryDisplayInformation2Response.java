@@ -25,7 +25,7 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DisplayInformationClass;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDisplayInformationBuffer;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDisplayInfoBuffer;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroupBuffer;
 
 /**
@@ -37,7 +37,7 @@ public class SamrQueryDisplayInformation2Response<T extends Unmarshallable>
     private final DisplayInformationClass infoClass;
     private int totalAvailableBytes;
     private int totalReturnedBytes;
-    private SAMPRDisplayInformationBuffer buffer;
+    private SAMPRDisplayInfoBuffer buffer;
     private int returnCode;
 
     public SamrQueryDisplayInformation2Response(DisplayInformationClass infoClass) {
