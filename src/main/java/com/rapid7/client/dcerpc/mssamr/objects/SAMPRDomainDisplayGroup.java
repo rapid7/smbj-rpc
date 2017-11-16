@@ -24,6 +24,25 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString.NonNullTerminated;
 
+/**
+ * The SAMPR_DOMAIN_DISPLAY_GROUP structure contains a subset of group information sufficient to show a summary of the account for an account management application.
+ *
+ * <pre>
+ * typedef struct _SAMPR_DOMAIN_DISPLAY_GROUP {
+ *   unsigned long Index;
+ *   unsigned long Rid;
+ *   unsigned long Attributes;
+ *   RPC_UNICODE_STRING AccountName;
+ *   RPC_UNICODE_STRING AdminComment;
+ * } SAMPR_DOMAIN_DISPLAY_GROUP,
+ *  *PSAMPR_DOMAIN_DISPLAY_GROUP;
+ * </pre>
+ *
+ * For information on each field, see section <a href=https://msdn.microsoft.com/en-us/library/cc245627.aspx>2.2.8.1</a>.
+ *
+ * @see <a href=https://msdn.microsoft.com/en-us/library/cc245634.aspx>
+ *       https://msdn.microsoft.com/en-us/library/cc245634.aspx</a>
+ */
 public class SAMPRDomainDisplayGroup implements Unmarshallable {
     private int index;
     private int rid;
