@@ -28,6 +28,8 @@ public abstract class SAMPRDisplayInformationBuffer<T extends Unmarshallable> ex
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // The struct that references this struct is exclusively aligned to 4.
+        // in.align(Alignment.FOUR);
         int infoLevel = in.readInt();
         infoClass = DisplayInformationClass.values()[infoLevel - 1];
         super.unmarshalEntity(in);

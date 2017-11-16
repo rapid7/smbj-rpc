@@ -69,7 +69,8 @@ public class SamrQueryDisplayInformation2Request extends RequestCall<SamrQueryDi
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         packetOut.writeMarshallable(handle);
-        packetOut.writeInt(infoClass.getValue());
+        packetOut.writeShort(infoClass.getValue());
+        packetOut.pad(2);
         packetOut.writeInt(index);
         packetOut.writeInt(entryCount);
         packetOut.writeInt(maxLength);

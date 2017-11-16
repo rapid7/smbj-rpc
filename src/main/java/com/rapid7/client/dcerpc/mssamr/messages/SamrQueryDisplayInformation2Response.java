@@ -67,6 +67,7 @@ public class SamrQueryDisplayInformation2Response<T extends Unmarshallable>
         totalAvailableBytes = packetIn.readInt();
         totalReturnedBytes = packetIn.readInt();
         unmarshallBuffer(packetIn);
+        packetIn.align();
         returnCode = packetIn.readInt();
     }
 
