@@ -46,7 +46,7 @@ public class Test_SAMPRSRSecurityDescriptor {
     @Test
     public void test_setters() {
         SAMPRSRSecurityDescriptor obj = new SAMPRSRSecurityDescriptor();
-        char[] securityDescriptor = new char[5];
+        byte[] securityDescriptor = new byte[5];
         obj.setSecurityDescriptor(securityDescriptor);
         assertSame(obj.getSecurityDescriptor(), securityDescriptor);
     }
@@ -72,19 +72,19 @@ public class Test_SAMPRSRSecurityDescriptor {
                 {"00000000 00000200", 0, null},
 
                 // Length: 2, Reference: 2
-                {"01000000 00000200", 0, new char[1]},
+                {"01000000 00000200", 0, new byte[1]},
                 // Length: 2, Reference: 2
-                {"02000000 00000200", 0, new char[2]},
+                {"02000000 00000200", 0, new byte[2]},
 
                 // Alignment
-                {"FFFFFFFF 02000000 00000200", 1, new char[2]},
-                {"FFFFFFFF 02000000 00000200", 2, new char[2]},
-                {"FFFFFFFF 02000000 00000200", 3, new char[2]}
+                {"FFFFFFFF 02000000 00000200", 1, new byte[2]},
+                {"FFFFFFFF 02000000 00000200", 2, new byte[2]},
+                {"FFFFFFFF 02000000 00000200", 3, new byte[2]}
         };
     }
 
     @Test(dataProvider = "data_unmarshalEntity")
-    public void test_unmarshalEntity(String hex, int mark, char[] expectedSecurityDescriptor) throws IOException {
+    public void test_unmarshalEntity(String hex, int mark, byte[] expectedSecurityDescriptor) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         in.fullySkipBytes(mark);
@@ -119,19 +119,19 @@ public class Test_SAMPRSRSecurityDescriptor {
         return new Object[][] {
                 // Null
                 {"", 0, null, null},
-                // MaximumCount: 1 SecurityDescriptor: {1, 2, 255}
-                {"01000000 01 02 FF", 0, new char[3], new char[]{1, 2, 255}},
+                // MaximumCount: 1 SecurityDescriptor: {1, 2, -127}
+                {"01000000 01 7F 80", 0, new byte[3], new byte[]{1, Byte.MAX_VALUE, Byte.MIN_VALUE}},
 
                 // Alignment
-                {"FFFFFFFF 01000000 01 02 FF", 1, new char[3], new char[]{1, 2, 255}},
-                {"FFFFFFFF 01000000 01 02 FF", 2, new char[3], new char[]{1, 2, 255}},
-                {"FFFFFFFF 01000000 01 02 FF", 3, new char[3], new char[]{1, 2, 255}},
+                {"FFFFFFFF 01000000 01 7F 80", 1, new byte[3], new byte[]{1, Byte.MAX_VALUE, Byte.MIN_VALUE}},
+                {"FFFFFFFF 01000000 01 7F 80", 2, new byte[3], new byte[]{1, Byte.MAX_VALUE, Byte.MIN_VALUE}},
+                {"FFFFFFFF 01000000 01 7F 80", 3, new byte[3], new byte[]{1, Byte.MAX_VALUE, Byte.MIN_VALUE}},
 
         };
     }
 
     @Test(dataProvider = "data_unmarshalDeferrals")
-    public void test_unmarshalDeferrals(String hex, int mark, char[] securityDescriptor, char[] expectedSecurityDescriptor) throws IOException {
+    public void test_unmarshalDeferrals(String hex, int mark, byte[] securityDescriptor, byte[] expectedSecurityDescriptor) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         in.fullySkipBytes(mark);
@@ -149,9 +149,9 @@ public class Test_SAMPRSRSecurityDescriptor {
         SAMPRSRSecurityDescriptor obj1 = new SAMPRSRSecurityDescriptor();
         SAMPRSRSecurityDescriptor obj2 = new SAMPRSRSecurityDescriptor();
         assertEquals(obj1.hashCode(), obj2.hashCode());
-        obj1.setSecurityDescriptor(new char[5]);
+        obj1.setSecurityDescriptor(new byte[5]);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
-        obj2.setSecurityDescriptor(new char[5]);
+        obj2.setSecurityDescriptor(new byte[5]);
         assertEquals(obj1.hashCode(), obj2.hashCode());
     }
 
@@ -160,9 +160,9 @@ public class Test_SAMPRSRSecurityDescriptor {
         SAMPRSRSecurityDescriptor obj1 = new SAMPRSRSecurityDescriptor();
         SAMPRSRSecurityDescriptor obj2 = new SAMPRSRSecurityDescriptor();
         assertEquals(obj1, obj2);
-        obj1.setSecurityDescriptor(new char[5]);
+        obj1.setSecurityDescriptor(new byte[5]);
         assertNotEquals(obj1, obj2);
-        obj2.setSecurityDescriptor(new char[5]);
+        obj2.setSecurityDescriptor(new byte[5]);
         assertEquals(obj1, obj2);
     }
 
@@ -174,7 +174,7 @@ public class Test_SAMPRSRSecurityDescriptor {
     @Test
     public void test_toString() {
         SAMPRSRSecurityDescriptor obj = new SAMPRSRSecurityDescriptor();
-        obj.setSecurityDescriptor(new char[]{1, 2, 3});
+        obj.setSecurityDescriptor(new byte[]{1, 2, 3});
         assertEquals(obj.toString(), "SAMPR_SR_SECURITY_DESCRIPTOR{size_of(SecurityDescriptor):3}");
     }
 }
