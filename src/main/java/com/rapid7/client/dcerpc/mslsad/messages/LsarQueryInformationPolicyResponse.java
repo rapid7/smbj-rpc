@@ -23,16 +23,17 @@ import java.rmi.UnmarshalException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAccountDomInfo;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAuditEventsInfo;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyPrimaryDomInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass;
 
-public class LsarQueryInformationPolicyResponse<T extends Unmarshallable> extends RequestResponse {
-    private final T policyInformation;
-    private final PolicyInformationClass policyInformationClass;
+public abstract class LsarQueryInformationPolicyResponse<T extends Unmarshallable> extends RequestResponse {
+    private T policyInformation;
 
-    public LsarQueryInformationPolicyResponse(T policyInformation, PolicyInformationClass policyInformationClass) {
-        this.policyInformation = policyInformation;
-        this.policyInformationClass = policyInformationClass;
-    }
+    public abstract PolicyInformationClass getPolicyInformationClass();
+
+    abstract T createPolicyInformation();
 
     public T getPolicyInformation() {
         return policyInformation;
@@ -42,12 +43,51 @@ public class LsarQueryInformationPolicyResponse<T extends Unmarshallable> extend
     public void unmarshal(PacketInput packetIn) throws IOException {
         if(packetIn.readReferentID() != 0) {
             final int infoLevel = packetIn.readUnsignedShort();
-            if (infoLevel != this.policyInformationClass.getInfoLevel()) {
+            if (infoLevel != getPolicyInformationClass().getInfoLevel()) {
                 throw new UnmarshalException(String.format(
                         "Incoming POLICY_INFORMATION_CLASS %d does not match expected: %d",
-                        infoLevel, this.policyInformationClass.getInfoLevel()));
+                        infoLevel, getPolicyInformationClass().getInfoLevel()));
             }
+            this.policyInformation = createPolicyInformation();
             packetIn.readUnmarshallable(this.policyInformation);
+        } else {
+            this.policyInformation = null;
+        }
+    }
+
+    public static class PolicyAuditEventsInformation extends LsarQueryInformationPolicyResponse<LSAPRPolicyAuditEventsInfo> {
+        @Override
+        public PolicyInformationClass getPolicyInformationClass() {
+            return PolicyInformationClass.POLICY_AUDIT_EVENTS_INFORMATION;
+        }
+
+        @Override
+        LSAPRPolicyAuditEventsInfo createPolicyInformation() {
+            return new LSAPRPolicyAuditEventsInfo();
+        }
+    }
+
+    public static class PolicyPrimaryDomainInformation extends LsarQueryInformationPolicyResponse<LSAPRPolicyPrimaryDomInfo> {
+        @Override
+        public PolicyInformationClass getPolicyInformationClass() {
+            return PolicyInformationClass.POLICY_PRIMARY_DOMAIN_INFORMATION;
+        }
+
+        @Override
+        LSAPRPolicyPrimaryDomInfo createPolicyInformation() {
+            return new LSAPRPolicyPrimaryDomInfo();
+        }
+    }
+
+    public static class PolicyAccountDomainInformation extends LsarQueryInformationPolicyResponse<LSAPRPolicyAccountDomInfo> {
+        @Override
+        public PolicyInformationClass getPolicyInformationClass() {
+            return PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION;
+        }
+
+        @Override
+        LSAPRPolicyAccountDomInfo createPolicyInformation() {
+            return new LSAPRPolicyAccountDomInfo();
         }
     }
 }

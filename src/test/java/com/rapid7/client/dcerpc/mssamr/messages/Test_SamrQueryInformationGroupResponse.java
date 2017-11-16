@@ -18,7 +18,8 @@
  *
  *
  */
-package com.rapid7.client.dcerpc.mslsad.messages;
+
+package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,7 +29,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-import com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupInformationClass;
+import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -37,74 +39,65 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
-public class Test_LsarQueryInformationPolicyResponse {
+public class Test_SamrQueryInformationGroupResponse {
 
     @DataProvider
     public Object[][] data_getters() {
         return new Object[][] {
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), PolicyInformationClass.POLICY_AUDIT_EVENTS_INFORMATION},
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), PolicyInformationClass.POLICY_PRIMARY_DOMAIN_INFORMATION},
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION}
+                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), GroupInformationClass.GROUP_GENERAL_INFORMATION}
         };
     }
 
     @Test(dataProvider = "data_getters")
-    public void test_getters(LsarQueryInformationPolicyResponse response, PolicyInformationClass expectedPolicyInformationClass) {
-        assertNull(response.getPolicyInformation());
-        assertSame(response.getPolicyInformationClass(), expectedPolicyInformationClass);
+    public void test_getters(SamrQueryInformationGroupResponse response, GroupInformationClass expectedGroupInformationClass) {
+        assertNull(response.getGroupInformation());
+        assertSame(response.getGroupInformationClass(), expectedGroupInformationClass);
     }
 
     @DataProvider
     public Object[][] data_unmarshal() {
         return new Object[][] {
-                // Reference: 1, POLICY_INFORMATION_CLASS: 2
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "01000000 0200"},
-                // Reference: 1, POLICY_INFORMATION_CLASS: 3
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "01000000 0300"},
-                // Reference: 1, POLICY_INFORMATION_CLASS: 5
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "01000000 0500"}
+                // Reference: 1, GROUP_INFORMATION_CLASS: 1
+                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "01000000 0100"}
         };
     }
 
     @Test(dataProvider = "data_unmarshal")
-    public void test_unmarshal(LsarQueryInformationPolicyResponse response, String hex) throws IOException {
+    public void test_unmarshal(SamrQueryInformationGroupResponse response, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         doReturn(null).when(in).readUnmarshallable(any(Unmarshallable.class));
         response.unmarshal(in);
-        assertNotNull(response.getPolicyInformation());
+        assertNotNull(response.getGroupInformation());
     }
 
     @DataProvider
     public Object[][] data_unmarshall_Null() {
         return new Object[][] {
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "00000000 0200"},
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "00000000 0300"},
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "00000000 0500"}
+                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "00000000 0100"}
         };
     }
 
     @Test(dataProvider = "data_unmarshall_Null")
-    public void test_unmarshall_Null(LsarQueryInformationPolicyResponse response, String hex) throws IOException {
+    public void test_unmarshall_Null(SamrQueryInformationGroupResponse response, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);
-        assertNull(response.getPolicyInformation());
+        assertNull(response.getGroupInformation());
     }
 
     @DataProvider
     public Object[][] data_unmarshal_InvalidTag() {
         return new Object[][] {
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "01000000 FFFF"},
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "01000000 FFFF"},
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "01000000 FFFF"}
+                // Reference: 1, POLICY_CLASS_INFORMATION: 3
+                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "01000000 FFFF"},
         };
     }
 
     @Test(dataProvider = "data_unmarshal_InvalidTag",
             expectedExceptions = {UnmarshalException.class},
-            expectedExceptionsMessageRegExp = "Incoming POLICY_INFORMATION_CLASS 65535 does not match expected: [0-9]+")
-    public void test_unmarshal_InvalidTag(LsarQueryInformationPolicyResponse response, String hex) throws IOException {
+            expectedExceptionsMessageRegExp = "Incoming GROUP_INFORMATION_CLASS 65535 does not match expected: [0-9]+")
+    public void test_unmarshal_InvalidTag(SamrQueryInformationGroupResponse response, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);

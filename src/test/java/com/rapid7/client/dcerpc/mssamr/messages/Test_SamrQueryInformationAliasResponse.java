@@ -18,7 +18,8 @@
  *
  *
  */
-package com.rapid7.client.dcerpc.mslsad.messages;
+
+package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,7 +29,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-import com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass;
+import com.rapid7.client.dcerpc.mssamr.objects.AliasInformationClass;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -37,74 +38,65 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
-public class Test_LsarQueryInformationPolicyResponse {
+public class Test_SamrQueryInformationAliasResponse {
 
     @DataProvider
     public Object[][] data_getters() {
         return new Object[][] {
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), PolicyInformationClass.POLICY_AUDIT_EVENTS_INFORMATION},
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), PolicyInformationClass.POLICY_PRIMARY_DOMAIN_INFORMATION},
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), PolicyInformationClass.POLICY_ACCOUNT_DOMAIN_INFORMATION}
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), AliasInformationClass.ALIAS_GENERALINFORMATION}
         };
     }
 
     @Test(dataProvider = "data_getters")
-    public void test_getters(LsarQueryInformationPolicyResponse response, PolicyInformationClass expectedPolicyInformationClass) {
-        assertNull(response.getPolicyInformation());
-        assertSame(response.getPolicyInformationClass(), expectedPolicyInformationClass);
+    public void test_getters(SamrQueryInformationAliasResponse response, AliasInformationClass expectedAliasInformationClass) {
+        assertNull(response.getAliasInformation());
+        assertSame(response.getAliasInformationClass(), expectedAliasInformationClass);
     }
 
     @DataProvider
     public Object[][] data_unmarshal() {
         return new Object[][] {
-                // Reference: 1, POLICY_INFORMATION_CLASS: 2
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "01000000 0200"},
-                // Reference: 1, POLICY_INFORMATION_CLASS: 3
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "01000000 0300"},
-                // Reference: 1, POLICY_INFORMATION_CLASS: 5
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "01000000 0500"}
+                // Reference: 1, ALIAS_INFORMATION_CLASS: 1
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "01000000 0100"}
         };
     }
 
     @Test(dataProvider = "data_unmarshal")
-    public void test_unmarshal(LsarQueryInformationPolicyResponse response, String hex) throws IOException {
+    public void test_unmarshal(SamrQueryInformationAliasResponse response, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         doReturn(null).when(in).readUnmarshallable(any(Unmarshallable.class));
         response.unmarshal(in);
-        assertNotNull(response.getPolicyInformation());
+        assertNotNull(response.getAliasInformation());
     }
 
     @DataProvider
     public Object[][] data_unmarshall_Null() {
         return new Object[][] {
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "00000000 0200"},
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "00000000 0300"},
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "00000000 0500"}
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "00000000 0100"}
         };
     }
 
     @Test(dataProvider = "data_unmarshall_Null")
-    public void test_unmarshall_Null(LsarQueryInformationPolicyResponse response, String hex) throws IOException {
+    public void test_unmarshall_Null(SamrQueryInformationAliasResponse response, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);
-        assertNull(response.getPolicyInformation());
+        assertNull(response.getAliasInformation());
     }
 
     @DataProvider
     public Object[][] data_unmarshal_InvalidTag() {
         return new Object[][] {
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "01000000 FFFF"},
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "01000000 FFFF"},
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "01000000 FFFF"}
+                // Reference: 1, POLICY_CLASS_INFORMATION: 3
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "01000000 FFFF"},
         };
     }
 
     @Test(dataProvider = "data_unmarshal_InvalidTag",
             expectedExceptions = {UnmarshalException.class},
-            expectedExceptionsMessageRegExp = "Incoming POLICY_INFORMATION_CLASS 65535 does not match expected: [0-9]+")
-    public void test_unmarshal_InvalidTag(LsarQueryInformationPolicyResponse response, String hex) throws IOException {
+            expectedExceptionsMessageRegExp = "Incoming ALIAS_INFORMATION_CLASS 65535 does not match expected: [0-9]+")
+    public void test_unmarshal_InvalidTag(SamrQueryInformationAliasResponse response, String hex) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);

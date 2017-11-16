@@ -19,7 +19,7 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mssamr.messages;
+package com.rapid7.client.dcerpc.mslsad.messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,37 +33,39 @@ import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class Test_SamrQueryInformationUserRequest {
+public class Test_LsarQueryInformationPolicyRequest {
 
     @DataProvider
     public Object[][] data_requests() {
         UserHandle handle = new UserHandle();
         handle.setBytes(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20});
         return new Object[][] {
-                {new SamrQueryInformationUserRequest.UserAllInformation(handle)}
+                {new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(handle)},
+                {new LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation(handle)},
+                {new LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation(handle)}
         };
     }
 
     @Test(dataProvider = "data_requests")
-    public void test_getOpNum(SamrQueryInformationUserRequest request) {
-        assertEquals(request.getOpNum(), SamrQueryInformationUserRequest.OP_NUM);
+    public void test_getOpNum(LsarQueryInformationPolicyRequest request) {
+        assertEquals(request.getOpNum(), LsarQueryInformationPolicyRequest.OP_NUM);
     }
 
     @Test(dataProvider = "data_requests")
-    public void test_getResponseObject(SamrQueryInformationUserRequest request) {
+    public void test_getResponseObject(LsarQueryInformationPolicyRequest request) {
         assertNotNull(request.getResponseObject());
     }
 
     @Test(dataProvider = "data_requests")
-    public void test_marshall(SamrQueryInformationUserRequest request) throws IOException {
+    public void test_marshall(LsarQueryInformationPolicyRequest request) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         PacketOutput out = new PacketOutput(bout);
         request.marshal(out);
 
         ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
         PacketInput in = new PacketInput(bin);
-        assertEquals(in.readRawBytes(20), request.getUserHandle().getBytes());
-        assertEquals(in.readUnsignedShort(), request.getUserInformationClass().getInfoLevel());
+        assertEquals(in.readRawBytes(20), request.getPolicyHandle().getBytes());
+        assertEquals(in.readUnsignedShort(), request.getPolicyInformationClass().getInfoLevel());
         assertEquals(bin.available(), 0);
     }
 }
