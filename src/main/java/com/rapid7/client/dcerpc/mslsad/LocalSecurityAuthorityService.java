@@ -46,7 +46,6 @@ import java.util.EnumSet;
  * @see <a href= "https://msdn.microsoft.com/en-us/library/cc234420.aspx">[MS-LSAT]</a>
  */
 public class LocalSecurityAuthorityService {
-    private ContextHandle policyHandle;
 
     public LocalSecurityAuthorityService(final RPCTransport transport) {
         this.transport = transport;

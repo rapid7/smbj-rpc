@@ -59,9 +59,8 @@ public class PacketInput extends PrimitiveInput {
 
         return result;
     }
-    
-    public byte[] readByteArrayRef()
-        throws IOException {
+
+    public byte[] readByteArrayRef() throws IOException {
         final byte[] result;
         if (0 != readReferentID()) {
             result = readByteArray();
