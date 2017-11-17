@@ -44,6 +44,8 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerR
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
@@ -64,6 +66,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRAliasGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroup;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
@@ -305,6 +308,20 @@ public class SecurityAccountManagerService {
         } catch (Buffer.BufferException e) {
             throw new UnmarshalException(String.format("Failed to parse %s", SAMPRSRSecurityDescriptor.class.getSimpleName()), e);
         }
+    }
+
+    /**
+     * Gets a list of {@link GroupMembership} information for the provided user handle.
+     *
+     * @param userHandle User handle. Must not be {@code null}.
+     */
+    public List<GroupMembership> getGroupsForUser(UserHandle userHandle) throws IOException {
+        SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
+        SamrGetGroupsForUserResponse response = transport.call(request);
+        if (!ERROR_SUCCESS.is(response.getReturnValue()))
+            throw new RPCException("GetGroupsForUser", response.getReturnValue());
+
+        return response.getGroupMembership();
     }
 
     /**
