@@ -20,6 +20,7 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
@@ -51,15 +52,13 @@ public class GroupMembership implements Unmarshallable {
         return attributes;
     }
 
-    public GroupMembership() {
-    }
-
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        in.align(Alignment.FOUR);
         rid = in.readInt();
         attributes = in.readInt();
     }
