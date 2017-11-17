@@ -33,12 +33,12 @@ import java.io.IOException;
  */
 public class LSAPRTrustInformation implements Unmarshallable
 {
-    RPCUnicodeString.NullTerminated name;
+    RPCUnicodeString.NonNullTerminated name;
     RPCSID sid;
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
-        name = new RPCUnicodeString.NullTerminated();
+        name = new RPCUnicodeString.NonNullTerminated();
         name.unmarshalPreamble(in);
     }
 
@@ -58,5 +58,39 @@ public class LSAPRTrustInformation implements Unmarshallable
         if (sid != null){
             in.readUnmarshallable(sid);
         }
+    }
+
+    public RPCUnicodeString.NonNullTerminated getName() {
+        return name;
+    }
+
+    public RPCSID getSid() {
+        return sid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LSAPRTrustInformation that = (LSAPRTrustInformation) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        return sid != null ? sid.equals(that.sid) : that.sid == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (sid != null ? sid.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "LSAPRTrustInformation{" +
+                "name=" + name +
+                ", sid=" + sid +
+                '}';
     }
 }

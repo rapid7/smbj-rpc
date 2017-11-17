@@ -53,4 +53,45 @@ public class LSAPRTranslatedSID implements Unmarshallable
     public void unmarshalDeferrals(PacketInput in)
         throws IOException {
     }
+
+    public int getUse() {
+        return use;
+    }
+
+    public long getRelativeId() {
+        return relativeId;
+    }
+
+    public long getDomainIndex() {
+        return domainIndex;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LSAPRTranslatedSID that = (LSAPRTranslatedSID) o;
+
+        if (use != that.use) return false;
+        if (relativeId != that.relativeId) return false;
+        return domainIndex == that.domainIndex;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = use;
+        result = 31 * result + (int) (relativeId ^ (relativeId >>> 32));
+        result = 31 * result + (int) (domainIndex ^ (domainIndex >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "LSAPRTranslatedSID{" +
+                "use=" + use +
+                ", relativeId=" + relativeId +
+                ", domainIndex=" + domainIndex +
+                '}';
+    }
 }

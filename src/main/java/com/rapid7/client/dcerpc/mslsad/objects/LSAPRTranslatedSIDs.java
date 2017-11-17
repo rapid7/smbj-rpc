@@ -27,6 +27,7 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ import java.util.List;
  */
 public class LSAPRTranslatedSIDs implements Unmarshallable
 {
-    private LSAPRTranslatedSID[] lsaprTranslatedSIDs;
+    private LSAPRTranslatedSID[] lsaprTranslatedSIDArray;
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
@@ -44,9 +45,49 @@ public class LSAPRTranslatedSIDs implements Unmarshallable
     public void unmarshalEntity(PacketInput in) throws IOException {
         in.align(Alignment.FOUR);
         int entries = in.readInt();
+        if (in.readReferentID() != 0) {
+            lsaprTranslatedSIDArray = new LSAPRTranslatedSID[entries];
+        } else lsaprTranslatedSIDArray = null;
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
+        if (lsaprTranslatedSIDArray != null) {
+            in.align(Alignment.FOUR);
+            in.readInt(); //count
+            
+            for (int i = 0; i < lsaprTranslatedSIDArray.length; i++){
+                LSAPRTranslatedSID lsaprTranslatedSID = new LSAPRTranslatedSID();
+                in.readUnmarshallable(lsaprTranslatedSID);
+                lsaprTranslatedSIDArray[i] = lsaprTranslatedSID;
+            }
+        }
+    }
+
+    public LSAPRTranslatedSID[] getLsaprTranslatedSIDArray() {
+        return lsaprTranslatedSIDArray;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LSAPRTranslatedSIDs that = (LSAPRTranslatedSIDs) o;
+
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(lsaprTranslatedSIDArray, that.lsaprTranslatedSIDArray);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(lsaprTranslatedSIDArray);
+    }
+
+    @Override
+    public String toString() {
+        return "LSAPRTranslatedSIDs{" +
+                "lsaprTranslatedSIDArray=" + Arrays.toString(lsaprTranslatedSIDArray) +
+                '}';
     }
 }
