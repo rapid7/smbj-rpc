@@ -47,29 +47,31 @@ public class Test_SamrQuerySecurityObjectResponse {
                 "02000000" +
                 // SecurityDescriptor: Length: 2 Reference: 2
                 "02000000 00000200" +
-                // SecurityDescriptor: MaximumCount: 3 SecurityDescriptor: {1, 2}
-                "02000000 01 02";
+                // SecurityDescriptor: MaximumCount: 3 SecurityDescriptor: {1, 2}, ReturnValue: 1
+                "02000000 01 02 01000000";
 
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
 
         SamrQuerySecurityObjectResponse response = new SamrQuerySecurityObjectResponse();
         response.unmarshal(in);
-
+        assertEquals(bin.available(), 0);
         assertNotNull(response.getSecurityDescriptor());
         assertEquals(response.getSecurityDescriptor().getSecurityDescriptor(), new byte[]{1, 2});
+        assertEquals(response.getReturnValue(), 1);
     }
 
     @Test
     public void test_unmarshal_null() throws IOException {
-        // Reference: 0
-        String hex = "00000000";
+        // Reference: 0, ReturnValue: 1
+        String hex = "00000000 01000000";
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
 
         SamrQuerySecurityObjectResponse response = new SamrQuerySecurityObjectResponse();
         response.unmarshal(in);
-
+        assertEquals(bin.available(), 0);
         assertNull(response.getSecurityDescriptor());
+        assertEquals(response.getReturnValue(), 1);
     }
 }

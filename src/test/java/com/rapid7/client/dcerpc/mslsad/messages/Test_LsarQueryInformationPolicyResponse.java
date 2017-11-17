@@ -33,6 +33,7 @@ import com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
@@ -58,11 +59,11 @@ public class Test_LsarQueryInformationPolicyResponse {
     public Object[][] data_unmarshal() {
         return new Object[][] {
                 // Reference: 1, POLICY_INFORMATION_CLASS: 2
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "01000000 0200"},
+                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "01000000 0200 00000000"},
                 // Reference: 1, POLICY_INFORMATION_CLASS: 3
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "01000000 0300"},
+                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "01000000 0300 00000000"},
                 // Reference: 1, POLICY_INFORMATION_CLASS: 5
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "01000000 0500"}
+                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "01000000 0500 00000000"}
         };
     }
 
@@ -78,9 +79,9 @@ public class Test_LsarQueryInformationPolicyResponse {
     @DataProvider
     public Object[][] data_unmarshall_Null() {
         return new Object[][] {
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "00000000 0200"},
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "00000000 0300"},
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "00000000 0500"}
+                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "00000000 0200 00000000"},
+                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "00000000 0300 00000000"},
+                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "00000000 0500 00000000"}
         };
     }
 
@@ -108,5 +109,6 @@ public class Test_LsarQueryInformationPolicyResponse {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);
+        assertEquals(bin.available(), 0);
     }
 }
