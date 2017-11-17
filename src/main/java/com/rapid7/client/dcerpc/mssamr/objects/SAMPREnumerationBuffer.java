@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +67,7 @@ public abstract class SAMPREnumerationBuffer<T extends Unmarshallable> implement
      *
      * @return The entries. May be {@code null} if the response is not processed.
      */
-    public List<T> getEntries() {
+    public final List<T> getEntries() {
         if (array == null)
             return null;
         return Collections.unmodifiableList(array);
@@ -120,5 +121,5 @@ public abstract class SAMPREnumerationBuffer<T extends Unmarshallable> implement
      *
      * @return The entity instance in the buffer.
      */
-    protected abstract T initEntity();
+    protected abstract T initEntity() throws UnmarshalException;
 }
