@@ -200,21 +200,28 @@ public class RPCSID implements Unmarshallable, Marshallable {
         StringBuilder b = new StringBuilder("S-");
         b.append(revision & 0xFF).append("-");
 
-        if (identifierAuthority[0] != (byte) 0 || identifierAuthority[1] != (byte) 0) {
-            b.append("0x");
-            b.append(ByteArrayUtils.printHex(identifierAuthority, 0, 6));
+        if (identifierAuthority == null) {
+            b.append("null");
         } else {
-            long shift = 0;
-            long id = 0;
-            for (int i = 5; i > 1; i--) {
-                id += (identifierAuthority[i] & 0xFFL) << shift;
-                shift += 8;
+            if (identifierAuthority[0] != (byte) 0 || identifierAuthority[1] != (byte) 0) {
+                b.append("0x");
+                b.append(ByteArrayUtils.printHex(identifierAuthority, 0, identifierAuthority.length));
+            } else {
+                long shift = 0;
+                long id = 0;
+                for (int i = identifierAuthority.length-1; i > 1; i--) {
+                    id += (identifierAuthority[i] & 0xFFL) << shift;
+                    shift += 8;
+                }
+                b.append(id);
             }
-            b.append(id);
         }
-
-        for (int i = 0; i < subAuthority.length; i++)
-            b.append("-").append(subAuthority[i] & 0xFFFFFFFFL);
+        if (subAuthority == null) {
+            b.append("-null");
+        } else {
+            for (int i = 0; i < subAuthority.length; i++)
+                b.append("-").append(subAuthority[i] & 0xFFFFFFFFL);
+        }
 
         return b.toString();
     }

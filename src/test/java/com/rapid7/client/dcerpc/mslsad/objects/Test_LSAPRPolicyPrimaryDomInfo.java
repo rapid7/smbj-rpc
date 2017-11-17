@@ -182,6 +182,6 @@ public class Test_LSAPRPolicyPrimaryDomInfo {
         sid.setIdentifierAuthority(new byte[]{1, 2, 3, 4, 5, 6});
         sid.setSubAuthority(new long[]{1, 2, 3});
         obj.setSid(sid);
-        assertEquals(obj.toString(), "LSAPR_POLICY_PRIMARY_DOM_INFO{Name:RPC_UNICODE_STRING{value:\"test 123\", nullTerminated:false}, Sid:RPC_SID{Revision:1, SubAuthorityCount:4, IdentifierAuthority:[1, 2, 3, 4, 5, 6], SubAuthority: [1, 2, 3]}}");
+        assertEquals(obj.toString(), "LSAPR_POLICY_PRIMARY_DOM_INFO{Name:RPC_UNICODE_STRING{value:\"test 123\", nullTerminated:false}, Sid:S-1-0x01 02 03 04 05 06-1-2-3}");
     }
 }

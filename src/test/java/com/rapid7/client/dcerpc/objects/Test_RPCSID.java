@@ -259,12 +259,12 @@ public class Test_RPCSID {
     @Test
     public void test_toString() {
         RPCSID rpc_sid = new RPCSID();
-        assertEquals(rpc_sid.toString(), "RPC_SID{Revision:0, SubAuthorityCount:0, IdentifierAuthority:null, SubAuthority: null}");
+        assertEquals(rpc_sid.toString(), "S-0-null-null");
         rpc_sid.setRevision((char) 200);
         rpc_sid.setSubAuthorityCount((char) 5);
         rpc_sid.setIdentifierAuthority(new byte[]{1, 2});
         rpc_sid.setSubAuthority(new long[]{2, 5, 7});
-        assertEquals(rpc_sid.toString(), "RPC_SID{Revision:200, SubAuthorityCount:5, IdentifierAuthority:[1, 2], SubAuthority: [2, 5, 7]}");
+        assertEquals(rpc_sid.toString(), "S-200-0x01 02-2-5-7");
     }
 
     @Test

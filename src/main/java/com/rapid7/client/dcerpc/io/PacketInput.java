@@ -59,16 +59,7 @@ public class PacketInput extends PrimitiveInput {
 
         return result;
     }
-
-    public byte[] readBytes(int number)
-        throws IOException {
-        byte [] result = new byte[number];
-        for (int index = 0; index < number; index ++){
-            result[index] = readByte();
-        }
-        return result;
-    }
-
+    
     public byte[] readByteArrayRef()
         throws IOException {
         final byte[] result;
