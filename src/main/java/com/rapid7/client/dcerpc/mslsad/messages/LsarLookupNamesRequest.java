@@ -69,11 +69,7 @@ import java.io.IOException;
  *summary of the return values that an implementation MUST return, as specified
  *by the message processing shown after the table.</p>
  * <a href="https://msdn.microsoft.com/en-ca/library/cc234495.aspx"> Table</a>
- *<dl>
- *<dd>
  *
- *
- *</dd></dl>
  *<p>The behavior required when receiving an LsarLookupNames
  *message MUST be identical to that when receiving an <a href="https://msdn.microsoft.com/en-ca/library/cc234494.aspx">LsarLookupNames2</a> message,
  *with the following exceptions:</p>
