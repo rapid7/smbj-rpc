@@ -23,14 +23,8 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 
 public class EmptyResponse extends RequestResponse {
-    private int returnValue;
-
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
-        returnValue = packetIn.readInt();
-    }
-
-    public int getReturnValue() {
-        return returnValue;
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
+        // Empty
     }
 }

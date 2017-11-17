@@ -30,7 +30,7 @@ public class LsarClosePolicyRpcResponse extends RequestResponse {
     }
 
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
       /*
        * Rpc Info
        *
@@ -51,5 +51,4 @@ public class LsarClosePolicyRpcResponse extends RequestResponse {
        */
         handle = packetIn.readRawBytes(20);
     }
-
 }

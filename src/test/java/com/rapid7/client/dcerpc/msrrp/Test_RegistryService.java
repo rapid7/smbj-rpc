@@ -550,10 +550,10 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(enumResponse1.getName()).thenReturn("subKey1");
-        when(enumResponse1.getLastWriteTime()).thenReturn(new FileTime(116444736000000000l));
+        when(enumResponse1.getLastWriteTime()).thenReturn(116444736000000000l);
         when(enumResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(enumResponse2.getName()).thenReturn("subKey2");
-        when(enumResponse2.getLastWriteTime()).thenReturn(new FileTime(116444736000000000l));
+        when(enumResponse2.getLastWriteTime()).thenReturn(116444736000000000l);
         when(enumResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
         when(enumResponse3.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getErrorCode());
 

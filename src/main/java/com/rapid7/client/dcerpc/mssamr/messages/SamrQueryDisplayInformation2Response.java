@@ -31,14 +31,11 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroupBuffer;
 /**
  * The {@link SamrEnumerateResponse} implementation for request {@link SamrQueryDisplayInformation2Request}.
  */
-public class SamrQueryDisplayInformation2Response<T extends Unmarshallable>
-        extends RequestResponse
-{
+public class SamrQueryDisplayInformation2Response<T extends Unmarshallable> extends RequestResponse {
     private final DisplayInformationClass infoClass;
     private int totalAvailableBytes;
     private int totalReturnedBytes;
     private SAMPRDisplayInfoBuffer buffer;
-    private int returnCode;
 
     public SamrQueryDisplayInformation2Response(DisplayInformationClass infoClass) {
         this.infoClass = infoClass;
@@ -58,17 +55,12 @@ public class SamrQueryDisplayInformation2Response<T extends Unmarshallable>
         return buffer.getEntries();
     }
 
-    public int getReturnValue() {
-        return returnCode;
-    }
-
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
         totalAvailableBytes = packetIn.readInt();
         totalReturnedBytes = packetIn.readInt();
         unmarshallBuffer(packetIn);
         packetIn.align();
-        returnCode = packetIn.readInt();
     }
 
     private void unmarshallBuffer(PacketInput packetIn) throws IOException {
