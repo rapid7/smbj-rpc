@@ -32,9 +32,6 @@ import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcReq
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarOpenPolicy2Request;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
-import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_ACCOUNT_DOM_INFO;
-import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_AUDIT_EVENTS_INFO;
-import com.rapid7.client.dcerpc.mslsad.objects.LSAPR_POLICY_PRIMARY_DOM_INFO;
 import com.rapid7.client.dcerpc.mslsad.objects.LookupNamesInfo;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -112,13 +109,12 @@ public class LocalSecurityAuthorityService {
         transport.call(closeRequest);
     }
 
-    public LookupNamesInfo lookupName(ContextHandle policyHandle, String name)
+    public LookupNamesInfo lookupNames(ContextHandle policyHandle, String... names)
             throws IOException {
-        final String[] names = {name};
         final LsarLookupNamesRequest lookupNamesRequest =
                 new LsarLookupNamesRequest(policyHandle, names);
         final LsarLookupNamesResponse lsarLookupNamesResponse = transport.call(lookupNamesRequest);
-        return lsarLookupNamesResponse.getLookupNamesInfo();
+        return null; //lsarLookupNamesResponse.getLookupNamesInfo();
     }
 
     private final RPCTransport transport;

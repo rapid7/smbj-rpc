@@ -75,21 +75,19 @@ public class LookupNamesInfo extends RequestResponse
 
     private void readDomainList(final PacketInput packetIn)
         throws IOException {
-        packetIn.readReferentID(); //refId
-        int entries = packetIn.readInt();
+        packetIn.readReferentID(); //refId  //Done
+        int entries = packetIn.readInt();   //Entity 1
 
-        for (int i = 0; i < entries; i++)
-        {
-            packetIn.readReferentID(); //referents for domains
-        }
-        packetIn.readInt(); //maxEntries
+        packetIn.readReferentID(); // Entity 2
+
+        packetIn.readInt(); //maxEntries //Entity 3
 
         readDomains(packetIn);
     }
 
     private void readDomains(final PacketInput packetIn)
         throws IOException {
-        int maxCount = packetIn.readInt();
+        int maxCount = packetIn.readInt(); //
         for (int i = 0; i < maxCount; i++){
             readNameAndSID(packetIn);
         }

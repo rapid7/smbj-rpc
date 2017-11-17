@@ -20,6 +20,8 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSIDs;
 import com.rapid7.client.dcerpc.mslsad.objects.LookupNamesInfo;
 import java.io.IOException;
 
@@ -50,20 +52,35 @@ import java.io.IOException;
  */
 
 public class LsarLookupNamesResponse extends RequestResponse {
-    private LookupNamesInfo lookupNamesInfo;
     private int returnValue;
+    private LSAPRReferencedDomainList lsaprReferencedDomainList;
+    private LSAPRTranslatedSIDs lsaprTranslatedSIDs;
 
     @Override
     public void unmarshal(final PacketInput packetIn)
             throws IOException {
-        lookupNamesInfo = new LookupNamesInfo();
-        lookupNamesInfo.unmarshal(packetIn);
+
+        //Top level parameters
+        //1. Referenced Domain List pointer
+        if (packetIn.readReferentID() != 0) //LsaprReferencedDomainList is a pointer
+        {
+            lsaprReferencedDomainList = new LSAPRReferencedDomainList();
+            packetIn.readUnmarshallable(lsaprReferencedDomainList);
+        } else { lsaprReferencedDomainList = null; }
+
+        //2. Translated Sids
+        lsaprTranslatedSIDs = new LSAPRTranslatedSIDs();
+        packetIn.readUnmarshallable(lsaprTranslatedSIDs);
+
+        //3. Mapped Count
+        packetIn.readInt();
+
         returnValue = packetIn.readInt();
     }
 
-    public LookupNamesInfo getLookupNamesInfo(){
-        return lookupNamesInfo;
-    }
+    //public LookupNamesInfo getLookupNamesInfo(){
+    //    return lookupNamesInfo;
+    //}
 
     public int getReturnValue() {
         return returnValue;
