@@ -25,14 +25,16 @@ import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGetGroupsBuffer;
 
+/**
+ * This is the {@link RequestResponse} implementation for {@link SamrGetGroupsForUserRequest}.
+ */
 public class SamrGetGroupsForUserResponse extends RequestResponse {
     private SAMPRGetGroupsBuffer buffer;
     private int returnValue;
-    public SamrGetGroupsForUserResponse() {
-
-    }
 
     public List<GroupMembership> getGroupMembership() {
+        if (buffer == null)
+            return null;
         return buffer.getEntries();
     }
 
@@ -43,8 +45,11 @@ public class SamrGetGroupsForUserResponse extends RequestResponse {
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         buffer = new SAMPRGetGroupsBuffer();
-        packetIn.readReferentID();
-        packetIn.readUnmarshallable(buffer);
+        int ref = packetIn.readReferentID();
+        if (ref != 0)
+            packetIn.readUnmarshallable(buffer);
+        else
+            buffer = null;
         returnValue = packetIn.readInt();
     }
 }
