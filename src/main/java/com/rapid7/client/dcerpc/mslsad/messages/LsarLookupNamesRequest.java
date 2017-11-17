@@ -19,8 +19,11 @@
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSIDs;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import java.io.IOException;
 
 /**
@@ -119,29 +122,36 @@ public class LsarLookupNamesRequest extends RequestCall<LsarLookupNamesResponse>
 
     @Override
     public void marshal(final PacketOutput packetOut)
-        throws IOException {
-        packetOut.write(policyHandle.getBytes());
+        throws IOException
+    {
+        packetOut.writeMarshallable(policyHandle);
         packetOut.writeInt(names.length);
         writeNames(packetOut);
+        packetOut.align(Alignment.FOUR); // Names is variable length; align for SID
+
+        //TODO: Write as packetOut.writeMarshalable(new LSAPRTranslatedSIDs())
         packetOut.writeInt(0); //count for SID
         packetOut.writeNull(); // SID
+
         packetOut.writeInt(LSA_LOOKUP_NAMES_ALL);
         packetOut.writeNull(); // Count (ignored on input)
     }
 
     private void writeNames(final PacketOutput packetOut)
-            throws IOException {
-        // conformat array type
+        throws IOException
+    {
         packetOut.writeInt(names.length);
-        for (String name: names) {
-            writeRPCUnicodeString(packetOut, name);
-        }
-    }
 
-    private void writeRPCUnicodeString(final PacketOutput packetOut, String name)
-        throws IOException {
-        packetOut.writeShort(name.length() * 2); //length
-        packetOut.writeShort(name.length() * 2); //max length
-        packetOut.writeStringRef(name, false);
+        RPCUnicodeString[] rpcNames = new RPCUnicodeString[names.length];
+        for (int i = 0; i < rpcNames.length; i++){
+            rpcNames[i] = RPCUnicodeString.NonNullTerminated.of(names[i]);
+            rpcNames[i].marshalPreamble(packetOut);
+        }
+        for (RPCUnicodeString rpcName: rpcNames){
+            rpcName.marshalEntity(packetOut);
+        }
+        for (RPCUnicodeString rpcName: rpcNames){
+            rpcName.marshalDeferrals(packetOut);
+        }
     }
 }
