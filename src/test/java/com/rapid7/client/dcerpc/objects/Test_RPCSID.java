@@ -265,6 +265,8 @@ public class Test_RPCSID {
         rpc_sid.setIdentifierAuthority(new byte[]{1, 2});
         rpc_sid.setSubAuthority(new long[]{2, 5, 7});
         assertEquals(rpc_sid.toString(), "S-200-0x01 02-2-5-7");
+        rpc_sid.setIdentifierAuthority(new byte[]{0, 1});
+        assertEquals(rpc_sid.toString(), "S-200-0x00 01-2-5-7");
     }
 
     @Test

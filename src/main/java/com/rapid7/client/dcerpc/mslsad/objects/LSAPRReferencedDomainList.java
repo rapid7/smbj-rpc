@@ -32,13 +32,37 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *   typedef struct _LSAPR_REFERENCED_DOMAIN_LIST {
- unsigned long Entries;
- [size_is(Entries)] PLSAPR_TRUST_INFORMATION Domains;
- unsigned long MaxEntries;
- } LSAPR_REFERENCED_DOMAIN_LIST,
- *PLSAPR_REFERENCED_DOMAIN_LIST;
-
+ *   Documentation from https://msdn.microsoft.com/en-us/library/cc234453.aspx
+ *   <h1 class="title">2.2.12 LSAPR_REFERENCED_DOMAIN_LIST</h1>
+ *
+ *  <p>The LSAPR_REFERENCED_DOMAIN_LIST structure contains
+ *  information about the <a href="https://msdn.microsoft.com/en-us/library/cc234422.aspx#gt_b0276eb2-4e65-4cf1-a718-e0920a614aca">domains</a>
+ *  referenced in a lookup operation.</p>
+ *
+ *  <dl>
+ *  <dd>
+ *  <div><pre> typedef struct _LSAPR_REFERENCED_DOMAIN_LIST {
+ *     unsigned long Entries;
+ *     [size_is(Entries)] PLSAPR_TRUST_INFORMATION Domains;
+ *     unsigned long MaxEntries;
+ *   } LSAPR_REFERENCED_DOMAIN_LIST,
+ *    *PLSAPR_REFERENCED_DOMAIN_LIST;
+ *  </pre></div>
+ *  </dd></dl>
+ *
+ *  <p><strong>Entries:</strong>  Contains the number of
+ *  domains referenced in the lookup operation.</p>
+ *
+ *  <p><strong>Domains:</strong>  Contains a set of
+ *  structures that identify domains. If the <strong>Entries</strong> field in this structure
+ *  is not 0, this field MUST be non-NULL. If <strong>Entries</strong> is 0, this field MUST
+ *  be ignored.</p>
+ *
+ *  <p><strong>MaxEntries:</strong>  This field MUST be
+ *  ignored. The content is unspecified, and no requirements are placed on its
+ *  value since it is never used.</p>
+ *
+ *
  */
 public class LSAPRReferencedDomainList implements Unmarshallable {
 

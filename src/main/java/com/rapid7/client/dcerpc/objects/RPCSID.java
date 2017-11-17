@@ -200,7 +200,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
         StringBuilder b = new StringBuilder("S-");
         b.append(revision & 0xFF).append("-");
 
-        if (identifierAuthority == null) {
+        if (identifierAuthority == null || identifierAuthority.length < 2) {
             b.append("null");
         } else {
             if (identifierAuthority[0] != (byte) 0 || identifierAuthority[1] != (byte) 0) {

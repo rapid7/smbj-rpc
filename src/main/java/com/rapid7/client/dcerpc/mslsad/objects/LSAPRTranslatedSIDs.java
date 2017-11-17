@@ -31,7 +31,29 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
-
+ *  Documentation from https://msdn.microsoft.com/en-us/library/cc234457.aspx
+ * <h1 class="title">2.2.15 LSAPR_TRANSLATED_SIDS</h1>
+ *
+ *  <p>The LSAPR_TRANSLATED_SIDS structure defines a set of
+ *  translated <a href="https://msdn.microsoft.com/en-us/library/cc234422.aspx#gt_83f2020d-0804-4840-a5ac-e06439d50f8d">SIDs</a>.</p>
+ *
+ *  <dl>
+ *  <dd>
+ *  <div><pre> typedef struct _LSAPR_TRANSLATED_SIDS {
+ *     [range(0,1000)] unsigned long Entries;
+ *     [size_is(Entries)] PLSA_TRANSLATED_SID Sids;
+ *   } LSAPR_TRANSLATED_SIDS,
+ *    *PLSAPR_TRANSLATED_SIDS;
+ *  </pre></div>
+ *  </dd></dl>
+ *
+ *  <p><strong>Entries:</strong>  Contains the number of
+ *  translated SIDs.<a id="Appendix_A_Target_7"></a><a href="https://msdn.microsoft.com/en-us/library/cc234510.aspx#Appendix_A_7">&lt;7&gt;</a></p>
+ *
+ *  <p><strong>Sids:</strong>  Contains a set of structures
+ *  that contain translated SIDs. If the Entries field in this structure is not 0,
+ *  this field MUST be non-NULL. If Entries is 0, this field MUST be NULL.</p>
+ *
  */
 public class LSAPRTranslatedSIDs implements Unmarshallable
 {
