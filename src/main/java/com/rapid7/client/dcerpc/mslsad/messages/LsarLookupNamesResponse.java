@@ -22,7 +22,6 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSIDs;
-import com.rapid7.client.dcerpc.mslsad.objects.LookupNamesInfo;
 import java.io.IOException;
 
 /**
@@ -78,9 +77,21 @@ public class LsarLookupNamesResponse extends RequestResponse {
         returnValue = packetIn.readInt();
     }
 
-    //public LookupNamesInfo getLookupNamesInfo(){
-    //    return lookupNamesInfo;
-    //}
+    public LSAPRReferencedDomainList getLsaprReferencedDomainList() {
+        return lsaprReferencedDomainList;
+    }
+
+    public void setLsaprReferencedDomainList(LSAPRReferencedDomainList lsaprReferencedDomainList) {
+        this.lsaprReferencedDomainList = lsaprReferencedDomainList;
+    }
+
+    public LSAPRTranslatedSIDs getLsaprTranslatedSIDs() {
+        return lsaprTranslatedSIDs;
+    }
+
+    public void setLsaprTranslatedSIDs(LSAPRTranslatedSIDs lsaprTranslatedSIDs) {
+        this.lsaprTranslatedSIDs = lsaprTranslatedSIDs;
+    }
 
     public int getReturnValue() {
         return returnValue;

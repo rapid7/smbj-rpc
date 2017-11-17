@@ -19,10 +19,11 @@
 
 package com.rapid7.client.dcerpc.mslsad;
 
-
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesResponse;
-import com.rapid7.client.dcerpc.mslsad.objects.LookupNamesInfo;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSIDs;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,18 +42,20 @@ public class Test_LookupNames {
         final LsarLookupNamesResponse response = new LsarLookupNamesResponse();
         response.fromHexString(
             "00000200010000000400020020000000010000001a001c00080002000c0002000e000000000000000d0000005700310030002d0045004e0054002d005800360034002d005500000004000000010400000000000515000000a43cb4affe0503bd73de0f3501000000100002000100000001000000f4010000000000000100000000000000");
-        //final LookupNamesInfo lookupNamesInfo = response.getLookupNames();
-        //assertEquals(lookupNamesInfo.getDomainList().get(0).getSID().toString(), "S-1-5-21-2947824804-3171091966-890232435");
-        //assertEquals(lookupNamesInfo.getTranslatedSIDs().get(0).getRelativeId(), 500);
+        LSAPRReferencedDomainList lsaprReferencedDomainList = response.getLsaprReferencedDomainList();
+        LSAPRTranslatedSIDs lsaprTranslatedSIDs = response.getLsaprTranslatedSIDs();
+
+        assertEquals(lsaprReferencedDomainList.getLsaprTrustInformations()[0].getSid().toString(), "S-1-5-21-2947824804-3171091966-890232435");
+        assertEquals(lsaprTranslatedSIDs.getLsaprTranslatedSIDArray()[0].getRelativeId(), 500);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void encodeLookupNamesRequest()
         throws IOException {
-        //final ContextHandle fakePolicyHandle = new ContextHandle("000000008e3039708fdd9f488f9665426d0d9c57");
+        final ContextHandle fakePolicyHandle = new ContextHandle("000000008e3039708fdd9f488f9665426d0d9c57");
         final String[] names = {"Administrator"};
-        //final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names);
-        //assertEquals(request.toHexString(), "000000008e3039708fdd9f488f9665426d0d9c5701000000010000001a001a00000002000d000000000000000d000000410064006d0069006e006900730074007200610074006f007200000000000000000000000100000000000000");
+        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names);
+        assertEquals(request.toHexString(), "000000008e3039708fdd9f488f9665426d0d9c5701000000010000001a001a00000002000d000000000000000d000000410064006d0069006e006900730074007200610074006f007200000000000000000000000100000000000000");
     }
 }

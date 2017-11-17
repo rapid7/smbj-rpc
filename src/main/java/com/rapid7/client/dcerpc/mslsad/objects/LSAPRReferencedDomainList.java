@@ -28,6 +28,7 @@ import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -81,5 +82,37 @@ public class LSAPRReferencedDomainList implements Unmarshallable {
                 lsaprTrustInformations[i] = lsaprTrustInformation;
             }
         }
+    }
+
+    public LSAPRTrustInformation[] getLsaprTrustInformations() {
+        return lsaprTrustInformations;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LSAPRReferencedDomainList that = (LSAPRReferencedDomainList) o;
+
+        if (entries != that.entries) return false;
+        if (maxEntries != that.maxEntries) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(lsaprTrustInformations, that.lsaprTrustInformations);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = entries;
+        result = 31 * result + Arrays.hashCode(lsaprTrustInformations);
+        result = 31 * result + (int) (maxEntries ^ (maxEntries >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "LSAPRReferencedDomainList{" +
+                "lsaprTrustInformations=" + Arrays.toString(lsaprTrustInformations) +
+                '}';
     }
 }

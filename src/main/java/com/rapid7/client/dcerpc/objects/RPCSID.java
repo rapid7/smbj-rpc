@@ -18,6 +18,7 @@
  */
 package com.rapid7.client.dcerpc.objects;
 
+import com.hierynomus.protocol.commons.ByteArrayUtils;
 import java.io.IOException;
 import java.rmi.MarshalException;
 import java.util.Arrays;
@@ -196,9 +197,26 @@ public class RPCSID implements Unmarshallable, Marshallable {
 
     @Override
     public String toString() {
-        return String.format("RPC_SID{Revision:%d, SubAuthorityCount:%d, IdentifierAuthority:%s, SubAuthority: %s}",
-                (int) getRevision(), (int) getSubAuthorityCount(),
-                Arrays.toString(getIdentifierAuthority()), Arrays.toString(getSubAuthority()));
+        StringBuilder b = new StringBuilder("S-");
+        b.append(revision & 0xFF).append("-");
+
+        if (identifierAuthority[0] != (byte) 0 || identifierAuthority[1] != (byte) 0) {
+            b.append("0x");
+            b.append(ByteArrayUtils.printHex(identifierAuthority, 0, 6));
+        } else {
+            long shift = 0;
+            long id = 0;
+            for (int i = 5; i > 1; i--) {
+                id += (identifierAuthority[i] & 0xFFL) << shift;
+                shift += 8;
+            }
+            b.append(id);
+        }
+
+        for (int i = 0; i < subAuthority.length; i++)
+            b.append("-").append(subAuthority[i] & 0xFFFFFFFFL);
+
+        return b.toString();
     }
 
 
