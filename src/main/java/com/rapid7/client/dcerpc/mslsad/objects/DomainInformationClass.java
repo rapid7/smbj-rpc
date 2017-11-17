@@ -20,7 +20,8 @@ package com.rapid7.client.dcerpc.mslsad.objects;
 
 public enum DomainInformationClass {
     DOMAIN_PASSWORD_INFORMATION(1),
-    DOMAIN_LOGOFF_INFORMATION(3);
+    DOMAIN_LOGOFF_INFORMATION(3),
+    DOMAIN_LOCKOUT_INFORMATION(12);
 
     DomainInformationClass(final int infoLevel) {
         this.infoLevel = infoLevel;
