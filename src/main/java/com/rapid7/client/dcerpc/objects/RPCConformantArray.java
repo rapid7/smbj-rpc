@@ -71,14 +71,14 @@ public abstract class RPCConformantArray<T extends Unmarshallable> implements Un
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
+        // <NDR: unsigned long> unsigned long EntriesRead;
+        entriesRead = in.readInt();
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
         // Structure Alignment
         in.align(Alignment.FOUR);
-        // <NDR: unsigned long> unsigned long EntriesRead;
-        entriesRead = in.readInt();
         // <NDR: pointer> [size_is(EntriesRead)] PSAMPR_RID_ENUMERATION Buffer;
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0) {
