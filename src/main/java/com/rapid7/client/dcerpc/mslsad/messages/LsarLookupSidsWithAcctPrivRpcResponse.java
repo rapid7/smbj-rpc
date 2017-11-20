@@ -25,18 +25,13 @@ import com.rapid7.client.dcerpc.messages.RequestResponse;
 
 public class LsarLookupSidsWithAcctPrivRpcResponse extends RequestResponse {
     private SID[] sids;
-    private int returnValue;
 
     public SID[] getSids() {
         return sids;
     }
 
-    public int getReturnValue() {
-        return returnValue;
-    }
-
     @Override
-    public void unmarshal(final PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(final PacketInput packetIn) throws IOException {
       /* Rpc Info
        *
        * MajorVer:    05
@@ -82,8 +77,6 @@ public class LsarLookupSidsWithAcctPrivRpcResponse extends RequestResponse {
                 sids[i] = read(packetIn);
             }
         }
-
-        returnValue = packetIn.readInt();
     }
 
     public SID read(PacketInput packetIn) throws IOException {

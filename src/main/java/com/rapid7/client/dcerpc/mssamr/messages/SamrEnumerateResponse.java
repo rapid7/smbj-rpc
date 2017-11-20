@@ -28,13 +28,13 @@ public abstract class SamrEnumerateResponse extends RequestResponse {
 
     private int resumeHandle;
     private int numEntries;
-    private int returnCode;
 
     protected abstract void unmarshallBuffer(PacketInput packetIn) throws IOException;
 
     public abstract List getList();
+
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
         // <NDR: unsigned long> [in, out] unsigned long* EnumerationContext,
         // Alignment: 4 - Already aligned
         resumeHandle = packetIn.readInt();
@@ -46,7 +46,6 @@ public abstract class SamrEnumerateResponse extends RequestResponse {
         // <NDR: unsigned long> [out] unsigned long* CountReturned
         packetIn.align(Alignment.FOUR);
         numEntries = packetIn.readInt();
-        returnCode = packetIn.readInt();
     }
 
     public int getNumEntries() {
@@ -55,9 +54,5 @@ public abstract class SamrEnumerateResponse extends RequestResponse {
 
     public int getResumeHandle() {
         return resumeHandle;
-    }
-
-    public int getReturnValue() {
-        return returnCode;
     }
 }

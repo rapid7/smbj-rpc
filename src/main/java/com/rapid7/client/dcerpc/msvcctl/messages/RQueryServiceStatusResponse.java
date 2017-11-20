@@ -28,11 +28,10 @@ import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
 
 public class RQueryServiceStatusResponse extends RequestResponse {
-    private int returnValue;
     private IServiceStatusInfo serviceStatusInfo;
 
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
         ServiceType serviceType = ServiceType.fromInt(packetIn.readInt());
         ServiceStatusType currentState = ServiceStatusType.fromInt(packetIn.readInt());
         ServicesAcceptedControls controlsAccepted = ServicesAcceptedControls.fromInt(packetIn.readInt());
@@ -41,14 +40,9 @@ public class RQueryServiceStatusResponse extends RequestResponse {
         int checkPoint = packetIn.readInt();
         int waitHint = packetIn.readInt();
         serviceStatusInfo = new ServiceStatusInfo(serviceType, currentState, controlsAccepted, win32ExitCode, serviceSpecificExitCode, checkPoint, waitHint);
-        returnValue = packetIn.readInt();
     }
 
     public IServiceStatusInfo getServiceStatusInfo() {
         return serviceStatusInfo;
-    }
-
-    public int getReturnValue() {
-        return returnValue;
     }
 }

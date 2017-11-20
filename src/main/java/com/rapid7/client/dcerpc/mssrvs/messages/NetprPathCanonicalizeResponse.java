@@ -38,12 +38,10 @@ import com.rapid7.client.dcerpc.mssrvs.NetprPathType;
 public class NetprPathCanonicalizeResponse extends RequestResponse {
     private String canonicalizedPath;
     private int pathType;
-    private int returnValue;
 
-    public void unmarshal(final PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(final PacketInput packetIn) throws IOException {
         canonicalizedPath = readChars(packetIn);
         pathType = packetIn.readInt();
-        returnValue = packetIn.readInt();
     }
 
     public String getCanonicalizedPath() {
@@ -52,10 +50,6 @@ public class NetprPathCanonicalizeResponse extends RequestResponse {
 
     public NetprPathType getPathType() {
         return NetprPathType.getid(pathType);
-    }
-
-    public SystemErrorCode getReturnValue() {
-        return SystemErrorCode.getErrorCode(returnValue);
     }
 
     private String readChars(final PacketInput packetIn) throws IOException {

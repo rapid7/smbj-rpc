@@ -98,7 +98,6 @@ public class NetrShareEnumResponse extends RequestResponse {
     private List<NetShareInfo0> shares;
     private int shareCount;
     private Integer resumeHandle;
-    private int returnValue;
 
     public int getLevel() {
         return level;
@@ -116,12 +115,8 @@ public class NetrShareEnumResponse extends RequestResponse {
         return resumeHandle;
     }
 
-    public int getReturnValue() {
-        return returnValue;
-    }
-
     @Override
-    public void unmarshal(final PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(final PacketInput packetIn) throws IOException {
         shares = new LinkedList<>();
         level = packetIn.readInt();
         packetIn.readInt();
@@ -193,6 +188,5 @@ public class NetrShareEnumResponse extends RequestResponse {
 
         shareCount = packetIn.readInt();
         resumeHandle = packetIn.readIntRef();
-        returnValue = packetIn.readInt();
     }
 }

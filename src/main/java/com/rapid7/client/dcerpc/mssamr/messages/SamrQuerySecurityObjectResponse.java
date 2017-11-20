@@ -36,7 +36,7 @@ public class SamrQuerySecurityObjectResponse extends RequestResponse {
     }
 
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
         if (packetIn.readReferentID() != 0) {
             this.securityDescriptor = new SAMPRSRSecurityDescriptor();
             packetIn.readUnmarshallable(this.securityDescriptor);

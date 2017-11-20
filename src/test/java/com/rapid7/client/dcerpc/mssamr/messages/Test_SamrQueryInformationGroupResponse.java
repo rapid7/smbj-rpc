@@ -35,6 +35,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
@@ -58,7 +59,7 @@ public class Test_SamrQueryInformationGroupResponse {
     public Object[][] data_unmarshal() {
         return new Object[][] {
                 // Reference: 1, GROUP_INFORMATION_CLASS: 1
-                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "01000000 0100"}
+                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "01000000 0100 01000000"}
         };
     }
 
@@ -68,13 +69,15 @@ public class Test_SamrQueryInformationGroupResponse {
         PacketInput in = spy(new PacketInput(bin));
         doReturn(null).when(in).readUnmarshallable(any(Unmarshallable.class));
         response.unmarshal(in);
+        assertEquals(bin.available(), 0);
         assertNotNull(response.getGroupInformation());
+        assertEquals(response.getReturnValue(), 1);
     }
 
     @DataProvider
     public Object[][] data_unmarshall_Null() {
         return new Object[][] {
-                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "00000000 0100"}
+                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "00000000 01000000"}
         };
     }
 
@@ -83,14 +86,16 @@ public class Test_SamrQueryInformationGroupResponse {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);
+        assertEquals(bin.available(), 0);
         assertNull(response.getGroupInformation());
+        assertEquals(response.getReturnValue(), 1);
     }
 
     @DataProvider
     public Object[][] data_unmarshal_InvalidTag() {
         return new Object[][] {
                 // Reference: 1, POLICY_CLASS_INFORMATION: 3
-                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "01000000 FFFF"},
+                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "01000000 FFFF 00000001"},
         };
     }
 

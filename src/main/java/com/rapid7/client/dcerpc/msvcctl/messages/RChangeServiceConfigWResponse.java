@@ -24,20 +24,14 @@ import com.rapid7.client.dcerpc.messages.RequestResponse;
 
 public class RChangeServiceConfigWResponse extends RequestResponse {
     private int tagId;
-    private int returnValue;
 
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
         int tagIdRefId = packetIn.readReferentID();
         if (tagIdRefId != 0) tagId = packetIn.readInt();
-        returnValue = packetIn.readInt();
     }
 
     public int getTagId() {
         return tagId;
-    }
-
-    public int getReturnValue() {
-        return returnValue;
     }
 }

@@ -62,7 +62,6 @@ public class BaseRegQueryInfoKeyResponse extends RequestResponse {
     private int maxValueLen;
     private int securityDescriptor;
     private long lastWriteTime;
-    private int returnValue;
 
     /**
      * @return The count of the subkeys of the specified key.
@@ -120,40 +119,8 @@ public class BaseRegQueryInfoKeyResponse extends RequestResponse {
         return lastWriteTime;
     }
 
-    /**
-     * @return The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code, as
-     * specified in {@link com.rapid7.client.dcerpc.mserref.SystemErrorCode} in [MS-ERREF]. The most common
-     * error codes are listed in the following table.
-     * <table border="1" summary="">
-     * <tr>
-     * <td>Return value/code</td>
-     * <td>Description</td>
-     * </tr>
-     * <tr>
-     * <td>ERROR_ACCESS_DENIED (0x00000005)</td>
-     * <td>The caller does not have KEY_QUERY_VALUE access rights.</td>
-     * </tr>
-     * <tr>
-     * <td>ERROR_INVALID_PARAMETER (0x00000057)</td>
-     * <td>A parameter is incorrect.</td>
-     * </tr>
-     * <tr>
-     * <td>ERROR_WRITE_PROTECT (0x00000013)</td>
-     * <td>A read or write operation was attempted to a volume after it was dismounted. The server can no longer
-     * service registry requests because server shutdown has been initiated.</td>
-     * </tr>
-     * <tr>
-     * <td>ERROR_MORE_DATA (0x000000EA)</td>
-     * <td>The size of the buffer is not large enough to hold the requested data.</td>
-     * </tr>
-     * </table>
-     */
-    public int getReturnValue() {
-        return returnValue;
-    }
-
     @Override
-    public void unmarshal(final PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(final PacketInput packetIn) throws IOException {
         // Remote Registry Service, QueryInfoKey
         //      Operation: QueryInfoKey (16)
         //      [Request in frame: 11405]
@@ -189,6 +156,5 @@ public class BaseRegQueryInfoKeyResponse extends RequestResponse {
         maxValueLen = packetIn.readInt();
         securityDescriptor = packetIn.readInt();
         lastWriteTime = packetIn.readLong();
-        returnValue = packetIn.readInt();
     }
 }

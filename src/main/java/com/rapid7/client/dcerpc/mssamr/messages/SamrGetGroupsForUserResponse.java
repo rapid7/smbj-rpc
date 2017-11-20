@@ -30,7 +30,6 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGetGroupsBuffer;
  */
 public class SamrGetGroupsForUserResponse extends RequestResponse {
     private SAMPRGetGroupsBuffer buffer;
-    private int returnValue;
 
     public List<GroupMembership> getGroupMembership() {
         if (buffer == null)
@@ -38,18 +37,13 @@ public class SamrGetGroupsForUserResponse extends RequestResponse {
         return buffer.getEntries();
     }
 
-    public int getReturnValue() {
-        return returnValue;
-    }
-
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
         buffer = new SAMPRGetGroupsBuffer();
         int ref = packetIn.readReferentID();
         if (ref != 0)
             packetIn.readUnmarshallable(buffer);
         else
             buffer = null;
-        returnValue = packetIn.readInt();
     }
 }

@@ -26,6 +26,7 @@ import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.*;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
@@ -108,7 +109,7 @@ public class RegistryService {
             final int returnCode = response.getReturnValue();
 
             if (ERROR_SUCCESS.is(returnCode)) {
-                keyNames.add(new RegistryKey(response.getName(), response.getLastWriteTime()));
+                keyNames.add(new RegistryKey(response.getName(), new FileTime(response.getLastWriteTime())));
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
                 return Collections.unmodifiableList(new ArrayList<RegistryKey>(keyNames));
             } else {

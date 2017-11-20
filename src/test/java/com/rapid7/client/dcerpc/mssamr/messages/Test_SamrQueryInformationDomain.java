@@ -24,7 +24,6 @@ import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
@@ -33,7 +32,7 @@ public class Test_SamrQueryInformationDomain {
 
     @Test
     public void SamrQueryPasswordInformationDomain() throws IOException {
-        String hexString = "000002000100000000000000000000000000000040deffff000000000000000000000000";
+        String hexString = "000002000100000000000000000000000000000040deffff000000000000000001000000";
         SamrQueryInformationDomainResponse<SAMPRDomainPasswordInfo> response =
                 new SamrQueryInformationDomainResponse.DomainPasswordInformation();
         response.unmarshal(getPacketInput(hexString));
@@ -48,7 +47,7 @@ public class Test_SamrQueryInformationDomain {
 
     @Test
     public void SamrQueryLogOffInformationDomain() throws IOException {
-        String hexString = "0000020003000000000000000000008000000000";
+        String hexString = "0000020003000000000000000000008001000000";
         SamrQueryInformationDomainResponse<SAMPRDomainLogOffInfo>
                 response = new SamrQueryInformationDomainResponse.DomainLogOffInformation();
         response.unmarshal(getPacketInput(hexString));
@@ -56,11 +55,12 @@ public class Test_SamrQueryInformationDomain {
 
         // -9223372036854775808(never expire)
         assertEquals(-9223372036854775808L, logOffInfo.getForceLogoff());
+        assertEquals(response.getReturnValue(), 1);
     }
 
     @Test
     public void SamrQueryLockoutInformationDomain() throws IOException {
-        String hexString = "000002000c00000000cc1dcffbffffff00cc1dcffbffffff0000";
+        String hexString = "000002000c00000000cc1dcffbffffff00cc1dcffbffffff000001000000";
         SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> response =
                 new SamrQueryInformationDomainResponse.DomainLockoutInformation();
         response.unmarshal(getPacketInput(hexString));
@@ -70,6 +70,7 @@ public class Test_SamrQueryInformationDomain {
         assertEquals(-18000000000L, lockout.getLockoutDuration());
         assertEquals(-18000000000L, lockout.getLockoutObservationWindow());
         assertEquals(0, lockout.getLockoutThreshold());
+        assertEquals(response.getReturnValue(), 1);
     }
 
     private PacketInput getPacketInput(final String hexString) {

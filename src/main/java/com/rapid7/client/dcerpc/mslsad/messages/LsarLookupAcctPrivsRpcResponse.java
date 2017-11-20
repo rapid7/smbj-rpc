@@ -24,18 +24,13 @@ import com.rapid7.client.dcerpc.messages.RequestResponse;
 
 public class LsarLookupAcctPrivsRpcResponse extends RequestResponse {
     private String[] privNames;
-    private int returnValue;
 
     public String[] getPrivNames() {
         return privNames;
     }
 
-    public int getReturnValue() {
-        return returnValue;
-    }
-
     @Override
-    public void unmarshal(final PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(final PacketInput packetIn) throws IOException {
       /*
        * Rpc Info
        *
@@ -73,8 +68,6 @@ public class LsarLookupAcctPrivsRpcResponse extends RequestResponse {
                 privNames[i] = packetIn.readString(true);
             }
         }
-
-        returnValue = packetIn.readInt();
     }
 }
 
