@@ -6,15 +6,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp;
 
@@ -22,15 +22,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import com.hierynomus.msdtyp.AccessMask;
-import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenClassesRoot;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenCurrentConfig;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenCurrentUser;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenLocalMachine;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenPerformanceData;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenPerformanceNlsText;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenPerformanceText;
-import com.rapid7.client.dcerpc.msrrp.messages.OpenUsers;
+import com.rapid7.client.dcerpc.msrrp.messages.*;
 
 /**
  * An application must open a key before it can add data to the registry. To open a key, an application must supply a
@@ -116,7 +108,7 @@ public enum RegistryHive {
     private final short opNum;
     private static final Map<String, RegistryHive> registryHiveByName = new HashMap<>();
 
-    private RegistryHive(final String fullName, final String shortName, final String opName, final short opNum) {
+    RegistryHive(final String fullName, final String shortName, final String opName, final short opNum) {
         this.fullName = fullName;
         this.shortName = shortName;
         this.opName = opName;

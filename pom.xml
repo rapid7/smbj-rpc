@@ -3,7 +3,7 @@
    <groupId>com.rapid7.client</groupId>
    <artifactId>dcerpc</artifactId>
    <packaging>jar</packaging>
-   <version>0.3.4-SNAPSHOT</version>
+   <version>0.5.3-SNAPSHOT</version>
    <name>dcerpc</name>
    <url>https://www.rapid7.com</url>
    <description>DCE-RPC implementation capable of using SMBv2 via SMBJ to invoke remote procedure calls (RPC) over the IPC$ named pipe.</description>
@@ -49,9 +49,11 @@
       <thirdparty.hamcrest.version>1.3</thirdparty.hamcrest.version>
       <thirdparty.junit.version>4.12</thirdparty.junit.version>
       <thirdparty.mockito.version>1.10.19</thirdparty.mockito.version>
-      <thirdparty.smbj.version>0.3.0</thirdparty.smbj.version>
+      <thirdparty.smbj.version>0.5.0</thirdparty.smbj.version>
+      <thirdparty.testng.version>6.11</thirdparty.testng.version>
       <maven.compiler.target>1.7</maven.compiler.target>
       <maven.compiler.source>1.7</maven.compiler.source>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
    </properties>
 
    <dependencies>
@@ -97,6 +99,12 @@
          <version>${thirdparty.mockito.version}</version>
          <scope>test</scope>
       </dependency>
+      <dependency>
+         <groupId>org.testng</groupId>
+         <artifactId>testng</artifactId>
+         <version>${thirdparty.testng.version}</version>
+         <scope>test</scope>
+      </dependency>
    </dependencies>
 
    <build>
@@ -104,7 +112,16 @@
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.3</version>
+            <version>3.7.0</version>
+            <configuration>
+               <source>${maven.compiler.source}</source>
+               <target>${maven.compiler.target}</target>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.20.1</version>
          </plugin>
          <plugin>
             <groupId>org.sonatype.plugins</groupId>
@@ -120,7 +137,7 @@
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
-            <version>2.2.1</version>
+            <version>3.0.1</version>
             <executions>
                <execution>
                   <id>attach-sources</id>

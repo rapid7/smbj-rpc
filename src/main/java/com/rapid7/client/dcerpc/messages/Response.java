@@ -6,21 +6,23 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.messages;
 
-import com.rapid7.client.dcerpc.RPCResponse;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.Header;
+import com.rapid7.client.dcerpc.PDUType;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 
 /**
  * The IDL declaration of the response PDU is as follows:<br>
@@ -64,17 +66,39 @@ import java.nio.ByteBuffer;
  *
  * @see <a href=http://pubs.opengroup.org/onlinepubs/009629399/chap12.htm>CDE 1.1: Remote Procedure Call</a>
  */
-public class Response extends RPCResponse {
-    public Response(final ByteBuffer packet)
-        throws TransportException {
-        super(packet);
+public final class Response extends Header {
+    private byte[] stub;
 
-        // DCE RPC Header (16 byte(s)) + Response Header (8 byte(s))
-        if (24 > getFragmentLength()) {
-            throw new TransportException(
-                String.format("Response packet length invalid: %d > %d", 24, getFragmentLength()));
-        }
+    public Response() {
+        setPDUType(PDUType.RESPONSE);
+    }
 
-        skipBytes(8);
+    public byte[] getStub() {
+        return stub;
+    }
+
+    public void setStub(final byte[] stub) {
+        this.stub = stub;
+    }
+
+    @Override
+    public void marshal(final PacketOutput packetOut) throws IOException {
+        setFragLength((short) (24 + stub.length));
+        super.marshal(packetOut);
+        packetOut.writeInt(0);
+        packetOut.writeShort(0);
+        packetOut.writeByte(0);
+        packetOut.align();
+        packetOut.write(getStub());
+        packetOut.write(new byte[getAuthLength()]);
+    }
+
+    @Override
+    public void unmarshal(final PacketInput packetIn) throws IOException {
+        super.unmarshal(packetIn);
+        setStub(new byte[getFragLength() - getAuthLength() - 24]);
+        packetIn.fullySkipBytes(8);
+        packetIn.readFully(getStub());
+        packetIn.fullySkipBytes(getAuthLength());
     }
 }

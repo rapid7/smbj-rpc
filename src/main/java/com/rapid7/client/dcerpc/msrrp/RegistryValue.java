@@ -6,18 +6,20 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp;
 
+import javax.activation.UnsupportedDataTypeException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -26,7 +28,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import javax.activation.UnsupportedDataTypeException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -35,7 +36,7 @@ public class RegistryValue {
     private final RegistryValueType type;
     private final byte[] data;
 
-    public RegistryValue(final String name, final RegistryValueType type, final byte[] data) {
+    public RegistryValue(final String name, final RegistryValueType type, final byte[] data) throws IOException {
         if (name == null) {
             throw new IllegalArgumentException("Name is invalid: " + name);
         }
@@ -52,38 +53,35 @@ public class RegistryValue {
         this.type = type;
 
         switch (type) {
-        case REG_DWORD:
-        case REG_DWORD_BIG_ENDIAN:
-            if (data.length != 4) {
-                throw new IllegalArgumentException(String.format("Data type %s is invalid with length %d: 0x%s,", type,
-                    data.length, Hex.toHexString(data).toUpperCase()));
-            }
-            break;
-        case REG_QWORD:
-            if (data.length != 8) {
-                throw new IllegalArgumentException(String.format("Data type %s is invalid with length %d: 0x%s,", type,
-                    data.length, Hex.toHexString(data).toUpperCase()));
-            }
-            break;
-        case REG_EXPAND_SZ:
-        case REG_LINK:
-        case REG_SZ:
-        case REG_MULTI_SZ:
-            if ((data.length & 1) != 0) {
-                throw new IllegalArgumentException(String.format("Data type %s is invalid with length %d: 0x%s,", type,
-                    data.length, Hex.toHexString(data).toUpperCase()));
-            }
-        default:
+            case REG_DWORD:
+            case REG_DWORD_BIG_ENDIAN:
+                if (data.length != 4) {
+                    throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length, Hex.toHexString(data).toUpperCase()));
+                }
+                break;
+            case REG_QWORD:
+                if (data.length != 8) {
+                    throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length, Hex.toHexString(data).toUpperCase()));
+                }
+                break;
+            case REG_EXPAND_SZ:
+            case REG_LINK:
+            case REG_SZ:
+            case REG_MULTI_SZ:
+                if ((data.length & 1) != 0) {
+                    throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length, Hex.toHexString(data).toUpperCase()));
+                }
+            default:
         }
 
         switch (type) {
-        case REG_DWORD:
-        case REG_QWORD:
-            this.data = Arrays.copyOf(data, data.length);
-            ArrayUtils.reverse(this.data);
-            break;
-        default:
-            this.data = Arrays.copyOf(data, data.length);
+            case REG_DWORD:
+            case REG_QWORD:
+                this.data = Arrays.copyOf(data, data.length);
+                ArrayUtils.reverse(this.data);
+                break;
+            default:
+                this.data = Arrays.copyOf(data, data.length);
         }
     }
 
@@ -101,22 +99,22 @@ public class RegistryValue {
 
     public int getDataAsInt() {
         switch (type) {
-        case REG_DWORD:
-        case REG_DWORD_BIG_ENDIAN:
-            return new BigInteger(1, data).intValue();
-        default:
-            throw new IllegalStateException();
+            case REG_DWORD:
+            case REG_DWORD_BIG_ENDIAN:
+                return new BigInteger(1, data).intValue();
+            default:
+                throw new IllegalStateException();
         }
     }
 
     public long getDataAsLong() {
         switch (type) {
-        case REG_DWORD:
-        case REG_DWORD_BIG_ENDIAN:
-        case REG_QWORD:
-            return new BigInteger(1, data).longValue();
-        default:
-            throw new IllegalStateException();
+            case REG_DWORD:
+            case REG_DWORD_BIG_ENDIAN:
+            case REG_QWORD:
+                return new BigInteger(1, data).longValue();
+            default:
+                throw new IllegalStateException();
         }
     }
 
@@ -135,88 +133,86 @@ public class RegistryValue {
         return Hex.toHexString(data).toUpperCase();
     }
 
-    public String[] getDataAsMultiStr()
-        throws UnsupportedEncodingException {
+    public String[] getDataAsMultiStr() throws UnsupportedEncodingException {
         switch (type) {
-        case REG_MULTI_SZ:
-            final StringBuilder element = new StringBuilder();
-            final List<String> elements = new LinkedList<>();
-            final ByteBuffer dataBuffer = ByteBuffer.wrap(data);
-            dataBuffer.order(ByteOrder.LITTLE_ENDIAN);
-            while (dataBuffer.hasRemaining()) {
-                final short shortValue = dataBuffer.getShort();
-                if (shortValue == 0) {
+            case REG_MULTI_SZ:
+                final StringBuilder element = new StringBuilder();
+                final List<String> elements = new LinkedList<>();
+                final ByteBuffer dataBuffer = ByteBuffer.wrap(data);
+                dataBuffer.order(ByteOrder.LITTLE_ENDIAN);
+                while (dataBuffer.hasRemaining()) {
+                    final short shortValue = dataBuffer.getShort();
+                    if (shortValue == 0) {
+                        elements.add(element.toString());
+                        element.setLength(0);
+                    } else {
+                        element.append((char) shortValue);
+                    }
+                }
+                if (0 < element.length()) {
                     elements.add(element.toString());
                     element.setLength(0);
-                } else {
-                    element.append((char) shortValue);
                 }
-            }
-            if (0 < element.length()) {
-                elements.add(element.toString());
-                element.setLength(0);
-            }
-            if (0 < elements.size()) {
-                final int nullIndex = elements.size() - 1;
-                if (elements.get(nullIndex).isEmpty()) {
-                    elements.remove(nullIndex);
+                if (0 < elements.size()) {
+                    final int nullIndex = elements.size() - 1;
+                    if (elements.get(nullIndex).isEmpty()) {
+                        elements.remove(nullIndex);
+                    }
                 }
-            }
-            return elements.toArray(new String[elements.size()]);
-        default:
-            throw new IllegalStateException();
+                return elements.toArray(new String[elements.size()]);
+            default:
+                throw new IllegalStateException();
         }
     }
 
-    public String getDataAsStr()
-        throws UnsupportedEncodingException, UnsupportedDataTypeException {
+    public String getDataAsStr() throws UnsupportedEncodingException, UnsupportedDataTypeException {
         final StringBuilder repr = new StringBuilder();
         switch (type) {
-        case REG_BINARY:
-        case REG_NONE:
-            repr.append(getDataAsBinaryStr());
-            break;
-        case REG_DWORD:
-        case REG_DWORD_BIG_ENDIAN:
-            repr.append(getDataAsInt());
-            break;
-        case REG_QWORD:
-            repr.append(getDataAsLong());
-            break;
-        case REG_EXPAND_SZ:
-        case REG_LINK:
-        case REG_SZ:
-            final ByteBuffer dataBuffer = ByteBuffer.wrap(data);
-            dataBuffer.order(ByteOrder.LITTLE_ENDIAN);
-            while (dataBuffer.hasRemaining()) {
-                final short shortValue = dataBuffer.getShort();
-                if (shortValue == 0) {
-                    break;
+            case REG_BINARY:
+            case REG_NONE:
+                repr.append(getDataAsBinaryStr());
+                break;
+            case REG_DWORD:
+            case REG_DWORD_BIG_ENDIAN:
+                repr.append(getDataAsInt());
+                break;
+            case REG_QWORD:
+                repr.append(getDataAsLong());
+                break;
+            case REG_EXPAND_SZ:
+            case REG_LINK:
+            case REG_SZ:
+                final ByteBuffer dataBuffer = ByteBuffer.wrap(data);
+                dataBuffer.order(ByteOrder.LITTLE_ENDIAN);
+                while (dataBuffer.hasRemaining()) {
+                    final short shortValue = dataBuffer.getShort();
+                    if (shortValue == 0) {
+                        break;
+                    }
+                    repr.append((char) shortValue);
                 }
-                repr.append((char) shortValue);
-            }
-            break;
-        case REG_MULTI_SZ:
-            final StringBuilder multiRepr = new StringBuilder();
-            for (final String element : getDataAsMultiStr()) {
+                break;
+            case REG_MULTI_SZ:
+                final StringBuilder multiRepr = new StringBuilder();
+                for (final String element : getDataAsMultiStr()) {
+                    if (0 < multiRepr.length()) {
+                        multiRepr.append(", ");
+                    }
+                    multiRepr.append("\"");
+                    multiRepr.append(element.replace("\"", "\\\""));
+                    multiRepr.append("\"");
+                }
                 if (0 < multiRepr.length()) {
-                    multiRepr.append(", ");
+                    repr.append("{");
+                    repr.append(multiRepr.toString());
+                    repr.append("}");
                 }
-                multiRepr.append("\"");
-                multiRepr.append(element.replace("\"", "\\\""));
-                multiRepr.append("\"");
-            }
-            if (0 < multiRepr.length()) {
-                repr.append("{");
-                repr.append(multiRepr.toString());
-                repr.append("}");
-            }
-            break;
-        case REG_FULL_RESOURCE_DESCRIPTOR:
-        case REG_RESOURCE_LIST:
-        case REG_RESOURCE_REQUIREMENTS_LIST:
-        default:
-            throw new UnsupportedDataTypeException();
+                break;
+            case REG_FULL_RESOURCE_DESCRIPTOR:
+            case REG_RESOURCE_LIST:
+            case REG_RESOURCE_REQUIREMENTS_LIST:
+            default:
+                throw new UnsupportedDataTypeException();
         }
         return repr.toString();
     }
@@ -256,8 +252,6 @@ public class RegistryValue {
 
     @Override
     public boolean equals(final Object anObject) {
-        return anObject instanceof RegistryValue && Objects.equals(name, ((RegistryValue) anObject).name)
-            && Objects.equals(type, ((RegistryValue) anObject).type)
-            && Arrays.equals(data, ((RegistryValue) anObject).data);
+        return anObject instanceof RegistryValue && Objects.equals(name, ((RegistryValue) anObject).name) && Objects.equals(type, ((RegistryValue) anObject).type) && Arrays.equals(data, ((RegistryValue) anObject).data);
     }
 }

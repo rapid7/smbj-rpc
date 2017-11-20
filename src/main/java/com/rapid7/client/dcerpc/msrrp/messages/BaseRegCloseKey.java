@@ -6,22 +6,23 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * * Neither the name of the copyright holder nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import com.rapid7.client.dcerpc.messages.Request;
-import com.rapid7.client.dcerpc.msrrp.objects.ContextHandle;
-import com.hierynomus.protocol.transport.TransportException;
-import java.nio.ByteBuffer;
+import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <b>3.1.5.6 BaseRegCloseKey (Opnum 5)</b><br>
@@ -113,19 +114,6 @@ import java.nio.ByteBuffer;
  * <b>Example:</b>
  *
  * <pre>
- * Distributed Computing Environment / Remote Procedure Call (DCE/RPC) Request, Fragment: Single, FragLen: 44, Call: 39, Ctx: 0, [Resp: #11429]
- *     Version: 5
- *     Version (minor): 0
- *     Packet type: Request (0)
- *     Packet Flags: 0x03
- *     Data Representation: 10000000
- *     Frag Length: 44
- *     Auth Length: 0
- *     Call ID: 39
- *     Alloc hint: 44
- *     Context ID: 0
- *     Opnum: 5
- *     [Response in frame: 11429]
  * Remote Registry Service, CloseKey
  *     Operation: CloseKey (5)
  *     [Response in frame: 11429]
@@ -138,17 +126,35 @@ import java.nio.ByteBuffer;
  *
  * @see <a href="https://msdn.microsoft.com/en-us/cc244928">3.1.5.6 BaseRegCloseKey (Opnum 5)</a>
  */
-public class BaseRegCloseKey extends Request<HandleResponse> {
+public class BaseRegCloseKey extends RequestCall<HandleResponse> {
+    /**
+     * A handle to a key that MUST have been opened previously by using one of the open methods: OpenClassesRoot,
+     * OpenCurrentUser, OpenLocalMachine, OpenPerformanceData, OpenUsers, BaseRegCreateKey, BaseRegOpenKey,
+     * OpenCurrentConfig, OpenPerformanceText, OpenPerformanceNlsText.
+     */
+    private final ContextHandle hKey;
+
     /**
      * The BaseRegCloseKey method is called by the client. In response, the server destroys (closes) the handle to the
      * specified registry key.
      *
      * @param hKey A handle to a key that MUST have been opened previously by using one of the open methods:
-     *        OpenClassesRoot, OpenCurrentUser, OpenLocalMachine, OpenPerformanceData, OpenUsers, BaseRegCreateKey,
-     *        BaseRegOpenKey, OpenCurrentConfig, OpenPerformanceText, OpenPerformanceNlsText.
+     *             OpenClassesRoot, OpenCurrentUser, OpenLocalMachine, OpenPerformanceData, OpenUsers, BaseRegCreateKey,
+     *             BaseRegOpenKey, OpenCurrentConfig, OpenPerformanceText, OpenPerformanceNlsText.
      */
     public BaseRegCloseKey(final ContextHandle hKey) {
         super((short) 5);
+
+        this.hKey = hKey;
+    }
+
+    @Override
+    public HandleResponse getResponseObject() {
+        return new HandleResponse();
+    }
+
+    @Override
+    public void marshal(final PacketOutput packetOut) throws IOException {
         // Remote Registry Service, CloseKey
         //      Operation: CloseKey (5)
         //      [Response in frame: 11429]
@@ -157,12 +163,6 @@ public class BaseRegCloseKey extends Request<HandleResponse> {
         //              Handle: 0000000032daf234b77c86409d29efe60d326683
         //              [Frame handle opened: 11176]
         //              [Frame handle closed: 11424]
-        putBytes(hKey.getBytes());
-    }
-
-    @Override
-    protected HandleResponse parsePDUResponse(final ByteBuffer responseBuffer)
-        throws TransportException {
-        return new HandleResponse(responseBuffer);
+        packetOut.write(hKey.getBytes());
     }
 }
