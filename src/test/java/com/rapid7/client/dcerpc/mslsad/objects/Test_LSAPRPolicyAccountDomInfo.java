@@ -179,6 +179,6 @@ public class Test_LSAPRPolicyAccountDomInfo {
         sid.setIdentifierAuthority(new byte[]{1, 2, 3, 4, 5, 6});
         sid.setSubAuthority(new long[]{1, 2, 3});
         obj.setDomainSid(sid);
-        assertEquals(obj.toString(), "LSAPR_POLICY_ACCOUNT_DOM_INFO{DomainName:RPC_UNICODE_STRING{value:\"test 123\", nullTerminated:false}, DomainSid:S-1-0x01 02 03 04 05 06-1-2-3}");
+        assertEquals(obj.toString(), "LSAPR_POLICY_ACCOUNT_DOM_INFO{DomainName:RPC_UNICODE_STRING{value:\"test 123\", nullTerminated:false}, DomainSid:S-1-0x010203040506-1-2-3}");
     }
 }
