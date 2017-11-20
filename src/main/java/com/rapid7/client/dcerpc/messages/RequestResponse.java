@@ -28,7 +28,7 @@ import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 
 public abstract class RequestResponse extends HexifyImpl implements Packet, Hexify {
 
-    private int returnCode;
+    private int returnValue;
 
     /**
      * @return The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise, it returns a nonzero error code, as
@@ -68,7 +68,7 @@ public abstract class RequestResponse extends HexifyImpl implements Packet, Hexi
      * </table>
      */
     public int getReturnValue() {
-        return returnCode;
+        return returnValue;
     }
 
     public SystemErrorCode getReturnCode() {
@@ -82,7 +82,7 @@ public abstract class RequestResponse extends HexifyImpl implements Packet, Hexi
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         unmarshalResponse(packetIn);
-        this.returnCode = packetIn.readInt();
+        this.returnValue = packetIn.readInt();
     }
 
     public abstract void unmarshalResponse(PacketInput packetIn) throws IOException;

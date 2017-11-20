@@ -51,12 +51,11 @@ import java.io.IOException;
  */
 
 public class LsarLookupNamesResponse extends RequestResponse {
-    private int returnValue;
     private LSAPRReferencedDomainList lsaprReferencedDomainList;
     private LSAPRTranslatedSIDs lsaprTranslatedSIDs;
 
     @Override
-    public void unmarshal(final PacketInput packetIn)
+    public void unmarshalResponse(final PacketInput packetIn)
             throws IOException {
 
         //Top level parameters
@@ -73,8 +72,6 @@ public class LsarLookupNamesResponse extends RequestResponse {
 
         //3. Mapped Count
         packetIn.readInt();
-
-        returnValue = packetIn.readInt();
     }
 
     public LSAPRReferencedDomainList getLsaprReferencedDomainList() {
@@ -91,9 +88,5 @@ public class LsarLookupNamesResponse extends RequestResponse {
 
     public void setLsaprTranslatedSIDs(LSAPRTranslatedSIDs lsaprTranslatedSIDs) {
         this.lsaprTranslatedSIDs = lsaprTranslatedSIDs;
-    }
-
-    public int getReturnValue() {
-        return returnValue;
     }
 }
