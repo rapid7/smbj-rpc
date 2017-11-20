@@ -34,10 +34,10 @@ public class Test_SamrQueryInformationDomain {
     @Test
     public void SamrQueryPasswordInformationDomain() throws IOException {
         String hexString = "000002000100000000000000000000000000000040deffff000000000000000000000000";
-        SAMPRDomainPasswordInfo passInfo = new SAMPRDomainPasswordInfo();
-        SamrQueryInformationDomainResponse<SAMPRDomainPasswordInfo> response = new SamrQueryInformationDomainResponse<>(
-            passInfo, DomainInformationClass.DOMAIN_PASSWORD_INFORMATION);
+        SamrQueryInformationDomainResponse<SAMPRDomainPasswordInfo> response =
+                new SamrQueryInformationDomainResponse.DomainPasswordInformation();
         response.unmarshal(getPacketInput(hexString));
+        SAMPRDomainPasswordInfo passInfo = response.getDomainInformation();
 
         assertEquals(-37108517437440L, passInfo.getMaximumPasswordAge());
         assertEquals(0, passInfo.getMinimumPasswordAge());
@@ -49,10 +49,10 @@ public class Test_SamrQueryInformationDomain {
     @Test
     public void SamrQueryLogOffInformationDomain() throws IOException {
         String hexString = "0000020003000000000000000000008000000000";
-        SAMPRDomainLogOffInfo logOffInfo = new SAMPRDomainLogOffInfo();
-        SamrQueryInformationDomainResponse<SAMPRDomainLogOffInfo> response = new SamrQueryInformationDomainResponse<>(
-            logOffInfo, DomainInformationClass.DOMAIN_LOGOFF_INFORMATION);
+        SamrQueryInformationDomainResponse<SAMPRDomainLogOffInfo>
+                response = new SamrQueryInformationDomainResponse.DomainLogOffInformation();
         response.unmarshal(getPacketInput(hexString));
+        SAMPRDomainLogOffInfo logOffInfo = response.getDomainInformation();
 
         // -9223372036854775808(never expire)
         assertEquals(-9223372036854775808L, logOffInfo.getForceLogoff());
@@ -61,10 +61,10 @@ public class Test_SamrQueryInformationDomain {
     @Test
     public void SamrQueryLockoutInformationDomain() throws IOException {
         String hexString = "000002000c00000000cc1dcffbffffff00cc1dcffbffffff0000";
-        SAMPRDomainLockoutInfo lockout = new SAMPRDomainLockoutInfo();
-        SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> response = new SamrQueryInformationDomainResponse<>(
-            lockout, DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION);
+        SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> response =
+                new SamrQueryInformationDomainResponse.DomainLockoutInformation();
         response.unmarshal(getPacketInput(hexString));
+        SAMPRDomainLockoutInfo lockout = response.getDomainInformation();
 
         // 1800 seconds
         assertEquals(-18000000000L, lockout.getLockoutDuration());
