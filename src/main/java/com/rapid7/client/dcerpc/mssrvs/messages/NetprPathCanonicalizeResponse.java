@@ -26,11 +26,11 @@ import com.rapid7.client.dcerpc.mssrvs.NetprPathType;
 
 /**
  * Server Service, NetPathCanonicalize
- * Operation: NetPathCanonicalize (31)
- * Count: 200
- * Path: C:\this\works
- * Path Type: ITYPE_PATH_ABSD (0x00002006)
- * Windows Error: WERR_OK (0x00000000)
+ *   Operation: NetPathCanonicalize (31)
+ *   Count: 200
+ *   Path: C:\this\works
+ *   Path Type: ITYPE_PATH_ABSD (0x00002006)
+ *   Windows Error: WERR_OK (0x00000000)
  *
  * Note: Wireshark unable to read packet correctly
  */

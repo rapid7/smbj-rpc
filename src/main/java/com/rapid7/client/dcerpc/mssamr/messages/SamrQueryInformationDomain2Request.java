@@ -24,20 +24,20 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 
 /**
- * <a href="https://msdn.microsoft.com/en-us/library/cc245779.aspx">SamrQueryInformationDomain</a>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc245773.aspx">SamrQueryInformationDomain2</a>
  *
  * <blockquote>
  * <pre>
- * long SamrQueryInformationDomain(
- *  [in] SAMPR_HANDLE DomainHandle,
- *  [in] DOMAIN_INFORMATION_CLASS DomainInformationClass,
- *  [out, switch_is(DomainInformationClass)]
- *    PSAMPR_DOMAIN_INFO_BUFFER* Buffer
- * );
+ * The SamrQueryInformationDomain2 method obtains attributes from a domain object.
+ *          long SamrQueryInformationDomain2(
+ *             [in] SAMPR_HANDLE DomainHandle,
+ *             [in] DOMAIN_INFORMATION_CLASS DomainInformationClass,
+ *             [out, switch_is(DomainInformationClass)]
+ *             PSAMPR_DOMAIN_INFO_BUFFER* Buffer
+ *          );
  * DomainHandle: An RPC context handle, as specified in section 2.2.3.2, representing a domain object.
  * DomainInformationClass: An enumeration indicating which attributes to return. See section 2.2.4.16 for a listing of possible values.
  * Buffer: The requested attributes on output. See section 2.2.4.17 for structure details.
@@ -53,20 +53,20 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
  * </pre>
  * </blockquote>
  */
-public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable>
+public abstract class SamrQueryInformationDomain2Request<T extends Unmarshallable>
         extends RequestCall<SamrQueryInformationDomainResponse<T>> {
 
-    public final static short OP_NUM = 8;
+    public final static short OP_NUM = 46;
 
     private final DomainHandle domainHandle;
 
-    public SamrQueryInformationDomainRequest(final DomainHandle domainHandle) {
+    public SamrQueryInformationDomain2Request(final DomainHandle domainHandle) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
     }
 
     public DomainHandle getDomainHandle() {
-        return domainHandle;
+        return this.domainHandle;
     }
 
     public abstract DomainInformationClass getDomainInformationClass();
@@ -77,35 +77,19 @@ public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable
         packetOut.writeShort(getDomainInformationClass().getInfoLevel());
     }
 
-    public static class DomainPasswordInformation extends SamrQueryInformationDomainRequest<SAMPRDomainPasswordInfo> {
-        public DomainPasswordInformation(final DomainHandle handle) {
+    public static class DomainLockoutInfo extends SamrQueryInformationDomain2Request<SAMPRDomainLockoutInfo> {
+        public DomainLockoutInfo(DomainHandle handle) {
             super(handle);
         }
 
         @Override
         public DomainInformationClass getDomainInformationClass() {
-            return DomainInformationClass.DOMAIN_PASSWORD_INFORMATION;
+            return DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION;
         }
 
         @Override
-        public SamrQueryInformationDomainResponse.DomainPasswordInformation getResponseObject() {
-            return new SamrQueryInformationDomainResponse.DomainPasswordInformation();
-        }
-    }
-
-    public static class DomainLogOffInformation extends SamrQueryInformationDomainRequest<SAMPRDomainLogOffInfo> {
-        public DomainLogOffInformation(final DomainHandle handle) {
-            super(handle);
-        }
-
-        @Override
-        public DomainInformationClass getDomainInformationClass() {
-            return DomainInformationClass.DOMAIN_LOGOFF_INFORMATION;
-        }
-
-        @Override
-        public SamrQueryInformationDomainResponse.DomainLogOffInformation getResponseObject() {
-            return new SamrQueryInformationDomainResponse.DomainLogOffInformation();
+        public SamrQueryInformationDomainResponse.DomainLockoutInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainLockoutInformation();
         }
     }
 }
