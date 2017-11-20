@@ -25,6 +25,7 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 
@@ -57,6 +58,19 @@ public class Test_SamrQueryInformationDomain {
         assertEquals(-9223372036854775808L, logOffInfo.getForceLogoff());
     }
 
+    @Test
+    public void SamrQueryLockoutInformationDomain() throws IOException {
+        String hexString = "000002000c00000000cc1dcffbffffff00cc1dcffbffffff0000";
+        SAMPRDomainLockoutInfo lockout = new SAMPRDomainLockoutInfo();
+        SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> response = new SamrQueryInformationDomainResponse<>(
+            lockout, DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION);
+        response.unmarshal(getPacketInput(hexString));
+
+        // 1800 seconds
+        assertEquals(-18000000000L, lockout.getLockoutDuration());
+        assertEquals(-18000000000L, lockout.getLockoutObservationWindow());
+        assertEquals(0, lockout.getLockoutThreshold());
+    }
 
     private PacketInput getPacketInput(final String hexString) {
         final byte[] inputStreamBytes = Hex.decode(hexString);

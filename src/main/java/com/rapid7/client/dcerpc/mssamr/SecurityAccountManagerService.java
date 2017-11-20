@@ -35,6 +35,7 @@ import com.hierynomus.msdtyp.SecurityInformation;
 import com.hierynomus.protocol.commons.buffer.Buffer;
 import com.hierynomus.smb.SMBBuffer;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
@@ -42,6 +43,7 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
@@ -57,6 +59,9 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryDisplayInformation2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryDisplayInformation2Response;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationAliasRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomain2Request;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQuerySecurityObjectRequest;
@@ -69,6 +74,9 @@ import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRAliasGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroup;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
@@ -177,6 +185,25 @@ public class SecurityAccountManagerService {
     public SAMPRAliasGeneralInformation getAliasGeneralInformation(final AliasHandle aliasHandle) throws IOException {
         SamrQueryInformationAliasRequest.AliasGeneralInformation request = new SamrQueryInformationAliasRequest.AliasGeneralInformation(aliasHandle);
         return transport.call(request).getAliasInformation();
+    }
+
+    public SAMPRDomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
+        SamrQueryInformationDomainRequest.DomainPasswordInformation request = new SamrQueryInformationDomainRequest.DomainPasswordInformation(
+            domainHandle);
+        return transport.call(request).getDomainInformation();
+    }
+
+    public SAMPRDomainLogOffInfo getDomainLogOffInfo(final DomainHandle domainHandle) throws IOException {
+        SamrQueryInformationDomainRequest.DomainLogOffInformation request = new SamrQueryInformationDomainRequest.DomainLogOffInformation(
+            domainHandle);
+        return transport.call(request).getDomainInformation();
+    }
+
+    public SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> getDomainLockoutInfo(
+        final DomainHandle DomainHandle) throws IOException {
+        SamrQueryInformationDomain2Request request = new SamrQueryInformationDomain2Request(DomainHandle,
+            DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION);
+        return transport.call(request);
     }
 
     /**
