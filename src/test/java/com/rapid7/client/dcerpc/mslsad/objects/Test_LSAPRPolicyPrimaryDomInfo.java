@@ -99,7 +99,6 @@ public class Test_LSAPRPolicyPrimaryDomInfo {
         RPCUnicodeString name1 = RPCUnicodeString.NonNullTerminated.of("test 123");
         RPCSID sid1 = new RPCSID();
         sid1.setRevision((char) 1);
-        sid1.setSubAuthorityCount((char) 4);
         sid1.setIdentifierAuthority(new byte[]{0,0,0,0,0,5});
         sid1.setSubAuthority(new long[]{1,2,3,4});
         RPCUnicodeString name2 = RPCUnicodeString.NonNullTerminated.of("test 1234");
@@ -178,7 +177,6 @@ public class Test_LSAPRPolicyPrimaryDomInfo {
         obj.setName(RPCUnicodeString.NonNullTerminated.of("test 123"));
         RPCSID sid = new RPCSID();
         sid.setRevision((char) 1);
-        sid.setSubAuthorityCount((char) 4);
         sid.setIdentifierAuthority(new byte[]{1, 2, 3, 4, 5, 6});
         sid.setSubAuthority(new long[]{1, 2, 3});
         obj.setSid(sid);

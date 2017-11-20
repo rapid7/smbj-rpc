@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.rmi.MarshalException;
 import java.util.Arrays;
 import java.util.Objects;
+import org.bouncycastle.util.encoders.Hex;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
@@ -79,10 +80,6 @@ public class RPCSID implements Unmarshallable, Marshallable {
         return subAuthorityCount;
     }
 
-    public void setSubAuthorityCount(char subAuthorityCount) {
-        this.subAuthorityCount = subAuthorityCount;
-    }
-
     public byte[] getIdentifierAuthority() {
         return identifierAuthority;
     }
@@ -97,6 +94,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
 
     public void setSubAuthority(long[] subAuthority) {
         this.subAuthority = subAuthority;
+        this.subAuthorityCount = (char) subAuthority.length;
     }
 
     @Override
@@ -205,7 +203,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
         } else {
             if (identifierAuthority[0] != (byte) 0 || identifierAuthority[1] != (byte) 0) {
                 b.append("0x");
-                b.append(ByteArrayUtils.printHex(identifierAuthority, 0, identifierAuthority.length));
+                b.append(Hex.toHexString(identifierAuthority));
             } else {
                 long shift = 0;
                 long id = 0;
@@ -244,20 +242,23 @@ public class RPCSID implements Unmarshallable, Marshallable {
             char revision = (char) Integer.parseInt(split[1]);
 
             String identifierAuthorityString = split[2];
+            byte[] identifierAuthority = new byte[6];
+
             long identifierAuthorityValue;
-            if (identifierAuthorityString.startsWith("0x")) {
-                identifierAuthorityValue = Long.parseLong(identifierAuthorityString.substring(2), 16);
+            if (identifierAuthorityString.startsWith("0X")) {
+                String bytes = identifierAuthorityString.substring(2,identifierAuthorityString.length());
+                identifierAuthority = Hex.decode(bytes);
+
             } else {
                 identifierAuthorityValue = Long.parseLong(identifierAuthorityString);
+                identifierAuthority[0] = (byte) ((identifierAuthorityValue >> 40) & 0xFF);
+                identifierAuthority[1] = (byte) ((identifierAuthorityValue >> 32) & 0xFF);
+                identifierAuthority[2] = (byte) ((identifierAuthorityValue >> 24) & 0xFF);
+                identifierAuthority[3] = (byte) ((identifierAuthorityValue >> 16) & 0xFF);
+                identifierAuthority[4] = (byte) ((identifierAuthorityValue >> 8) & 0xFF);
+                identifierAuthority[5] = (byte) (identifierAuthorityValue & 0xFF);
             }
 
-            byte[] identifierAuthority = new byte[6];
-            identifierAuthority[0] = (byte) ((identifierAuthorityValue >> 40) & 0xFF);
-            identifierAuthority[1] = (byte) ((identifierAuthorityValue >> 32) & 0xFF);
-            identifierAuthority[2] = (byte) ((identifierAuthorityValue >> 24) & 0xFF);
-            identifierAuthority[3] = (byte) ((identifierAuthorityValue >> 16) & 0xFF);
-            identifierAuthority[4] = (byte) ((identifierAuthorityValue >> 8) & 0xFF);
-            identifierAuthority[5] = (byte) (identifierAuthorityValue & 0xFF);
 
             long[] subAuthorities = new long[split.length - 3];
             for (int i = 0; i < subAuthorities.length; i++) {
@@ -267,7 +268,6 @@ public class RPCSID implements Unmarshallable, Marshallable {
             rpcSid.setRevision(revision);
             rpcSid.setIdentifierAuthority(identifierAuthority);
             rpcSid.setSubAuthority(subAuthorities);
-            rpcSid.setSubAuthorityCount((char) subAuthorities.length);
             return rpcSid;
         } catch (NumberFormatException e) {
             throw new MalformedSIDException("Unable to parse SID token: " + e.getMessage());
