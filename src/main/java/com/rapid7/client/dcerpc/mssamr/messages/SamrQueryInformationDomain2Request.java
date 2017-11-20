@@ -20,7 +20,6 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
@@ -53,8 +52,8 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
  * </pre>
  * </blockquote>
  */
-public abstract class SamrQueryInformationDomain2Request<T extends Unmarshallable>
-        extends RequestCall<SamrQueryInformationDomainResponse<T>> {
+public class SamrQueryInformationDomain2Request
+        extends RequestCall<SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo>> {
     public final static short OP_NUM = 46;
     private final DomainHandle handle;
     private final DomainInformationClass infoLevel;
@@ -65,27 +64,15 @@ public abstract class SamrQueryInformationDomain2Request<T extends Unmarshallabl
         this.infoLevel = infoLevel;
     }
 
-    abstract T newDomainInformation();
-
-    @Override
-    public SamrQueryInformationDomainResponse<T> getResponseObject() {
-        return new SamrQueryInformationDomainResponse<T>(newDomainInformation(), infoLevel);
-    }
-
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         packetOut.write(handle.getBytes());
         packetOut.writeShort(infoLevel.getInfoLevel());
     }
 
-    public static class DomainLockoutInformation extends SamrQueryInformationDomain2Request<SAMPRDomainLockoutInfo> {
-        public DomainLockoutInformation(final DomainHandle handle) {
-            super(handle, DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION);
-        }
-
-        @Override
-        SAMPRDomainLockoutInfo newDomainInformation() {
-            return new SAMPRDomainLockoutInfo();
-        }
+    @Override
+    public SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> getResponseObject() {
+        return new SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo>(new SAMPRDomainLockoutInfo(), infoLevel);
     }
+
 }

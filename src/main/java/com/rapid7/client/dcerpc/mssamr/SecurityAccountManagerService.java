@@ -29,6 +29,7 @@ import java.util.List;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
@@ -47,6 +48,9 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomain2Request;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationUserRequest;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
@@ -54,9 +58,12 @@ import com.rapid7.client.dcerpc.mssamr.objects.AliasInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
-import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
@@ -228,6 +235,25 @@ public class SecurityAccountManagerService {
                 return transport.call(request);
             }
         });
+    }
+
+    public SAMPRDomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
+        SamrQueryInformationDomainRequest.DomainPasswordInformation request = new SamrQueryInformationDomainRequest.DomainPasswordInformation(
+            domainHandle);
+        return transport.call(request).getDomainInformation();
+    }
+
+    public SAMPRDomainLogOffInfo getDomainLogOffInfo(final DomainHandle domainHandle) throws IOException {
+        SamrQueryInformationDomainRequest.DomainLogOffInformation request = new SamrQueryInformationDomainRequest.DomainLogOffInformation(
+            domainHandle);
+        return transport.call(request).getDomainInformation();
+    }
+
+    public SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> getDomainLockoutInfo(
+        final DomainHandle DomainHandle) throws IOException {
+        SamrQueryInformationDomain2Request request = new SamrQueryInformationDomain2Request(
+            DomainHandle, DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION);
+        return transport.call(request);
     }
 
     /**
