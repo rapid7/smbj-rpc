@@ -20,6 +20,7 @@ package com.rapid7.client.dcerpc.mssrvs.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssrvs.NetrOpCode;
 
@@ -160,9 +161,12 @@ public class NetprPathCanonicalizeRequest extends RequestCall<NetprPathCanonical
 
     public void marshal(final PacketOutput stubOut) throws IOException {
         stubOut.writeStringRef(serverName, true);
+        stubOut.align(Alignment.FOUR);
         stubOut.writeString(pathName, true);
+        stubOut.align(Alignment.FOUR); // align WCHAR*
         stubOut.writeInt(outBufLen);
         stubOut.writeString(prefix, true);
+        stubOut.align(Alignment.FOUR); // align WCHAR*
         stubOut.writeInt(pathType);
         stubOut.writeInt(flags);
 
