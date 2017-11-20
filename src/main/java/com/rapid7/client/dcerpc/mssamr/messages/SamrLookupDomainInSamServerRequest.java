@@ -46,7 +46,7 @@ public class SamrLookupDomainInSamServerRequest extends RequestCall<SamrLookupDo
 
     // <NDR: fixed array> [in] SAMPR_HANDLE ServerHandle
     private final ServerHandle serverHandle;
-    // <NDR: pointer[struct]> [in] PRPC_UNICODE_STRING Name,
+    // <NDR: struct> [in] PRPC_UNICODE_STRING Name,
     private final RPCUnicodeString.NonNullTerminated name;
 
     public SamrLookupDomainInSamServerRequest(final ServerHandle serverHandle, RPCUnicodeString.NonNullTerminated name) {
@@ -72,7 +72,7 @@ public class SamrLookupDomainInSamServerRequest extends RequestCall<SamrLookupDo
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SAMPR_HANDLE ServerHandle
         packetOut.writeMarshallable(getServerHandle());
-        // <NDR: pointer[struct]> [in] PRPC_UNICODE_STRING Name
+        // <NDR: struct> [in] PRPC_UNICODE_STRING Name
         packetOut.writeMarshallable(getName());
     }
 }

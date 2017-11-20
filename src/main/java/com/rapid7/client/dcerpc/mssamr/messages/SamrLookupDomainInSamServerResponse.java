@@ -27,7 +27,7 @@ import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 
 public class SamrLookupDomainInSamServerResponse extends RequestResponse {
-    // [out] PRPC_SID* DomainId
+    // <NDR: pointer[struct]> [out] PRPC_SID* DomainId
     private RPCSID domainId;
 
     public RPCSID getDomainId() {
