@@ -20,6 +20,7 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
@@ -52,27 +53,43 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
  * </pre>
  * </blockquote>
  */
-public class SamrQueryInformationDomain2Request
-        extends RequestCall<SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo>> {
-    public final static short OP_NUM = 46;
-    private final DomainHandle handle;
-    private final DomainInformationClass infoLevel;
+public abstract class SamrQueryInformationDomain2Request<T extends Unmarshallable>
+        extends RequestCall<SamrQueryInformationDomainResponse<T>> {
 
-    public SamrQueryInformationDomain2Request(final DomainHandle handle, final DomainInformationClass infoLevel) {
+    public final static short OP_NUM = 46;
+
+    private final DomainHandle domainHandle;
+
+    public SamrQueryInformationDomain2Request(final DomainHandle domainHandle) {
         super(OP_NUM);
-        this.handle = handle;
-        this.infoLevel = infoLevel;
+        this.domainHandle = domainHandle;
     }
+
+    public DomainHandle getDomainHandle() {
+        return this.domainHandle;
+    }
+
+    public abstract DomainInformationClass getDomainInformationClass();
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(handle.getBytes());
-        packetOut.writeShort(infoLevel.getInfoLevel());
+        packetOut.write(getDomainHandle().getBytes());
+        packetOut.writeShort(getDomainInformationClass().getInfoLevel());
     }
 
-    @Override
-    public SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> getResponseObject() {
-        return new SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo>(new SAMPRDomainLockoutInfo(), infoLevel);
-    }
+    public static class DomainLockoutInfo extends SamrQueryInformationDomain2Request<SAMPRDomainLockoutInfo> {
+        public DomainLockoutInfo(DomainHandle handle) {
+            super(handle);
+        }
 
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainLockoutInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainLockoutInformation();
+        }
+    }
 }

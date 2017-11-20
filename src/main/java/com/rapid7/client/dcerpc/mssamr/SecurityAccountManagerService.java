@@ -199,11 +199,9 @@ public class SecurityAccountManagerService {
         return transport.call(request).getDomainInformation();
     }
 
-    public SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> getDomainLockoutInfo(
-        final DomainHandle DomainHandle) throws IOException {
-        SamrQueryInformationDomain2Request request = new SamrQueryInformationDomain2Request(DomainHandle,
-            DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION);
-        return transport.call(request);
+    public SAMPRDomainLockoutInfo getDomainLockoutInfo(final DomainHandle domainHandle) throws IOException {
+        SamrQueryInformationDomain2Request.DomainLockoutInfo request = new SamrQueryInformationDomain2Request.DomainLockoutInfo(domainHandle);
+        return transport.call(request).getDomainInformation();
     }
 
     /**
