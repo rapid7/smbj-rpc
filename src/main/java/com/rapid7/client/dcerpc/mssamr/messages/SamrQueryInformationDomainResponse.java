@@ -23,32 +23,71 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 
-public class SamrQueryInformationDomainResponse<T extends Unmarshallable> extends RequestResponse {
-    private final T domainInformation;
-    private final DomainInformationClass domainInformationClass;
-
-    public SamrQueryInformationDomainResponse(T domainInformation, DomainInformationClass domainInformationClass) {
-        this.domainInformation = domainInformation;
-        this.domainInformationClass = domainInformationClass;
-    }
+public abstract class SamrQueryInformationDomainResponse<T extends Unmarshallable> extends RequestResponse {
+    private T domainInformation;
 
     public T getDomainInformation() {
         return domainInformation;
     }
 
+    public abstract DomainInformationClass getDomainInformationClass();
+
+    abstract T createDomainInformation();
+
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         if (packetIn.readReferentID() != 0) {
             final int infoLevel = packetIn.readShort();
-            if (infoLevel != this.domainInformationClass.getInfoLevel()) {
+            if (infoLevel != getDomainInformationClass().getInfoLevel()) {
                 throw new IllegalArgumentException(
                     String.format("Incoming DOMAIN_INFORMATION_CLASS %d does not match expected: %d", infoLevel,
-                        this.domainInformationClass.getInfoLevel()));
+                            getDomainInformationClass().getInfoLevel()));
             }
-
+            this.domainInformation = createDomainInformation();
             packetIn.readUnmarshallable(this.domainInformation);
+        } else {
+            this.domainInformation = null;
         }
     }
 
+    public static class DomainPasswordInformation extends SamrQueryInformationDomainResponse<SAMPRDomainPasswordInfo> {
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_PASSWORD_INFORMATION;
+        }
+
+        @Override
+        SAMPRDomainPasswordInfo createDomainInformation() {
+            return new SAMPRDomainPasswordInfo();
+        }
+    }
+
+    public static class DomainLogOffInformation extends SamrQueryInformationDomainResponse<SAMPRDomainLogOffInfo> {
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_LOGOFF_INFORMATION;
+        }
+
+        @Override
+        SAMPRDomainLogOffInfo createDomainInformation() {
+            return new SAMPRDomainLogOffInfo();
+        }
+    }
+
+    public static class DomainLockoutInformation extends SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> {
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION;
+        }
+
+        @Override
+        SAMPRDomainLockoutInfo createDomainInformation() {
+            return new SAMPRDomainLockoutInfo();
+        }
+    }
 }

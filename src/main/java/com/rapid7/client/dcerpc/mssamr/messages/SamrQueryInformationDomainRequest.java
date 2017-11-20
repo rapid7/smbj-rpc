@@ -55,50 +55,57 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
  */
 public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable>
         extends RequestCall<SamrQueryInformationDomainResponse<T>> {
+
     public final static short OP_NUM = 8;
-    private final DomainHandle handle;
-    private final DomainInformationClass infoLevel;
 
-    public SamrQueryInformationDomainRequest(final DomainHandle handle, final DomainInformationClass infoLevel) {
+    private final DomainHandle domainHandle;
+
+    public SamrQueryInformationDomainRequest(final DomainHandle domainHandle) {
         super(OP_NUM);
-        this.handle = handle;
-        this.infoLevel = infoLevel;
+        this.domainHandle = domainHandle;
     }
 
-    abstract T newDomainInformation();
-
-    @Override
-    public SamrQueryInformationDomainResponse<T> getResponseObject() {
-        return new SamrQueryInformationDomainResponse<T>(newDomainInformation(), infoLevel);
-
+    public DomainHandle getDomainHandle() {
+        return domainHandle;
     }
+
+    public abstract DomainInformationClass getDomainInformationClass();
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(handle.getBytes());
-        packetOut.writeShort(infoLevel.getInfoLevel());
+        packetOut.write(getDomainHandle().getBytes());
+        packetOut.writeShort(getDomainInformationClass().getInfoLevel());
     }
 
     public static class DomainPasswordInformation extends SamrQueryInformationDomainRequest<SAMPRDomainPasswordInfo> {
         public DomainPasswordInformation(final DomainHandle handle) {
-            super(handle, DomainInformationClass.DOMAIN_PASSWORD_INFORMATION);
+            super(handle);
         }
 
         @Override
-        SAMPRDomainPasswordInfo newDomainInformation() {
-            return new SAMPRDomainPasswordInfo();
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_PASSWORD_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainPasswordInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainPasswordInformation();
         }
     }
 
     public static class DomainLogOffInformation extends SamrQueryInformationDomainRequest<SAMPRDomainLogOffInfo> {
         public DomainLogOffInformation(final DomainHandle handle) {
-            super(handle, DomainInformationClass.DOMAIN_LOGOFF_INFORMATION);
+            super(handle);
         }
 
         @Override
-        SAMPRDomainLogOffInfo newDomainInformation() {
-            return new SAMPRDomainLogOffInfo();
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_LOGOFF_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainLogOffInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainLogOffInformation();
         }
     }
-
 }
