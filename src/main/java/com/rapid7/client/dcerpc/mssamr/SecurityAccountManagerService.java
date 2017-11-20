@@ -35,7 +35,6 @@ import com.hierynomus.msdtyp.SecurityInformation;
 import com.hierynomus.protocol.commons.buffer.Buffer;
 import com.hierynomus.smb.SMBBuffer;
 import com.rapid7.client.dcerpc.RPCException;
-import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
@@ -61,7 +60,6 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryDisplayInformation2Resp
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomain2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQuerySecurityObjectRequest;
