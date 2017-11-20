@@ -26,11 +26,13 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang3.mutable.MutableInt;
 import com.rapid7.client.dcerpc.Interface;
+import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.PFCFlag;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.Transport;
 import com.rapid7.client.dcerpc.messages.*;
+import com.rapid7.client.dcerpc.transport.exceptions.RPCFaultException;
 
 public abstract class RPCTransport implements Transport {
     protected final static int DEFAULT_MAX_XMIT_FRAG = 16384;
@@ -98,14 +100,20 @@ public abstract class RPCTransport implements Transport {
 
             packetInByteLength.setValue(read(packetInBytes));
         }
-
         final byte[] responseStub = responseStubOutputStream.toByteArray();
         final ByteArrayInputStream stubInputStream = new ByteArrayInputStream(responseStub);
         final PacketInput stubIn = new PacketInput(stubInputStream);
+        // This is a request call - Expect a Response
+        if (response.getPDUType() != PDUType.RESPONSE) {
+            // PDUType.REJECT is unexpected in connection-oriented calls
+            // but maps to the same 32bit fields, so we can catch it with RPCFaultException as well.
+            if (response.getPDUType() == PDUType.FAULT || response.getPDUType() == PDUType.REJECT) {
+                throw RPCFaultException.read(stubIn);
+            }
+            throw new IOException(String.format("Expected PDU %s but got: %s", PDUType.RESPONSE, response.getPDUType()));
+        }
         final T result = call.getResponseObject();
-
         result.unmarshal(stubIn);
-
         return result;
     }
 

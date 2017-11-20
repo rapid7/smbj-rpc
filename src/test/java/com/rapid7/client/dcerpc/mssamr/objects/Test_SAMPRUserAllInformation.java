@@ -173,7 +173,7 @@ public class Test_SAMPRUserAllInformation {
         obj.setPrivateData(privateData);
         assertSame(obj.getPrivateData(), privateData);
         SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
-        securityDescriptor.setSecurityDescriptor(new char[]{5, 6, 7});
+        securityDescriptor.setSecurityDescriptor(new byte[]{5, 6, 7});
         obj.setSecurityDescriptor(securityDescriptor);
         assertSame(obj.getSecurityDescriptor(), securityDescriptor);
         obj.setUserId(7L);
@@ -320,7 +320,7 @@ public class Test_SAMPRUserAllInformation {
         expectedObj.getLmOwfPassword().setBuffer(new int[]{1, 2, 65535});
         expectedObj.getNtOwfPassword().setBuffer(new int[]{1, 2, 3, 5});
         expectedObj.getPrivateData().setValue("testƟ131");
-        expectedObj.getSecurityDescriptor().setSecurityDescriptor(new char[]{1, 2});
+        expectedObj.getSecurityDescriptor().setSecurityDescriptor(new byte[]{1, 2});
         expectedObj.getLogonHours().setLogonHours(new char[]{3});
 
         String hex =
@@ -464,7 +464,7 @@ public class Test_SAMPRUserAllInformation {
         obj2.setPrivateData(privateData);
         assertEquals(obj1.hashCode(), obj2.hashCode());
         SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
-        securityDescriptor.setSecurityDescriptor(new char[]{5, 6, 7});
+        securityDescriptor.setSecurityDescriptor(new byte[]{5, 6, 7});
         obj1.setSecurityDescriptor(securityDescriptor);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
         obj2.setSecurityDescriptor(securityDescriptor);
@@ -623,7 +623,7 @@ public class Test_SAMPRUserAllInformation {
         obj2.setPrivateData(privateData);
         assertEquals(obj1, obj2);
         SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
-        securityDescriptor.setSecurityDescriptor(new char[]{5, 6, 7});
+        securityDescriptor.setSecurityDescriptor(new byte[]{5, 6, 7});
         obj1.setSecurityDescriptor(securityDescriptor);
         assertNotEquals(obj1, obj2);
         obj2.setSecurityDescriptor(securityDescriptor);
@@ -726,7 +726,7 @@ public class Test_SAMPRUserAllInformation {
         obj.setNtOwfPassword(ntOwfPassword);
         obj.setPrivateData(RPCUnicodeString.NonNullTerminated.of(""));
         SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
-        securityDescriptor.setSecurityDescriptor(new char[2]);
+        securityDescriptor.setSecurityDescriptor(new byte[2]);
         obj.setSecurityDescriptor(securityDescriptor);
         obj.setUserId(7L);
         obj.setPrimaryGroupId(8L);

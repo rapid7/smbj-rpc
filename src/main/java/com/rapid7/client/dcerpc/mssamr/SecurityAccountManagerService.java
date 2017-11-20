@@ -21,13 +21,19 @@ package com.rapid7.client.dcerpc.mssamr;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_MORE_ENTRIES;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
+import static com.rapid7.client.dcerpc.mssamr.objects.DisplayInformationClass.DomainDisplayGroup;
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msdtyp.SID;
+import com.hierynomus.msdtyp.SecurityDescriptor;
+import com.hierynomus.msdtyp.SecurityInformation;
+import com.hierynomus.protocol.commons.buffer.Buffer;
+import com.hierynomus.smb.SMBBuffer;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
@@ -40,6 +46,8 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainReque
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
@@ -48,21 +56,29 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryDisplayInformation2Request;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryDisplayInformation2Response;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomain2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrQuerySecurityObjectRequest;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRAliasGeneralInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroup;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
@@ -166,6 +182,30 @@ public class SecurityAccountManagerService {
         return transport.call(request).getGroupInformation();
     }
 
+    public SAMPRAliasGeneralInformation getAliasGeneralInformation(final AliasHandle aliasHandle) throws IOException {
+        SamrQueryInformationAliasRequest.AliasGeneralInformation request = new SamrQueryInformationAliasRequest.AliasGeneralInformation(aliasHandle);
+        return transport.call(request).getAliasInformation();
+    }
+
+    public SAMPRDomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
+        SamrQueryInformationDomainRequest.DomainPasswordInformation request = new SamrQueryInformationDomainRequest.DomainPasswordInformation(
+            domainHandle);
+        return transport.call(request).getDomainInformation();
+    }
+
+    public SAMPRDomainLogOffInfo getDomainLogOffInfo(final DomainHandle domainHandle) throws IOException {
+        SamrQueryInformationDomainRequest.DomainLogOffInformation request = new SamrQueryInformationDomainRequest.DomainLogOffInformation(
+            domainHandle);
+        return transport.call(request).getDomainInformation();
+    }
+
+    public SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> getDomainLockoutInfo(
+        final DomainHandle DomainHandle) throws IOException {
+        SamrQueryInformationDomain2Request request = new SamrQueryInformationDomain2Request(DomainHandle,
+            DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION);
+        return transport.call(request);
+    }
+
     /**
      * Gets the group names for the provided domain. Max buffer size will be used.
      *
@@ -237,23 +277,78 @@ public class SecurityAccountManagerService {
         });
     }
 
-    public SAMPRDomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
-        SamrQueryInformationDomainRequest.DomainPasswordInformation request = new SamrQueryInformationDomainRequest.DomainPasswordInformation(
-            domainHandle);
-        return transport.call(request).getDomainInformation();
+    public List<SAMPRDomainDisplayGroup> getDomainGroupInformationforDomain(final DomainHandle handle)
+            throws IOException {
+        // no limit.
+        final int entryCount = 0xffffffff;
+        final int maxLength = 0xffff;
+        return getDomainGroupInformationforDomain(handle, entryCount, maxLength);
     }
 
-    public SAMPRDomainLogOffInfo getDomainLogOffInfo(final DomainHandle domainHandle) throws IOException {
-        SamrQueryInformationDomainRequest.DomainLogOffInformation request = new SamrQueryInformationDomainRequest.DomainLogOffInformation(
-            domainHandle);
-        return transport.call(request).getDomainInformation();
+    public List<SAMPRDomainDisplayGroup> getDomainGroupInformationforDomain(final DomainHandle handle,
+            final int entryCount,
+            final int maxLength) throws IOException {
+        List<SAMPRDomainDisplayGroup> groups = new ArrayList<>();
+        int enumContext = 0;
+        int totalReturnedBytes = 0;
+        while (true) {
+            final SamrQueryDisplayInformation2Request request = new SamrQueryDisplayInformation2Request(handle,
+                    DomainDisplayGroup, enumContext, entryCount, maxLength);
+            final SamrQueryDisplayInformation2Response response = transport.call(request);
+            enumContext += response.getList().size();
+            totalReturnedBytes += response.getTotalReturnedBytes();
+            int returnCode = response.getReturnValue();
+            if (ERROR_MORE_ENTRIES.is(returnCode)) {
+                groups.addAll(response.getList());
+            } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)
+                    || totalReturnedBytes == response.getTotalAvailableBytes()) {
+                groups.addAll(response.getList());
+                return Collections.unmodifiableList(groups);
+            } else {
+                throw new RPCException("QueryDisplayInformation2", returnCode);
+            }
+        }
     }
 
-    public SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> getDomainLockoutInfo(
-        final DomainHandle DomainHandle) throws IOException {
-        SamrQueryInformationDomain2Request request = new SamrQueryInformationDomain2Request(
-            DomainHandle, DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION);
-        return transport.call(request);
+    public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle,
+            final SecurityInformation ... securityInformation) throws IOException {
+        int securityInformationValue = 0;
+        if (securityInformation != null) {
+            for (SecurityInformation v : securityInformation) {
+                if (v == null)
+                    continue;
+                securityInformationValue |= v.getValue();
+            }
+        }
+        SamrQuerySecurityObjectRequest request = new SamrQuerySecurityObjectRequest(objectHandle, securityInformationValue);
+        return parseSecurityDescriptor(transport.call(request).getSecurityDescriptor());
+    }
+
+    public SecurityDescriptor parseSecurityDescriptor(SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
+        if (securityDescriptor == null)
+            return null;
+        byte[] payload = securityDescriptor.getSecurityDescriptor();
+        if (payload == null)
+            return null;
+        try {
+            return SecurityDescriptor.read(new SMBBuffer(payload));
+        } catch (Buffer.BufferException e) {
+            throw new UnmarshalException(String.format("Failed to parse %s", SAMPRSRSecurityDescriptor.class.getSimpleName()), e);
+        }
+    }
+
+    /**
+     * Gets a list of {@link GroupMembership} information for the provided user handle.
+     *
+     * @param userHandle User handle. Must not be {@code null}.
+     */
+    public List<GroupMembership> getGroupsForUser(UserHandle userHandle) throws IOException {
+        SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
+        SamrGetGroupsForUserResponse response = transport.call(request);
+        if (!ERROR_SUCCESS.is(response.getReturnValue()))
+            throw new RPCException("GetGroupsForUser", response.getReturnValue());
+
+        return response.getGroupMembership();
     }
 
     /**
@@ -271,7 +366,7 @@ public class SecurityAccountManagerService {
                 list.addAll(response.getList());
                 return Collections.unmodifiableList(list);
             } else {
-                throw new RPCException("EnumDomainsInSamServer", returnCode);
+                throw new RPCException(response.getClass().getName(), returnCode);
             }
         }
     }
