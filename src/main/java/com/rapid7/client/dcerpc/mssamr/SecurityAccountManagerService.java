@@ -47,6 +47,7 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupDomainInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
@@ -82,6 +83,8 @@ import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.RPCSID;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class SecurityAccountManagerService {
@@ -345,6 +348,12 @@ public class SecurityAccountManagerService {
             throw new RPCException("GetGroupsForUser", response.getReturnValue());
 
         return response.getGroupMembership();
+    }
+
+    public RPCSID getSIDForDomain(ServerHandle serverHandle, String domainName) throws IOException {
+        SamrLookupDomainInSamServerRequest request = new SamrLookupDomainInSamServerRequest(serverHandle,
+                RPCUnicodeString.NonNullTerminated.of(domainName));
+        return transport.call(request).getDomainId();
     }
 
     /**
