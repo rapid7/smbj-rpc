@@ -26,10 +26,7 @@ import java.io.IOException;
 import java.rmi.UnmarshalException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.msdtyp.SID;
 import com.hierynomus.msdtyp.SecurityDescriptor;
 import com.hierynomus.msdtyp.SecurityInformation;
 import com.hierynomus.protocol.commons.buffer.Buffer;
@@ -82,9 +79,11 @@ import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class SecurityAccountManagerService {
+    private final static int MAXIMUM_ALLOWED = 33554432;
     private final RPCTransport transport;
 
     public SecurityAccountManagerService(RPCTransport transport) {
@@ -92,19 +91,19 @@ public class SecurityAccountManagerService {
     }
 
     public ServerHandle openServerHandle(String serverName) throws IOException {
-        final SamrConnect2Request request = new SamrConnect2Request(serverName, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final SamrConnect2Request request = new SamrConnect2Request(serverName, MAXIMUM_ALLOWED);
         final SamrConnect2Response response = transport.call(request);
         return response.getHandle();
     }
 
-    public DomainHandle openDomain(ServerHandle serverHandle, SID sid) throws IOException {
-        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, sid, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+    public DomainHandle openDomain(ServerHandle serverHandle, RPCSID domainId) throws IOException {
+        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, MAXIMUM_ALLOWED, domainId);
         final SamrOpenDomainResponse response = transport.call(request);
         return response.getHandle();
     }
 
-    public GroupHandle openGroup(DomainHandle domainHandle, int groupRID) throws IOException {
-        final SamrOpenGroupRequest request = new SamrOpenGroupRequest(domainHandle, EnumSet.of(AccessMask.MAXIMUM_ALLOWED), groupRID);
+    public GroupHandle openGroup(DomainHandle domainHandle, int groupId) throws IOException {
+        final SamrOpenGroupRequest request = new SamrOpenGroupRequest(domainHandle, MAXIMUM_ALLOWED, groupId);
         final SamrOpenGroupResponse response = transport.call(request);
         return response.getHandle();
     }
@@ -120,7 +119,7 @@ public class SecurityAccountManagerService {
         // SAMR Alias specific rights: 0x0000000c
         // - SAMR_ALIAS_ACCESS_LOOKUP_INFO is SET(8)
         // - SAMR_ALIAS_ACCESS_GET_MEMBERS is SET(4)
-        final SamrOpenAliasRequest request = new SamrOpenAliasRequest(domainHandle, sid, 0x0002000C);
+        final SamrOpenAliasRequest request = new SamrOpenAliasRequest(domainHandle, 0x0002000C, sid);
         final SamrOpenAliasResponse response = transport.call(request);
         return response.getHandle();
     }
@@ -240,14 +239,14 @@ public class SecurityAccountManagerService {
      * Gets the user names for the provided domain. Max buffer size will be used
      *
      * @param domainHandle The domain handle.
-     * @param userAccountContorl The UserAccountControl flags that filters the returned users.
+     * @param userAccountControl The UserAccountControl flags that filters the returned users.
      * @return The enumerated users.
      * @throws IOException On issue with communication or marshalling.
      */
-    public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl)
+    public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl)
             throws IOException {
         final int bufferSize = 0xffff;
-        return getUsersForDomain(domainHandle, userAccountContorl, bufferSize);
+        return getUsersForDomain(domainHandle, userAccountControl, bufferSize);
     }
 
     /**
@@ -255,19 +254,19 @@ public class SecurityAccountManagerService {
      * size.
      *
      * @param domainHandle The domain handle.
-     * @param userAccountContorl The UserAccountControl flags that filters the returned users.
+     * @param userAccountControl The UserAccountControl flags that filters the returned users.
      * @param bufferSize The buffer size for each request.
      * @return The enumerated users.
      * @throws IOException On issue with communication or marshalling.
      */
-    public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountContorl,
+    public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl,
             final int bufferSize) throws IOException {
         List<UserInfo> users = new ArrayList<>();
         return enumerate(domainHandle, users, new EnumerationCallback() {
             @Override
             public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
                 final SamrEnumerateUsersInDomainRequest request = new SamrEnumerateUsersInDomainRequest(domainHandle,
-                        enumContext, userAccountContorl, bufferSize);
+                        enumContext, userAccountControl, bufferSize);
                 return transport.call(request);
             }
         });

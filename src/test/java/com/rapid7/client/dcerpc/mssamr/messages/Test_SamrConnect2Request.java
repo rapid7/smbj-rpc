@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
-import java.util.EnumSet;
 import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
@@ -30,8 +29,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class Test_SamrConnect2Request {
-    private final SamrConnect2Request request1 = new SamrConnect2Request(null, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-    private final SamrConnect2Request request2 = new SamrConnect2Request("", EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+    private final SamrConnect2Request request1 = new SamrConnect2Request(null, (int) AccessMask.MAXIMUM_ALLOWED.getValue());
+    private final SamrConnect2Request request2 = new SamrConnect2Request("", (int) AccessMask.MAXIMUM_ALLOWED.getValue());
 
     @Test
     public void getOpNum() {

@@ -29,11 +29,12 @@ public abstract class SamrEnumerateRequest<T extends SamrEnumerateResponse> exte
     private final int enumContext;
     private final int maxLength;
 
-    protected SamrEnumerateRequest(short opNum, ContextHandle handle, int enumContext, int maxLength) {
+    protected SamrEnumerateRequest(short opNum, ContextHandle handle,
+            int enumerationContext, int preferredMaximumLength) {
         super(opNum);
         this.handle = handle;
-        this.enumContext = enumContext;
-        this.maxLength = maxLength;
+        this.enumContext = enumerationContext;
+        this.maxLength = preferredMaximumLength;
     }
 
 

@@ -27,12 +27,22 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
 /**
+ * <a href="https://msdn.microsoft.com/en-us/library/cc245750.aspx">SamrOpenGroup</a>
+ * <blockquote><pre>The SamrOpenGroup method obtains a handle to a group, given a RID.
+ *
  *      long SamrOpenGroup(
  *          [in] SAMPR_HANDLE DomainHandle,
  *          [in] unsigned long DesiredAccess,
  *          [in] unsigned long GroupId,
  *          [out] SAMPR_HANDLE* GroupHandle
  *      );
+ *
+ *  DomainHandle: An RPC context handle, as specified in section 2.2.3.2, representing a domain object.
+ *  DesiredAccess: An ACCESS_MASK that indicates the requested access for the returned handle. See section 2.2.1.5 for a list of group access values.
+ *  GroupId: A RID of a group.
+ *  GroupHandle: An RPC context handle, as specified in section 2.2.3.2.
+ *
+ *  This protocol asks the RPC runtime, via the strict_context_handle attribute, to reject the use of context handles created by a method of a different RPC interface than this one, as specified in [MS-RPCE] section 3.</pre></blockquote>
  */
 public class SamrOpenGroupRequest extends RequestCall<SamrOpenGroupResponse> {
     public final static short OP_NUM = 19;
@@ -42,23 +52,22 @@ public class SamrOpenGroupRequest extends RequestCall<SamrOpenGroupResponse> {
     // <NDR: unsigned long> [in] unsigned long DesiredAccess
     private final int desiredAccess;
     // <NDR: unsigned long> [in] unsigned long GroupId
-    private final int groupRID;
+    private final long groupId;
 
-    public SamrOpenGroupRequest(DomainHandle domainHandle, EnumSet<AccessMask> desiredAccess, int groupRID) {
+    public SamrOpenGroupRequest(DomainHandle domainHandle, int desiredAccess, long groupId) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
-        // TODO allow for unsigned int
-        this.desiredAccess = (int) EnumWithValue.EnumUtils.toLong(desiredAccess);
-        this.groupRID = groupRID;
+        this.desiredAccess = desiredAccess;
+        this.groupId = groupId;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.writeMarshallable(domainHandle);
+        packetOut.writeMarshallable(this.domainHandle);
         // No align necessary - Always 20 bytes written
-        packetOut.writeInt(desiredAccess);
+        packetOut.writeInt(this.desiredAccess);
         // No align necessary - Always 4 bytes written
-        packetOut.writeInt(groupRID);
+        packetOut.writeInt(this.groupId);
     }
 
     @Override

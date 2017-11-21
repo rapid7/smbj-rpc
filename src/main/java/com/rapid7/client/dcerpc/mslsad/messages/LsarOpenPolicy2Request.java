@@ -23,15 +23,32 @@ import java.util.EnumSet;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
+/**
+ * <a href="https://msdn.microsoft.com/en-us/library/cc234486.aspx">LsarOpenPolicy2</a>
+ * <blockquote><pre>The LsarOpenPolicy2 method opens a context handle to the RPC server.
+ *
+ *      NTSTATUS LsarOpenPolicy2(
+ *          [in, unique, string] wchar_t* SystemName,
+ *          [in] PLSAPR_OBJECT_ATTRIBUTES ObjectAttributes,
+ *          [in] ACCESS_MASK DesiredAccess,
+ *          [out] LSAPR_HANDLE* PolicyHandle
+ *      );
+ *
+ *  Processing rules for this message are defined in [MS-LSAD] section 3.1.4.4.1.</pre></blockquote>
+ */
 public class LsarOpenPolicy2Request extends RequestCall<HandleResponse> {
     private final static short OP_NUM = 44;
+    // <NDR: pointer[RPC_UNICODE_STRING]> [in, unique, string] wchar_t* SystemName
     private final String systemName;
-    private final EnumSet<AccessMask> desiredAccess;
+    // <NDR: unsigned long> [in] ACCESS_MASK DesiredAccess
+    private final int desiredAccess;
 
-    public LsarOpenPolicy2Request(final String systemName, final EnumSet<AccessMask> desiredAccess) {
+    public LsarOpenPolicy2Request(final String systemName, final int desiredAccess) {
         super(OP_NUM);
         this.systemName = systemName;
         this.desiredAccess = desiredAccess;
@@ -60,6 +77,6 @@ public class LsarOpenPolicy2Request extends RequestCall<HandleResponse> {
         packetOut.writeByte((byte) 0x00);
         // LSAPR_OBJECT_ATTRIBUTES ENDS
 
-        packetOut.writeInt((int) EnumUtils.toLong(desiredAccess));
+        packetOut.writeInt(this.desiredAccess);
     }
 }

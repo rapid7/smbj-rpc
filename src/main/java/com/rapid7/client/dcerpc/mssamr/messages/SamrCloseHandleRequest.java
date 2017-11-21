@@ -35,7 +35,7 @@ public class SamrCloseHandleRequest extends RequestCall<SamrCloseHandleResponse>
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(handle.getBytes());
+        packetOut.writeMarshallable(this.handle);
     }
 
     @Override

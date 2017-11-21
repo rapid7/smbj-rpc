@@ -28,16 +28,15 @@ import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupAcctPrivsRpcRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupAcctPrivsRpcResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesResponse;
-import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcRequest;
-import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSidsWithAcctPrivRpcResponse;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountsWithUserRightRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountsWithUserRightResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarOpenPolicy2Request;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.RPCSID;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.msdtyp.SID;
 import java.io.IOException;
-import java.util.EnumSet;
 
 /**
  * This class implements a partial Local Security Authority service in according with [MS-LSAD] and [MS-LSAT].
@@ -46,6 +45,7 @@ import java.util.EnumSet;
  * @see <a href= "https://msdn.microsoft.com/en-us/library/cc234420.aspx">[MS-LSAT]</a>
  */
 public class LocalSecurityAuthorityService {
+    private final static int MAXIMUM_ALLOWED = 33554432;
 
     public LocalSecurityAuthorityService(final RPCTransport transport) {
         this.transport = transport;
@@ -53,13 +53,13 @@ public class LocalSecurityAuthorityService {
 
     public void checkHandle(ContextHandle handle) throws IOException {
         if (handle == null) {
-            throw new IllegalArgumentException("ContextHandle is invalid: " + handle);
+            throw new IllegalArgumentException("ContextHandle is invalid: null");
         }
     }
 
     public ContextHandle openPolicyHandle(String serverName) throws IOException {
-        final LsarOpenPolicy2Request request = new LsarOpenPolicy2Request(serverName, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
-        HandleResponse response = transport.call(request);
+        final LsarOpenPolicy2Request request = new LsarOpenPolicy2Request(serverName, MAXIMUM_ALLOWED);
+        final HandleResponse response = transport.call(request);
         if (response.getReturnValue() != 0) {
             throw new RPCException("LsarOpenPolicy2Request", response.getReturnValue());
         }
@@ -92,11 +92,12 @@ public class LocalSecurityAuthorityService {
         return queryResponse.getPrivNames();
     }
 
-    public SID[] enumerateAccountsWithPrivilege(ContextHandle handle, String privilege) throws IOException {
-        checkHandle(handle);
-
-        final LsarLookupSidsWithAcctPrivRpcRequest queryRequest = new LsarLookupSidsWithAcctPrivRpcRequest(handle, privilege);
-        final LsarLookupSidsWithAcctPrivRpcResponse queryResponse = transport.call(queryRequest);
+    public RPCSID[] enumerateAccountsWithPrivilege(ContextHandle policyHandle, String userRight) throws IOException {
+        checkHandle(policyHandle);
+        final LsarEnumerateAccountsWithUserRightRequest queryRequest =
+                new LsarEnumerateAccountsWithUserRightRequest(
+                        policyHandle, RPCUnicodeString.NonNullTerminated.of(userRight));
+        final LsarEnumerateAccountsWithUserRightResponse queryResponse = transport.call(queryRequest);
         return queryResponse.getSids();
     }
 
