@@ -18,9 +18,6 @@
  */
 package com.rapid7.client.dcerpc.mssamr.objects;
 
-/**
- *
- */
 public class EnumeratedUsers extends SAMPREnumerationBuffer<UserInfo> {
 
     @Override

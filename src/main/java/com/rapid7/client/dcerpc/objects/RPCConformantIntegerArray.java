@@ -16,30 +16,37 @@
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr.messages;
+package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGetMembersBuffer;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 
-public class SamrGetMembesInGroupResponse extends RequestResponse {
-    private SAMPRGetMembersBuffer buffer;
+public class RPCConformantIntegerArray extends RPCConformantArray<Integer> {
 
     @Override
-    public void unmarshalResponse(PacketInput packetIn) throws IOException {
-        int referenceId = packetIn.readInt();
-        if (referenceId == 0) {
-            buffer = null;
-            return;
+    public void unmarshalEntity(PacketInput in) throws IOException {
+        if (getMaxCount() >= 0) {
+            array = new ArrayList<>(getMaxCount());
+            for (int i = 0; i < getMaxCount(); i++) {
+                array.add(in.readInt());
+            }
         }
-        buffer = new SAMPRGetMembersBuffer();
-        packetIn.readUnmarshallable(buffer);
     }
 
-    public List<GroupMembership> getList() {
-        return buffer.getGroupMembershipt();
+    @Override
+    public void unmarshalDeferrals(PacketInput in) throws IOException {
+    }
+
+    @Override
+    public void marshalEntity(PacketOutput out) throws IOException {
+        for (Integer value : array) {
+            out.writeInt(value);
+        }
+    }
+
+    @Override
+    public void marshalDeferrals(PacketOutput out) throws IOException {
     }
 }
