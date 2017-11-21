@@ -36,7 +36,7 @@ import com.rapid7.client.dcerpc.msvcctl.objects.IServiceConfigInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
-import com.rapid7.client.dcerpc.objects.EmptyResponse;
+import com.rapid7.client.dcerpc.messages.EmptyResponse;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class ServiceControlManagerService {

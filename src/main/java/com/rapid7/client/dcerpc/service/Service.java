@@ -21,20 +21,35 @@
 
 package com.rapid7.client.dcerpc.service;
 
+import java.io.IOException;
 import java.rmi.UnmarshalException;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public abstract class Service {
-    public RequestResponse checkReturnCode(RequestResponse response, String name) throws RPCException {
-        return checkReturnCode(response, name, SystemErrorCode.ERROR_SUCCESS);
+    private final RPCTransport transport;
+
+    protected Service(final RPCTransport transport) {
+        this.transport = transport;
     }
 
-    public RequestResponse checkReturnCode(RequestResponse response, String name, SystemErrorCode ... expectCodes)
-            throws RPCException{
-        if (response == null || expectCodes == null)
+
+    protected <R extends RequestResponse> R call(RequestCall<R> request) throws IOException {
+        return transport.call(request);
+    }
+
+    protected <R extends RequestResponse> R callAndExpectSuccess(RequestCall<R> request, String name) throws IOException {
+        return callAndExpect(request, name, SystemErrorCode.ERROR_SUCCESS);
+    }
+
+    protected <R extends RequestResponse> R callAndExpect(RequestCall<R> request, String name,
+            SystemErrorCode ... expectCodes) throws IOException {
+        final R response = call(request);
+        if (expectCodes == null)
             return response;
         for (SystemErrorCode code : expectCodes) {
             if (code != null && code.is(response.getReturnValue())) {

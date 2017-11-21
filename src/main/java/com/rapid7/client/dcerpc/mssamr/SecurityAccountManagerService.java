@@ -33,9 +33,7 @@ import com.hierynomus.protocol.commons.buffer.Buffer;
 import com.hierynomus.smb.SMBBuffer;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Response;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainRequest;
@@ -43,18 +41,13 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupDomainInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryDisplayInformation2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryDisplayInformation2Response;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationAliasRequest;
@@ -84,38 +77,34 @@ import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
+import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
-public class SecurityAccountManagerService {
+public class SecurityAccountManagerService extends Service {
     private final static int MAXIMUM_ALLOWED = 33554432;
-    private final RPCTransport transport;
 
-    public SecurityAccountManagerService(RPCTransport transport) {
-        this.transport = transport;
+    public SecurityAccountManagerService(final RPCTransport transport) {
+        super(transport);
     }
 
-    public ServerHandle openServerHandle(String serverName) throws IOException {
+    public ServerHandle openServer(String serverName) throws IOException {
         final SamrConnect2Request request = new SamrConnect2Request(serverName, MAXIMUM_ALLOWED);
-        final SamrConnect2Response response = transport.call(request);
-        return response.getHandle();
+        return callAndExpectSuccess(request, "SamrConnect2").getHandle();
     }
 
     public DomainHandle openDomain(ServerHandle serverHandle, RPCSID domainId) throws IOException {
         final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, MAXIMUM_ALLOWED, domainId);
-        final SamrOpenDomainResponse response = transport.call(request);
-        return response.getHandle();
+        return callAndExpectSuccess(request, "SamrOpenDomain").getHandle();
     }
 
     public GroupHandle openGroup(DomainHandle domainHandle, int groupId) throws IOException {
         final SamrOpenGroupRequest request = new SamrOpenGroupRequest(domainHandle, MAXIMUM_ALLOWED, groupId);
-        final SamrOpenGroupResponse response = transport.call(request);
-        return response.getHandle();
+        return callAndExpectSuccess(request, "SamrOpenGroupRequest").getHandle();
     }
 
     public UserHandle openUser(DomainHandle domainHandle, int sid) throws IOException {
         final SamrOpenUserRequest request = new SamrOpenUserRequest(domainHandle, sid);
-        final SamrOpenUserResponse response = transport.call(request);
-        return response.getHandle();
+        return callAndExpectSuccess(request, "SamrOpenUserRequest").getHandle();
     }
 
     public AliasHandle openAlias(DomainHandle domainHandle, int sid) throws IOException {
@@ -124,16 +113,12 @@ public class SecurityAccountManagerService {
         // - SAMR_ALIAS_ACCESS_LOOKUP_INFO is SET(8)
         // - SAMR_ALIAS_ACCESS_GET_MEMBERS is SET(4)
         final SamrOpenAliasRequest request = new SamrOpenAliasRequest(domainHandle, 0x0002000C, sid);
-        final SamrOpenAliasResponse response = transport.call(request);
-        return response.getHandle();
+        return callAndExpectSuccess(request, "SamrOpenAlias").getHandle();
     }
 
     public void closeHandle(ContextHandle handle) throws IOException {
         final SamrCloseHandleRequest request = new SamrCloseHandleRequest(handle);
-        final SamrCloseHandleResponse response = transport.call(request);
-
-        if (response.getReturnValue() != 0)
-            throw new IOException("Failed to close handle: " + new String(handle.getBytes()));
+        callAndExpectSuccess(request, "SamrCloseHandle");
     }
 
     public List<DomainInfo> getDomainsForServer(final ServerHandle serverHandle) throws IOException {
@@ -143,13 +128,17 @@ public class SecurityAccountManagerService {
 
     public List<DomainInfo> getDomainsForServer(final ServerHandle serverHandle, final int bufferSize)
             throws IOException {
-        List<DomainInfo> domains = new ArrayList<>();
+        final List<DomainInfo> domains = new ArrayList<>();
         return enumerate(serverHandle, domains, new EnumerationCallback() {
+            @Override
+            public String getName() {
+                return "SamrEnumerateDomainsInSamServer";
+            }
             @Override
             public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
                 final SamrEnumerateDomainsInSamServerRequest request = new SamrEnumerateDomainsInSamServerRequest(
                         serverHandle, enumContext, bufferSize);
-                return transport.call(request);
+                return call(request);
             }
         });
     }
@@ -165,44 +154,52 @@ public class SecurityAccountManagerService {
         List<AliasInfo> aliases = new ArrayList<>();
         return enumerate(domainHandle, aliases, new EnumerationCallback() {
             @Override
+            public String getName() {
+                return "SamrEnumerateAliasesInDomain";
+            }
+            @Override
             public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
                 final SamrEnumerateAliasesInDomainRequest request = new SamrEnumerateAliasesInDomainRequest(
                         domainHandle, enumContext, bufferSize);
-                return transport.call(request);
+                return call(request);
             }
         });
     }
 
     public SAMPRUserAllInformation getUserAllInformation(final UserHandle userHandle) throws IOException {
-        SamrQueryInformationUserRequest.UserAllInformation request = new SamrQueryInformationUserRequest.UserAllInformation(userHandle);
-        return transport.call(request).getUserInformation();
+        final SamrQueryInformationUserRequest.UserAllInformation request =
+                new SamrQueryInformationUserRequest.UserAllInformation(userHandle);
+        return callAndExpectSuccess(request, "SamrQueryInformationUser[21]").getUserInformation();
     }
 
     public SAMPRGroupGeneralInformation getGroupGeneralInformation(final GroupHandle groupHandle) throws IOException {
-        SamrQueryInformationGroupRequest.GroupGeneralInformation request = new SamrQueryInformationGroupRequest.GroupGeneralInformation(groupHandle);
-        return transport.call(request).getGroupInformation();
+        final SamrQueryInformationGroupRequest.GroupGeneralInformation request =
+                new SamrQueryInformationGroupRequest.GroupGeneralInformation(groupHandle);
+        return callAndExpectSuccess(request, "SamrQueryInformationGroup[1]").getGroupInformation();
     }
 
     public SAMPRAliasGeneralInformation getAliasGeneralInformation(final AliasHandle aliasHandle) throws IOException {
-        SamrQueryInformationAliasRequest.AliasGeneralInformation request = new SamrQueryInformationAliasRequest.AliasGeneralInformation(aliasHandle);
-        return transport.call(request).getAliasInformation();
+        final SamrQueryInformationAliasRequest.AliasGeneralInformation request =
+                new SamrQueryInformationAliasRequest.AliasGeneralInformation(aliasHandle);
+        return callAndExpectSuccess(request, "SamrQueryInformationAlias[1]").getAliasInformation();
     }
 
     public SAMPRDomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
-        SamrQueryInformationDomainRequest.DomainPasswordInformation request = new SamrQueryInformationDomainRequest.DomainPasswordInformation(
-            domainHandle);
-        return transport.call(request).getDomainInformation();
+        final SamrQueryInformationDomainRequest.DomainPasswordInformation request =
+                new SamrQueryInformationDomainRequest.DomainPasswordInformation(domainHandle);
+        return callAndExpectSuccess(request, "SamrQueryInformationDomain[1]").getDomainInformation();
     }
 
     public SAMPRDomainLogOffInfo getDomainLogOffInfo(final DomainHandle domainHandle) throws IOException {
-        SamrQueryInformationDomainRequest.DomainLogOffInformation request = new SamrQueryInformationDomainRequest.DomainLogOffInformation(
-            domainHandle);
-        return transport.call(request).getDomainInformation();
+        final SamrQueryInformationDomainRequest.DomainLogOffInformation request =
+                new SamrQueryInformationDomainRequest.DomainLogOffInformation(domainHandle);
+        return callAndExpectSuccess(request, "SamrQueryInformationDomain[3]").getDomainInformation();
     }
 
     public SAMPRDomainLockoutInfo getDomainLockoutInfo(final DomainHandle domainHandle) throws IOException {
-        SamrQueryInformationDomain2Request.DomainLockoutInfo request = new SamrQueryInformationDomain2Request.DomainLockoutInfo(domainHandle);
-        return transport.call(request).getDomainInformation();
+        final SamrQueryInformationDomain2Request.DomainLockoutInfo request =
+                new SamrQueryInformationDomain2Request.DomainLockoutInfo(domainHandle);
+        return callAndExpectSuccess(request, "SamrQueryInformationDomain2[12]").getDomainInformation();
     }
 
     /**
@@ -228,13 +225,17 @@ public class SecurityAccountManagerService {
      */
     public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
             throws IOException {
-        List<GroupInfo> groups = new ArrayList<>();
+        final List<GroupInfo> groups = new ArrayList<>();
         return enumerate(domainHandle, groups, new EnumerationCallback() {
+            @Override
+            public String getName() {
+                return "SamrEnumerateGroupsInDomain";
+            }
             @Override
             public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
                 final SamrEnumerateGroupsInDomainRequest request = new SamrEnumerateGroupsInDomainRequest(domainHandle,
                         enumContext, bufferSize);
-                return transport.call(request);
+                return call(request);
             }
         });
     }
@@ -265,13 +266,17 @@ public class SecurityAccountManagerService {
      */
     public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl,
             final int bufferSize) throws IOException {
-        List<UserInfo> users = new ArrayList<>();
+        final List<UserInfo> users = new ArrayList<>();
         return enumerate(domainHandle, users, new EnumerationCallback() {
+            @Override
+            public String getName() {
+                return "SamrEnumerateUsersInDomain";
+            }
             @Override
             public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
                 final SamrEnumerateUsersInDomainRequest request = new SamrEnumerateUsersInDomainRequest(domainHandle,
                         enumContext, userAccountControl, bufferSize);
-                return transport.call(request);
+                return call(request);
             }
         });
     }
@@ -287,13 +292,13 @@ public class SecurityAccountManagerService {
     public List<SAMPRDomainDisplayGroup> getDomainGroupInformationforDomain(final DomainHandle handle,
             final int entryCount,
             final int maxLength) throws IOException {
-        List<SAMPRDomainDisplayGroup> groups = new ArrayList<>();
+        final List<SAMPRDomainDisplayGroup> groups = new ArrayList<>();
         int enumContext = 0;
         int totalReturnedBytes = 0;
         while (true) {
             final SamrQueryDisplayInformation2Request request = new SamrQueryDisplayInformation2Request(handle,
                     DomainDisplayGroup, enumContext, entryCount, maxLength);
-            final SamrQueryDisplayInformation2Response response = transport.call(request);
+            final SamrQueryDisplayInformation2Response response = call(request);
             enumContext += response.getList().size();
             totalReturnedBytes += response.getTotalReturnedBytes();
             int returnCode = response.getReturnValue();
@@ -319,11 +324,11 @@ public class SecurityAccountManagerService {
                 securityInformationValue |= v.getValue();
             }
         }
-        SamrQuerySecurityObjectRequest request = new SamrQuerySecurityObjectRequest(objectHandle, securityInformationValue);
-        return parseSecurityDescriptor(transport.call(request).getSecurityDescriptor());
+        final SamrQuerySecurityObjectRequest request = new SamrQuerySecurityObjectRequest(objectHandle, securityInformationValue);
+        return parseSecurityDescriptor(callAndExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor());
     }
 
-    public SecurityDescriptor parseSecurityDescriptor(SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
+    SecurityDescriptor parseSecurityDescriptor(SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
         if (securityDescriptor == null)
             return null;
         byte[] payload = securityDescriptor.getSecurityDescriptor();
@@ -342,30 +347,26 @@ public class SecurityAccountManagerService {
      * @param userHandle User handle. Must not be {@code null}.
      */
     public List<GroupMembership> getGroupsForUser(UserHandle userHandle) throws IOException {
-        SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
-        SamrGetGroupsForUserResponse response = transport.call(request);
-        if (!ERROR_SUCCESS.is(response.getReturnValue()))
-            throw new RPCException("GetGroupsForUser", response.getReturnValue());
-
-        return response.getGroupMembership();
+        final SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
+        return callAndExpectSuccess(request, "SamrGetGroupsForUser").getGroupMembership();
     }
 
     public RPCSID getSIDForDomain(ServerHandle serverHandle, String domainName) throws IOException {
-        SamrLookupDomainInSamServerRequest request = new SamrLookupDomainInSamServerRequest(serverHandle,
+        final SamrLookupDomainInSamServerRequest request = new SamrLookupDomainInSamServerRequest(serverHandle,
                 RPCUnicodeString.NonNullTerminated.of(domainName));
-        return transport.call(request).getDomainId();
+        return callAndExpectSuccess(request, "SamrLookupDomainInSamServer").getDomainId();
     }
     
     public SamrLookupNamesInDomainResponse getNamesInDomain(DomainHandle domainHandle, String ... names)
             throws IOException {
         if (names == null)
             names = new String[0];
-        RPCUnicodeString.NonNullTerminated[] inNames = new RPCUnicodeString.NonNullTerminated[names.length];
+        final RPCUnicodeString.NonNullTerminated[] inNames = new RPCUnicodeString.NonNullTerminated[names.length];
         for (int i = 0; i < names.length; i++) {
             inNames[i] = RPCUnicodeString.NonNullTerminated.of(names[i]);
         }
-        SamrLookupNamesInDomainRequest request = new SamrLookupNamesInDomainRequest(domainHandle, inNames);
-        return transport.call(request);
+        final SamrLookupNamesInDomainRequest request = new SamrLookupNamesInDomainRequest(domainHandle, inNames);
+        return callAndExpectSuccess(request, "SamrLookupNamesInDomain");
     }
 
     /**
@@ -392,6 +393,7 @@ public class SecurityAccountManagerService {
      * Anonymous function for calling the enumeration request.
      */
     private interface EnumerationCallback {
+        String getName();
         SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException;
     }
 }
