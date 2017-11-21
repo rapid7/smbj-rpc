@@ -48,6 +48,8 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainReques
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupDomainInSamServerRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenDomainRequest;
@@ -354,6 +356,18 @@ public class SecurityAccountManagerService {
         SamrLookupDomainInSamServerRequest request = new SamrLookupDomainInSamServerRequest(serverHandle,
                 RPCUnicodeString.NonNullTerminated.of(domainName));
         return transport.call(request).getDomainId();
+    }
+    
+    public SamrLookupNamesInDomainResponse getNamesInDomain(DomainHandle domainHandle, String ... names)
+            throws IOException {
+        if (names == null)
+            names = new String[0];
+        RPCUnicodeString.NonNullTerminated[] inNames = new RPCUnicodeString.NonNullTerminated[names.length];
+        for (int i = 0; i < names.length; i++) {
+            inNames[i] = RPCUnicodeString.NonNullTerminated.of(names[i]);
+        }
+        SamrLookupNamesInDomainRequest request = new SamrLookupNamesInDomainRequest(domainHandle, inNames);
+        return transport.call(request);
     }
 
     /**
