@@ -16,6 +16,7 @@
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
  */
+
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import com.rapid7.client.dcerpc.io.PacketInput;
@@ -30,7 +31,6 @@ import java.io.IOException;
  */
 
 public class LsarLookupSIDsResponse extends RequestResponse {
-    private int returnValue;
     private int mappedCount;
     private LSAPRReferencedDomainList lsaprReferencedDomainList;
     private LSAPRTranslatedNames lsaprTranslatedNames;
@@ -51,22 +51,15 @@ public class LsarLookupSIDsResponse extends RequestResponse {
         mappedCount = packetIn.readInt();
     }
 
-    public int getReturnValue() {
-        return returnValue;
-    }
-
-    public int getMappedCount()
-    {
+    public int getMappedCount() {
         return mappedCount;
     }
 
-    public LSAPRReferencedDomainList getLsaprReferencedDomainList()
-    {
+    public LSAPRReferencedDomainList getLsaprReferencedDomainList() {
         return lsaprReferencedDomainList;
     }
 
-    public LSAPRTranslatedNames getLsaprTranslatedNames()
-    {
+    public LSAPRTranslatedNames getLsaprTranslatedNames() {
         return lsaprTranslatedNames;
     }
 }

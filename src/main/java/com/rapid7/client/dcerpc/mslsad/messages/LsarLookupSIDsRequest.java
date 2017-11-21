@@ -117,8 +117,7 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
     private final ContextHandle policyHandle;
 
     public LsarLookupSIDsRequest(final ContextHandle policyHandle, final String[] SIDs)
-        throws MalformedSIDException
-    {
+        throws MalformedSIDException {
         super(OP_NUM);
         this.SIDs = SIDs;
         this.policyHandle = policyHandle;
