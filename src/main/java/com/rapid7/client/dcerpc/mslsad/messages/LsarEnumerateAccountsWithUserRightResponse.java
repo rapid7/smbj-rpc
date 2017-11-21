@@ -25,7 +25,7 @@ import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 
 public class LsarEnumerateAccountsWithUserRightResponse extends RequestResponse {
-    // [out] PLSAPR_ACCOUNT_ENUM_BUFFER EnumerationBuffer
+    // <NDR: pointer[conformant array]> [out] PLSAPR_ACCOUNT_ENUM_BUFFER EnumerationBuffer
     private RPCSID[] sids;
 
     public RPCSID[] getSids() {

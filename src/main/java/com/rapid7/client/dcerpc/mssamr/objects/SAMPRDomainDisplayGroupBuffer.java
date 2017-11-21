@@ -37,7 +37,7 @@ package com.rapid7.client.dcerpc.mssamr.objects;
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc245639.aspx">
  *       https://msdn.microsoft.com/en-us/library/cc245639.aspx</a>
  */
-public class SAMPRDomainDisplayGroupBuffer extends SAMPRDisplayInfoBuffer<SAMPRDomainDisplayGroup> {
+public class SAMPRDomainDisplayGroupBuffer extends SAMPREnumerationBuffer<SAMPRDomainDisplayGroup> {
 
     @Override
     protected SAMPRDomainDisplayGroup initEntity() {

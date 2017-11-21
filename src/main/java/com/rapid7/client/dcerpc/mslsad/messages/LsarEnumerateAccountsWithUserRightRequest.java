@@ -38,7 +38,9 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
  */
 public class LsarEnumerateAccountsWithUserRightRequest extends RequestCall<LsarEnumerateAccountsWithUserRightResponse> {
     private final static short OP_NUM = 35;
+    // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
     private final ContextHandle policyHandle;
+    // <NDR: pointer[struct]> [in, unique] PRPC_UNICODE_STRING UserRight
     private final RPCUnicodeString.NonNullTerminated userRight;
 
     public LsarEnumerateAccountsWithUserRightRequest(final ContextHandle policyHandle,
@@ -50,13 +52,13 @@ public class LsarEnumerateAccountsWithUserRightRequest extends RequestCall<LsarE
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        // [in] LSAPR_HANDLE PolicyHandle
+        // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
         packetOut.writeMarshallable(this.policyHandle);
         if (this.userRight == null) {
-            // Alignment: 4 - Already aligned
+            // Alignment: 4 - Already aligned, wrote 20 bytes above
             packetOut.writeNull();
         } else {
-            // Alignment: 4 - Already aligned
+            // Alignment: 4 - Already aligned, wrote 20 bytes above
             packetOut.writeReferentID();
             packetOut.writeMarshallable(this.userRight);
         }

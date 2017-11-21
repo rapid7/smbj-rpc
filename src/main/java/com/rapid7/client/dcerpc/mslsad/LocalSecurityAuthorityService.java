@@ -18,10 +18,11 @@
  */
 package com.rapid7.client.dcerpc.mslsad;
 
+import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAccountDomInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAuditEventsInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyPrimaryDomInfo;
-import com.rapid7.client.dcerpc.mslsad.messages.LsarClosePolicyRpcRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarCloseRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountRightsRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesResponse;
@@ -80,12 +81,14 @@ public class LocalSecurityAuthorityService extends Service {
         final LsarEnumerateAccountsWithUserRightRequest request =
                 new LsarEnumerateAccountsWithUserRightRequest(
                         policyHandle, RPCUnicodeString.NonNullTerminated.of(userRight));
-        return callExpectSuccess(request, "LsarEnumerateAccountsWithUserRight").getSids();
+        return callExpect(request, "LsarEnumerateAccountsWithUserRight",
+                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_NO_MORE_ENTRIES).getSids();
     }
 
     public void closePolicyHandle(final ContextHandle handle) throws IOException {
-        final LsarClosePolicyRpcRequest request = new LsarClosePolicyRpcRequest(handle);
-        callExpectSuccess(request, "LsarClosePolicy");
+        final LsarCloseRequest request = new LsarCloseRequest(handle);
+        callExpect(request, "LsarClose",
+                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_INVALID_HANDLE);
     }
 
     public LsarLookupNamesResponse lookupNames(final ContextHandle policyHandle, final String... names) throws IOException {

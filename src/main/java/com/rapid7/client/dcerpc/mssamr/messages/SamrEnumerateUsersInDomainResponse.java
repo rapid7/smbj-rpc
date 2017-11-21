@@ -28,6 +28,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
  * The {@link SamrEnumerateResponse} implementation for request {@link SamrEnumerateUsersInDomainRequest}.
  */
 public class SamrEnumerateUsersInDomainResponse extends SamrEnumerateResponse {
+    // <NDR: struct> [out] PSAMPR_ENUMERATION_BUFFER* Buffer
     private EnumeratedUsers users;
 
     @Override

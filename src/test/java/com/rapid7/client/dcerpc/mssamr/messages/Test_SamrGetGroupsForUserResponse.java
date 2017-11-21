@@ -31,8 +31,8 @@ public class Test_SamrGetGroupsForUserResponse {
         response.fromHexString(
             "00000200010000000400020001000000010200000700000000000000");
         assertEquals(0, response.getReturnValue());
-        assertEquals(1, response.getGroupMembership().size());
-        GroupMembership group = response.getGroupMembership().get(0);
+        assertEquals(1, response.getGroups().size());
+        GroupMembership group = response.getGroups().get(0);
         assertEquals(513, group.getRelativeID());
         assertEquals(0x0000007, group.getAttributes());
     }

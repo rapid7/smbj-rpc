@@ -52,6 +52,7 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
 public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable> extends RequestCall<LsarQueryInformationPolicyResponse<T>> {
     public final static short OP_NUM = 7;
 
+    // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
     private final ContextHandle policyHandle;
 
     public LsarQueryInformationPolicyRequest(final ContextHandle policyHandle) {
@@ -67,7 +68,7 @@ public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable
 
     @Override
     public void marshal(final PacketOutput packetOut) throws IOException {
-        // [in] LSAPR_HANDLE PolicyHandle,
+        // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
         packetOut.writeMarshallable(policyHandle);
         // <NDR: unsigned short> [in] POLICY_INFORMATION_CLASS InformationClass,
         // Alignment: 2 - Already aligned. ContextHandle writes 20 bytes above

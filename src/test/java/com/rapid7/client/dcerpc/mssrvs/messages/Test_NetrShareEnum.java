@@ -70,6 +70,6 @@ public class Test_NetrShareEnum {
         assertEquals("Remote IPC", share2.getComment());
 
         assertNull(response.getResumeHandle());
-        assertEquals(SystemErrorCode.ERROR_SUCCESS.getErrorCode(), response.getReturnValue());
+        assertEquals(SystemErrorCode.ERROR_SUCCESS.getValue(), response.getReturnValue());
     }
 }
