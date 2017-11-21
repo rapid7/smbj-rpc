@@ -53,6 +53,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRAliasGeneralInformation;
 public abstract class SamrQueryInformationAliasRequest<T extends Unmarshallable> extends RequestCall<SamrQueryInformationAliasResponse<T>> {
     public static final short OP_NUM = 28;
 
+    // <NDR: fixed array> [in] SAMPR_HANDLE AliasHandle
     private final AliasHandle aliasHandle;
 
     SamrQueryInformationAliasRequest(AliasHandle aliasHandle) {
@@ -68,7 +69,7 @@ public abstract class SamrQueryInformationAliasRequest<T extends Unmarshallable>
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        // <NDR: struct> [in] SAMPR_HANDLE AliasHandle,
+        // <NDR: fixed array> [in] SAMPR_HANDLE AliasHandle
         packetOut.writeMarshallable(getAliasHandle());
         // <NDR: unsigned short> [in] ALIAS_INFORMATION_CLASS AliasInformationClass,
         // Alignment: 2 - Already aligned. ContextHandle writes 20 bytes above

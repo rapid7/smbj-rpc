@@ -20,6 +20,7 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
@@ -29,13 +30,11 @@ import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
 public class RQueryServiceConfigWResponse extends RequestResponse {
     private ServiceConfigInfo serviceConfigInfo;
     private int bytesNeeded;
-    private int returnValue;
 
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
         readQueryServiceConfg(packetIn);
         bytesNeeded = packetIn.readInt();
-        returnValue = packetIn.readInt();
     }
 
     private void readQueryServiceConfg(PacketInput packetIn) throws IOException {
@@ -65,9 +64,5 @@ public class RQueryServiceConfigWResponse extends RequestResponse {
 
     public ServiceConfigInfo getServiceConfigInfo() {
         return serviceConfigInfo;
-    }
-
-    public int getReturnValue() {
-        return returnValue;
     }
 }

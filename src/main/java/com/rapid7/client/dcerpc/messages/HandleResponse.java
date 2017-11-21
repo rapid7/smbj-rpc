@@ -39,7 +39,6 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
  */
 public class HandleResponse<T extends ContextHandle> extends RequestResponse {
     private final T handle = initHandle();
-    private int returnValue;
 
     /**
      * @return The handle to a opened key.
@@ -48,17 +47,8 @@ public class HandleResponse<T extends ContextHandle> extends RequestResponse {
         return handle;
     }
 
-    /**
-     * @return The method returns 0 (ERROR_SUCCESS) to indicate success; otherwise,
-     * it returns a nonzero error code, as
-     * specified in [MS-ERREF] section 2.2.
-     */
-    public int getReturnValue() {
-        return returnValue;
-    }
-
     @Override
-    public void unmarshal(final PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(final PacketInput packetIn) throws IOException {
         // Remote Registry Service, OpenHKLM
         // Operation: OpenHKLM (2)
         // [Request in frame: 11174]
@@ -69,7 +59,6 @@ public class HandleResponse<T extends ContextHandle> extends RequestResponse {
         // [Frame handle closed: 11424]
         // Windows Error: WERR_OK (0x00000000)
         packetIn.readUnmarshallable(handle);
-        returnValue = packetIn.readInt();
     }
 
     /**

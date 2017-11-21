@@ -46,13 +46,13 @@ public enum DisplayInformationClass {
     DomainDisplayOemUser(4),
     DomainDisplayOemGroup(5);
 
-    private DisplayInformationClass(final int value) {
-        this.value = value;
+    DisplayInformationClass(final int infoLevel) {
+        this.infoLevel = infoLevel;
     }
 
-    public int getValue() {
-        return value;
+    public int getInfoLevel() {
+        return infoLevel;
     }
 
-    private final int value;
+    private final int infoLevel;
 }

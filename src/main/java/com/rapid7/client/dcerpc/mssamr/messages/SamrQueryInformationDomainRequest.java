@@ -58,6 +58,7 @@ public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable
 
     public final static short OP_NUM = 8;
 
+    // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
     private final DomainHandle domainHandle;
 
     public SamrQueryInformationDomainRequest(final DomainHandle domainHandle) {
@@ -73,7 +74,10 @@ public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
+        // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
         packetOut.write(getDomainHandle().getBytes());
+        // <NDR: short> switch_is(DomainInformationClass)
+        // Alignment: 2 - Already aligned, wrote 20 bytes above
         packetOut.writeShort(getDomainInformationClass().getInfoLevel());
     }
 

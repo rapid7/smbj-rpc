@@ -34,6 +34,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.AliasInformationClass;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
@@ -57,7 +58,7 @@ public class Test_SamrQueryInformationAliasResponse {
     public Object[][] data_unmarshal() {
         return new Object[][] {
                 // Reference: 1, ALIAS_INFORMATION_CLASS: 1
-                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "01000000 0100"}
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "01000000 0100 01000000"}
         };
     }
 
@@ -67,13 +68,15 @@ public class Test_SamrQueryInformationAliasResponse {
         PacketInput in = spy(new PacketInput(bin));
         doReturn(null).when(in).readUnmarshallable(any(Unmarshallable.class));
         response.unmarshal(in);
+        assertEquals(bin.available(), 0);
         assertNotNull(response.getAliasInformation());
+        assertEquals(response.getReturnValue(), 1);
     }
 
     @DataProvider
     public Object[][] data_unmarshall_Null() {
         return new Object[][] {
-                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "00000000 0100"}
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "00000000 01000000"}
         };
     }
 
@@ -82,7 +85,9 @@ public class Test_SamrQueryInformationAliasResponse {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);
+        assertEquals(bin.available(), 0);
         assertNull(response.getAliasInformation());
+        assertEquals(response.getReturnValue(), 1);
     }
 
     @DataProvider

@@ -94,29 +94,10 @@ public class Test_RPCSID {
 
         RPCSID rpc_sid = new RPCSID();
         rpc_sid.setRevision((char) 25);
-        rpc_sid.setSubAuthorityCount((char) 2);
         rpc_sid.setIdentifierAuthority(new byte[]{1, 2, 3, 4, 5, 6});
         rpc_sid.setSubAuthority(new long[]{5, 10});
         rpc_sid.marshalEntity(out);
         assertEquals(Hex.toHexString(bout.toByteArray()), expectHex);
-    }
-
-    @Test
-    public void test_marshalEntity_SubAuthorityCountInvalid() throws IOException {
-        RPCSID rpc_sid = new RPCSID();
-        rpc_sid.setRevision((char) 25);
-        rpc_sid.setSubAuthorityCount((char) 30);
-        rpc_sid.setIdentifierAuthority(new byte[]{1, 2, 3, 4, 5, 6});
-        rpc_sid.setSubAuthority(new long[]{5, 10});
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        MarshalException actual = null;
-        try {
-            rpc_sid.marshalEntity(new PacketOutput(outputStream));
-        } catch (MarshalException e) {
-            actual = e;
-        }
-        assertNotNull(actual);
-        assertEquals(actual.getMessage(), "SubAuthorityCount (30) != SubAuthority[] length (2)");
     }
 
     @Test
@@ -199,13 +180,11 @@ public class Test_RPCSID {
     public void test_setters() {
         RPCSID rpc_sid = new RPCSID();
         rpc_sid.setRevision((char) 200);
-        rpc_sid.setSubAuthorityCount((char) 5);
         byte[] identifierAuthority = new byte[]{1, 2};
         rpc_sid.setIdentifierAuthority(identifierAuthority);
         long[] subAuthority = new long[]{2, 5, 7};
         rpc_sid.setSubAuthority(subAuthority);
         assertEquals(rpc_sid.getRevision(), (char) 200);
-        assertEquals(rpc_sid.getSubAuthorityCount(), (char) 5);
         assertSame(rpc_sid.getIdentifierAuthority(), identifierAuthority);
         assertSame(rpc_sid.getSubAuthority(), subAuthority);
     }
@@ -218,10 +197,6 @@ public class Test_RPCSID {
         rpc_sid1.setRevision((char) 200);
         assertNotEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
         rpc_sid2.setRevision((char) 200);
-        assertEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
-        rpc_sid1.setSubAuthorityCount((char) 5);
-        assertNotEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
-        rpc_sid2.setSubAuthorityCount((char) 5);
         assertEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
         rpc_sid1.setIdentifierAuthority(new byte[]{1, 2});
         assertNotEquals(rpc_sid1.hashCode(), rpc_sid2.hashCode());
@@ -242,10 +217,6 @@ public class Test_RPCSID {
         assertNotEquals(sid1, sid2);
         sid2.setRevision((char) 200);
         assertEquals(sid1, sid2);
-        sid1.setSubAuthorityCount((char) 2);
-        assertNotEquals(sid1, sid2);
-        sid2.setSubAuthorityCount((char) 2);
-        assertEquals(sid1, sid2);
         sid1.setIdentifierAuthority(new byte[]{1, 2});
         assertNotEquals(sid1, sid2);
         sid2.setIdentifierAuthority(new byte[]{1, 2});
@@ -259,12 +230,13 @@ public class Test_RPCSID {
     @Test
     public void test_toString() {
         RPCSID rpc_sid = new RPCSID();
-        assertEquals(rpc_sid.toString(), "RPC_SID{Revision:0, SubAuthorityCount:0, IdentifierAuthority:null, SubAuthority: null}");
+        assertEquals(rpc_sid.toString(), "S-0-null-null");
         rpc_sid.setRevision((char) 200);
-        rpc_sid.setSubAuthorityCount((char) 5);
         rpc_sid.setIdentifierAuthority(new byte[]{1, 2});
         rpc_sid.setSubAuthority(new long[]{2, 5, 7});
-        assertEquals(rpc_sid.toString(), "RPC_SID{Revision:200, SubAuthorityCount:5, IdentifierAuthority:[1, 2], SubAuthority: [2, 5, 7]}");
+        assertEquals(rpc_sid.toString(), "S-200-0x0102-2-5-7");
+        rpc_sid.setIdentifierAuthority(new byte[]{0, 1});
+        assertEquals(rpc_sid.toString(), "S-200-0x0001-2-5-7");
     }
 
     @Test
@@ -279,6 +251,20 @@ public class Test_RPCSID {
         assertEquals(rpc_sid.getSubAuthorityCount(), 3);
         assertArrayEquals(rpc_sid.getIdentifierAuthority(), new byte[] { 0, 0, 0, 0, 0, 5 });
         assertArrayEquals(rpc_sid.getSubAuthority(), new long[] { 333, 444, 5 });
+    }
+
+    @Test
+    public void test_to_and_from_String() throws MalformedSIDException {
+        String sid_string = "S-1-5-32";
+        RPCSID sid = RPCSID.fromString(sid_string);
+        assertEquals(sid_string, sid.toString());
+
+        RPCSID sid2 = new RPCSID();
+        sid2.setRevision((char) 200);
+        sid2.setIdentifierAuthority(new byte[] {0, 1});
+        sid2.setSubAuthority(new long []{2,5,7});
+
+        assertEquals(RPCSID.fromString(sid2.toString()), sid2);
     }
 
     @Test(expectedExceptions = { MalformedSIDException.class })

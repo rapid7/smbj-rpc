@@ -40,7 +40,7 @@ public class Test_NetPrPathCanonicalize {
 
 
         assertEquals("C:\\Something", response.getCanonicalizedPath());
-        assertEquals(SystemErrorCode.ERROR_SUCCESS, response.getReturnValue());
+        assertEquals(SystemErrorCode.ERROR_SUCCESS.getValue(), response.getReturnValue());
         assertEquals(NetprPathType.ITYPE_PATH_ABSD, response.getPathType());
     }
 

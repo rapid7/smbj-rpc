@@ -62,9 +62,9 @@ public class Test_SecurityAccountManagerService {
         ServerHandle handle = new ServerHandle();
         SamrEnumerateDomainsInSamServerResponse response1 = Mockito.mock(SamrEnumerateDomainsInSamServerResponse.class);
         SamrEnumerateDomainsInSamServerResponse response2 = Mockito.mock(SamrEnumerateDomainsInSamServerResponse.class);
-        Mockito.when(response1.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_ENTRIES.getErrorCode());
+        Mockito.when(response1.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_ENTRIES.getValue());
         Mockito.when(response1.getResumeHandle()).thenReturn(1);
-        Mockito.when(response2.getReturnValue()).thenReturn(SystemErrorCode.ERROR_SUCCESS.getErrorCode());
+        Mockito.when(response2.getReturnValue()).thenReturn(SystemErrorCode.ERROR_SUCCESS.getValue());
         Mockito.when(response2.getResumeHandle()).thenReturn(2);
         List<DomainInfo> domains1 = new ArrayList<>();
         List<DomainInfo> domains2 = new ArrayList<>();

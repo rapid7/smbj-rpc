@@ -42,25 +42,36 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
  */
 public class SamrEnumerateUsersInDomainRequest extends RequestCall<SamrEnumerateUsersInDomainResponse> {
     public static final short OP_NUM = 13;
-    private final DomainHandle handle;
-    private final int enumContext;
+    // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
+    private final DomainHandle domainHandle;
+    // <NDR: unsigned long> [in, out] unsigned long* EnumerationContext
+    private final int enumerationContext;
+    // <NDR: unsigned long> [in] unsigned long UserAccountControl
     private final int userAccountControl;
+    // <NDR: unsigned long> [in] unsigned long PreferedMaximumLength
     private final int maxLength;
 
-    public SamrEnumerateUsersInDomainRequest(DomainHandle handle, int enumContext, int userAccountControl,
-            int maxLength) {
+    public SamrEnumerateUsersInDomainRequest(DomainHandle domainHandle, int enumerationContext,
+            int userAccountControl, int maxLength) {
         super(OP_NUM);
-        this.handle = handle;
-        this.enumContext = enumContext;
+        this.domainHandle = domainHandle;
+        this.enumerationContext = enumerationContext;
         this.userAccountControl = userAccountControl;
         this.maxLength = maxLength;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(handle.getBytes());
-        packetOut.writeInt(enumContext);
+        // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
+        packetOut.writeMarshallable(this.domainHandle);
+        // <NDR: unsigned long> [in, out] unsigned long* EnumerationContext
+        // Alignment: 4 - Already aligned, wrote 20 bytes above
+        packetOut.writeInt(this.enumerationContext);
+        // <NDR: unsigned long> [in] unsigned long UserAccountControl
+        // Alignment: 4 - Already aligned
         packetOut.writeInt(userAccountControl);
+        // <NDR: unsigned long> [in] unsigned long PreferedMaximumLength
+        // Alignment: 4 - Already aligned
         packetOut.writeInt(maxLength);
     }
 

@@ -22,34 +22,54 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 
-public class LsarClosePolicyRpcResponse extends RequestResponse {
-    private byte[] handle;
+public class LsarEnumerateAccountRightsResponse extends RequestResponse {
+    // [out] PLSAPR_USER_RIGHT_SET UserRights
+    private String[] privNames;
 
-    public byte[] getPolicyHandle() {
-        return handle;
+    public String[] getPrivNames() {
+        return privNames;
     }
 
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(final PacketInput packetIn) throws IOException {
       /*
        * Rpc Info
        *
        * MajorVer: 05
        * MinorVer: 00
        * PacketType: 02 (Response)
-       * Flags: 03
+       * Flags: 03R
        * PackType: 10000000
-       * FragLen: 3000
+       * FragLen: EC00
        * AuthLen: 0000
-       * CallId: 01000000
-       * AllocHint: 18000000
+       * CallId: 03000000
+       * AllocHint: D4000000
        * ContextId: 0000
        * CancelCount: 00
        * Rsvd: 00
-       * PolicyHnd: 00000000A6327DA8A113D7119878C915DD98180A
+       *
+       * Count: 11000000
+       * Ptr: 80DC1600
+       * Count: 11000000
+       * UniHdr1: 2600 2800985A1700
+       * UniHdr2: 2200 2400 68F41600 ...
+       * UniStr1: 14000000 00000000 13000000 53006500530065....
+       * SeSecurityPrivilege ...
        * Status: 00000000
        */
-        handle = packetIn.readRawBytes(20);
-    }
 
+        final int privCnt = packetIn.readInt();
+        int ptr = packetIn.readInt();// 0 if status == 0xc0000034
+        if (privCnt >= 1) {
+            // MaxCnt(4 bytes) + UnitHdr(8 bytes)* privCnt
+            packetIn.fullySkipBytes(4 + 8 * privCnt);
+
+            privNames = new String[privCnt];
+            for (int i = 0; i < privCnt; i++) {
+                privNames[i] = packetIn.readString(true);
+            }
+        }
+    }
 }
+
+

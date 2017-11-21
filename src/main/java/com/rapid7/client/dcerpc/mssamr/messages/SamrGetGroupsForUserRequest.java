@@ -40,16 +40,18 @@ import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
  */
 public class SamrGetGroupsForUserRequest extends RequestCall<SamrGetGroupsForUserResponse> {
     public static final short OP_NUM = 39;
-    private final UserHandle handle;
 
-    public SamrGetGroupsForUserRequest(UserHandle handle) {
+    // <NDR: fixed array> [in] SAMPR_HANDLE UserHandle
+    private final UserHandle userHandle;
+
+    public SamrGetGroupsForUserRequest(UserHandle userHandle) {
         super(OP_NUM);
-        this.handle = handle;
+        this.userHandle = userHandle;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.writeMarshallable(handle);
+        packetOut.writeMarshallable(this.userHandle);
     }
 
     @Override

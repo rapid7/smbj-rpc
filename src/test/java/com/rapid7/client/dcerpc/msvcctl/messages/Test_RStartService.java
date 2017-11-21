@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
-import com.rapid7.client.dcerpc.objects.EmptyResponse;
+import com.rapid7.client.dcerpc.messages.EmptyResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

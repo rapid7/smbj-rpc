@@ -39,7 +39,7 @@ public abstract class SamrQueryInformationDomainResponse<T extends Unmarshallabl
     abstract T createDomainInformation();
 
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
         if (packetIn.readReferentID() != 0) {
             final int infoLevel = packetIn.readShort();
             if (infoLevel != getDomainInformationClass().getInfoLevel()) {

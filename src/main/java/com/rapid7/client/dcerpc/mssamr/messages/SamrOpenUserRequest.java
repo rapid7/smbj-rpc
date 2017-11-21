@@ -23,21 +23,43 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
+/**
+ * <a href="https://msdn.microsoft.com/en-us/library/cc245752.aspx">SamrOpenUser</a>
+ * <blockquote><pre>The SamrOpenUser method obtains a handle to a user, given a RID.
+ *
+ *      long SamrOpenUser(
+ *          [in] SAMPR_HANDLE DomainHandle,
+ *          [in] unsigned long DesiredAccess,
+ *          [in] unsigned long UserId,
+ *          [out] SAMPR_HANDLE* UserHandle
+ *      );
+ *
+ *  DomainHandle: An RPC context handle, as specified in section 2.2.3.2, representing a domain object.
+ *  DesiredAccess: An ACCESS_MASK that indicates the requested access for the returned handle. See section 2.2.1.7 for a list of user access values.
+ *  UserId: A RID of a user account.
+ *  UserHandle: An RPC context handle, as specified in section 2.2.3.2.
+ *
+ *  This protocol asks the RPC runtime, via the strict_context_handle attribute, to reject the use of context handles created by a method of a different RPC interface than this one, as specified in [MS-RPCE] section 3.</pre></blockquote>
+ */
 public class SamrOpenUserRequest extends RequestCall<SamrOpenUserResponse> {
     public final static short OP_NUM = 34;
 
-    private final DomainHandle handle;
-    private final int userRid;
+    // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
+    private final DomainHandle domainHandle;
+    // <NDR: unsigned long> [in] unsigned long DesiredAccess
+    // Static
+    // <NDR: unsigned long> [in] unsigned long UserId
+    private final int userId;
 
-    public SamrOpenUserRequest(DomainHandle handle, int userRid) {
+    public SamrOpenUserRequest(DomainHandle domainHandle, int userId) {
         super(OP_NUM);
-        this.handle = handle;
-        this.userRid = userRid;
+        this.domainHandle = domainHandle;
+        this.userId = userId;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(handle.getBytes());
+        packetOut.writeMarshallable(this.domainHandle);
         // Generic rights: 0x00000000
         // Standard rights: 0x00020000
         // SAMR User specific rights: 0x0000011b
@@ -45,8 +67,12 @@ public class SamrOpenUserRequest extends RequestCall<SamrOpenUserResponse> {
         // - Groups: SAMR_USER_ACCESS_GET_GROUPS is SET
         // - Attributes: SAMR_USER_ACCESS_GET_ATTRIBUTES is SET
         // - Logoninfo: SAMR_USER_ACCESS_GET_LOGONINFO is SET
+        // <NDR: unsigned long> [in] unsigned long DesiredAccess
+        // Alignment: 4 - Already aligned, wrote 20 bytes above
         packetOut.writeInt(0x2011B);
-        packetOut.writeInt(userRid);
+        // <NDR: unsigned long> [in] unsigned long UserId
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(this.userId);
     }
 
     @Override

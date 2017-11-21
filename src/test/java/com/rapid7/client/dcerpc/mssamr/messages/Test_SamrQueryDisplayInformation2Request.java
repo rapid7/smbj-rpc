@@ -31,8 +31,8 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 public class Test_SamrQueryDisplayInformation2Request {
 
     private final DomainHandle handle = new DomainHandle();
-    private final SamrQueryDisplayInformation2Request request1 = new SamrQueryDisplayInformation2Request(handle,
-            DisplayInformationClass.DomainDisplayGroup, 0, 0xffffffff, 0xffff);
+    private final SamrQueryDisplayInformation2Request.DomainDisplayGroup request1 =
+            new SamrQueryDisplayInformation2Request.DomainDisplayGroup(handle,0, 0xffffffff, 0xffff);
 
     @Test
     public void getStub() throws IOException {

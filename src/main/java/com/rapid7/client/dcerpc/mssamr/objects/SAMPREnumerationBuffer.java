@@ -120,6 +120,7 @@ public abstract class SAMPREnumerationBuffer<T extends Unmarshallable> implement
      * Initiate the entity instance contained in the buffer.
      *
      * @return The entity instance in the buffer.
+     * @throws UnmarshalException when unable to instantiate buffer
      */
     protected abstract T initEntity() throws UnmarshalException;
 }

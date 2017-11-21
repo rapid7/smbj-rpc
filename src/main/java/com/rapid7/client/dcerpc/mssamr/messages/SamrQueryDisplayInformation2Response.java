@@ -20,65 +20,74 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import java.rmi.UnmarshalException;
-import java.util.List;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DisplayInformationClass;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDisplayInfoBuffer;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroupBuffer;
 
 /**
  * The {@link SamrEnumerateResponse} implementation for request {@link SamrQueryDisplayInformation2Request}.
  */
-public class SamrQueryDisplayInformation2Response<T extends Unmarshallable>
-        extends RequestResponse
-{
-    private final DisplayInformationClass infoClass;
-    private int totalAvailableBytes;
+public abstract class SamrQueryDisplayInformation2Response<T extends Unmarshallable> extends RequestResponse {
+
+    // <NDR: unsigned long> [out] unsigned long* TotalAvailable
+    private int totalAvailable;
+    // <NDR: unsigned long> [out] unsigned long* TotalReturned
     private int totalReturnedBytes;
-    private SAMPRDisplayInfoBuffer buffer;
-    private int returnCode;
+    // <NDR: pointer[union]> [out, switch_is(DisplayInformationClass)] PSAMPR_DISPLAY_INFO_BUFFER Buffer
+    private T displayInformation;
 
-    public SamrQueryDisplayInformation2Response(DisplayInformationClass infoClass) {
-        this.infoClass = infoClass;
+    public abstract DisplayInformationClass getDisplayInformationClass();
+
+    abstract T createDisplayInformation();
+
+    public T getDisplayInformation() {
+        return displayInformation;
     }
 
-    public int getTotalAvailableBytes() {
-        return totalAvailableBytes;
+    public int getTotalAvailable() {
+        return totalAvailable;
     }
 
-    public int getTotalReturnedBytes() {
+    public int getTotalReturned() {
         return totalReturnedBytes;
     }
 
-    public List<T> getList() {
-        if (buffer == null)
-            return null;
-        return buffer.getEntries();
-    }
-
-    public int getReturnValue() {
-        return returnCode;
-    }
-
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
-        totalAvailableBytes = packetIn.readInt();
-        totalReturnedBytes = packetIn.readInt();
-        unmarshallBuffer(packetIn);
-        packetIn.align();
-        returnCode = packetIn.readInt();
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
+        // <NDR: unsigned long> [out] unsigned long* TotalAvailable
+        this.totalAvailable = packetIn.readInt();
+        // <NDR: unsigned long> [out] unsigned long* TotalReturned
+        // Alignment: 4 - Already aligned
+        this.totalReturnedBytes = packetIn.readInt();
+        // <NDR: pointer[union]> [out, switch_is(DisplayInformationClass)] PSAMPR_DISPLAY_INFO_BUFFER Buffer
+        // Alignment: 4 - Already aligned
+        if(packetIn.readReferentID() != 0) {
+            // switch_is(DisplayInformationClass)
+            // Alignment: 2 - Already aligned
+            final int infoLevel = packetIn.readUnsignedShort();
+            if (infoLevel != getDisplayInformationClass().getInfoLevel()) {
+                throw new UnmarshalException(String.format(
+                        "Incoming DISPLAY_INFORMATION_CLASS %d does not match expected: %d",
+                        infoLevel, getDisplayInformationClass().getInfoLevel()));
+            }
+            this.displayInformation = createDisplayInformation();
+            packetIn.readUnmarshallable(this.displayInformation);
+        } else {
+            this.displayInformation = null;
+        }
     }
 
-    private void unmarshallBuffer(PacketInput packetIn) throws IOException {
-        switch (infoClass) {
-        case DomainDisplayGroup:
-            buffer = new SAMPRDomainDisplayGroupBuffer();
-            break;
-        default:
-            throw new UnmarshalException("Unsupported Display Information Class: " + infoClass.name());
+    public static class DomainDisplayGroup extends SamrQueryDisplayInformation2Response<SAMPRDomainDisplayGroupBuffer> {
+        @Override
+        public DisplayInformationClass getDisplayInformationClass() {
+            return DisplayInformationClass.DomainDisplayGroup;
         }
-        packetIn.readUnmarshallable(buffer);
+
+        @Override
+        SAMPRDomainDisplayGroupBuffer createDisplayInformation() {
+            return new SAMPRDomainDisplayGroupBuffer();
+        }
     }
 }

@@ -42,9 +42,11 @@ public class SamrEnumerateDomainsInSamServerRequest
 
     public static final short OP_NUM = 6;
 
-    public SamrEnumerateDomainsInSamServerRequest(ServerHandle handle, int enumContext, int maxLength) {
-        super(OP_NUM, handle, enumContext, maxLength);
+    public SamrEnumerateDomainsInSamServerRequest(ServerHandle serverHandle,
+            int enumerationContext, int preferredMaximumLength) {
+        super(OP_NUM, serverHandle, enumerationContext, preferredMaximumLength);
     }
+
     @Override
     public SamrEnumerateDomainsInSamServerResponse getResponseObject() {
         return new SamrEnumerateDomainsInSamServerResponse();

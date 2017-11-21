@@ -30,7 +30,7 @@ import static org.junit.Assert.assertThat;
 
 public class Test_SamrOpenAlias {
     // https://msdn.microsoft.com/en-us/library/cc980032.aspx
-    private final SamrOpenAliasRequest request = new SamrOpenAliasRequest(new DomainHandle(), 500, 0x0002000C);
+    private final SamrOpenAliasRequest request = new SamrOpenAliasRequest(new DomainHandle(), 0x0002000C, 500);
 
     @Test
     public void getOpNum() {

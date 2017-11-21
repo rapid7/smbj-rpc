@@ -41,7 +41,7 @@ public abstract class SamrQueryInformationUserResponse<T extends Unmarshallable>
     abstract T createUserInformation();
 
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
         if(packetIn.readReferentID() != 0) {
             final int infoLevel = packetIn.readUnsignedShort();
             if (infoLevel != getUserInformationClass().getInfoLevel()) {

@@ -39,7 +39,7 @@ public class Test_ROpenSCManager {
         final HandleResponse response = new HandleResponse();
         response.fromHexString("000000003a2177b63ee8844398f35fc12e3a8fc500000000");
         ContextHandle managerHandle = new ContextHandle("000000003a2177b63ee8844398f35fc12e3a8fc5");
-        assertEquals(SystemErrorCode.ERROR_SUCCESS.getErrorCode(), response.getReturnValue());
+        assertEquals(SystemErrorCode.ERROR_SUCCESS.getValue(), response.getReturnValue());
         assertEquals(managerHandle, response.getHandle());
     }
 

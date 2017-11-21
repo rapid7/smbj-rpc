@@ -19,29 +19,42 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
-import java.util.EnumSet;
-import com.google.common.base.Strings;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 
+/**
+ * <blockquote><pre>The SamrConnect2 method returns a handle to a server object.
+ *
+ *      long SamrConnect2(
+ *          [in, unique, string] PSAMPR_SERVER_NAME ServerName,
+ *          [out] SAMPR_HANDLE* ServerHandle,
+ *          [in] unsigned long DesiredAccess
+ *      );
+ *
+ *  ServerName: The null-terminated NETBIOS name of the server; this parameter MAY be ignored on receipt.
+ *  ServerHandle: An RPC context handle, as specified in section 2.2.3.2.
+ *  DesiredAccess: An ACCESS_MASK that indicates the access requested for ServerHandle on output. See section 2.2.1.3 for a listing of possible values.</pre></blockquote>
+ */
 public class SamrConnect2Request extends RequestCall<SamrConnect2Response> {
     public final static short OP_NUM = 57;
 
+    // <NDR: pointer[struct]> [in, unique, string] PSAMPR_SERVER_NAME ServerName
     private final String serverName;
-    private final EnumSet<AccessMask> desiredAccess;
+    // <NDR: unsigned long> [in] unsigned long DesiredAccess
+    private final int desiredAccess;
 
-    public SamrConnect2Request(String serverName, final EnumSet<AccessMask> desiredAccess) {
+    public SamrConnect2Request(String serverName, int desiredAccess) {
         super(OP_NUM);
-        this.serverName = Strings.nullToEmpty(serverName);
+        this.serverName = serverName;
         this.desiredAccess = desiredAccess;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
+        // <NDR: conformant varying array> [in, unique, string] PSAMPR_SERVER_NAME ServerName
         packetOut.writeStringRef(serverName, true);
-        packetOut.writeInt((int) EnumUtils.toLong(desiredAccess));
+        // <NDR: unsigned long> [in] unsigned long DesiredAccess
+        packetOut.writeInt(this.desiredAccess);
     }
 
     @Override

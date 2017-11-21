@@ -30,8 +30,7 @@ public class Test_SAMPRDisplayGroupBuffer {
     @Test
     public void unmarshall() throws IOException {
         SAMPRDomainDisplayGroupBuffer buffer = new SAMPRDomainDisplayGroupBuffer();
-        String byteArray = new String(
-                "0300000001000000000002000100000001000000010200000700000008000800040002001c001c00080002000400000000000000040000004e006f006e0065000e000000000000000e0000004f007200640069006e00610072007900200075007300650072007300");
+        String byteArray = "01000000000002000100000001000000010200000700000008000800040002001c001c00080002000400000000000000040000004e006f006e0065000e000000000000000e0000004f007200640069006e00610072007900200075007300650072007300";
         ByteArrayInputStream inputStream = new ByteArrayInputStream(Hex.decode(byteArray));
         PacketInput in = new PacketInput(inputStream);
         in.readUnmarshallable(buffer);
