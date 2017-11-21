@@ -32,57 +32,50 @@ public abstract class RPCReferentConformantArray<T extends Unmarshallable & Mars
     public void unmarshalEntity(PacketInput in) throws IOException {
         if (getMaxCount() >= 0) {
             array = new ArrayList<>();
-        }
-        for (int i = 0; i < getMaxCount(); i++) {
-            int refId = in.readReferentID();
-            // Not contained in the deferrals.
-            if (refId == 0) {
-                array.add(null);
-            } else {
-                array.add(createEntity());
+            for (int i = 0; i < getMaxCount(); i++) {
+                int refId = in.readReferentID();
+                // Not contained in the deferrals.
+                if (refId == 0) {
+                    array.add(null);
+                } else {
+                    array.add(createEntity());
+                }
             }
         }
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
+        if (array == null)
+            return;
+
         for (T t : array) {
             if (t != null)
-                t.unmarshalPreamble(in);
-        }
-        for (T t : array) {
-            if (t != null)
-                t.unmarshalEntity(in);
-        }
-        for (T t : array) {
-            if (t != null)
-                t.unmarshalDeferrals(in);
+                in.readUnmarshallable(t);
         }
     }
 
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
+        if (array == null)
+            return;
+
         for (T t : array) {
             if (t != null)
                 out.writeReferentID();
             else
-                out.writeInt(0);
+                out.writeNull();
         }
     }
 
     @Override
     public void marshalDeferrals(PacketOutput out) throws IOException {
+        if (array == null)
+            return;
+
         for (T t : array) {
             if (t != null)
-                t.marshalPreamble(out);
-        }
-        for (T t : array) {
-            if (t != null)
-                t.marshalEntity(out);
-        }
-        for (T t : array) {
-            if (t != null)
-                t.marshalDeferrals(out);
+                out.writeMarshallable(t);
         }
     }
 
