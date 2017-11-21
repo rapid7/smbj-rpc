@@ -39,6 +39,8 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerR
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetAliasMembershipRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetAliasMembershipResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupRequest;
@@ -396,6 +398,12 @@ public class SecurityAccountManagerService extends Service {
             groups.add(new Membership(returnedGroup.getRelativeID(), returnedGroup.getAttributes()));
         }
         return groups;
+    }
+
+    public void getAliasMembership(DomainHandle handle, RPCSID... rpcsids) throws IOException {
+        SamrGetAliasMembershipRequest request = new SamrGetAliasMembershipRequest(handle, rpcsids);
+        SamrGetAliasMembershipResponse response = callExpectSuccess(request, "GetAliasMembership");
+
     }
 
     /**
