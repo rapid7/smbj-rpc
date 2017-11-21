@@ -100,6 +100,14 @@ public class LocalSecurityAuthorityService extends Service {
         return callExpectSuccess(request, "LsarLookupNames");
     }
 
+    /**
+     *
+     * @param policyHandle Handle to the policy
+     * @param SIDs List of SIDs to lookup
+     * @return A list of Strings containing account names. Where account names are not mapped, null is returned.
+     * @throws IOException Thrown if exception happens at the RPC layer
+     * @throws MalformedSIDException Thrown if any of the SIDs do not conform to the SID format
+     */
     public String[] lookupSIDs(ContextHandle policyHandle, String... SIDs)
         throws IOException, MalformedSIDException
     {
