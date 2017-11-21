@@ -19,7 +19,10 @@
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedNames;
 import java.io.IOException;
 
 /**
@@ -50,15 +53,42 @@ import java.io.IOException;
 
 public class LsarLookupSIDsResponse extends RequestResponse {
     private int returnValue;
+    private int mappedCount;
+    private LSAPRReferencedDomainList lsaprReferencedDomainList;
+    private LSAPRTranslatedNames lsaprTranslatedNames;
 
     @Override
     public void unmarshalResponse(final PacketInput packetIn)
             throws IOException {
-        //
-        returnValue = packetIn.readInt();
+
+        if (packetIn.readReferentID() != 0) {
+            lsaprReferencedDomainList = new LSAPRReferencedDomainList();
+            packetIn.readUnmarshallable(lsaprReferencedDomainList);
+        }
+
+        lsaprTranslatedNames = new LSAPRTranslatedNames();
+        packetIn.readUnmarshallable(lsaprTranslatedNames);
+        //Mapped Count
+        packetIn.align(Alignment.FOUR);
+        mappedCount = packetIn.readInt();
     }
 
     public int getReturnValue() {
         return returnValue;
+    }
+
+    public int getMappedCount()
+    {
+        return mappedCount;
+    }
+
+    public LSAPRReferencedDomainList getLsaprReferencedDomainList()
+    {
+        return lsaprReferencedDomainList;
+    }
+
+    public LSAPRTranslatedNames getLsaprTranslatedNames()
+    {
+        return lsaprTranslatedNames;
     }
 }

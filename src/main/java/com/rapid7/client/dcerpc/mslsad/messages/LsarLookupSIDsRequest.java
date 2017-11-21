@@ -20,84 +20,92 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRSIDEnumBuffer;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
-import com.hierynomus.msdtyp.SID;
+import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import java.io.IOException;
 
 /**
- *  <h1 class="title">3.1.4.8 LsarLookupNames (Opnum 14)</h1>
- *  <div id="mainSection">
- *            <div id="mainBody">
- *                <div class="section" id="collapseableSection">
- *<p>The LsarLookupNames method translates a batch of <a href="https://msdn.microsoft.com/en-ca/library/cc234422.aspx#gt_f3ef2572-95cf-4c5c-b3c9-551fd648f409">security principal</a> names to
- *their <a href="https://msdn.microsoft.com/en-ca/library/cc234422.aspx#gt_83f2020d-0804-4840-a5ac-e06439d50f8d">SID</a> form. It also
- *returns the <a href="https://msdn.microsoft.com/en-ca/library/cc234422.aspx#gt_b0276eb2-4e65-4cf1-a718-e0920a614aca">domains</a> that
- *these names are a part of.</p>
- *<dl>
- *<dd>
- *<div><pre>&nbsp;NTSTATUS LsarLookupNames(
- *  [in] LSAPR_HANDLE PolicyHandle,
- *  [in, range(0,1000)] unsigned long Count,
- *  [in, size_is(Count)] PRPC_UNICODE_STRING Names,
- *  [out] PLSAPR_REFERENCED_DOMAIN_LIST* ReferencedDomains,
- *  [in, out] PLSAPR_TRANSLATED_SIDS TranslatedSids,
- *  [in] LSAP_LOOKUP_LEVEL LookupLevel,
- *  [in, out] unsigned long* MappedCount
- *);
- *</pre></div>
- *</dd></dl>
- *<p><strong>PolicyHandle: </strong>Context handle obtained by an <a href="https://msdn.microsoft.com/en-ca/library/cc234489.aspx">LsarOpenPolicy</a> or <a href="https://msdn.microsoft.com/en-ca/library/cc234486.aspx">LsarOpenPolicy2</a> call.</p>
- *<p><strong>Count: </strong>Number of names in the Names array.<a id="Appendix_A_Target_32"></a><a href="https://msdn.microsoft.com/en-ca/library/cc234510.aspx#Appendix_A_32">&lt;32&gt;</a></p>
- *<p><strong>Names: </strong>Contains the security principal names
- *to translate, as specified in section <a href="https://msdn.microsoft.com/en-ca/library/cc234492.aspx">3.1.4.5</a>.</p>
- *<p><strong>ReferencedDomains: </strong>On successful return,
- *contains the domain information for the domain to which each security principal
- *belongs. The domain information includes a NetBIOS domain name and a domain SID
- *for each entry in the list.</p>
- *<p><strong>TranslatedSids: </strong>On successful return, contains
- *the corresponding SID forms for security principal names in the <em>Names</em>
- *parameter. It MUST be ignored on input.</p>
- *<p><strong>LookupLevel: </strong>Specifies what scopes are to be
- *used during translation, as specified in section <a href="https://msdn.microsoft.com/en-ca/library/cc234458.aspx">2.2.16</a>.</p>
- *<p><strong>MappedCount: </strong>On successful return, contains
- *the number of names that are translated completely to their SID forms. This
- *parameter has no effect on message processing in any environment. It MUST be
- *ignored on input.</p>
- *<p><strong>Return Values: </strong>The following table contains a
- *summary of the return values that an implementation MUST return, as specified
- *by the message processing shown after the table.</p>
- * <a href="https://msdn.microsoft.com/en-ca/library/cc234495.aspx"> Table</a>
- *<dl>
- *<dd>
+ *    <h1 class="title">3.1.4.11 LsarLookupSids (Opnum 15)</h1>
+ *
+ *   <div id="mainSection">
+ *             <div id="mainBody">
+ *
+ *                 <div class="section" id="collapseableSection">
  *
  *
- *</dd></dl>
- *<p>The behavior required when receiving an LsarLookupNames
- *message MUST be identical to that when receiving an <a href="https://msdn.microsoft.com/en-ca/library/cc234494.aspx">LsarLookupNames2</a> message,
- *with the following exceptions:</p>
- *<p>
- *Elements in the TranslatedSids output structure do not contain a <strong>Flags</strong>
- *field.</p>
- *<p>
- *Due to the absence of the <em>LookupOptions</em> and <em>ClientRevision</em>
- *parameters, the <a href="https://msdn.microsoft.com/en-ca/library/cc234422.aspx#gt_ae65dac0-cd24-4e83-a946-6d1097b71553">RPC server</a>
- *MUST assume that <em>LookupOptions</em> is 0 and <em>ClientRevision</em> is 1.</p>
- *<p>
- *The server MUST return STATUS_ACCESS_DENIED if neither of the
- *following conditions is true:</p>
+ * <p>The LsarLookupSids method translates a batch of <a href="https://msdn.microsoft.com/en-us/library/cc234422.aspx#gt_f3ef2572-95cf-4c5c-b3c9-551fd648f409">security principal</a> <a href="https://msdn.microsoft.com/en-us/library/cc234422.aspx#gt_83f2020d-0804-4840-a5ac-e06439d50f8d">SIDs</a> to their name forms.
+ * It also returns the <a href="https://msdn.microsoft.com/en-us/library/cc234422.aspx#gt_b0276eb2-4e65-4cf1-a718-e0920a614aca">domains</a>
+ * that these names are a part of.</p>
  *
- *The RPC_C_AUTHN_NETLOGON security provider (as specified in <a href="https://msdn.microsoft.com/en-ca/library/cc243560.aspx">[MS-RPCE]</a>
- *section <a href="https://msdn.microsoft.com/en-ca/library/cc243578.aspx">2.2.1.1.7</a>)
- *and at least RPC_C_AUTHN_LEVEL_PKT_INTEGRITY authentication level (as specified
- *in [MS-RPCE] section <a href="https://msdn.microsoft.com/en-ca/library/cc243867.aspx">2.2.1.1.8</a>)
- *were used in this <a href="https://msdn.microsoft.com/en-ca/library/cc234422.aspx#gt_8a7f6700-8311-45bc-af10-82e10accd331">RPC</a>
- *message.
+ * <dl>
+ * <dd>
+ * <div><pre> NTSTATUS LsarLookupSids(
+ *    [in] LSAPR_HANDLE PolicyHandle,
+ *    [in] PLSAPR_SID_ENUM_BUFFER SidEnumBuffer,
+ *    [out] PLSAPR_REFERENCED_DOMAIN_LIST* ReferencedDomains,
+ *    [in, out] PLSAPR_TRANSLATED_NAMES TranslatedNames,
+ *    [in] LSAP_LOOKUP_LEVEL LookupLevel,
+ *    [in, out] unsigned long* MappedCount
+ *  );
+ * </pre></div>
+ * </dd></dl>
  *
- *The PolicyHandle was granted POLICY_LOOKUP_NAMES access.
+ * <p><strong>PolicyHandle: </strong>Context handle obtained by an <a href="https://msdn.microsoft.com/en-us/library/cc234489.aspx">LsarOpenPolicy</a> or <a href="https://msdn.microsoft.com/en-us/library/cc234486.aspx">LsarOpenPolicy2</a> call.</p>
  *
- *                </div>
- *            </div>
- *        </div>
+ * <p><strong>SidEnumBuffer: </strong>Contains the SIDs to be
+ * translated. The SIDs in this structure can be that of users, groups, computers,
+ * Windows-defined well-known security principals, or domains.</p>
+ *
+ * <p><strong>ReferencedDomains: </strong>On successful return,
+ * contains the domain information for the domain to which each security principal
+ * belongs. The domain information includes a NetBIOS domain name and a domain SID
+ * for each entry in the list.</p>
+ *
+ * <p><strong>TranslatedNames: </strong>On successful return,
+ * contains the corresponding name form for security principal SIDs in the <em>SidEnumBuffer</em>
+ * parameter. It MUST be ignored on input.</p>
+ *
+ * <p><strong>LookupLevel: </strong>Specifies what scopes are to be
+ * used during translation, as specified in section <a href="https://msdn.microsoft.com/en-us/library/cc234458.aspx">2.2.16</a>.</p>
+ *
+ * <p><strong>MappedCount: </strong>On successful return, contains
+ * the number of names that are translated completely to their Name forms. It MUST
+ * be ignored on input.</p>
+ *
+ * <p><strong>Return Values: </strong>The following table contains a
+ * summary of the return values that an implementation MUST return, as specified
+ * by the message processing shown after the table.</p>
+ * See table at: https://msdn.microsoft.com/en-us/library/cc234488.aspx
+ *
+ * <p>The behavior required when receiving an LsarLookupSids
+ * message MUST be identical to that when receiving an <a href="https://msdn.microsoft.com/en-us/library/cc234487.aspx">LsarLookupSids2</a> message,
+ * with the following exceptions:</p>
+ *
+ * <ul><li><p>Elements in the TranslatedNames output structure do not contain a
+ * Flags field.</p>
+ *
+ * </li><li><p>Due to the absence of <em>LookupOptions</em> and <em>ClientRevision</em>
+ * parameters, the <a href="https://msdn.microsoft.com/en-us/library/cc234422.aspx#gt_ae65dac0-cd24-4e83-a946-6d1097b71553">RPC server</a>
+ * MUST assume that <em>LookupOptions</em> is 0 and <em>ClientRevision</em> is 1.</p>
+ *
+ * </li><li><p>The server MUST return STATUS_ACCESS_DENIED if neither of the
+ * following conditions is true:</p>
+ *
+ * <ol><li><p>The RPC_C_AUTHN_NETLOGON security provider (as specified in <a href="https://msdn.microsoft.com/en-us/library/cc243560.aspx">[MS-RPCE]</a>
+ * section <a href="https://msdn.microsoft.com/en-us/library/cc243578.aspx">2.2.1.1.7</a>)
+ * and at least RPC_C_AUTHN_LEVEL_PKT_INTEGRITY authentication level (as specified
+ * in [MS-RPCE] section <a href="https://msdn.microsoft.com/en-us/library/cc243867.aspx">2.2.1.1.8</a>)
+ * were used in this <a href="https://msdn.microsoft.com/en-us/library/cc234422.aspx#gt_8a7f6700-8311-45bc-af10-82e10accd331">RPC</a>
+ * message.</p>
+ *
+ * </li><li><p>The PolicyHandle was granted POLICY_LOOKUP_NAMES access.</p>
+ *
+ * </li></ol></li></ul>
+ *                 </div>
+ *             </div>
+ *         </div>
+ *
  */
 
 public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
@@ -105,12 +113,16 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
     private final static int LSA_LOOKUP_NAMES_ALL = 0x1;
 
     private final String[] SIDs;
+    private final LSAPRSIDEnumBuffer lsaprsidEnumBuffer;
     private final ContextHandle policyHandle;
 
-    public LsarLookupSIDsRequest(final ContextHandle policyHandle, final String[] SIDs) {
+    public LsarLookupSIDsRequest(final ContextHandle policyHandle, final String[] SIDs)
+        throws MalformedSIDException
+    {
         super(OP_NUM);
         this.SIDs = SIDs;
         this.policyHandle = policyHandle;
+        this.lsaprsidEnumBuffer = new LSAPRSIDEnumBuffer(SIDs);
     }
 
     @Override
@@ -121,16 +133,9 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
     @Override
     public void marshal(final PacketOutput packetOut)
         throws IOException {
-        packetOut.write(policyHandle.getBytes());
-        packetOut.writeInt(SIDs.length); //entries
-        packetOut.writeReferentID(); //pointer to sid_information
-        packetOut.writeInt(SIDs.length); // conformat array; max count
-        for (String ignored : SIDs) {
-            packetOut.writeReferentID();
-        }
-        for (String SID: SIDs) {
-            writeSID(SID, packetOut);
-        }
+        packetOut.writeMarshallable(policyHandle);
+
+        packetOut.writeMarshallable(lsaprsidEnumBuffer);
 
         //TranslatedNames
         packetOut.writeInt(0); //count of names
@@ -139,17 +144,5 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
         packetOut.writeInt(LSA_LOOKUP_NAMES_ALL);
 
         packetOut.writeNull(); // Count (ignored on input)
-    }
-
-    private void writeSID(final String sid, final PacketOutput packetOut)
-            throws IOException {
-        SID sid1 = SID.fromString(sid);
-        packetOut.writeInt(sid1.getSubAuthorities().length); //count
-        packetOut.writeByte(sid1.getRevision());
-        packetOut.writeByte(sid1.getSubAuthorities().length);
-        packetOut.write(sid1.getSidIdentifierAuthority());
-        for (long subAuth: sid1.getSubAuthorities()){
-            packetOut.writeInt((int)subAuth);
-        }
     }
 }

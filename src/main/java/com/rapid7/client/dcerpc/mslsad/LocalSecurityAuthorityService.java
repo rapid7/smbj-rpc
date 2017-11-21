@@ -31,7 +31,9 @@ import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarOpenPolicy2Request;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedName;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.service.Service;
@@ -98,11 +100,22 @@ public class LocalSecurityAuthorityService extends Service {
         return callExpectSuccess(request, "LsarLookupNames");
     }
 
-    public LsarLookupSIDsResponse lookupSIDs(ContextHandle policyHandle, String... SIDs)
-        throws IOException {
+    public String[] lookupSIDs(ContextHandle policyHandle, String... SIDs)
+        throws IOException, MalformedSIDException
+    {
+        String[] mappedNames;
         final LsarLookupSIDsRequest request =
             new LsarLookupSIDsRequest(policyHandle, SIDs);
-        return callExpect(request, "LsarLookupSIDs", SystemErrorCode.ERROR_SUCCESS);
+        final LsarLookupSIDsResponse lsarLookupSIDsResponse = callExpect(request, "LsarLookupSIDs",
+                SystemErrorCode.ERROR_SUCCESS,
+                SystemErrorCode.STATUS_SOME_NOT_MAPPED);
+
+        LSAPRTranslatedName[] nameArray = lsarLookupSIDsResponse.getLsaprTranslatedNames().getlsaprTranslatedNameArray();
+        mappedNames = new String[nameArray.length];
+        for (int i = 0; i < nameArray.length; i++) {
+            mappedNames[i] = nameArray[i].getName().getValue();
+        }
+        return mappedNames;
     }
 
 }
