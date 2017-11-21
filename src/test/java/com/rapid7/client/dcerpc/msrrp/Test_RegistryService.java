@@ -58,7 +58,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesKeyExist("HKLM", ""));
 
@@ -75,7 +75,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesKeyExist("HKLM", null));
 
@@ -92,7 +92,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         assertFalse(registryService.doesKeyExist("HKLM", ""));
 
@@ -108,7 +108,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         assertFalse(registryService.doesKeyExist("HKLM", null));
 
@@ -124,7 +124,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 1 (ERROR_INVALID_FUNCTION)");
@@ -140,8 +140,8 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesKeyExist("HKLM", "key"));
 
@@ -161,8 +161,8 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         assertFalse(registryService.doesKeyExist("HKLM", "key"));
 
@@ -181,8 +181,8 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("BaseRegOpenKey returned error code: 1 (ERROR_INVALID_FUNCTION)");
@@ -221,11 +221,11 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
         when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
 
@@ -249,9 +249,9 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         assertFalse(registryService.doesValueExist("HKLM", "key", "value"));
 
@@ -273,9 +273,9 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("BaseRegQueryValue returned error code: 1 (ERROR_INVALID_FUNCTION)");
@@ -314,11 +314,11 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
         when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
 
@@ -342,11 +342,11 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
         when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
 
@@ -370,11 +370,11 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
         when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
 
@@ -398,11 +398,11 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
         when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
 
@@ -426,8 +426,8 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(infoResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(infoResponse.getSubKeys()).thenReturn(111);
         when(infoResponse.getMaxSubKeyLen()).thenReturn(222);
         when(infoResponse.getMaxClassLen()).thenReturn(333);
@@ -436,7 +436,7 @@ public class Test_RegistryService {
         when(infoResponse.getMaxValueLen()).thenReturn(666);
         when(infoResponse.getSecurityDescriptor()).thenReturn(777);
         when(infoResponse.getLastWriteTime()).thenReturn(116444736000000000l);
-        when(infoResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(infoResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final RegistryKeyInfo registryKeyInfo = registryService.getKeyInfo("HKLM", "key");
 
@@ -495,7 +495,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -510,7 +510,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -527,8 +527,8 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(infoResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("BaseRegOpenKey returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -547,15 +547,15 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1).thenReturn(enumResponse2).thenReturn(enumResponse3);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(enumResponse1.getName()).thenReturn("subKey1");
         when(enumResponse1.getLastWriteTime()).thenReturn(116444736000000000l);
-        when(enumResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(enumResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(enumResponse2.getName()).thenReturn("subKey2");
         when(enumResponse2.getLastWriteTime()).thenReturn(116444736000000000l);
-        when(enumResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(enumResponse3.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getErrorCode());
+        when(enumResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(enumResponse3.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getValue());
 
         final List<RegistryKey> subKeys = registryService.getSubKeys("HKLM", "key");
         final RegistryKey subKey1 = new RegistryKey("subKey1", new FileTime(116444736000000000l));
@@ -589,9 +589,9 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(enumResponse.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(enumResponse.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getValue());
 
         final List<RegistryKey> subKeys = registryService.getSubKeys("HKLM", "key");
 
@@ -635,7 +635,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -650,7 +650,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -666,8 +666,8 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("BaseRegOpenKey returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -686,17 +686,17 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1).thenReturn(enumResponse2).thenReturn(enumResponse3);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(enumResponse1.getName()).thenReturn("value1");
         when(enumResponse1.getType()).thenReturn(RegistryValueType.REG_BINARY);
         when(enumResponse1.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
-        when(enumResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(enumResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(enumResponse2.getName()).thenReturn("value2");
         when(enumResponse2.getType()).thenReturn(RegistryValueType.REG_BINARY);
         when(enumResponse2.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
-        when(enumResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(enumResponse3.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getErrorCode());
+        when(enumResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(enumResponse3.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getValue());
 
         final List<RegistryValue> values = registryService.getValues("HKLM", "key");
         final RegistryValue value1 = new RegistryValue("value1", RegistryValueType.REG_BINARY, new byte[]{0x01, 0x23, 0x45, 0x67});
@@ -732,9 +732,9 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(enumResponse.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(enumResponse.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getValue());
 
         final List<RegistryValue> values = registryService.getValues("HKLM", "key");
 
@@ -778,7 +778,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -793,7 +793,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -809,8 +809,8 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("BaseRegOpenKey returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -827,11 +827,11 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
         when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final RegistryValue value = registryService.getValue("HKLM", "key", "value");
 
@@ -859,11 +859,11 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
         when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final RegistryValue value = registryService.getValue("HKLM", "key", "");
 
@@ -891,11 +891,11 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
         when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final RegistryValue value = registryService.getValue("HKLM", "key", null);
 
@@ -923,9 +923,9 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(valueResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(valueResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("BaseRegQueryValue returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -962,7 +962,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -977,7 +977,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -993,8 +993,8 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("BaseRegOpenKey returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -1023,7 +1023,7 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final ContextHandle handle = registryService.openHive("HKLM");
 
@@ -1042,7 +1042,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -1058,7 +1058,7 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final ContextHandle handle1 = registryService.openHive("HKLM");
         final ContextHandle handle2 = registryService.openHive("HKLM");
@@ -1081,9 +1081,9 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse1).thenReturn(hiveResponse2);
         when(hiveResponse1.getHandle()).thenReturn(new ContextHandle("11111111"));
-        when(hiveResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(hiveResponse2.getHandle()).thenReturn(new ContextHandle("22222222"));
-        when(hiveResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final ContextHandle handle1 = registryService.openHive("HKLM");
         final ContextHandle handle2 = registryService.openHive("HKU");
@@ -1130,9 +1130,9 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final ContextHandle handle = registryService.openKey("HKLM", "key");
 
@@ -1153,7 +1153,7 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -1170,8 +1170,8 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
 
         thrown.expect(RPCException.class);
         thrown.expectMessage("BaseRegOpenKey returned error code: 2 (ERROR_FILE_NOT_FOUND)");
@@ -1188,9 +1188,9 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
-        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final ContextHandle handle1 = registryService.openKey("HKLM", "key");
         final ContextHandle handle2 = registryService.openKey("HKLM", "key");
@@ -1216,11 +1216,11 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse1).thenReturn(keyResponse2);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse1.getHandle()).thenReturn(new ContextHandle("11111111"));
-        when(keyResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(keyResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse2.getHandle()).thenReturn(new ContextHandle("22222222"));
-        when(keyResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(keyResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final ContextHandle handle1 = registryService.openKey("HKLM", "key1");
         final ContextHandle handle2 = registryService.openKey("HKLM", "key2");
@@ -1268,7 +1268,7 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final ContextHandle handle = registryService.openKey("HKLM", "");
 
@@ -1288,7 +1288,7 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
-        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getErrorCode());
+        when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final ContextHandle handle = registryService.openKey("HKLM", null);
 

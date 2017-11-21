@@ -47,11 +47,11 @@ import com.rapid7.client.dcerpc.objects.RPCSID;
 public class SamrOpenDomainRequest extends RequestCall<SamrOpenDomainResponse> {
     public final static short OP_NUM = 7;
 
-    // [in] SAMPR_HANDLE ServerHandle
+    // <NDR: fixed array> [in] SAMPR_HANDLE ServerHandle
     private final ServerHandle handle;
-    // [in] unsigned long DesiredAccess
+    // <NDR: unsigned long> [in] unsigned long DesiredAccess
     private final int desiredAccess;
-    // [in] PRPC_SID DomainId
+    // <NDR: struct> [in] PRPC_SID DomainId
     private final RPCSID domainId;
 
     public SamrOpenDomainRequest(ServerHandle handle, int desiredAccess, RPCSID domainId) {
@@ -63,12 +63,12 @@ public class SamrOpenDomainRequest extends RequestCall<SamrOpenDomainResponse> {
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        // [in] SAMPR_HANDLE ServerHandle
+        // <NDR: fixed array> [in] SAMPR_HANDLE ServerHandle
         packetOut.writeMarshallable(this.handle);
-        // [in] unsigned long DesiredAccess
+        // <NDR: unsigned long> [in] unsigned long DesiredAccess
         // Alignment: 4 - Already aligned, wrote 20 bytes above
         packetOut.writeInt(this.desiredAccess);
-        // [in] PRPC_SID DomainId
+        // <NDR: struct> [in] PRPC_SID DomainId
         packetOut.writeMarshallable(this.domainId);
     }
 

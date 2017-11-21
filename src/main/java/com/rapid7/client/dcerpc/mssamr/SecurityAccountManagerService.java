@@ -66,6 +66,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRAliasGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroup;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroupBuffer;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
@@ -282,32 +283,36 @@ public class SecurityAccountManagerService extends Service {
         });
     }
 
-    public List<SAMPRDomainDisplayGroup> getDomainGroupInformationforDomain(final DomainHandle handle)
+    public List<SAMPRDomainDisplayGroup> getDomainGroupInformationForDomain(final DomainHandle handle)
             throws IOException {
         // no limit.
         final int entryCount = 0xffffffff;
         final int maxLength = 0xffff;
-        return getDomainGroupInformationforDomain(handle, entryCount, maxLength);
+        return getDomainGroupInformationForDomain(handle, entryCount, maxLength);
     }
 
-    public List<SAMPRDomainDisplayGroup> getDomainGroupInformationforDomain(final DomainHandle handle,
+    public List<SAMPRDomainDisplayGroup> getDomainGroupInformationForDomain(final DomainHandle handle,
             final int entryCount,
             final int maxLength) throws IOException {
         final List<SAMPRDomainDisplayGroup> groups = new ArrayList<>();
         int enumContext = 0;
         int totalReturnedBytes = 0;
         while (true) {
-            final SamrQueryDisplayInformation2Request request = new SamrQueryDisplayInformation2Request(handle,
-                    DomainDisplayGroup, enumContext, entryCount, maxLength);
-            final SamrQueryDisplayInformation2Response response = call(request);
-            enumContext += response.getList().size();
-            totalReturnedBytes += response.getTotalReturnedBytes();
+            final SamrQueryDisplayInformation2Request.DomainDisplayGroup request =
+                    new SamrQueryDisplayInformation2Request.DomainDisplayGroup(handle, enumContext, entryCount, maxLength);
+            final SamrQueryDisplayInformation2Response<SAMPRDomainDisplayGroupBuffer> response = call(request);
+
+            List<SAMPRDomainDisplayGroup> buffer = response.getDisplayInformation().getEntries();
+            if (buffer == null)
+                buffer = new ArrayList<>();
+            enumContext += buffer.size();
+            totalReturnedBytes += response.getTotalReturned();
             int returnCode = response.getReturnValue();
             if (ERROR_MORE_ENTRIES.is(returnCode)) {
-                groups.addAll(response.getList());
+                groups.addAll(buffer);
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)
-                    || totalReturnedBytes == response.getTotalAvailableBytes()) {
-                groups.addAll(response.getList());
+                    || totalReturnedBytes == response.getTotalAvailable()) {
+                groups.addAll(buffer);
                 return Collections.unmodifiableList(groups);
             } else {
                 throw new RPCException("QueryDisplayInformation2", returnCode);
@@ -349,7 +354,7 @@ public class SecurityAccountManagerService extends Service {
      */
     public List<GroupMembership> getGroupsForUser(UserHandle userHandle) throws IOException {
         final SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
-        return callExpectSuccess(request, "SamrGetGroupsForUser").getGroupMembership();
+        return callExpectSuccess(request, "SamrGetGroupsForUser").getGroups();
     }
 
     public RPCSID getSIDForDomain(ServerHandle serverHandle, String domainName) throws IOException {

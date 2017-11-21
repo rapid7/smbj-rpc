@@ -19,28 +19,22 @@
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import java.io.IOException;
-import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 
-public class LsarClosePolicyRpcRequest extends RequestCall<LsarClosePolicyRpcResponse> {
-    private final static short OP_NUM = 0;
-    private final ContextHandle handle;
+public class LsarCloseResponse extends RequestResponse {
+    // <NDR: fixed array> [in, out] LSAPR_HANDLE* ObjectHandle
+    private ContextHandle objectHandle;
 
-    public LsarClosePolicyRpcRequest(final ContextHandle handle) {
-        super(OP_NUM);
-        this.handle = handle;
+    public ContextHandle getObjectHandle() {
+        return objectHandle;
     }
 
     @Override
-    public void marshal(PacketOutput packetOut) throws IOException {
-        // set the policy handle
-        packetOut.write(handle.getBytes());
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
+        // <NDR: fixed array> [in, out] LSAPR_HANDLE* ObjectHandle
+        this.objectHandle = new ContextHandle();
+        packetIn.readUnmarshallable(objectHandle);
     }
-
-    @Override
-    public LsarClosePolicyRpcResponse getResponseObject() {
-        return new LsarClosePolicyRpcResponse();
-    }
-
 }

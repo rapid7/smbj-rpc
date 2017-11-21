@@ -32,19 +32,19 @@ public class Test_RPCException {
 
     @Test
     public void getReturnValue() {
-        final RPCException rpcException = new RPCException("test", SystemErrorCode.ERROR_SUCCESS.getErrorCode());
-        assertEquals(SystemErrorCode.ERROR_SUCCESS.getErrorCode(), rpcException.getReturnValue());
+        final RPCException rpcException = new RPCException("test", SystemErrorCode.ERROR_SUCCESS.getValue());
+        assertEquals(SystemErrorCode.ERROR_SUCCESS.getValue(), rpcException.getReturnValue());
     }
 
     @Test
-    public void getErrorCode_unknownErrorCode() {
+    public void getValue_unknownErrorCode() {
         final RPCException rpcException = new RPCException("test", -1);
         assertNull(rpcException.getErrorCode());
     }
 
     @Test
-    public void getErrorCode() {
-        final RPCException rpcException = new RPCException("test", SystemErrorCode.ERROR_SUCCESS.getErrorCode());
+    public void getValue() {
+        final RPCException rpcException = new RPCException("test", SystemErrorCode.ERROR_SUCCESS.getValue());
         assertEquals(SystemErrorCode.ERROR_SUCCESS, rpcException.getErrorCode());
     }
 
@@ -56,7 +56,7 @@ public class Test_RPCException {
 
     @Test
     public void hasErrorCode() {
-        final RPCException rpcException = new RPCException("test", SystemErrorCode.ERROR_SUCCESS.getErrorCode());
+        final RPCException rpcException = new RPCException("test", SystemErrorCode.ERROR_SUCCESS.getValue());
         assertTrue(rpcException.hasErrorCode());
     }
 }

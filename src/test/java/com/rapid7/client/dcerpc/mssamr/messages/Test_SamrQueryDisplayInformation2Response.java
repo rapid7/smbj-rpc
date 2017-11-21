@@ -18,22 +18,25 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import static com.rapid7.client.dcerpc.mssamr.objects.DisplayInformationClass.DomainDisplayGroup;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.io.IOException;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroup;
 
 public class Test_SamrQueryDisplayInformation2Response {
 
     @Test
     public void unmarshallGroupDisplayInfo() throws IOException {
-        SamrQueryDisplayInformation2Response<SAMPRDomainDisplayGroup> response = new SamrQueryDisplayInformation2Response(DomainDisplayGroup);
+        SamrQueryDisplayInformation2Response.DomainDisplayGroup response
+                = new SamrQueryDisplayInformation2Response.DomainDisplayGroup();
         response.fromHexString(
-            "54000000540000000300000001000000000002000100000001000000010200000700000008000800040002001c001c00080002000400000000000000040000004e006f006e0065000e000000000000000e0000004f007200640069006e0061007200790020007500730065007200730000000000");
-        assertEquals(84, response.getTotalAvailableBytes());
-        assertEquals(84, response.getTotalReturnedBytes());
-        assertEquals(1, response.getList().size());
+            "540000005400000003000000 03000000 00000000 00000000 01000000");
+        assertEquals(84, response.getTotalAvailable());
+        assertEquals(84, response.getTotalReturned());
+        assertEquals(response.getDisplayInformation().getEntriesRead(), 0);
+        assertNull(response.getDisplayInformation().getEntries());
+        assertEquals(response.getReturnValue(), 1);
     }
 
 }

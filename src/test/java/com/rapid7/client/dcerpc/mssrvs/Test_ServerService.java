@@ -49,7 +49,7 @@ public class Test_ServerService {
         final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
 
         when(transport.call((RequestCall<NetrShareEnumResponse>) any())).thenReturn(response);
-        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_SUCCESS.getErrorCode());
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_SUCCESS.getValue());
         when(response.getShares()).thenReturn(Lists.newArrayList(new NetShareInfo0("test1")));
 
         final ServerService serverService = new ServerService(transport);
@@ -67,7 +67,7 @@ public class Test_ServerService {
         final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
 
         when(transport.call((RequestCall<NetrShareEnumResponse>) any())).thenReturn(response);
-        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getErrorCode()).thenReturn(SystemErrorCode.ERROR_SUCCESS.getErrorCode());
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getValue()).thenReturn(SystemErrorCode.ERROR_SUCCESS.getValue());
         when(response.getResumeHandle()).thenReturn(1);
         when(response.getShares()).thenReturn(Lists.newArrayList(new NetShareInfo0("test1"))).thenReturn(Lists.newArrayList(new NetShareInfo0("test2")));
 
@@ -91,7 +91,7 @@ public class Test_ServerService {
         final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
 
         when(transport.call((RequestCall<NetrShareEnumResponse>) any())).thenReturn(response);
-        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_ACCESS_DENIED.getErrorCode());
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_ACCESS_DENIED.getValue());
 
         final ServerService serverService = new ServerService(transport);
         serverService.getShares();
@@ -107,7 +107,7 @@ public class Test_ServerService {
         final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
 
         when(transport.call((RequestCall<NetrShareEnumResponse>) any())).thenReturn(response);
-        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getErrorCode());
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getValue());
         when(response.getResumeHandle()).thenReturn(0);
         when(response.getShares()).thenReturn(new LinkedList<NetShareInfo0>());
 
@@ -125,7 +125,7 @@ public class Test_ServerService {
         final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
 
         when(transport.call((RequestCall<NetrShareEnumResponse>) any())).thenReturn(response);
-        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getErrorCode());
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getValue());
         when(response.getResumeHandle()).thenReturn(0).thenReturn(0);
         when(response.getShares()).thenReturn(Lists.newArrayList(new NetShareInfo0("test")));
 
@@ -143,7 +143,7 @@ public class Test_ServerService {
         final NetrShareEnumResponse response = mock(NetrShareEnumResponse.class);
 
         when(transport.call((RequestCall<NetrShareEnumResponse>) any())).thenReturn(response);
-        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getErrorCode());
+        when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_DATA.getValue());
         when(response.getResumeHandle()).thenReturn(null);
         when(response.getShares()).thenReturn(Lists.newArrayList(new NetShareInfo0("test")));
 

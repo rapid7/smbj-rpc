@@ -63,9 +63,12 @@ public class SamrOpenGroupRequest extends RequestCall<SamrOpenGroupResponse> {
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
+        // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
         packetOut.writeMarshallable(this.domainHandle);
+        // <NDR: unsigned long> [in] unsigned long DesiredAccess
         // No align necessary - Always 20 bytes written
         packetOut.writeInt(this.desiredAccess);
+        // <NDR: unsigned long> [in] unsigned long GroupId
         // No align necessary - Always 4 bytes written
         packetOut.writeInt(this.groupId);
     }

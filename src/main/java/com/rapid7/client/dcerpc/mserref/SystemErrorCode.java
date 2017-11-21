@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum SystemErrorCode {
+    // ERROR_*
     ERROR_SUCCESS(0x0),
     ERROR_INVALID_FUNCTION(0x1),
     ERROR_FILE_NOT_FOUND(0x2),
@@ -987,30 +988,38 @@ public enum SystemErrorCode {
     ERROR_PATCH_MANAGED_ADVERTISED_PRODUCT(0x673),
     ERROR_INSTALL_SERVICE_SAFEBOOT(0x674),
     ERROR_FAIL_FAST_EXCEPTION(0x675),
-    ERROR_INSTALL_REJECTED(0x676);
+    ERROR_INSTALL_REJECTED(0x676),
+    // STATUS_*
+    STATUS_NO_MORE_ENTRIES(0x8000001A),
+    STATUS_INVALID_HANDLE(0xC0000008),
+    STATUS_INVALID_PARAMETER(0xC000000D),
+    STATUS_ACCESS_DENIED(0xC0000022),
+    STATUS_OBJECT_NAME_NOT_FOUND(0xC0000034),
+    STATUS_NO_SUCH_PRIVILEGE(0xC0000060);
 
-    private final int errorCode;
-    private static final Map<Integer, SystemErrorCode> errorCodes = new HashMap<>();
 
-    private SystemErrorCode(final int errorCode) {
-        this.errorCode = errorCode;
+    private final int value;
+    private static final Map<Integer, SystemErrorCode> VALUE_MAP = new HashMap<>();
+
+    SystemErrorCode(final int value) {
+        this.value = value;
     }
 
-    public int getErrorCode() {
-        return errorCode;
+    public int getValue() {
+        return value;
     }
 
-    public boolean is(final int errorCode) {
-        return this.errorCode == errorCode;
+    public boolean is(final int value) {
+        return this.value == value;
     }
 
-    public static SystemErrorCode getErrorCode(final int errorCode) {
-        return errorCodes.get(errorCode);
+    public static SystemErrorCode getErrorCode(final int value) {
+        return VALUE_MAP.get(value);
     }
 
     static {
         for (final SystemErrorCode errorCode : SystemErrorCode.values()) {
-            errorCodes.put(errorCode.getErrorCode(), errorCode);
+            VALUE_MAP.put(errorCode.getValue(), errorCode);
         }
     }
 }

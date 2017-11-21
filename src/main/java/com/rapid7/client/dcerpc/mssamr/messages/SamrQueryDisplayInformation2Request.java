@@ -20,9 +20,11 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssamr.objects.DisplayInformationClass;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroupBuffer;
 
 /**
  * The SamrQueryDisplayInformation3 method obtains a listing of accounts in ascending name-sorted order, starting at a specified index.
@@ -36,48 +38,72 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
  *   [in] unsigned long PreferredMaximumLength,
  *   [out] unsigned long* TotalAvailable,
  *   [out] unsigned long* TotalReturned,
- *   [out, switch_is(DisplayInformationClass)]
- *     PSAMPR_DISPLAY_INFO_BUFFER Buffer
+ *   [out, switch_is(DisplayInformationClass)] PSAMPR_DISPLAY_INFO_BUFFER Buffer
  *  );
  *  </pre>
  *
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc245761.aspx">
  *       https://msdn.microsoft.com/en-us/library/cc245761.aspx</a>
  */
-public class SamrQueryDisplayInformation2Request extends RequestCall<SamrQueryDisplayInformation2Response> {
+public abstract class SamrQueryDisplayInformation2Request<T extends Unmarshallable>
+        extends RequestCall<SamrQueryDisplayInformation2Response<T>> {
     public static final short OP_NUM = 48;
-    private final DomainHandle handle;
-    private final DisplayInformationClass infoClass;
-    private final int index;
-    private final int entryCount;
-    private final int maxLength;
 
-    public SamrQueryDisplayInformation2Request(
-            DomainHandle handle,
-            DisplayInformationClass infoClass,
-            int index,
-            int entryCount,
-            int maxLength) {
+    // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
+    private final DomainHandle domainHandle;
+    // <NDR: short> [in] DOMAIN_DISPLAY_INFORMATION DisplayInformationClass
+    // Supplied by child classes
+    // <NDR: unsigned long> [in] unsigned long Index
+    private final int index;
+    // <NDR: unsigned long> [in] unsigned long EntryCount
+    private final int entryCount;
+    // <NDR: unsigned long> [in] unsigned long PreferredMaximumLength
+    private final int preferredMaximumLength;
+
+    public SamrQueryDisplayInformation2Request(DomainHandle domainHandle, int index,
+            int entryCount, int preferredMaximumLength) {
         super(OP_NUM);
-        this.handle = handle;
-        this.infoClass = infoClass;
+        this.domainHandle = domainHandle;
         this.index = index;
         this.entryCount = entryCount;
-        this.maxLength = maxLength;
+        this.preferredMaximumLength = preferredMaximumLength;
     }
+
+    public abstract DisplayInformationClass getDisplayInformationClass();
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.writeMarshallable(handle);
-        packetOut.writeShort(infoClass.getValue());
+        // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
+        packetOut.writeMarshallable(this.domainHandle);
+        // <NDR: short> [in] DOMAIN_DISPLAY_INFORMATION DisplayInformationClass
+        // Alignment: 2 - Already aligned, wrote 20 bytes above
+        packetOut.writeShort(getDisplayInformationClass().getInfoLevel());
         packetOut.pad(2);
-        packetOut.writeInt(index);
-        packetOut.writeInt(entryCount);
-        packetOut.writeInt(maxLength);
+        // <NDR: unsigned long> [in] unsigned long Index
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(this.index);
+        // <NDR: unsigned long> [in] unsigned long EntryCount
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(this.entryCount);
+        // <NDR: unsigned long> [in] unsigned long PreferredMaximumLength
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(this.preferredMaximumLength);
     }
 
-    @Override
-    public SamrQueryDisplayInformation2Response getResponseObject() {
-        return new SamrQueryDisplayInformation2Response(infoClass);
+    public static class DomainDisplayGroup extends SamrQueryDisplayInformation2Request<SAMPRDomainDisplayGroupBuffer> {
+
+        public DomainDisplayGroup(DomainHandle domainHandle, int index, int entryCount, int preferredMaximumLength) {
+            super(domainHandle, index, entryCount, preferredMaximumLength);
+        }
+
+        @Override
+        public DisplayInformationClass getDisplayInformationClass() {
+            return DisplayInformationClass.DomainDisplayGroup;
+        }
+
+        @Override
+        public SamrQueryDisplayInformation2Response.DomainDisplayGroup getResponseObject() {
+            return new SamrQueryDisplayInformation2Response.DomainDisplayGroup();
+        }
     }
 }
