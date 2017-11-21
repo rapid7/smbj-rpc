@@ -59,9 +59,10 @@ public class LocalSecurityAuthorityService extends Service {
     }
 
     public PolicyAuditEventsInfo getAuditPolicy(final ContextHandle handle) throws IOException {
-        final LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation request = new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(
-                handle);
-        final LSAPRPolicyAuditEventsInfo policyInformation = callExpectSuccess(request, "LsarQueryInformationPolicy[2]").getPolicyInformation();
+        final LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation request =
+                new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(handle);
+        final LSAPRPolicyAuditEventsInfo policyInformation =
+                callExpectSuccess(request, "LsarQueryInformationPolicy[2]").getPolicyInformation();
         return extractPolicyAuditEventsInfo(policyInformation);
     }
 
@@ -108,9 +109,9 @@ public class LocalSecurityAuthorityService extends Service {
 
     /**
      * @param policyHandle Handle to the policy
-     * @param SIDs         List of SIDs to lookup
+     * @param SIDs List of SIDs to lookup
      * @return A list of Strings containing account names. Where account names are not mapped, null is returned.
-     * @throws IOException           Thrown if exception happens at the RPC layer
+     * @throws IOException Thrown if exception happens at the RPC layer
      * @throws MalformedSIDException Thrown if any of the SIDs do not conform to the SID format
      */
     public String[] lookupSIDs(ContextHandle policyHandle, String... SIDs) throws IOException, MalformedSIDException {
