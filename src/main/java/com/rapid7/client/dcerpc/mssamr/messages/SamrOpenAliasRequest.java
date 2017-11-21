@@ -47,16 +47,16 @@ public class SamrOpenAliasRequest extends RequestCall<SamrOpenAliasResponse> {
 
     // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
     private final DomainHandle domainHandle;
-    // <NDR: unsigned long> [in] unsigned long AliasId
-    private final int desiredAccess;
     // <NDR: unsigned long> [in] unsigned long DesiredAccess
-    private final int userRid;
+    private final int desiredAccess;
+    // <NDR: unsigned long> [in] unsigned long AliasId
+    private final int aliasId;
 
-    public SamrOpenAliasRequest(DomainHandle domainHandle, int desiredAccess, int userRid) {
+    public SamrOpenAliasRequest(DomainHandle domainHandle, int desiredAccess, int aliasId) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
-        this.userRid = userRid;
         this.desiredAccess = desiredAccess;
+        this.aliasId = aliasId;
     }
 
     @Override
@@ -65,10 +65,10 @@ public class SamrOpenAliasRequest extends RequestCall<SamrOpenAliasResponse> {
         packetOut.writeMarshallable(this.domainHandle);
         // <NDR: unsigned long> [in] unsigned long AliasId
         // Alignment: 4 - Already aligned
-        packetOut.writeInt(desiredAccess);
+        packetOut.writeInt(this.desiredAccess);
         // <NDR: unsigned long> [in] unsigned long DesiredAccess
         // Alignment: 4 - Already aligned
-        packetOut.writeInt(userRid);
+        packetOut.writeInt(this.aliasId);
     }
 
     @Override

@@ -46,7 +46,7 @@ public class Test_RegistryService {
     @Test
     public void constructorNullTransport() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid RPC transport: null");
+        thrown.expectMessage("Expecting non-null transport");
 
         new RegistryService(null);
     }

@@ -29,22 +29,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class Test_SamrConnect2Request {
-    private final SamrConnect2Request request1 = new SamrConnect2Request(null, (int) AccessMask.MAXIMUM_ALLOWED.getValue());
-    private final SamrConnect2Request request2 = new SamrConnect2Request("", (int) AccessMask.MAXIMUM_ALLOWED.getValue());
+    private final SamrConnect2Request request = new SamrConnect2Request("", (int) AccessMask.MAXIMUM_ALLOWED.getValue());
 
     @Test
     public void getOpNum() {
-        assertEquals(SamrConnect2Request.OP_NUM, request1.getOpNum());
+        assertEquals(SamrConnect2Request.OP_NUM, request.getOpNum());
     }
 
     @Test
     public void getStub() throws IOException {
-        assertEquals("000002000100000000000000010000000000000000000002", toHexString(request1.getStub()));
-        assertEquals("000002000100000000000000010000000000000000000002", toHexString(request2.getStub()));
+        assertEquals("000002000100000000000000010000000000000000000002", toHexString(request.getStub()));
     }
 
     @Test
     public void getResponseObject() throws IOException {
-        assertThat(request1.getResponseObject(), instanceOf(HandleResponse.class));
+        assertThat(request.getResponseObject(), instanceOf(HandleResponse.class));
     }
 }

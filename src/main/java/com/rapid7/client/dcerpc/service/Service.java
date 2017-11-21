@@ -22,18 +22,18 @@
 package com.rapid7.client.dcerpc.service;
 
 import java.io.IOException;
-import java.rmi.UnmarshalException;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public abstract class Service {
     private final RPCTransport transport;
 
     protected Service(final RPCTransport transport) {
+        if (transport == null)
+            throw new IllegalArgumentException("Expecting non-null transport");
         this.transport = transport;
     }
 
@@ -42,46 +42,21 @@ public abstract class Service {
         return transport.call(request);
     }
 
-    protected <R extends RequestResponse> R callAndExpectSuccess(RequestCall<R> request, String name) throws IOException {
-        return callAndExpect(request, name, SystemErrorCode.ERROR_SUCCESS);
+    protected <R extends RequestResponse> R callExpectSuccess(RequestCall<R> request, String name) throws IOException {
+        return callExpect(request, name, SystemErrorCode.ERROR_SUCCESS);
     }
 
-    protected <R extends RequestResponse> R callAndExpect(RequestCall<R> request, String name,
+    protected <R extends RequestResponse> R callExpect(RequestCall<R> request, String name,
             SystemErrorCode ... expectCodes) throws IOException {
         final R response = call(request);
         if (expectCodes == null)
             return response;
+        final int returnValue = response.getReturnValue();
         for (SystemErrorCode code : expectCodes) {
-            if (code != null && code.is(response.getReturnValue())) {
+            if (code != null && code.is(returnValue)) {
                 return response;
             }
         }
-        throw new RPCException(name, response.getReturnValue());
-    }
-
-    public static class Inbound {
-        public static ContextHandle createContextHandle(byte[] contextHandle) {
-            if (contextHandle.length != 20) {
-                throw new IllegalArgumentException(String.format(
-                        "contextHandle must be exactly 20 bytes, got: %d",
-                        contextHandle.length));
-            }
-            ContextHandle ret = new ContextHandle();
-            ret.setBytes(contextHandle);
-            return ret;
-        }
-    }
-
-    public static class Outbound {
-        public static byte[] transformContextHandle(ContextHandle contextHandle) throws UnmarshalException {
-            if (contextHandle == null)
-                throw new UnmarshalException("Expecting non-null ndr_context_handle");
-            byte[] ret = contextHandle.getBytes();
-            if (ret == null)
-                throw new UnmarshalException("Expecting non-null ndr_context_handle content");
-            else if (ret.length != 20)
-                throw new UnmarshalException("Expecting exactly 20 bytes in ndr_context_handle");
-            return ret;
-        }
+        throw new RPCException(name, returnValue);
     }
 }

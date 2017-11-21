@@ -31,7 +31,7 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
  *          [in] unsigned long DesiredAccess
  *      );
  *
- *  ServerName: The null-terminated NETBIOS name of the server; this parameter MAY<41> be ignored on receipt.
+ *  ServerName: The null-terminated NETBIOS name of the server; this parameter MAY be ignored on receipt.
  *  ServerHandle: An RPC context handle, as specified in section 2.2.3.2.
  *  DesiredAccess: An ACCESS_MASK that indicates the access requested for ServerHandle on output. See section 2.2.1.3 for a listing of possible values.</pre></blockquote>
  */

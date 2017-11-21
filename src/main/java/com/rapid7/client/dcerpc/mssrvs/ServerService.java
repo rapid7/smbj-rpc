@@ -28,6 +28,7 @@ import com.hierynomus.protocol.transport.TransportException;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssrvs.messages.*;
+import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 /**
@@ -37,11 +38,10 @@ import com.rapid7.client.dcerpc.transport.RPCTransport;
  *
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc247080.aspx">[MS-SRVS]: Server Service Remote Protocol</a>
  */
-public class ServerService {
-    private final RPCTransport transport;
+public class ServerService extends Service {
 
     public ServerService(final RPCTransport transport) {
-        this.transport = transport;
+        super(transport);
     }
 
     public List<NetShareInfo0> getShares() throws IOException {
@@ -49,7 +49,7 @@ public class ServerService {
         final MutableInt resumeHandle = new MutableInt();
         for (; ; ) {
             final NetrShareEnumRequest request = new NetrShareEnumRequest(2, resumeHandle.getValue());
-            final NetrShareEnumResponse response = transport.call(request);
+            final NetrShareEnumResponse response = call(request);
             final int returnCode = response.getReturnValue();
             if (SystemErrorCode.ERROR_SUCCESS.is(returnCode) || SystemErrorCode.ERROR_MORE_DATA.is(returnCode)) {
                 final List<NetShareInfo0> responseShares = response.getShares();
@@ -77,10 +77,10 @@ public class ServerService {
         return Collections.unmodifiableList(new ArrayList<>(shares));
     }
 
-    public String getCanonicalizedName(String serverName, String pathName, String prefix, int outBufLength, int pathType, int flags)
-            throws IOException {
-        final NetprPathCanonicalizeRequest request = new NetprPathCanonicalizeRequest(serverName, pathName, outBufLength, prefix, pathType, flags);
-        NetprPathCanonicalizeResponse response = transport.call(request);
-        return response.getCanonicalizedPath();
+    public String getCanonicalizedName(String serverName, String pathName, String prefix,
+            int outBufLength, int pathType, int flags) throws IOException {
+        final NetprPathCanonicalizeRequest request =
+                new NetprPathCanonicalizeRequest(serverName, pathName, outBufLength, prefix, pathType, flags);
+        return callExpectSuccess(request, "NetprPathCanonicalize").getCanonicalizedPath();
     }
 }

@@ -22,7 +22,8 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 
-public class LsarLookupAcctPrivsRpcResponse extends RequestResponse {
+public class LsarEnumerateAccountRightsResponse extends RequestResponse {
+    // [out] PLSAPR_USER_RIGHT_SET UserRights
     private String[] privNames;
 
     public String[] getPrivNames() {
