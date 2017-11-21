@@ -26,18 +26,20 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupAcctPrivsRpcRequest;
-import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupAcctPrivsRpcResponse;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountRightsRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountRightsResponse;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.MalformedSIDException;
+import com.rapid7.client.dcerpc.objects.RPCSID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class Test_LsarLookupAccPrivs {
+public class Test_LsarEnumerateAccountRights {
 
     @Test
-    public void lsar_SingleAcctPrivsRpcResponse() throws IOException {
-        LsarLookupAcctPrivsRpcResponse response = new LsarLookupAcctPrivsRpcResponse();
+    public void lsar_SingleLsarEnumerateAccountRightsResponse() throws IOException {
+        LsarEnumerateAccountRightsResponse response = new LsarEnumerateAccountRightsResponse();
         String hexString = "01000000000002000100000036003800040002001C000000000000001B00000053006500440075006D006D0079003100440075006D006D0079003200440075006D006D00790033003400350052006900670068007400000000000000";
         response.unmarshal(getPacketInput(hexString));
         //dummy Privilege
@@ -48,8 +50,8 @@ public class Test_LsarLookupAccPrivs {
     }
 
     @Test
-    public void lsar_MultipleAcctPrivsRpcResponse() throws IOException {
-        LsarLookupAcctPrivsRpcResponse response = new LsarLookupAcctPrivsRpcResponse();
+    public void lsar_MultipleLsarEnumerateAccountRightsResponse() throws IOException {
+        LsarEnumerateAccountRightsResponse response = new LsarEnumerateAccountRightsResponse();
         String hexString = "0300000000000200030000002E0030000400020036003800080002002E0030000C00020018000000000000001700000053006500440075006D006D007900440075006D006D007900440075006D006D00790031005200690067006800740000001C000000000000001B00000053006500440075006D006D0079003100440075006D006D0079003200440075006D006D00790033003400350052006900670068007400000018000000000000001700000053006500440075006D006D007900440075006D006D0079003100440075006D006D00790052006900670068007400000000000000";
         response.unmarshal(getPacketInput(hexString));
         //dummy Privileges
@@ -60,7 +62,7 @@ public class Test_LsarLookupAccPrivs {
     }
 
     @Test
-    public void lsar_LsarLookupAccPrivsReqeust() throws IOException {
+    public void lsar_LsarEnumerateAccountRightsResponse() throws MalformedSIDException, IOException {
         ContextHandle handle = new ContextHandle();
         final byte[] b = Hex.decode("000000003451f9262c047d43b9c38648900abf7c");
         handle.setBytes(b);
@@ -68,7 +70,7 @@ public class Test_LsarLookupAccPrivs {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
         //dummy SIDs
-        LsarLookupAcctPrivsRpcRequest request = new LsarLookupAcctPrivsRpcRequest(handle, "S-1-5-1-501");
+        LsarEnumerateAccountRightsRequest request = new LsarEnumerateAccountRightsRequest(handle, RPCSID.fromString("S-1-5-1-501"));
         request.marshal(packetOut);
 
         assertEquals(Hex.toHexString(outputStream.toByteArray()), "000000003451f9262c047d43b9c38648900abf7c02000000010200000000000501000000f5010000");
