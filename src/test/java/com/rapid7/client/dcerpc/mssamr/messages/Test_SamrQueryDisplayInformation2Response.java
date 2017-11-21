@@ -31,7 +31,7 @@ public class Test_SamrQueryDisplayInformation2Response {
         SamrQueryDisplayInformation2Response.DomainDisplayGroup response
                 = new SamrQueryDisplayInformation2Response.DomainDisplayGroup();
         response.fromHexString(
-            "540000005400000003000000 03000000 00000000 00000000 01000000");
+            "5400000054000000 03000000 00000000 00000000 01000000");
         assertEquals(84, response.getTotalAvailable());
         assertEquals(84, response.getTotalReturned());
         assertEquals(response.getDisplayInformation().getEntriesRead(), 0);
