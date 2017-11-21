@@ -54,10 +54,12 @@ public class LocalSecurityAuthorityService extends Service {
         return callExpectSuccess(request, "LsarOpenPolicy2").getHandle();
     }
 
-    public LSAPRPolicyAuditEventsInfo getAuditPolicy(final ContextHandle handle) throws IOException {
+    public PolicyAuditEventsInfo getAuditPolicy(final ContextHandle handle) throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation request =
                 new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(handle);
-        return callExpectSuccess(request, "LsarQueryInformationPolicy[2]").getPolicyInformation();
+        final LSAPRPolicyAuditEventsInfo policyInformation =
+                callExpectSuccess(request, "LsarQueryInformationPolicy[2]").getPolicyInformation();
+        return extractPolicyAuditEventsInfo(policyInformation);
     }
 
     public LSAPRPolicyPrimaryDomInfo getPolicyPrimaryDomainInformation(final ContextHandle policyHandle) throws IOException {
@@ -94,6 +96,12 @@ public class LocalSecurityAuthorityService extends Service {
     public LsarLookupNamesResponse lookupNames(final ContextHandle policyHandle, final String... names) throws IOException {
         final LsarLookupNamesRequest request = new LsarLookupNamesRequest(policyHandle, names);
         return callExpectSuccess(request, "LsarLookupNames");
+    }
+
+    PolicyAuditEventsInfo extractPolicyAuditEventsInfo(final LSAPRPolicyAuditEventsInfo rpcObj) {
+        return new PolicyAuditEventsInfo(
+                (rpcObj.getAuditingMode() != 0),
+                rpcObj.getEventAuditingOptions());
     }
 }
 

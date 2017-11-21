@@ -38,7 +38,7 @@ public class Test_LSAPRPolicyAuditEventsInfo {
     @Test
     public void test_getters_default() {
         LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
-        assertFalse(obj.isAuditingMode());
+        assertEquals(obj.getAuditingMode(), 0);
         assertNull(obj.getEventAuditingOptions());
         assertEquals(obj.getMaximumAuditEventCount(), 0);
     }
@@ -46,11 +46,11 @@ public class Test_LSAPRPolicyAuditEventsInfo {
     @Test
     public void test_setters() {
         LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
-        obj.setAuditingMode(true);
+        obj.setAuditingMode((char) 1);
         int[] eventAuditingOptions = new int[]{1, 2, 3};
         obj.setEventAuditingOptions(eventAuditingOptions);
         obj.setMaximumAuditEventCount(5);
-        assertTrue(obj.isAuditingMode());
+        assertEquals(obj.getAuditingMode(), 1);
         assertSame(obj.getEventAuditingOptions(), eventAuditingOptions);
         assertEquals(obj.getMaximumAuditEventCount(), 5);
     }
@@ -67,31 +67,31 @@ public class Test_LSAPRPolicyAuditEventsInfo {
         return new Object[][] {
                 // isAuditingEnabled=false, alignment=3b, referentId=2, MaximumAuditEventCount=3
                 {"00 777777 02000000 03000000",
-                        0, false, new int[]{0, 0, 0}, 3},
+                        0, (char) 0, new int[]{0, 0, 0}, 3},
                 // isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=3
                 {"01 777777 00000000 00000000",
-                        0, true, null, 0},
+                        0, (char) 1, null, 0},
                 // alignment: 3, isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=3
                 {"ffffffff 01 777777 00000000 00000000",
-                        1, true, null, 0},
+                        1, (char) 1, null, 0},
                 // alignment: 2, isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=3
                 {"ffffffff 01 777777 00000000 00000000",
-                        2, true, null, 0},
+                        2, (char) 1, null, 0},
                 // alignment: 1, isAuditingEnabled=true, alignment=3b, referentId=0, MaximumAuditEventCount=3
                 {"ffffffff 01 777777 00000000 00000000",
-                        3, true, null, 0}
+                        3, (char) 1, null, 0}
         };
     }
 
     @Test(dataProvider = "data_unmarshalEntity")
-    public void test_unmarsalEntity(String hex, int mark, boolean isAuditingEnabled, int[] eventAuditingOptions, int maximumAuditEventCount) throws IOException {
+    public void test_unmarsalEntity(String hex, int mark, char auditingMode, int[] eventAuditingOptions, int maximumAuditEventCount) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         in.readFully(new byte[mark]);
 
         LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
         obj.unmarshalEntity(in);
-        assertEquals(obj.isAuditingMode(), isAuditingEnabled);
+        assertEquals(obj.getAuditingMode(), auditingMode);
         assertEquals(obj.getEventAuditingOptions(), eventAuditingOptions);
         assertEquals(obj.getMaximumAuditEventCount(), maximumAuditEventCount);
     }
@@ -141,11 +141,11 @@ public class Test_LSAPRPolicyAuditEventsInfo {
         in.readFully(new byte[mark]);
 
         LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
-        obj.setAuditingMode(true);
+        obj.setAuditingMode((char) 2);
         obj.setMaximumAuditEventCount(maximumAuditEventCount);
         obj.setEventAuditingOptions(eventAuditingOptions);
         obj.unmarshalDeferrals(in);
-        assertTrue(obj.isAuditingMode());
+        assertEquals(obj.getAuditingMode(), (char) 2);
         assertEquals(obj.getEventAuditingOptions(), expectedEventAuditingOptions);
         assertEquals(obj.getMaximumAuditEventCount(), maximumAuditEventCount);
     }
@@ -172,9 +172,9 @@ public class Test_LSAPRPolicyAuditEventsInfo {
         LSAPRPolicyAuditEventsInfo obj1 = new LSAPRPolicyAuditEventsInfo();
         LSAPRPolicyAuditEventsInfo obj2 = new LSAPRPolicyAuditEventsInfo();
         assertEquals(obj1.hashCode(), obj2.hashCode());
-        obj1.setAuditingMode(true);
+        obj1.setAuditingMode((char) 2);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
-        obj2.setAuditingMode(true);
+        obj2.setAuditingMode((char) 2);
         assertEquals(obj1.hashCode(), obj2.hashCode());
         obj1.setEventAuditingOptions(new int[]{1, 2, 3});
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
@@ -193,9 +193,9 @@ public class Test_LSAPRPolicyAuditEventsInfo {
         assertEquals(obj1, obj1);
         LSAPRPolicyAuditEventsInfo obj2 = new LSAPRPolicyAuditEventsInfo();
         assertEquals(obj1, obj2);
-        obj1.setAuditingMode(true);
+        obj1.setAuditingMode((char) 2);
         assertNotEquals(obj1, obj2);
-        obj2.setAuditingMode(true);
+        obj2.setAuditingMode((char) 2);
         assertEquals(obj1, obj2);
         obj1.setEventAuditingOptions(new int[]{1, 2, 3});
         assertNotEquals(obj1, obj2);
@@ -210,15 +210,15 @@ public class Test_LSAPRPolicyAuditEventsInfo {
     @Test
     public void test_toString_default() {
         LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
-        assertEquals(obj.toString(), "LSAPR_POLICY_AUDIT_EVENTS_INFO{AuditingMode:false, EventAuditingOptions:null, MaximumAuditEventCount:0}");
+        assertEquals(obj.toString(), "LSAPR_POLICY_AUDIT_EVENTS_INFO{AuditingMode:0, EventAuditingOptions:null, MaximumAuditEventCount:0}");
     }
 
     @Test
     public void test_toString() {
         LSAPRPolicyAuditEventsInfo obj = new LSAPRPolicyAuditEventsInfo();
-        obj.setAuditingMode(true);
+        obj.setAuditingMode((char) 2);
         obj.setEventAuditingOptions(new int[]{1, 2, 3});
         obj.setMaximumAuditEventCount(5);
-        assertEquals(obj.toString(), "LSAPR_POLICY_AUDIT_EVENTS_INFO{AuditingMode:true, EventAuditingOptions:[1, 2, 3], MaximumAuditEventCount:5}");
+        assertEquals(obj.toString(), "LSAPR_POLICY_AUDIT_EVENTS_INFO{AuditingMode:2, EventAuditingOptions:[1, 2, 3], MaximumAuditEventCount:5}");
     }
 }
