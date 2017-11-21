@@ -58,9 +58,9 @@ public class LocalSecurityAuthorityService extends Service {
         return callExpectSuccess(request, "LsarOpenPolicy2").getHandle();
     }
 
-    public PolicyAuditEventsInfo getAuditPolicy(final ContextHandle handle) throws IOException {
+    public PolicyAuditEventsInfo getAuditPolicy(final ContextHandle policyHandle) throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation request =
-                new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(handle);
+                new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(policyHandle);
         final LSAPRPolicyAuditEventsInfo policyInformation =
                 callExpectSuccess(request, "LsarQueryInformationPolicy[2]").getPolicyInformation();
         return extractPolicyAuditEventsInfo(policyInformation);
@@ -68,15 +68,15 @@ public class LocalSecurityAuthorityService extends Service {
 
     public LSAPRPolicyPrimaryDomInfo getPolicyPrimaryDomainInformation(final ContextHandle policyHandle)
             throws IOException {
-        final LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation request = new LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation(
-                policyHandle);
+        final LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation request =
+                new LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation(policyHandle);
         return callExpectSuccess(request, "LsarQueryInformationPolicy[3]").getPolicyInformation();
     }
 
     public LSAPRPolicyAccountDomInfo getPolicyAccountDomainInformation(final ContextHandle policyHandle)
             throws IOException {
-        final LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation request = new LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation(
-                policyHandle);
+        final LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation request =
+                new LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation(policyHandle);
         return callExpectSuccess(request, "LsarQueryInformationPolicy[5]").getPolicyInformation();
     }
 
