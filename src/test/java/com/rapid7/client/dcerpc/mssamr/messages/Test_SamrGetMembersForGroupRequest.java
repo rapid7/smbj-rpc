@@ -25,13 +25,13 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
 
-public class Test_SamrGetGroupsForUserRequest {
+public class Test_SamrGetMembersForGroupRequest {
 
-    private final UserHandle handle = new UserHandle();
+    private final GroupHandle handle = new GroupHandle();
 
-    private final SamrGetGroupsForUserRequest request1 = new SamrGetGroupsForUserRequest(handle);
+    private final SamrGetMembersInGroupRequest request1 = new SamrGetMembersInGroupRequest(handle);
 
     @Test
     public void getStub() throws IOException {
@@ -41,11 +41,12 @@ public class Test_SamrGetGroupsForUserRequest {
 
     @Test
     public void getResponseObject() throws IOException {
-        assertThat(request1.getResponseObject(), instanceOf(SamrGetGroupsForUserResponse.class));
+        assertThat(request1.getResponseObject(), instanceOf(SamrGetMembesInGroupResponse.class));
     }
 
     @Test
     public void getOpNum() {
-        assertEquals(SamrGetGroupsForUserRequest.OP_NUM, request1.getOpNum());
+        assertEquals(SamrGetMembersInGroupRequest.OP_NUM, request1.getOpNum());
     }
+
 }

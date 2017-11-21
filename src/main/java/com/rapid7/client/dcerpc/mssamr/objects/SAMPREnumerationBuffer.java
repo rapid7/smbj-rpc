@@ -47,7 +47,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  */
 public abstract class SAMPREnumerationBuffer<T extends Unmarshallable> implements Unmarshallable {
 
-    private Integer entriesRead;
+    private int entriesRead;
     private List<T> array;
 
     public SAMPREnumerationBuffer() {
@@ -67,7 +67,7 @@ public abstract class SAMPREnumerationBuffer<T extends Unmarshallable> implement
      *
      * @return The entries. May be {@code null} if the response is not processed.
      */
-    public final List<T> getEntries() {
+    public List<T> getEntries() {
         if (array == null)
             return null;
         return Collections.unmodifiableList(array);
