@@ -350,6 +350,8 @@ public class SecurityAccountManagerService extends Service {
      * Gets a list of {@link GroupMembership} information for the provided user handle.
      *
      * @param userHandle User handle. Must not be {@code null}.
+     * @return A list of users group memberships
+     * @throws IOException Throws if exception occurs on the RPC layer
      */
     public List<GroupMembership> getGroupsForUser(UserHandle userHandle) throws IOException {
         final SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
