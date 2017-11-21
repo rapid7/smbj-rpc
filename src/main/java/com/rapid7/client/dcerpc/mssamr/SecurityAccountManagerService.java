@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mssamr;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_MORE_ENTRIES;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
-import static com.rapid7.client.dcerpc.mssamr.objects.DisplayInformationClass.DomainDisplayGroup;
 import java.io.IOException;
 import java.rmi.UnmarshalException;
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupDomainInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainResponse;
@@ -71,6 +71,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSIDInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
@@ -184,6 +185,11 @@ public class SecurityAccountManagerService extends Service {
         final SamrQueryInformationAliasRequest.AliasGeneralInformation request =
                 new SamrQueryInformationAliasRequest.AliasGeneralInformation(aliasHandle);
         return callExpectSuccess(request, "SamrQueryInformationAlias[1]").getAliasInformation();
+    }
+
+    public List<SAMPRSIDInformation> getMembersInAlias(final AliasHandle aliasHandle) throws IOException {
+        final SamrGetMembersInAliasRequest request = new SamrGetMembersInAliasRequest(aliasHandle);
+        return callExpectSuccess(request, "SamrGetMembersInAlias").getSIDs();
     }
 
     public SAMPRDomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
@@ -362,7 +368,7 @@ public class SecurityAccountManagerService extends Service {
                 RPCUnicodeString.NonNullTerminated.of(domainName));
         return callExpectSuccess(request, "SamrLookupDomainInSamServer").getDomainId();
     }
-    
+
     public SamrLookupNamesInDomainResponse getNamesInDomain(DomainHandle domainHandle, String ... names)
             throws IOException {
         if (names == null)

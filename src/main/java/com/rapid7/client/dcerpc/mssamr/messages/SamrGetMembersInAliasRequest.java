@@ -60,7 +60,7 @@ public class SamrGetMembersInAliasRequest extends RequestCall<SamrGetMembersInAl
 
     private final AliasHandle aliasHandle;
 
-    SamrGetMembersInAliasRequest(AliasHandle aliasHandle) {
+    public SamrGetMembersInAliasRequest(AliasHandle aliasHandle) {
         super(OP_NUM);
         this.aliasHandle = aliasHandle;
     }

@@ -58,16 +58,16 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSIDInformation;
  *
  */
 public class SamrGetMembersInAliasResponse extends RequestResponse {
-    private SAMPRSIDArrayOut sids;
+    private SAMPRSIDArrayOut members;
 
-    public List<SAMPRSIDInformation> getList() {
-        return sids.getEntries();
+    public List<SAMPRSIDInformation> getSIDs() {
+        return members.getEntries();
     }
 
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
-        this.sids = new SAMPRSIDArrayOut();
-        packetIn.readUnmarshallable(sids);
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
+        this.members = new SAMPRSIDArrayOut();
+        packetIn.readUnmarshallable(members);
     }
 
 }
