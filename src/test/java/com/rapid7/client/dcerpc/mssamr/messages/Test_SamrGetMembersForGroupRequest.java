@@ -41,7 +41,7 @@ public class Test_SamrGetMembersForGroupRequest {
 
     @Test
     public void getResponseObject() throws IOException {
-        assertThat(request1.getResponseObject(), instanceOf(SamrGetMembesInGroupResponse.class));
+        assertThat(request1.getResponseObject(), instanceOf(SamrGetMembersInGroupResponse.class));
     }
 
     @Test

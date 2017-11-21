@@ -35,7 +35,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
  * <p><strong>GroupHandle</strong>: An RPC context handle, as specified in section <a href="https://msdn.microsoft.com/en-us/library/cc245544.aspx">2.2.3.2</a>, representing a <a href="https://msdn.microsoft.com/en-us/library/cc245478.aspx#gt_7ce4771c-2043-49b8-85d3-0c60c7789f9a">group object.</a></p>
  * <p><strong>Members</strong>: A structure containing an array of <a href="https://msdn.microsoft.com/en-us/library/cc245478.aspx#gt_df3d0b61-56cd-4dac-9402-982f1fedc41c">RIDs</a>, as well as an array of attribute values.</p>
  */
-public class SamrGetMembersInGroupRequest extends RequestCall<SamrGetMembesInGroupResponse> {
+public class SamrGetMembersInGroupRequest extends RequestCall<SamrGetMembersInGroupResponse> {
 
     public static final short OP_NUM = 25;
     private final GroupHandle handle;
@@ -51,7 +51,7 @@ public class SamrGetMembersInGroupRequest extends RequestCall<SamrGetMembesInGro
     }
 
     @Override
-    public SamrGetMembesInGroupResponse getResponseObject() {
-        return new SamrGetMembesInGroupResponse();
+    public SamrGetMembersInGroupResponse getResponseObject() {
+        return new SamrGetMembersInGroupResponse();
     }
 }

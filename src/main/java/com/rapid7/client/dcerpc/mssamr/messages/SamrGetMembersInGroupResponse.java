@@ -25,7 +25,7 @@ import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGetMembersBuffer;
 
-public class SamrGetMembesInGroupResponse extends RequestResponse {
+public class SamrGetMembersInGroupResponse extends RequestResponse {
     private SAMPRGetMembersBuffer buffer;
 
     @Override
@@ -40,6 +40,6 @@ public class SamrGetMembesInGroupResponse extends RequestResponse {
     }
 
     public List<GroupMembership> getList() {
-        return buffer.getGroupMembershipt();
+        return buffer.getGroupMembership();
     }
 }

@@ -35,7 +35,7 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerR
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembesInGroupResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
@@ -116,7 +116,7 @@ public class Test_SecurityAccountManagerService {
     public void test_getMembersForGroup() throws IOException {
         RPCTransport transport = Mockito.mock(RPCTransport.class);
         SecurityAccountManagerService service = new SecurityAccountManagerService(transport);
-        SamrGetMembesInGroupResponse response = Mockito.mock(SamrGetMembesInGroupResponse.class);
+        SamrGetMembersInGroupResponse response = Mockito.mock(SamrGetMembersInGroupResponse.class);
         Mockito.when(response.getReturnValue()).thenReturn(0);
         List<GroupMembership> users = new ArrayList<>();
         GroupMembership returnedMembership = new GroupMembership();

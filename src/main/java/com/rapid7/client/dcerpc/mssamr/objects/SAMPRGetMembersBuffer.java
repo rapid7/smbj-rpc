@@ -53,7 +53,7 @@ public class SAMPRGetMembersBuffer implements Unmarshallable {
         return memberCount;
     }
 
-    public List<GroupMembership> getGroupMembershipt() {
+    public List<GroupMembership> getGroupMembership() {
         return array;
     }
 

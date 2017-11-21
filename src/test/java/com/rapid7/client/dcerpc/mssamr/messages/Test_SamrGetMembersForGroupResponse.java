@@ -26,7 +26,7 @@ public class Test_SamrGetMembersForGroupResponse {
 
     @Test
     public void unmarshall() throws IOException {
-        SamrGetMembesInGroupResponse response = new SamrGetMembesInGroupResponse();
+        SamrGetMembersInGroupResponse response = new SamrGetMembersInGroupResponse();
         response.fromHexString(
             "0000020004000000040002000800020004000000f4010000f5010000e9030000ea030000040000000700000007000000070000000700000000000000");
         assertEquals(0, response.getReturnValue());
