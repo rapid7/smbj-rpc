@@ -20,7 +20,6 @@ package com.rapid7.client.dcerpc.mssamr;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,9 +32,16 @@ import com.hierynomus.msdtyp.SecurityDescriptor;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
+import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class Test_SecurityAccountManagerService {
@@ -104,5 +110,44 @@ public class Test_SecurityAccountManagerService {
         RPCTransport transport = Mockito.mock(RPCTransport.class);
         SecurityAccountManagerService service = new SecurityAccountManagerService(transport);
         assertNull(service.parseSecurityDescriptor(new SAMPRSRSecurityDescriptor()));
+    }
+
+    @Test
+    public void test_getMembersForGroup() throws IOException {
+        RPCTransport transport = Mockito.mock(RPCTransport.class);
+        SecurityAccountManagerService service = new SecurityAccountManagerService(transport);
+        SamrGetMembersInGroupResponse response = Mockito.mock(SamrGetMembersInGroupResponse.class);
+        Mockito.when(response.getReturnValue()).thenReturn(0);
+        List<GroupMembership> users = new ArrayList<>();
+        GroupMembership returnedMembership = new GroupMembership();
+        returnedMembership.setAttributes(7);
+        returnedMembership.setRelativeID(500);
+        users.add(returnedMembership);
+        Mockito.when(response.getList()).thenReturn(users);
+        Mockito.when(transport.call(Mockito.any(SamrGetMembersInGroupRequest.class))).thenReturn(response);
+        List<Membership> membership = service.getMembersForGroup(Mockito.mock(GroupHandle.class));
+        assertEquals(1, membership.size());
+        assertEquals(500, membership.get(0).getRelativeID());
+        assertEquals(7, membership.get(0).getAttributes());
+    }
+
+    @Test
+    public void getGroupsForUser() throws IOException
+    {
+        RPCTransport transport = Mockito.mock(RPCTransport.class);
+        SecurityAccountManagerService service = new SecurityAccountManagerService(transport);
+        SamrGetGroupsForUserResponse response = Mockito.mock(SamrGetGroupsForUserResponse.class);
+        Mockito.when(response.getReturnValue()).thenReturn(0);
+        List<GroupMembership> users = new ArrayList<>();
+        GroupMembership returnedMembership = new GroupMembership();
+        returnedMembership.setAttributes(7);
+        returnedMembership.setRelativeID(500);
+        users.add(returnedMembership);
+        Mockito.when(response.getGroups()).thenReturn(users);
+        Mockito.when(transport.call(Mockito.any(SamrGetGroupsForUserRequest.class))).thenReturn(response);
+        List<Membership> membership = service.getGroupsForUser(Mockito.mock(UserHandle.class));
+        assertEquals(1, membership.size());
+        assertEquals(500, membership.get(0).getRelativeID());
+        assertEquals(7, membership.get(0).getAttributes());
     }
 }
