@@ -134,6 +134,7 @@ public class LocalSecurityAuthorityService extends Service {
                 SystemErrorCode.STATUS_SOME_NOT_MAPPED);
         LSAPRTranslatedSID[] translatedSIDs = response.getLsaprTranslatedSIDs().getLsaprTranslatedSIDArray();
         LSAPRTrustInformation[] domainArray = response.getLsaprReferencedDomainList().getLsaprTrustInformations();
+        // Create DTO SIDs
         SID[] SIDs = new SID[translatedSIDs.length];
         for (int i = 0; i < translatedSIDs.length; i++) {
             try {

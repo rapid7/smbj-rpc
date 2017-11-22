@@ -26,6 +26,7 @@ import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSIDs;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
+import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 import java.io.IOException;
 import org.junit.Rule;
@@ -73,8 +74,7 @@ public class Test_LookupNames {
 
     //This test is to verify that the Service correctly sets invalid SIDs to null from a valid response
     @Test
-    public void testLookupNamesService()
-        throws IOException {
+    public void testLookupNamesService() throws IOException, MalformedSIDException {
         final RPCTransport transport = mock(RPCTransport.class);
         final byte[] fakePolicyHandle = "000000008e3039708fdd".getBytes();
         final LocalSecurityAuthorityService localSecurityAuthorityService = new LocalSecurityAuthorityService(transport);
