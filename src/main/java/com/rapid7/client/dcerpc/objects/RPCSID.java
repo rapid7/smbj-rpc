@@ -18,12 +18,11 @@
  */
 package com.rapid7.client.dcerpc.objects;
 
-import com.hierynomus.protocol.commons.ByteArrayUtils;
 import java.io.IOException;
 import java.rmi.MarshalException;
+import java.rmi.UnmarshalException;
 import java.util.Arrays;
 import java.util.Objects;
-import org.bouncycastle.util.encoders.Hex;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
@@ -110,6 +109,9 @@ public class RPCSID implements Unmarshallable, Marshallable {
             throw new MarshalException(String.format("SubAuthorityCount (%d) != SubAuthority[] length (%d)",
                     (int) this.subAuthorityCount, this.subAuthority.length));
         }
+        if (this.subAuthority.length <= 0) {
+            throw new MarshalException("Expecting at least one SubAuthority entry");
+        }
         // Structure alignment
         out.align(Alignment.FOUR);
         // <NDR: unsigned char> unsigned char Revision;
@@ -152,6 +154,9 @@ public class RPCSID implements Unmarshallable, Marshallable {
         // <NDR: unsigned char> unsigned char SubAuthorityCount;
         // Alignment: 1 - Already aligned
         this.subAuthorityCount = in.readUnsignedByte();
+        if (this.subAuthorityCount <= 0) {
+            throw new UnmarshalException("Expecting at least one SubAuthority entry");
+        }
         // <NDR: fixed array> RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
         // Alignment: 1 - Already aligned
         this.identifierAuthority = new byte[6];
@@ -195,82 +200,8 @@ public class RPCSID implements Unmarshallable, Marshallable {
 
     @Override
     public String toString() {
-        StringBuilder b = new StringBuilder("S-");
-        b.append(revision & 0xFF).append("-");
-
-        if (identifierAuthority == null || identifierAuthority.length < 2) {
-            b.append("null");
-        } else {
-            if (identifierAuthority[0] != (byte) 0 || identifierAuthority[1] != (byte) 0) {
-                b.append("0x");
-                b.append(Hex.toHexString(identifierAuthority));
-            } else {
-                long shift = 0;
-                long id = 0;
-                for (int i = identifierAuthority.length-1; i > 1; i--) {
-                    id += (identifierAuthority[i] & 0xFFL) << shift;
-                    shift += 8;
-                }
-                b.append(id);
-            }
-        }
-        if (subAuthority == null) {
-            b.append("-null");
-        } else {
-            for (int i = 0; i < subAuthority.length; i++)
-                b.append("-").append(subAuthority[i] & 0xFFFFFFFFL);
-        }
-
-        return b.toString();
-    }
-
-
-    /**
-     * @param sidString SID string. Must not be {@code null}.
-     * @return A {@link RPCSID} parsed from the provided string.
-     * @throws MalformedSIDException The provided SID is malformed.
-     */
-    public static RPCSID fromString(String sidString) throws MalformedSIDException {
-        String[] split = sidString.toUpperCase().trim().split("-");
-        if (split.length < 3)
-            throw new MalformedSIDException("Illegal SID format: " + sidString);
-
-        if (!split[0].equals("S"))
-            throw new MalformedSIDException("SID must start with S:" + sidString);
-
-        try {
-            char revision = (char) Integer.parseInt(split[1]);
-
-            String identifierAuthorityString = split[2];
-            byte[] identifierAuthority = new byte[6];
-
-            long identifierAuthorityValue;
-            if (identifierAuthorityString.startsWith("0X")) {
-                String bytes = identifierAuthorityString.substring(2,identifierAuthorityString.length());
-                identifierAuthority = Hex.decode(bytes);
-
-            } else {
-                identifierAuthorityValue = Long.parseLong(identifierAuthorityString);
-                identifierAuthority[0] = (byte) ((identifierAuthorityValue >> 40) & 0xFF);
-                identifierAuthority[1] = (byte) ((identifierAuthorityValue >> 32) & 0xFF);
-                identifierAuthority[2] = (byte) ((identifierAuthorityValue >> 24) & 0xFF);
-                identifierAuthority[3] = (byte) ((identifierAuthorityValue >> 16) & 0xFF);
-                identifierAuthority[4] = (byte) ((identifierAuthorityValue >> 8) & 0xFF);
-                identifierAuthority[5] = (byte) (identifierAuthorityValue & 0xFF);
-            }
-
-
-            long[] subAuthorities = new long[split.length - 3];
-            for (int i = 0; i < subAuthorities.length; i++) {
-                subAuthorities[i] = Long.parseLong(split[i + 3]);
-            }
-            RPCSID rpcSid = new RPCSID();
-            rpcSid.setRevision(revision);
-            rpcSid.setIdentifierAuthority(identifierAuthority);
-            rpcSid.setSubAuthority(subAuthorities);
-            return rpcSid;
-        } catch (NumberFormatException e) {
-            throw new MalformedSIDException("Unable to parse SID token: " + e.getMessage());
-        }
+        return String.format("RPC_SID{Revision:%d, SubAuthorityCount:%d, IdentifierAuthority:%s, SubAuthority: %s}",
+                (int) getRevision(), (int) getSubAuthorityCount(),
+                Arrays.toString(getIdentifierAuthority()), Arrays.toString(getSubAuthority()));
     }
 }

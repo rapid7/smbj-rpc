@@ -49,6 +49,10 @@ public class Test_SamrOpenDomainRequest {
     }
 
     private SamrOpenDomainRequest createRequest() throws MalformedSIDException {
-        return new SamrOpenDomainRequest(new ServerHandle(), (int) AccessMask.MAXIMUM_ALLOWED.getValue(), RPCSID.fromString("S-1-5-32"));
+        RPCSID rpcsid = new RPCSID();
+        rpcsid.setRevision((char) 1);
+        rpcsid.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
+        rpcsid.setSubAuthority(new long[]{32});
+        return new SamrOpenDomainRequest(new ServerHandle(), (int) AccessMask.MAXIMUM_ALLOWED.getValue(), rpcsid);
     }
 }

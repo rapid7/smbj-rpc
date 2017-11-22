@@ -24,6 +24,7 @@ import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSIDs;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.objects.RPCSID;
 import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,7 +46,11 @@ public class Test_LookupNames {
         LSAPRReferencedDomainList lsaprReferencedDomainList = response.getLsaprReferencedDomainList();
         LSAPRTranslatedSIDs lsaprTranslatedSIDs = response.getLsaprTranslatedSIDs();
 
-        assertEquals(lsaprReferencedDomainList.getLsaprTrustInformations()[0].getSid().toString(), "S-1-5-21-2947824804-3171091966-890232435");
+        RPCSID expectSid = new RPCSID();
+        expectSid.setRevision((char) 1);
+        expectSid.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
+        expectSid.setSubAuthority(new long[]{21, 2947824804L, 3171091966L, 890232435});
+        assertEquals(lsaprReferencedDomainList.getLsaprTrustInformations()[0].getSid(), expectSid);
         assertEquals(lsaprTranslatedSIDs.getLsaprTranslatedSIDArray()[0].getRelativeId(), 500);
     }
 

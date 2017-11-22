@@ -18,16 +18,15 @@
  */
 package com.rapid7.client.dcerpc.objects;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.rmi.MarshalException;
+import java.rmi.UnmarshalException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -70,6 +69,14 @@ public class Test_RPCSID {
     @Test(expectedExceptions = {NullPointerException.class})
     public void test_marshalEntity_null() throws IOException {
         new RPCSID().marshalEntity(new PacketOutput(new ByteArrayOutputStream()));
+    }
+
+    @Test(expectedExceptions = {MarshalException.class},
+            expectedExceptionsMessageRegExp = "Expecting at least one SubAuthority entry")
+    public void test_marsalEntity_NoSubAuthorities() throws IOException {
+        RPCSID rpcsid = new RPCSID();
+        rpcsid.setSubAuthority(new long[]{});
+        rpcsid.marshalEntity(new PacketOutput(new ByteArrayOutputStream()));
     }
 
     @DataProvider
@@ -127,6 +134,16 @@ public class Test_RPCSID {
         rpc_sid.unmarshalPreamble(in);
         assertEquals(bin.available(), 0);
         assertEquals(rpc_sid.getSubAuthority(), null);
+    }
+
+    @Test(expectedExceptions = {UnmarshalException.class},
+            expectedExceptionsMessageRegExp = "Expecting at least one SubAuthority entry")
+    public void test_unmarshalEntity_NoSubAuthorities() throws IOException {
+        // Revision: 1, SubAuthorityCount: 0
+        String hex = "0100 0000";
+        ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
+        PacketInput in = new PacketInput(bin);
+        new RPCSID().unmarshalEntity(in);
     }
 
     @DataProvider
@@ -228,47 +245,16 @@ public class Test_RPCSID {
     }
 
     @Test
+    public void test_toString_default() {
+        assertEquals(new RPCSID().toString(), "RPC_SID{Revision:0, SubAuthorityCount:0, IdentifierAuthority:null, SubAuthority: null}");
+    }
+
+    @Test
     public void test_toString() {
-        RPCSID rpc_sid = new RPCSID();
-        assertEquals(rpc_sid.toString(), "S-0-null-null");
-        rpc_sid.setRevision((char) 200);
-        rpc_sid.setIdentifierAuthority(new byte[]{1, 2});
-        rpc_sid.setSubAuthority(new long[]{2, 5, 7});
-        assertEquals(rpc_sid.toString(), "S-200-0x0102-2-5-7");
-        rpc_sid.setIdentifierAuthority(new byte[]{0, 1});
-        assertEquals(rpc_sid.toString(), "S-200-0x0001-2-5-7");
-    }
-
-    @Test
-    public void test_fromString() throws MalformedSIDException {
-        RPCSID rpc_sid = RPCSID.fromString("S-1-5-32");
-        assertEquals(rpc_sid.getRevision(), 1);
-        assertEquals(rpc_sid.getSubAuthorityCount(), 1);
-        assertArrayEquals(rpc_sid.getIdentifierAuthority(), new byte[] { 0, 0, 0, 0, 0, 5 });
-        assertArrayEquals(rpc_sid.getSubAuthority(), new long[] { 32 });
-        rpc_sid = RPCSID.fromString("S-1-5-333-444-5");
-        assertEquals(rpc_sid.getRevision(), 1);
-        assertEquals(rpc_sid.getSubAuthorityCount(), 3);
-        assertArrayEquals(rpc_sid.getIdentifierAuthority(), new byte[] { 0, 0, 0, 0, 0, 5 });
-        assertArrayEquals(rpc_sid.getSubAuthority(), new long[] { 333, 444, 5 });
-    }
-
-    @Test
-    public void test_to_and_from_String() throws MalformedSIDException {
-        String sid_string = "S-1-5-32";
-        RPCSID sid = RPCSID.fromString(sid_string);
-        assertEquals(sid_string, sid.toString());
-
-        RPCSID sid2 = new RPCSID();
-        sid2.setRevision((char) 200);
-        sid2.setIdentifierAuthority(new byte[] {0, 1});
-        sid2.setSubAuthority(new long []{2,5,7});
-
-        assertEquals(RPCSID.fromString(sid2.toString()), sid2);
-    }
-
-    @Test(expectedExceptions = { MalformedSIDException.class })
-    public void test_fromStringMalformed() throws MalformedSIDException {
-        RPCSID.fromString("MALFORMED");
+        RPCSID rpcsid = new RPCSID();
+        rpcsid.setRevision((char) 200);
+        rpcsid.setIdentifierAuthority(new byte[]{1, 2});
+        rpcsid.setSubAuthority(new long[]{2, 5, 7});
+        assertEquals(rpcsid.toString(), "RPC_SID{Revision:200, SubAuthorityCount:3, IdentifierAuthority:[1, 2], SubAuthority: [2, 5, 7]}");
     }
 }

@@ -19,7 +19,7 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mslsad;
+package com.rapid7.client.dcerpc.mslsad.dto;
 
 import java.util.Arrays;
 import java.util.Objects;

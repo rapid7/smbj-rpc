@@ -19,10 +19,13 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mslsad;
+package com.rapid7.client.dcerpc.mslsad.dto;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import com.rapid7.client.dcerpc.mslsad.dto.PolicyAuditEventType;
+import com.rapid7.client.dcerpc.mslsad.dto.PolicyAuditEventsInfo;
 
 import static org.testng.Assert.assertEquals;
 
