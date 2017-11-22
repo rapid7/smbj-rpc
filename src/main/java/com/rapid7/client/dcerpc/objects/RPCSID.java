@@ -18,7 +18,6 @@
  */
 package com.rapid7.client.dcerpc.objects;
 
-import com.hierynomus.protocol.commons.ByteArrayUtils;
 import java.io.IOException;
 import java.rmi.MarshalException;
 import java.util.Arrays;
