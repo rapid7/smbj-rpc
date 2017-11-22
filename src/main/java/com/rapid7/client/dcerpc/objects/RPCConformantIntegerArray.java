@@ -19,19 +19,19 @@
 package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 
 public class RPCConformantIntegerArray extends RPCConformantArray<Integer> {
 
+    public RPCConformantIntegerArray(Integer[] array) {
+        super(array);
+    }
+
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
-        if (getMaxCount() >= 0) {
-            array = new ArrayList<>(getMaxCount());
-            for (int i = 0; i < getMaxCount(); i++) {
-                array.add(in.readInt());
-            }
+        for (int i = 0; i < array.length; i++) {
+            array[i] = in.readInt();
         }
     }
 
@@ -41,6 +41,9 @@ public class RPCConformantIntegerArray extends RPCConformantArray<Integer> {
 
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
+        if (array == null)
+            return;
+
         for (Integer value : array) {
             out.writeInt(value);
         }

@@ -65,12 +65,12 @@ public class SAMPRGetMembersBuffer implements Unmarshallable {
     public void unmarshalEntity(PacketInput in) throws IOException {
         memberCount = in.readInt();
         if (in.readReferentID() != 0) {
-            members = new RPCConformantIntegerArray();
+            members = new RPCConformantIntegerArray(new Integer[memberCount]);
         } else {
             members = null;
         }
         if (in.readReferentID() != 0) {
-            attributes = new RPCConformantIntegerArray();
+            attributes = new RPCConformantIntegerArray(new Integer[memberCount]);
         } else {
             attributes = null;
         }
