@@ -135,20 +135,22 @@ public class LocalSecurityAuthorityService extends Service {
         LSAPRTranslatedSID[] translatedSIDs = response.getLsaprTranslatedSIDs().getLsaprTranslatedSIDArray();
         LSAPRTrustInformation[] domainArray = response.getLsaprReferencedDomainList().getLsaprTrustInformations();
         // Create DTO SIDs
-        SID[] SIDs = new SID[translatedSIDs.length];
+        SID[] sids = new SID[translatedSIDs.length];
         for (int i = 0; i < translatedSIDs.length; i++) {
             try {
-                //get domain SID
-                int domainIndex = (int) translatedSIDs[i].getDomainIndex();
-                RPCSID sid = domainArray[domainIndex].getSid();
-                SID dtoSID = new SID((byte) sid.getRevision(), sid.getIdentifierAuthority(), sid.getSubAuthority());
-                //add RID to SID
-                SIDs[i] = dtoSID.resolveRelativeID(translatedSIDs[i].getRelativeId());
+                if (translatedSIDs[i] != null) {
+                    //get domain SID
+                    int domainIndex = (int) translatedSIDs[i].getDomainIndex();
+                    RPCSID sid = domainArray[domainIndex].getSid();
+                    SID dtoSID = parseRPCSID(sid);
+                    //add RID to SID
+                    sids[i] = dtoSID.resolveRelativeID(translatedSIDs[i].getRelativeId());
+                }
             } catch (IndexOutOfBoundsException e) {
-                SIDs[i] = null; //DomainIndex can be -1 if name is unknown / domain SID does not exist
+                sids[i] = null; //DomainIndex can be -1 if name is unknown / domain SID does not exist
             }
         }
-        return SIDs;
+        return sids;
     }
 
     /**
@@ -158,7 +160,8 @@ public class LocalSecurityAuthorityService extends Service {
      * @throws IOException Thrown if exception happens at the RPC layer
      * @throws MalformedSIDException Thrown if any of the SIDs do not conform to the SID format
      */
-    public String[] lookupSIDs(final byte[] policyHandle, SID ... sids) throws IOException, MalformedSIDException {
+    public String[] lookupSIDs(final byte[] policyHandle, SID ... sids)
+            throws IOException, MalformedSIDException {
         final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(parseHandle(policyHandle), parseSIDs(sids));
         final LsarLookupSIDsResponse lsarLookupSIDsResponse = callExpect(request, "LsarLookupSIDs",
                 SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED);
