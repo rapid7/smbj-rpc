@@ -37,7 +37,12 @@ public class SID {
         this.subAuthority = subAuthority;
     }
 
-    public SID addRelativeId(long rid){
+    /**
+     *
+     * @param rid The relative ID to append to subauthorities
+     * @return A new child SID object with this relativeID
+     */
+    public SID resolveRelativeId(long rid){
         long[] newSubAuth = new long[subAuthority.length + 1];
         System.arraycopy(subAuthority, 0, newSubAuth, 0, subAuthority.length);
         newSubAuth[subAuthority.length] = rid;
