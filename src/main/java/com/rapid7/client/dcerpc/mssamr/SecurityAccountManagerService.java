@@ -38,10 +38,11 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupDomainInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainResponse;
@@ -347,25 +348,13 @@ public class SecurityAccountManagerService extends Service {
         }
     }
 
-    /**
-     * Gets a list of {@link GroupMembership} information for the provided user handle.
-     *
-     * @param userHandle User handle. Must not be {@code null}.
-     * @return A list of users group memberships
-     * @throws IOException Throws if exception occurs on the RPC layer
-     */
-    public List<GroupMembership> getGroupsForUser(UserHandle userHandle) throws IOException {
-        final SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
-        return callExpectSuccess(request, "SamrGetGroupsForUser").getGroups();
-    }
-
     public SID getSIDForDomain(ServerHandle serverHandle, String domainName) throws IOException {
         final SamrLookupDomainInSamServerRequest request = new SamrLookupDomainInSamServerRequest(serverHandle,
                 RPCUnicodeString.NonNullTerminated.of(domainName));
         final RPCSID rpcsid = callExpectSuccess(request, "SamrLookupDomainInSamServer").getDomainId();
         return parseRPCSID(rpcsid);
     }
-    
+
     public SamrLookupNamesInDomainResponse getNamesInDomain(DomainHandle domainHandle, String ... names)
             throws IOException {
         if (names == null)
@@ -379,7 +368,40 @@ public class SecurityAccountManagerService extends Service {
     }
 
     /**
-     * Helper method for calling {@link SamrEnumerateRequest}(s) enumerating through the buffers for
+     * Gets a list of {@link Membership} information for groups containing the provided user handle.
+     *
+     * @param userHandle User handle. Must not be {@code null}.
+     */
+    public List<Membership> getGroupsForUser(UserHandle userHandle)
+            throws IOException {
+        SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
+        SamrGetGroupsForUserResponse response = callExpectSuccess(request, "GetGroupsForUser");
+        List<Membership> groups = new ArrayList<>();
+        List<GroupMembership> returnedGroups = response.getGroups();
+        for (GroupMembership returnedGroup : returnedGroups) {
+            groups.add(new Membership(returnedGroup.getRelativeID(), returnedGroup.getAttributes()));
+        }
+        return groups;
+    }
+
+    /**
+     * Gets a list of {@link Membership} information for the members of the provided group handle.
+     *
+     * @param handle Group handle. Must not be {@code null}.
+     */
+    public List<Membership> getMembersForGroup(GroupHandle handle)
+            throws IOException {
+        SamrGetMembersInGroupRequest request = new SamrGetMembersInGroupRequest(handle);
+        List<GroupMembership> returnedGroups = callExpectSuccess(request, "GetMembersForGroup").getList();
+        List<Membership> groups = new ArrayList<>();
+        for (GroupMembership returnedGroup : returnedGroups) {
+            groups.add(new Membership(returnedGroup.getRelativeID(), returnedGroup.getAttributes()));
+        }
+        return groups;
+    }
+
+    /**
+     * Helper method for calling enumeration requests and enumerating through the buffers for
      * {@link SamrEnumerateResponse}.
      */
     private <T> List<T> enumerate(ContextHandle handle, List<T> list, EnumerationCallback callback) throws IOException {
