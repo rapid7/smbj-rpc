@@ -23,7 +23,6 @@ package com.rapid7.client.dcerpc.mslsad.objects;
 
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
-import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import java.io.IOException;
 
@@ -56,15 +55,13 @@ public class LSAPRSIDEnumBuffer implements Marshallable {
     private final int entries;
     private final LSAPRSIDInformationArray lsaprSIDInformationArray;
 
-    public LSAPRSIDEnumBuffer(String ...SIDs)
-        throws MalformedSIDException
-    {
+    public LSAPRSIDEnumBuffer(RPCSID ... rpcSIDs) {
         lsaprSIDInformationArray = new LSAPRSIDInformationArray();
-        for (String SID: SIDs) {
-            LSAPRSIDInformation lsaprSIDInformation = new LSAPRSIDInformation(new RPCSID().fromString(SID));
+        for (RPCSID rpcsid : rpcSIDs) {
+            LSAPRSIDInformation lsaprSIDInformation = new LSAPRSIDInformation(rpcsid);
             lsaprSIDInformationArray.addLSAPRSIDInformation(lsaprSIDInformation);
         }
-        entries = SIDs.length;
+        entries = rpcSIDs.length;
     }
 
     @Override public void marshalPreamble(PacketOutput out)

@@ -19,7 +19,7 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mslsad;
+package com.rapid7.client.dcerpc.mslsad.dto;
 
 /**
  * Represents a mask which is applied to any {@link PolicyAuditEventType}

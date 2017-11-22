@@ -28,7 +28,7 @@ import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
-import com.rapid7.client.dcerpc.serviceobjects.SID;
+import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public abstract class Service {
@@ -82,27 +82,44 @@ public abstract class Service {
         if (sid == null)
             return null;
         RPCSID rpcsid = new RPCSID();
-        rpcsid.setRevision(sid.getRevision());
+        rpcsid.setRevision((char) sid.getRevision());
         rpcsid.setIdentifierAuthority(sid.getIdentifierAuthority());
-        rpcsid.setSubAuthority(sid.getSubAuthority());
+        rpcsid.setSubAuthority(sid.getSubAuthorities());
         return rpcsid;
     }
 
-    protected RPCSID[] parseSIDs(final SID[] sids) {
+    protected RPCSID[] parseSIDs(SID[] sids) {
         final RPCSID[] rpcsids;
-        if (sids == null)
+        if (sids == null) {
             rpcsids = new RPCSID[0];
-        else
+            sids = new SID[0];
+        }
+        else {
             rpcsids = new RPCSID[sids.length];
-        for (int i = 0; i < sids.length; i++) {
+        }
+        for (int i = 0; i < rpcsids.length; i++) {
             rpcsids[i] = parseSID(sids[i]);
         }
         return rpcsids;
     }
 
+    protected SID[] parseRPCSIDs(RPCSID[] rpcsids) {
+        final SID[] sids;
+        if (rpcsids == null) {
+            sids = new SID[0];
+            rpcsids = new RPCSID[0];
+        } else {
+            sids = new SID[rpcsids.length];
+        }
+        for (int i = 0; i < sids.length; i++) {
+            sids[i] = parseRPCSID(rpcsids[i]);
+        }
+        return sids;
+    }
+
     protected SID parseRPCSID(final RPCSID rpcsid) {
         if (rpcsid == null)
             return null;
-        return new SID(rpcsid.getRevision(), rpcsid.getIdentifierAuthority(), rpcsid.getSubAuthority());
+        return new SID((byte) rpcsid.getRevision(), rpcsid.getIdentifierAuthority(), rpcsid.getSubAuthority());
     }
 }

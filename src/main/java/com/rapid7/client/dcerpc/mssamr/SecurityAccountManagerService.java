@@ -32,6 +32,7 @@ import com.hierynomus.msdtyp.SecurityInformation;
 import com.hierynomus.protocol.commons.buffer.Buffer;
 import com.hierynomus.smb.SMBBuffer;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
@@ -93,8 +94,8 @@ public class SecurityAccountManagerService extends Service {
         return callExpectSuccess(request, "SamrConnect2").getHandle();
     }
 
-    public DomainHandle openDomain(ServerHandle serverHandle, RPCSID domainId) throws IOException {
-        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, MAXIMUM_ALLOWED, domainId);
+    public DomainHandle openDomain(ServerHandle serverHandle, SID domainId) throws IOException {
+        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, MAXIMUM_ALLOWED, parseSID(domainId));
         return callExpectSuccess(request, "SamrOpenDomain").getHandle();
     }
 
@@ -358,10 +359,11 @@ public class SecurityAccountManagerService extends Service {
         return callExpectSuccess(request, "SamrGetGroupsForUser").getGroups();
     }
 
-    public RPCSID getSIDForDomain(ServerHandle serverHandle, String domainName) throws IOException {
+    public SID getSIDForDomain(ServerHandle serverHandle, String domainName) throws IOException {
         final SamrLookupDomainInSamServerRequest request = new SamrLookupDomainInSamServerRequest(serverHandle,
                 RPCUnicodeString.NonNullTerminated.of(domainName));
-        return callExpectSuccess(request, "SamrLookupDomainInSamServer").getDomainId();
+        final RPCSID rpcsid = callExpectSuccess(request, "SamrLookupDomainInSamServer").getDomainId();
+        return parseRPCSID(rpcsid);
     }
     
     public SamrLookupNamesInDomainResponse getNamesInDomain(DomainHandle domainHandle, String ... names)

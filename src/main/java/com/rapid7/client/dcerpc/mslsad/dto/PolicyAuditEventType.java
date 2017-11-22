@@ -19,7 +19,7 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mslsad;
+package com.rapid7.client.dcerpc.mslsad.dto;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/gg258137.aspx">POLICY_AUDIT_EVENT_TYPE</a>

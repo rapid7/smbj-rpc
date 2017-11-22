@@ -19,10 +19,10 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mslsad;
+package com.rapid7.client.dcerpc.mslsad.dto;
 
 import java.util.Objects;
-import com.rapid7.client.dcerpc.serviceobjects.SID;
+import com.rapid7.client.dcerpc.dto.SID;
 
 public class PolicyPrimaryDomInfo {
     private final String name;
