@@ -70,7 +70,12 @@ public class Test_LsarEnumerateAccountRights {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
         //dummy SIDs
-        LsarEnumerateAccountRightsRequest request = new LsarEnumerateAccountRightsRequest(handle, RPCSID.fromString("S-1-5-1-501"));
+        // "S-1-5-1-501"
+        RPCSID rpcsid = new RPCSID();
+        rpcsid.setRevision((char) 1);
+        rpcsid.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
+        rpcsid.setSubAuthority(new long[]{1, 501});
+        LsarEnumerateAccountRightsRequest request = new LsarEnumerateAccountRightsRequest(handle, rpcsid);
         request.marshal(packetOut);
 
         assertEquals(Hex.toHexString(outputStream.toByteArray()), "000000003451f9262c047d43b9c38648900abf7c02000000010200000000000501000000f5010000");

@@ -35,8 +35,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * The LSAPR_POLICY_AUDIT_EVENTS_INFO structure contains auditing options on the server.
  *      typedef struct _LSAPR_POLICY_AUDIT_EVENTS_INFO {
  *          unsigned char AuditingMode;
- *          [size_is(MaximumAuditEventCount)]
- *          unsigned long* EventAuditingOptions;
+ *          [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
  *          [range(0,1000)] unsigned long MaximumAuditEventCount;
  *      } LSAPR_POLICY_AUDIT_EVENTS_INFO,
  *      *PLSAPR_POLICY_AUDIT_EVENTS_INFO;
@@ -48,17 +47,18 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  */
 public class LSAPRPolicyAuditEventsInfo implements Unmarshallable {
     // <NDR: unsigned char> unsigned char AuditingMode;
-    private boolean auditingMode;
+    private char auditingMode;
     // <NDR: pointer> [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
+    // Even though these are unsigned long's, we store as int because it's just a bitmask
     private int[] eventAuditingOptions;
     // <NDR: unsigned long> [range(0,1000)] unsigned long MaximumAuditEventCount;
     private int maximumAuditEventCount;
 
-    public boolean isAuditingMode() {
+    public char getAuditingMode() {
         return auditingMode;
     }
 
-    public void setAuditingMode(boolean auditingMode) {
+    public void setAuditingMode(char auditingMode) {
         this.auditingMode = auditingMode;
     }
 
@@ -89,7 +89,7 @@ public class LSAPRPolicyAuditEventsInfo implements Unmarshallable {
         in.align(Alignment.FOUR);
         // <NDR: unsigned char> unsigned char AuditingMode;: 1
         // Alignment: 1 - Already aligned
-        this.auditingMode = in.readBoolean();
+        this.auditingMode = in.readUnsignedByte();
         // <NDR: pointer> [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;
         // Alignment: 4 - Pad 3 bytes
         in.fullySkipBytes(3);
@@ -131,7 +131,7 @@ public class LSAPRPolicyAuditEventsInfo implements Unmarshallable {
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(isAuditingMode());
+        int result = Objects.hashCode(getAuditingMode());
         result = (31 * result) + Arrays.hashCode(getEventAuditingOptions());
         return (31 * result) + Objects.hashCode(getMaximumAuditEventCount());
     }
@@ -144,7 +144,7 @@ public class LSAPRPolicyAuditEventsInfo implements Unmarshallable {
             return false;
         }
         LSAPRPolicyAuditEventsInfo other = (LSAPRPolicyAuditEventsInfo) obj;
-        return Objects.equals(isAuditingMode(), other.isAuditingMode()) &&
+        return Objects.equals(getAuditingMode(), other.getAuditingMode()) &&
                 Arrays.equals(getEventAuditingOptions(), other.getEventAuditingOptions()) &&
                 Objects.equals(getMaximumAuditEventCount(), other.getMaximumAuditEventCount());
     }
@@ -152,7 +152,7 @@ public class LSAPRPolicyAuditEventsInfo implements Unmarshallable {
     @Override
     public String toString() {
         return String.format(
-                "LSAPR_POLICY_AUDIT_EVENTS_INFO{AuditingMode:%b, EventAuditingOptions:%s, MaximumAuditEventCount:%d}",
-                isAuditingMode(), Arrays.toString(getEventAuditingOptions()), getMaximumAuditEventCount());
+                "LSAPR_POLICY_AUDIT_EVENTS_INFO{AuditingMode:%d, EventAuditingOptions:%s, MaximumAuditEventCount:%d}",
+                (int) getAuditingMode(), Arrays.toString(getEventAuditingOptions()), getMaximumAuditEventCount());
     }
 }
