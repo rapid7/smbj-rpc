@@ -38,12 +38,10 @@ public class SID {
     }
 
     public SID addRelativeId(long rid){
-        if (rid != 0) {
-            long[] newSubAuth = new long[subAuthority.length + 1];
-            System.arraycopy(subAuthority, 0, newSubAuth, 0, subAuthority.length);
-            newSubAuth[subAuthority.length] = rid;
-            return new SID(this.revision, identifierAuthority, newSubAuth);
-        } else return this;
+        long[] newSubAuth = new long[subAuthority.length + 1];
+        System.arraycopy(subAuthority, 0, newSubAuth, 0, subAuthority.length);
+        newSubAuth[subAuthority.length] = rid;
+        return new SID(this.revision, identifierAuthority, newSubAuth);
     }
 
     public byte getRevision() {
