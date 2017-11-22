@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
-import java.util.List;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.objects.RPCConformantIntegerArray;
@@ -27,7 +26,7 @@ import com.rapid7.client.dcerpc.objects.RPCConformantIntegerArray;
 public class SamrGetAliasMembershipResponse extends RequestResponse {
     private RPCConformantIntegerArray array;
 
-    public List<Integer> getList() {
+    public Integer[] getList() {
         if (array == null)
             return null;
         return array.getArray();

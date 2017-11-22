@@ -84,8 +84,8 @@ public class SAMPRGetMembersBuffer implements Unmarshallable {
         array = new ArrayList<>(memberCount);
         for (int i = 0; i < memberCount; i++) {
             GroupMembership member = new GroupMembership();
-            member.setRelativeID(members.getArray().get(i));
-            member.setAttributes(attributes.getArray().get(i));
+            member.setRelativeID(members.getArray()[i]);
+            member.setAttributes(attributes.getArray()[i]);
             array.add(member);
         }
     }
