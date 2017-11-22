@@ -21,6 +21,7 @@ package com.rapid7.client.dcerpc.objects;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
@@ -33,6 +34,7 @@ public abstract class RPCReferentConformantArray<T extends Unmarshallable & Mars
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        in.align(Alignment.FOUR);
         for (int i = 0; i < array.length; i++) {
             int refId = in.readReferentID();
             // Not contained in the deferrals.
