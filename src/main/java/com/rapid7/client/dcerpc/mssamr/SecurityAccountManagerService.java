@@ -40,6 +40,8 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerR
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetAliasMembershipRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetAliasMembershipResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupRequest;
@@ -398,6 +400,20 @@ public class SecurityAccountManagerService extends Service {
             groups.add(new Membership(returnedGroup.getRelativeID(), returnedGroup.getAttributes()));
         }
         return groups;
+    }
+
+    /**
+     * Gets the union of all aliases that a given set of SIDs is a member of.
+     *
+     * @param handle The domain handle.
+     * @param sids A list of SIDs.
+     * @return An array of alias relativeIDs to the provided SID.
+     * @throws IOException
+     */
+    public Integer[] getAliasMembership(DomainHandle handle, SID... sids) throws IOException {
+        SamrGetAliasMembershipRequest request = new SamrGetAliasMembershipRequest(handle, parseSIDs(sids));
+        SamrGetAliasMembershipResponse response = callExpectSuccess(request, "GetAliasMembership");
+        return response.getList();
     }
 
     /**
