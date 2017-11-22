@@ -58,12 +58,23 @@ public class LocalSecurityAuthorityService extends Service {
         return callExpectSuccess(request, "LsarOpenPolicy2").getHandle();
     }
 
-    public PolicyAuditEventsInfo getAuditPolicy(final ContextHandle policyHandle) throws IOException {
+    /**
+     * Use LsarQueryInformationPolicy to retrieve the {@link PolicyAuditEventsInfo} for the given
+     * policy {@link ContextHandle}.
+     *
+     * @param policyHandle The policy which corresponds to the returned {@link PolicyAuditEventsInfo}
+     * @return The {@link PolicyAuditEventsInfo} for the given policy {@link ContextHandle}.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public PolicyAuditEventsInfo getPolicyAuditEventsInfo(final ContextHandle policyHandle) throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation request =
                 new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(policyHandle);
         final LSAPRPolicyAuditEventsInfo policyInformation =
                 callExpectSuccess(request, "LsarQueryInformationPolicy[2]").getPolicyInformation();
-        return extractPolicyAuditEventsInfo(policyInformation);
+        return new PolicyAuditEventsInfo(
+                (policyInformation.getAuditingMode() != 0),
+                policyInformation.getEventAuditingOptions());
     }
 
     public LSAPRPolicyPrimaryDomInfo getPolicyPrimaryDomainInformation(final ContextHandle policyHandle)
@@ -101,10 +112,6 @@ public class LocalSecurityAuthorityService extends Service {
             throws IOException {
         final LsarLookupNamesRequest request = new LsarLookupNamesRequest(policyHandle, names);
         return callExpectSuccess(request, "LsarLookupNames");
-    }
-
-    PolicyAuditEventsInfo extractPolicyAuditEventsInfo(final LSAPRPolicyAuditEventsInfo rpcObj) {
-        return new PolicyAuditEventsInfo((rpcObj.getAuditingMode() != 0), rpcObj.getEventAuditingOptions());
     }
 
     /**

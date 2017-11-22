@@ -21,6 +21,10 @@
 
 package com.rapid7.client.dcerpc.mslsad;
 
+/**
+ * <a href="https://msdn.microsoft.com/en-us/library/gg258137.aspx">POLICY_AUDIT_EVENT_TYPE</a>
+ * Represents the category of {@link EventAuditOptions}.
+ */
 public enum PolicyAuditEventType {
     AUDIT_CATEGORY_SYSTEM((byte) 1),
     AUDIT_CATEGORY_LOGON((byte) 2),
