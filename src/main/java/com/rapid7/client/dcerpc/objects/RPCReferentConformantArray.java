@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
@@ -28,18 +27,19 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 public abstract class RPCReferentConformantArray<T extends Unmarshallable & Marshallable>
         extends RPCConformantArray<T> {
 
+    public RPCReferentConformantArray(T[] array) {
+        super(array);
+    }
+
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
-        if (getMaxCount() >= 0) {
-            array = new ArrayList<>();
-            for (int i = 0; i < getMaxCount(); i++) {
-                int refId = in.readReferentID();
-                // Not contained in the deferrals.
-                if (refId == 0) {
-                    array.add(null);
-                } else {
-                    array.add(createEntity());
-                }
+        for (int i = 0; i < array.length; i++) {
+            int refId = in.readReferentID();
+            // Not contained in the deferrals.
+            if (refId == 0) {
+                array[i] = null;
+            } else {
+                array[i] = createEntity();
             }
         }
     }

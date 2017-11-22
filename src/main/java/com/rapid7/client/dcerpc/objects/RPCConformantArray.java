@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import com.rapid7.client.dcerpc.io.PacketInput;
@@ -28,23 +29,20 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 public abstract class RPCConformantArray<T> implements Unmarshallable, Marshallable {
 
-    private int maxCount;
-    protected List<T> array;
-
-    public void setMaxCount(int maxCount) {
-        this.maxCount = maxCount;
-    }
-
-    public void setArray(List<T> array) {
+    protected RPCConformantArray(T[] array) {
+        this.maxCount = array.length;
         this.array = array;
     }
+
+    private int maxCount;
+    protected T[] array;
 
     public int getMaxCount() {
         return maxCount;
     }
 
     public List<T> getArray() {
-        return Collections.unmodifiableList(array);
+        return Collections.unmodifiableList(Arrays.asList(array));
     }
 
     @Override
