@@ -26,6 +26,7 @@ import org.testng.annotations.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertSame;
 
 public class Test_SID {
@@ -62,6 +63,22 @@ public class Test_SID {
         assertEquals(sid.getRevision(), (byte) 200);
         assertSame(sid.getIdentifierAuthority(), identifierAuthority);
         assertSame(sid.getSubAuthorities(), subAuthorities);
+        assertEquals(sid.getRelativeID(), 3);
+    }
+
+    @Test
+    public void test_resolveRelativeID() {
+        SID sid1 = new SID((byte) 200, new byte[]{1, 2, 3, 4, 5, 6}, new long[]{1, 2, 3});
+        SID sid2 = sid1.resolveRelativeID(500);
+        // Ensure object is a clone
+        assertNotSame(sid1.getIdentifierAuthority(), sid2.getIdentifierAuthority());
+        assertNotSame(sid1.getSubAuthorities(), sid2.getSubAuthorities());
+        assertNotEquals(sid1, sid2);
+        // Check new object
+        assertEquals(sid2.getRevision(), (byte) 200);
+        assertEquals(sid2.getIdentifierAuthority(), new byte[]{1, 2, 3, 4, 5, 6});
+        assertEquals(sid2.getSubAuthorities(), new long[] {1, 2, 3, 500});
+        assertEquals(sid2.getRelativeID(), 500);
     }
 
     @Test
