@@ -19,8 +19,13 @@
 package com.rapid7.client.dcerpc.msvcctl;
 
 import java.io.IOException;
+
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceManagerAccessLevel;
 import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RControlServiceRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RCloseServiceHandleRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RCreateServiceWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RDeleteServiceRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenSCManagerWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenServiceWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWRequest;
@@ -84,5 +89,25 @@ public class ServiceControlManagerService extends Service {
         final ContextHandle serviceHandle = getServiceHandle(service, serviceManagerHandle);
         final RQueryServiceConfigWRequest request = new RQueryServiceConfigWRequest(serviceHandle, RQueryServiceConfigWRequest.MAX_BUFFER_SIZE);
         return callExpectSuccess(request, "RQueryServiceConfigW").getServiceConfigInfo();
+    }
+
+    public ContextHandle createService(ContextHandle serviceManagerHandle,
+                                       IServiceConfigInfo serviceConfigInfo,
+                                       ServiceManagerAccessLevel accessLevel,
+                                       String service) throws IOException {
+        RCreateServiceWRequest request =
+                new RCreateServiceWRequest(serviceManagerHandle, serviceConfigInfo, accessLevel, service);
+        return callExpectSuccess(request, "RCreateServiceW").getHandle();
+    }
+
+    public boolean deleteService(ContextHandle serviceHandle) throws IOException {
+        RDeleteServiceRequest request = new RDeleteServiceRequest(serviceHandle);
+        callExpectSuccess(request, "RDeleteService");
+        return true;
+    }
+
+    public ContextHandle closeHandle(ContextHandle serviceHandle) throws IOException {
+        RCloseServiceHandleRequest request = new RCloseServiceHandleRequest(serviceHandle);
+        return callExpectSuccess(request, "RCloseServiceHandle").getHandle();
     }
 }
