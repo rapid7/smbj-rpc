@@ -43,10 +43,14 @@ public class Test_LsarEnumerateAccountsWithUserRight {
         response.unmarshal(getPacketInput(hexString));
 
         //dummy SID
-        String expectedSid = "S-1-5-0-0-0-0-501";
+        // "S-1-5-0-0-0-0-501"
+        RPCSID expectedSid = new RPCSID();
+        expectedSid.setRevision((char) 1);
+        expectedSid.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
+        expectedSid.setSubAuthority(new long[]{0, 0, 0, 0, 501});
         RPCSID[] sids = response.getSids();
 
-        assertEquals(expectedSid, sids[0].toString());
+        assertEquals(expectedSid, sids[0]);
 
     }
 
@@ -69,11 +73,28 @@ public class Test_LsarEnumerateAccountsWithUserRight {
         response.unmarshal(getPacketInput(hexString));
 
         //dummy SIDs
-        String[] expectedSid = {"S-1-5-1-501", "S-1-5-2-545", "S-1-5-3-544", "S-1-5-4-0-0-0-501"};
+        // "S-1-5-1-501", "S-1-5-2-545", "S-1-5-3-544", "S-1-5-4-0-0-0-501"
+        RPCSID sid1 = new RPCSID();
+        sid1.setRevision((char) 1);
+        sid1.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
+        sid1.setSubAuthority(new long[]{1, 501});
+        RPCSID sid2 = new RPCSID();
+        sid2.setRevision((char) 1);
+        sid2.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
+        sid2.setSubAuthority(new long[]{2, 545});
+        RPCSID sid3 = new RPCSID();
+        sid3.setRevision((char) 1);
+        sid3.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
+        sid3.setSubAuthority(new long[]{3, 544});
+        RPCSID sid4 = new RPCSID();
+        sid4.setRevision((char) 1);
+        sid4.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
+        sid4.setSubAuthority(new long[]{4, 0, 0, 0, 501});
+        RPCSID[] expectedSids = {sid1, sid2, sid3, sid4};
         RPCSID[] sids = response.getSids();
 
-        for (int i = 0; i < expectedSid.length; i++) {
-            assertEquals(expectedSid[i], sids[i].toString());
+        for (int i = 0; i < expectedSids.length; i++) {
+            assertEquals(expectedSids[i], sids[i]);
         }
     }
 

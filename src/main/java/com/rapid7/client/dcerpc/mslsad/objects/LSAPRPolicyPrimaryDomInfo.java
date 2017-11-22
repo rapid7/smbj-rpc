@@ -86,6 +86,8 @@ public class LSAPRPolicyPrimaryDomInfo implements Unmarshallable {
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0) {
             sid = new RPCSID();
+        } else {
+            sid = null;
         }
     }
 

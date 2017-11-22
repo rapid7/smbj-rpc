@@ -19,6 +19,8 @@
 package com.rapid7.client.dcerpc.mslsad;
 
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import com.rapid7.client.dcerpc.mslsad.dto.PolicyAuditEventsInfo;
+import com.rapid7.client.dcerpc.mslsad.dto.PolicyPrimaryDomInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAccountDomInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAuditEventsInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyPrimaryDomInfo;
@@ -32,11 +34,11 @@ import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarOpenPolicy2Request;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedName;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.service.Service;
+import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 import java.io.IOException;
 
@@ -53,70 +55,86 @@ public class LocalSecurityAuthorityService extends Service {
         super(transport);
     }
 
-    public ContextHandle openPolicyHandle(final String serverName) throws IOException {
+    public byte[] openPolicyHandle(final String serverName) throws IOException {
         final LsarOpenPolicy2Request request = new LsarOpenPolicy2Request(serverName, MAXIMUM_ALLOWED);
-        return callExpectSuccess(request, "LsarOpenPolicy2").getHandle();
+        return parseHandle(callExpectSuccess(request, "LsarOpenPolicy2").getHandle());
     }
 
-    public LSAPRPolicyAuditEventsInfo getAuditPolicy(final ContextHandle handle) throws IOException {
+    /**
+     * Use LsarQueryInformationPolicy to retrieve the {@link PolicyAuditEventsInfo} for the given
+     * policy handle.
+     *
+     * @param policyHandle The policy which corresponds to the returned {@link PolicyAuditEventsInfo}
+     * @return The {@link PolicyAuditEventsInfo} for the given policy handle.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public PolicyAuditEventsInfo getPolicyAuditEventsInfo(final byte[] policyHandle) throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation request =
-                new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(handle);
-        return callExpectSuccess(request, "LsarQueryInformationPolicy[2]").getPolicyInformation();
+                new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(parseHandle(policyHandle));
+        final LSAPRPolicyAuditEventsInfo policyInformation =
+                callExpectSuccess(request, "LsarQueryInformationPolicy[2]").getPolicyInformation();
+        return new PolicyAuditEventsInfo(
+                (policyInformation.getAuditingMode() != 0),
+                policyInformation.getEventAuditingOptions());
     }
 
-    public LSAPRPolicyPrimaryDomInfo getPolicyPrimaryDomainInformation(final ContextHandle policyHandle) throws IOException {
+    public PolicyPrimaryDomInfo getPolicyPrimaryDomainInformation(final byte[] policyHandle)
+            throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation request =
-                new LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation(policyHandle);
-        return callExpectSuccess(request, "LsarQueryInformationPolicy[3]").getPolicyInformation();
+                new LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation(parseHandle(policyHandle));
+        final LSAPRPolicyPrimaryDomInfo policyInformation =
+                callExpectSuccess(request, "LsarQueryInformationPolicy[3]").getPolicyInformation();
+        return new PolicyPrimaryDomInfo(
+                policyInformation.getName().getValue(),
+                parseRPCSID(policyInformation.getSid()));
     }
 
-    public LSAPRPolicyAccountDomInfo getPolicyAccountDomainInformation(final ContextHandle policyHandle) throws IOException {
+    public LSAPRPolicyAccountDomInfo getPolicyAccountDomainInformation(final byte[] policyHandle)
+            throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation request =
-                new LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation(policyHandle);
+                new LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation(parseHandle(policyHandle));
         return callExpectSuccess(request, "LsarQueryInformationPolicy[5]").getPolicyInformation();
     }
 
-    public String[] getLookupAcctPrivs(final ContextHandle handle, final RPCSID sid) throws IOException {
-        final LsarEnumerateAccountRightsRequest request = new LsarEnumerateAccountRightsRequest(handle, sid);
+    public String[] getLookupAcctPrivs(final byte[] handle, final SID sid) throws IOException {
+        final LsarEnumerateAccountRightsRequest request =
+                new LsarEnumerateAccountRightsRequest(parseHandle(handle), parseSID(sid));
         return callExpectSuccess(request, "LsarEnumerateAccountRights").getPrivNames();
     }
 
-    public RPCSID[] enumerateAccountsWithPrivilege(final ContextHandle policyHandle, final String userRight) throws IOException {
-        final LsarEnumerateAccountsWithUserRightRequest request =
-                new LsarEnumerateAccountsWithUserRightRequest(
-                        policyHandle, RPCUnicodeString.NonNullTerminated.of(userRight));
-        return callExpect(request, "LsarEnumerateAccountsWithUserRight",
+    public SID[] enumerateAccountsWithPrivilege(final byte[] policyHandle, final String userRight)
+            throws IOException {
+        final LsarEnumerateAccountsWithUserRightRequest request = new LsarEnumerateAccountsWithUserRightRequest(
+                parseHandle(policyHandle), RPCUnicodeString.NonNullTerminated.of(userRight));
+        final RPCSID[] rpcsids = callExpect(request, "LsarEnumerateAccountsWithUserRight",
                 SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_NO_MORE_ENTRIES).getSids();
+        return parseRPCSIDs(rpcsids);
     }
 
-    public void closePolicyHandle(final ContextHandle handle) throws IOException {
-        final LsarCloseRequest request = new LsarCloseRequest(handle);
-        callExpect(request, "LsarClose",
-                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_INVALID_HANDLE);
+    public void closePolicyHandle(final byte[] handle) throws IOException {
+        final LsarCloseRequest request = new LsarCloseRequest(parseHandle(handle));
+        callExpect(request, "LsarClose", SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_INVALID_HANDLE);
     }
 
-    public LsarLookupNamesResponse lookupNames(final ContextHandle policyHandle, final String... names) throws IOException {
-        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(policyHandle, names);
+    public LsarLookupNamesResponse lookupNames(final byte[] policyHandle, final String... names)
+            throws IOException {
+        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(parseHandle(policyHandle), names);
         return callExpectSuccess(request, "LsarLookupNames");
     }
 
     /**
-     *
      * @param policyHandle Handle to the policy
-     * @param SIDs List of SIDs to lookup
+     * @param sids List of SIDs to lookup
      * @return A list of Strings containing account names. Where account names are not mapped, null is returned.
      * @throws IOException Thrown if exception happens at the RPC layer
      * @throws MalformedSIDException Thrown if any of the SIDs do not conform to the SID format
      */
-    public String[] lookupSIDs(ContextHandle policyHandle, String... SIDs)
-        throws IOException, MalformedSIDException
-    {
+    public String[] lookupSIDs(final byte[] policyHandle, SID ... sids) throws IOException, MalformedSIDException {
         String[] mappedNames;
-        final LsarLookupSIDsRequest request =
-            new LsarLookupSIDsRequest(policyHandle, SIDs);
+        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(parseHandle(policyHandle), parseSIDs(sids));
         final LsarLookupSIDsResponse lsarLookupSIDsResponse = callExpect(request, "LsarLookupSIDs",
-                SystemErrorCode.ERROR_SUCCESS,
-                SystemErrorCode.STATUS_SOME_NOT_MAPPED);
+                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED);
 
         LSAPRTranslatedName[] nameArray = lsarLookupSIDsResponse.getLsaprTranslatedNames().getlsaprTranslatedNameArray();
         mappedNames = new String[nameArray.length];
@@ -125,6 +143,6 @@ public class LocalSecurityAuthorityService extends Service {
         }
         return mappedNames;
     }
-
 }
+
 
