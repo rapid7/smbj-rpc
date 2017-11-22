@@ -402,10 +402,18 @@ public class SecurityAccountManagerService extends Service {
         return groups;
     }
 
-    public void getAliasMembership(DomainHandle handle, RPCSID... rpcsids) throws IOException {
-        SamrGetAliasMembershipRequest request = new SamrGetAliasMembershipRequest(handle, rpcsids);
+    /**
+     * Gets the union of all aliases that a given set of SIDs is a member of.
+     *
+     * @param handle The domain handle.
+     * @param sids A list of SIDs.
+     * @return A list of alias relativeIDs to the provided SID.
+     * @throws IOException
+     */
+    public List<Integer> getAliasMembership(DomainHandle handle, SID... sids) throws IOException {
+        SamrGetAliasMembershipRequest request = new SamrGetAliasMembershipRequest(handle, parseSIDs(sids));
         SamrGetAliasMembershipResponse response = callExpectSuccess(request, "GetAliasMembership");
-
+        return response.getList();
     }
 
     /**

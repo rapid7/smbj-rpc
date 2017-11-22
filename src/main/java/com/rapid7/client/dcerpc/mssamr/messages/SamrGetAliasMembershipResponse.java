@@ -41,7 +41,7 @@ public class SamrGetAliasMembershipResponse extends RequestResponse {
             array = null;
             return;
         }
-        array = new RPCConformantIntegerArray();
+        array = new RPCConformantIntegerArray(new Integer[count]);
         packetIn.readUnmarshallable(array);
     }
 }

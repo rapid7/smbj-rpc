@@ -19,13 +19,27 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
-import java.util.Arrays;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCSIDArray;
 
+/**
+ * The SamrGetAliasMembership method obtains the union of all aliases that a given set of SIDs is a member of.
+ *
+ * <pre>
+ * long SamrGetAliasMembership(
+ *   [in] SAMPR_HANDLE DomainHandle,
+ *   [in] PSAMPR_PSID_ARRAY SidArray,
+ *   [out] PSAMPR_ULONG_ARRAY Membership
+ * );
+ * </pre>
+ *
+ * <p> DomainHandle: An RPC context handle, as specified in section 2.2.3.2, representing a domain object.</p>
+ * <p> SidArray: A list of SIDs.</p>
+ * <p> Membership: The union of all aliases (represented by RIDs) that all SIDs in SidArray are a member of.</p>
+ */
 public class SamrGetAliasMembershipRequest extends RequestCall<SamrGetAliasMembershipResponse> {
     public static final short OP_NUM = 16;
 
@@ -41,9 +55,7 @@ public class SamrGetAliasMembershipRequest extends RequestCall<SamrGetAliasMembe
     @Override
     public void marshal(PacketOutput out) throws IOException {
         out.write(handle.getBytes());
-        RPCSIDArray array = new RPCSIDArray();
-        array.setMaxCount(sids.length);
-        array.setArray(Arrays.asList(sids));
+        RPCSIDArray array = new RPCSIDArray(sids);
         out.writeInt(sids.length);
         out.writeReferentID();
         out.writeMarshallable(array);

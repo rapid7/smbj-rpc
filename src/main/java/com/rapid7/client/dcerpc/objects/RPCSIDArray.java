@@ -20,6 +20,10 @@ package com.rapid7.client.dcerpc.objects;
 
 public class RPCSIDArray extends RPCReferentConformantArray<RPCSID> {
 
+    public RPCSIDArray(RPCSID[] sids) {
+        super(sids);
+    }
+
     @Override
     protected RPCSID createEntity() {
         return new RPCSID();
