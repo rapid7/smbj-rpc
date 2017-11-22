@@ -62,6 +62,7 @@ public abstract class RPCReferentConformantArray<T extends Unmarshallable & Mars
         if (array == null)
             return;
 
+        out.align(Alignment.FOUR);
         for (T t : array) {
             if (t != null)
                 out.writeReferentID();
