@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.mssamr.objects;
 
 import java.io.IOException;
+import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
@@ -63,7 +64,27 @@ public class SAMPRSIDInformation implements Unmarshallable {
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        // <NDR: struct> RPC_SID SidPointer;
-        in.readUnmarshallable(sidPointer);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSidPointer());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof SAMPRSIDInformation)) {
+            return false;
+        }
+        SAMPRSIDInformation other = (SAMPRSIDInformation) obj;
+        return Objects.equals(getSidPointer(), other.getSidPointer());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("SAMPRSIDInformation{sidPointer:%s}", getSidPointer());
+    }
+
 }

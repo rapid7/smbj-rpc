@@ -61,13 +61,20 @@ public class SamrGetMembersInAliasResponse extends RequestResponse {
     private SAMPRSIDArrayOut members;
 
     public List<SAMPRSIDInformation> getSIDs() {
+        if (this.members == null) {
+            return null;
+        }
         return members.getEntries();
     }
 
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
-        this.members = new SAMPRSIDArrayOut();
-        packetIn.readUnmarshallable(members);
+        if (packetIn.readReferentID() != 0) {
+            this.members = new SAMPRSIDArrayOut();
+            packetIn.readUnmarshallable(members);
+        } else {
+            this.members = null;
+        }
     }
 
 }
