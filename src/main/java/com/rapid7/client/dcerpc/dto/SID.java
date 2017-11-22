@@ -71,8 +71,30 @@ public class SID {
         return identifierAuthority;
     }
 
+    /**
+     * @return All subauthorities. At least one
+     */
     public long[] getSubAuthorities() {
         return subAuthorities;
+    }
+
+    /**
+     * @return The last subauthority, which is the relative identifier (RID).
+     * This is guaranteed to be available as at least one subauthority is required to construct a valid SID.
+     */
+    public long getRelativeID() {
+        return subAuthorities[subAuthorities.length-1];
+    }
+
+    /**
+     * @param relativeID The relative identifier (RID) used to construct a new {@link SID} object.
+     * @return A new {@link SID} object as a clone of this object, with the provided relativeID appended to the subauthorities.
+     */
+    public SID resolveRelativeID(final long relativeID) {
+        final byte[] identifierAuthority = Arrays.copyOf(this.identifierAuthority, this.identifierAuthority.length);
+        final long[] subAuthorities = Arrays.copyOf(this.subAuthorities, this.subAuthorities.length+1);
+        subAuthorities[subAuthorities.length-1] = relativeID;
+        return new SID(this.revision, identifierAuthority, subAuthorities);
     }
 
     @Override
