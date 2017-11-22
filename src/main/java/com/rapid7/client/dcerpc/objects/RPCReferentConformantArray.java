@@ -48,9 +48,6 @@ public abstract class RPCReferentConformantArray<T extends Unmarshallable & Mars
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        if (array == null)
-            return;
-
         for (T t : array) {
             if (t != null)
                 in.readUnmarshallable(t);
@@ -59,9 +56,6 @@ public abstract class RPCReferentConformantArray<T extends Unmarshallable & Mars
 
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
-        if (array == null)
-            return;
-
         out.align(Alignment.FOUR);
         for (T t : array) {
             if (t != null)
@@ -73,9 +67,6 @@ public abstract class RPCReferentConformantArray<T extends Unmarshallable & Mars
 
     @Override
     public void marshalDeferrals(PacketOutput out) throws IOException {
-        if (array == null)
-            return;
-
         for (T t : array) {
             if (t != null)
                 out.writeMarshallable(t);
