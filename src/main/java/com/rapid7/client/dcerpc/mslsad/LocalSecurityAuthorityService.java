@@ -58,19 +58,34 @@ public class LocalSecurityAuthorityService extends Service {
         return callExpectSuccess(request, "LsarOpenPolicy2").getHandle();
     }
 
-    public LSAPRPolicyAuditEventsInfo getAuditPolicy(final ContextHandle handle) throws IOException {
+    /**
+     * Use LsarQueryInformationPolicy to retrieve the {@link PolicyAuditEventsInfo} for the given
+     * policy {@link ContextHandle}.
+     *
+     * @param policyHandle The policy which corresponds to the returned {@link PolicyAuditEventsInfo}
+     * @return The {@link PolicyAuditEventsInfo} for the given policy {@link ContextHandle}.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public PolicyAuditEventsInfo getPolicyAuditEventsInfo(final ContextHandle policyHandle) throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation request =
-                new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(handle);
-        return callExpectSuccess(request, "LsarQueryInformationPolicy[2]").getPolicyInformation();
+                new LsarQueryInformationPolicyRequest.PolicyAuditEventsInformation(policyHandle);
+        final LSAPRPolicyAuditEventsInfo policyInformation =
+                callExpectSuccess(request, "LsarQueryInformationPolicy[2]").getPolicyInformation();
+        return new PolicyAuditEventsInfo(
+                (policyInformation.getAuditingMode() != 0),
+                policyInformation.getEventAuditingOptions());
     }
 
-    public LSAPRPolicyPrimaryDomInfo getPolicyPrimaryDomainInformation(final ContextHandle policyHandle) throws IOException {
+    public LSAPRPolicyPrimaryDomInfo getPolicyPrimaryDomainInformation(final ContextHandle policyHandle)
+            throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation request =
                 new LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation(policyHandle);
         return callExpectSuccess(request, "LsarQueryInformationPolicy[3]").getPolicyInformation();
     }
 
-    public LSAPRPolicyAccountDomInfo getPolicyAccountDomainInformation(final ContextHandle policyHandle) throws IOException {
+    public LSAPRPolicyAccountDomInfo getPolicyAccountDomainInformation(final ContextHandle policyHandle)
+            throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation request =
                 new LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation(policyHandle);
         return callExpectSuccess(request, "LsarQueryInformationPolicy[5]").getPolicyInformation();
@@ -81,42 +96,36 @@ public class LocalSecurityAuthorityService extends Service {
         return callExpectSuccess(request, "LsarEnumerateAccountRights").getPrivNames();
     }
 
-    public RPCSID[] enumerateAccountsWithPrivilege(final ContextHandle policyHandle, final String userRight) throws IOException {
-        final LsarEnumerateAccountsWithUserRightRequest request =
-                new LsarEnumerateAccountsWithUserRightRequest(
-                        policyHandle, RPCUnicodeString.NonNullTerminated.of(userRight));
-        return callExpect(request, "LsarEnumerateAccountsWithUserRight",
-                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_NO_MORE_ENTRIES).getSids();
+    public RPCSID[] enumerateAccountsWithPrivilege(final ContextHandle policyHandle, final String userRight)
+            throws IOException {
+        final LsarEnumerateAccountsWithUserRightRequest request = new LsarEnumerateAccountsWithUserRightRequest(
+                policyHandle, RPCUnicodeString.NonNullTerminated.of(userRight));
+        return callExpect(request, "LsarEnumerateAccountsWithUserRight", SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_NO_MORE_ENTRIES).getSids();
     }
 
     public void closePolicyHandle(final ContextHandle handle) throws IOException {
         final LsarCloseRequest request = new LsarCloseRequest(handle);
-        callExpect(request, "LsarClose",
-                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_INVALID_HANDLE);
+        callExpect(request, "LsarClose", SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_INVALID_HANDLE);
     }
 
-    public LsarLookupNamesResponse lookupNames(final ContextHandle policyHandle, final String... names) throws IOException {
+    public LsarLookupNamesResponse lookupNames(final ContextHandle policyHandle, final String... names)
+            throws IOException {
         final LsarLookupNamesRequest request = new LsarLookupNamesRequest(policyHandle, names);
         return callExpectSuccess(request, "LsarLookupNames");
     }
 
     /**
-     *
      * @param policyHandle Handle to the policy
      * @param SIDs List of SIDs to lookup
      * @return A list of Strings containing account names. Where account names are not mapped, null is returned.
      * @throws IOException Thrown if exception happens at the RPC layer
      * @throws MalformedSIDException Thrown if any of the SIDs do not conform to the SID format
      */
-    public String[] lookupSIDs(ContextHandle policyHandle, String... SIDs)
-        throws IOException, MalformedSIDException
-    {
+    public String[] lookupSIDs(ContextHandle policyHandle, String... SIDs) throws IOException, MalformedSIDException {
         String[] mappedNames;
-        final LsarLookupSIDsRequest request =
-            new LsarLookupSIDsRequest(policyHandle, SIDs);
+        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(policyHandle, SIDs);
         final LsarLookupSIDsResponse lsarLookupSIDsResponse = callExpect(request, "LsarLookupSIDs",
-                SystemErrorCode.ERROR_SUCCESS,
-                SystemErrorCode.STATUS_SOME_NOT_MAPPED);
+                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED);
 
         LSAPRTranslatedName[] nameArray = lsarLookupSIDsResponse.getLsaprTranslatedNames().getlsaprTranslatedNameArray();
         mappedNames = new String[nameArray.length];
@@ -125,6 +134,6 @@ public class LocalSecurityAuthorityService extends Service {
         }
         return mappedNames;
     }
-
 }
+
 

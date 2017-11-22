@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mssamr;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_MORE_ENTRIES;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
-import static com.rapid7.client.dcerpc.mssamr.objects.DisplayInformationClass.DomainDisplayGroup;
 import java.io.IOException;
 import java.rmi.UnmarshalException;
 import java.util.ArrayList;
