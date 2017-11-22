@@ -90,7 +90,7 @@ public class SID {
     /**
      * @param relativeID The relative identifier (RID) used to construct a new {@link SID} object.
      * @return A new {@link SID} object as a clone of this object, with the provided relativeID appended to the subauthorities.
-     * Use of this method is typically only useful in situations where this SID represents an issue (i.e. domain).
+     * Use of this method is typically only useful in situations where this SID represents an issuer (i.e. domain).
      */
     public SID resolveRelativeID(final long relativeID) {
         final byte[] identifierAuthority = Arrays.copyOf(this.identifierAuthority, this.identifierAuthority.length);
