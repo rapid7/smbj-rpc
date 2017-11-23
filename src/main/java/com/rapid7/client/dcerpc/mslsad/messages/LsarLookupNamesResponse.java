@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSIDs;
@@ -51,42 +52,37 @@ import java.io.IOException;
  */
 
 public class LsarLookupNamesResponse extends RequestResponse {
-    private LSAPRReferencedDomainList lsaprReferencedDomainList;
-    private LSAPRTranslatedSIDs lsaprTranslatedSIDs;
+    // <NDR: pointer[struct]> [out] PLSAPR_REFERENCED_DOMAIN_LIST* ReferencedDomains
+    private LSAPRReferencedDomainList referencedDomains;
+    // <NDR: struct> [in, out] PLSAPR_TRANSLATED_SIDS TranslatedSids
+    private LSAPRTranslatedSIDs translatedSIDs;
+    // <NDR: unsigned long> [in, out] unsigned long* MappedCount
+    // Ignored
 
     @Override
-    public void unmarshalResponse(final PacketInput packetIn)
-            throws IOException {
-
-        //Top level parameters
-        //1. Referenced Domain List pointer
-        if (packetIn.readReferentID() != 0) //LsaprReferencedDomainList is a pointer
-        {
-            lsaprReferencedDomainList = new LSAPRReferencedDomainList();
-            packetIn.readUnmarshallable(lsaprReferencedDomainList);
-        } else { lsaprReferencedDomainList = null; }
-
-        //2. Translated Sids
-        lsaprTranslatedSIDs = new LSAPRTranslatedSIDs();
-        packetIn.readUnmarshallable(lsaprTranslatedSIDs);
-
-        //3. Mapped Count
-        packetIn.readInt();
+    public void unmarshalResponse(final PacketInput packetIn) throws IOException {
+        // <NDR: pointer[struct]> [out] PLSAPR_REFERENCED_DOMAIN_LIST* ReferencedDomains
+        // Alignment: 4 - Already aligned
+        if (packetIn.readReferentID() != 0) { //LsaprReferencedDomainList is a pointer
+            referencedDomains = new LSAPRReferencedDomainList();
+            packetIn.readUnmarshallable(referencedDomains);
+        }
+        else {
+            referencedDomains = null;
+        }
+        // <NDR: struct> [in, out] PLSAPR_TRANSLATED_SIDS TranslatedSids
+        translatedSIDs = new LSAPRTranslatedSIDs();
+        packetIn.readUnmarshallable(translatedSIDs);
+        // <NDR: unsigned long> [in, out] unsigned long* MappedCount
+        packetIn.align(Alignment.FOUR);
+        packetIn.fullySkipBytes(4);
     }
 
-    public LSAPRReferencedDomainList getLsaprReferencedDomainList() {
-        return lsaprReferencedDomainList;
+    public LSAPRReferencedDomainList getReferencedDomains() {
+        return referencedDomains;
     }
 
-    public void setLsaprReferencedDomainList(LSAPRReferencedDomainList lsaprReferencedDomainList) {
-        this.lsaprReferencedDomainList = lsaprReferencedDomainList;
-    }
-
-    public LSAPRTranslatedSIDs getLsaprTranslatedSIDs() {
-        return lsaprTranslatedSIDs;
-    }
-
-    public void setLsaprTranslatedSIDs(LSAPRTranslatedSIDs lsaprTranslatedSIDs) {
-        this.lsaprTranslatedSIDs = lsaprTranslatedSIDs;
+    public LSAPRTranslatedSIDs getTranslatedSIDs() {
+        return translatedSIDs;
     }
 }

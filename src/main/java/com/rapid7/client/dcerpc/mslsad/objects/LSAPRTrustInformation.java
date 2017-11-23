@@ -27,6 +27,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  *  Documentation from https://msdn.microsoft.com/en-us/library/cc234259.aspx
@@ -57,31 +58,37 @@ import java.io.IOException;
  */
 public class LSAPRTrustInformation implements Unmarshallable
 {
+    // <NDR: struct> RPC_UNICODE_STRING Name;
     private RPCUnicodeString.NonNullTerminated name;
+    // <NDR: pointer[struct]> PRPC_SID Sid;
     private RPCSID sid;
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
+        // <NDR: struct> RPC_UNICODE_STRING Name;
         name = new RPCUnicodeString.NonNullTerminated();
         name.unmarshalPreamble(in);
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // <NDR: struct> RPC_UNICODE_STRING Name;
         name.unmarshalEntity(in);
+        // <NDR: pointer[struct]> PRPC_SID Sid;
         in.align(Alignment.FOUR);
-
-        if (in.readReferentID() != 0){
+        if (in.readReferentID() != 0)
             sid = new RPCSID();
-        } else sid = null;
+        else
+            sid = null;
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
+        // <NDR: struct> RPC_UNICODE_STRING Name;
         name.unmarshalDeferrals(in);
-        if (sid != null){
+        // <NDR: struct> PRPC_SID Sid;
+        if (sid != null)
             in.readUnmarshallable(sid);
-        }
     }
 
     public RPCUnicodeString.NonNullTerminated getName() {
@@ -93,28 +100,25 @@ public class LSAPRTrustInformation implements Unmarshallable
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof LSAPRTrustInformation)) {
+            return false;
+        }
 
-        LSAPRTrustInformation that = (LSAPRTrustInformation) o;
-
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return sid != null ? sid.equals(that.sid) : that.sid == null;
+        final LSAPRTrustInformation other = (LSAPRTrustInformation) obj;
+        return Objects.equals(this.name, other.name)
+                && Objects.equals(this.sid, other.sid);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (sid != null ? sid.hashCode() : 0);
-        return result;
+        return Objects.hash(this.name, this.sid);
     }
 
     @Override
     public String toString() {
-        return "LSAPRTrustInformation{" +
-                "name=" + name +
-                ", sid=" + sid +
-                '}';
+        return String.format("LSAPR_TRUST_INFORMATION{Name:%s,Sid:%s}", this.name, this.sid);
     }
 }

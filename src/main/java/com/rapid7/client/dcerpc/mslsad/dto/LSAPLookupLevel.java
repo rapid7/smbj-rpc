@@ -1,22 +1,24 @@
-/**
+/*
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright notice,
+ *   Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
  *
- * * Redistributions in binary form must reproduce the above copyright
+ *  Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  *
- * * Neither the name of the copyright holder nor the names of its contributors
+ *  Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
+ *
+ *
  */
-package com.rapid7.client.dcerpc.mslsad;
+package com.rapid7.client.dcerpc.mslsad.dto;
 
 /**
  * The LSAP_LOOKUP_LEVEL enumeration defines different scopes for searches
@@ -123,7 +125,7 @@ public enum LSAPLookupLevel {
      * domains</a> for the domain to which this machine is joined.
      * </p>
      */
-    LsapLookupWksta,
+    LSAP_LOOKUP_WKSTA,
     /**
      * <p>
      * <strong>LsapLookupPDC:</strong> SIDs MUST be searched in the
@@ -161,7 +163,7 @@ public enum LSAPLookupLevel {
      * is joined.
      * </p>
      */
-    LsapLookupPDC,
+    LSAP_LOOKUP_PDC,
     /**
      * <p>
      * <strong>LsapLookupTDL:</strong> SIDs MUST be searched in the
@@ -176,7 +178,7 @@ public enum LSAPLookupLevel {
      * for the domain to which this machine is joined.
      * </p>
      */
-    LsapLookupTDL,
+    LSAP_LOOKUP_TDL,
     /**
      * <p>
      * <strong>LsapLookupGC:</strong> SIDs MUST be searched in the
@@ -189,7 +191,7 @@ public enum LSAPLookupLevel {
      * View of the forest of the domain to which this machine is joined.
      * </p>
      */
-    LsapLookupGC,
+    LSAP_LOOKUP_GC,
     /**
      * <p>
      * <strong>LsapLookupXForestReferral:</strong> SIDs MUST be
@@ -204,7 +206,7 @@ public enum LSAPLookupLevel {
      * joined.
      * </p>
      */
-    LsapLookupXForestReferral,
+    LSAP_LOOKUP_XFOREST_REFERRAL,
     /**
      * <p>
      * <strong>LsapLookupXForestResolve:</strong> SIDs MUST be
@@ -217,7 +219,7 @@ public enum LSAPLookupLevel {
      * View of the forest of the domain to which this machine is joined.
      * </p>
      */
-    LsapLookupXForestResolve,
+    LSAP_LOOKUP_XFOREST_RESOLVE,
     /**
      * <p>
      * <strong>LsapLookupRODCReferralToFullDC:</strong> SIDs MUST be
@@ -240,7 +242,7 @@ public enum LSAPLookupLevel {
      * is joined.
      * </p>
      */
-    LsapLookupRODCReferralToFullDC;
+    LSAP_LOOKUP_RODC_REFERRAL_TO_FULL_DC;
 
     public short getValue() {
         return (short) (ordinal() + 1);

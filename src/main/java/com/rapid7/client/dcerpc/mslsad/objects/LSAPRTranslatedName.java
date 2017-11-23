@@ -26,8 +26,10 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
+ * <b>Alignment: 4</b>
  * Documentation from https://msdn.microsoft.com/en-us/library/cc234461.aspx
  *
  * <h1 class="title">2.2.19 LSAPR_TRANSLATED_NAME</h1>
@@ -67,28 +69,38 @@ import java.io.IOException;
  */
 public class LSAPRTranslatedName implements Unmarshallable
 {
-    private int use;
+    // <NDR: short> SID_NAME_USE Use;
+    private short use;
+    // <NDR: struct> RPC_UNICODE_STRING Name;
     private RPCUnicodeString.NonNullTerminated name;
-    private long domainIndex;
+    // <NDR: long> long DomainIndex
+    private int domainIndex;
 
     @Override
-    public void unmarshalPreamble(PacketInput in)
-        throws IOException {
-    }
-
-    @Override
-    public void unmarshalEntity(PacketInput in)
-        throws IOException {
-        in.align(Alignment.FOUR);
-        use = in.readInt();
+    public void unmarshalPreamble(PacketInput in) throws IOException {
         name = new RPCUnicodeString.NonNullTerminated();
-        name.unmarshalEntity(in);
-        domainIndex = in.readUnsignedInt();
+        name.unmarshalPreamble(in);
     }
 
     @Override
-    public void unmarshalDeferrals(PacketInput in)
-        throws IOException {
+    public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
+        in.align(Alignment.FOUR);
+        // <NDR: short> SID_NAME_USE Use;
+        // Alignment: 2 - Already aligned
+        use = in.readShort();
+        // <NDR: struct> RPC_UNICODE_STRING Name;
+        // Alignment: 4
+        in.fullySkipBytes(2);
+        name.unmarshalEntity(in);
+        // <NDR: long> long DomainIndex
+        in.align(Alignment.FOUR);
+        domainIndex = in.readInt();
+    }
+
+    @Override
+    public void unmarshalDeferrals(PacketInput in) throws IOException {
+        // <NDR: struct> RPC_UNICODE_STRING Name;
         name.unmarshalDeferrals(in);
     }
 
@@ -99,37 +111,31 @@ public class LSAPRTranslatedName implements Unmarshallable
     public RPCUnicodeString getName() { return name;
     }
 
-    public long getDomainIndex() {
+    public int getDomainIndex() {
         return domainIndex;
     }
 
-    @Override public boolean equals(Object o)
-    {
-        if (this == o)
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        } else if (! (obj instanceof LSAPRTranslatedName)) {
             return false;
-
-        LSAPRTranslatedName that = (LSAPRTranslatedName)o;
-
-        return use == that.use && domainIndex == that.domainIndex &&
-            (name != null ? name.equals(that.name) : that.name == null);
+        }
+        final LSAPRTranslatedName other = (LSAPRTranslatedName) obj;
+        return this.use == other.use
+                && Objects.equals(this.name, other.name)
+                && this.domainIndex == other.domainIndex;
     }
 
-    @Override public int hashCode()
-    {
-        int result = use;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (int)(domainIndex ^ (domainIndex >>> 32));
-        return result;
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.use, this.name, this.domainIndex);
     }
 
     @Override
     public String toString() {
-        return "LSAPRTranslatedSID{" +
-                "use=" + use +
-                ", name=" + name +
-                ", domainIndex=" + domainIndex +
-                '}';
+        return String.format("LSAPR_TRANSLATED_NAME{Use:%d,Name:%s,DomainIndex:%d",
+                this.use, this.name, this.domainIndex);
     }
 }

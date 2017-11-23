@@ -8,11 +8,11 @@
  * * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
  *
- * * Redistributions in binary form must reproduce the above copyright
+ * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  *
- * * Neither the name of the copyright holder nor the names of its contributors
+ * Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
  */
@@ -23,6 +23,7 @@ import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import com.rapid7.client.dcerpc.mslsad.dto.LSAPLookupLevel;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyAuditEventsInfo;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyDomainInfo;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyHandle;
@@ -188,6 +189,19 @@ public class LocalSecurityAuthorityService extends Service {
     }
 
     /**
+     * Look up {@link SID}s for the given names. Uses {@link LSAPLookupLevel#LSAP_LOOKUP_WKSTA} as a lookup level.
+     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param names Array of names to lookup {@link SID}s for.
+     * @return An array of {@link SID}s. Each entry index in this list corresponds to the same entry index in
+     * the provided names array. A null entry indicates that the given name was not found.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public SID[] lookupNames(final PolicyHandle policyHandle, String... names) throws IOException {
+        return lookupNames(policyHandle, LSAPLookupLevel.LSAP_LOOKUP_WKSTA, names);
+    }
+
+    /**
      * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
      * @param lookupLevel Look up level as defined in {@link LSAPLookupLevel}.
      * @param names Array of names to lookup {@link SID}s for.
@@ -198,13 +212,13 @@ public class LocalSecurityAuthorityService extends Service {
      */
     public SID[] lookupNames(final PolicyHandle policyHandle, final LSAPLookupLevel lookupLevel, final String... names)
             throws IOException {
-        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(parseHandle(policyHandle), names,
-                lookupLevel.getValue());
-        LsarLookupNamesResponse response = callExpect(request, "LsarLookupNames",
+        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(
+                parseHandle(policyHandle), parseNonNullTerminatedStrings(names), lookupLevel.getValue());
+        final LsarLookupNamesResponse response = callExpect(request, "LsarLookupNames",
                 SystemErrorCode.ERROR_SUCCESS,
                 SystemErrorCode.STATUS_SOME_NOT_MAPPED);
-        final LSAPRTranslatedSID[] translatedSIDs = response.getLsaprTranslatedSIDs().getLsaprTranslatedSIDArray();
-        final LSAPRTrustInformation[] domainArray = response.getLsaprReferencedDomainList().getLsaprTrustInformations();
+        final LSAPRTranslatedSID[] translatedSIDs = response.getTranslatedSIDs().getSIDs();
+        final LSAPRTrustInformation[] domainArray = response.getReferencedDomains().getDomains();
         // Create DTO SIDs
         final SID[] sids = new SID[translatedSIDs.length];
         for (int i = 0; i < translatedSIDs.length; i++) {
@@ -227,15 +241,24 @@ public class LocalSecurityAuthorityService extends Service {
         return sids;
     }
 
-    public SID[] lookupNames(final PolicyHandle policyHandle, String... names) throws IOException {
-        return lookupNames(policyHandle, LSAPLookupLevel.LsapLookupWksta, names);
+    /**
+     * Look up names for the given {@link SID}s. Uses {@link LSAPLookupLevel#LSAP_LOOKUP_WKSTA} as a lookup level.
+     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param sids Array of {@link SID}s to lookup
+     * @return An array of names. Each entry index in this list corresponds to the same entry index in
+     * the provided sods array. A null entry indicates that the given {@link SID} was not found.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public String[] lookupSIDs(final PolicyHandle policyHandle, SID... sids) throws IOException {
+        return lookupSIDs(policyHandle, LSAPLookupLevel.LSAP_LOOKUP_WKSTA, sids);
     }
 
     /**
      * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
      * @param lookupLevel Look up level as defined in {@link LSAPLookupLevel}.
      * @param sids Array of {@link SID}s to lookup
-     * @return An array of account names. Each entry index in this list corresponds to the same entry index in
+     * @return An array of names. Each entry index in this list corresponds to the same entry index in
      * the provided sods array. A null entry indicates that the given {@link SID} was not found.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
@@ -246,17 +269,12 @@ public class LocalSecurityAuthorityService extends Service {
                 lookupLevel.getValue());
         final LsarLookupSIDsResponse lsarLookupSIDsResponse = callExpect(request, "LsarLookupSIDs",
                 SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED);
-
-        LSAPRTranslatedName[] nameArray = lsarLookupSIDsResponse.getLsaprTranslatedNames().getlsaprTranslatedNameArray();
-        String[] mappedNames = new String[nameArray.length];
+        final LSAPRTranslatedName[] nameArray = lsarLookupSIDsResponse.getTranslatedNames().getNames();
+        final String[] mappedNames = new String[nameArray.length];
         for (int i = 0; i < nameArray.length; i++) {
             mappedNames[i] = nameArray[i].getName().getValue();
         }
         return mappedNames;
-    }
-
-    public String[] lookupSIDs(final PolicyHandle policyHandle, SID... sids) throws IOException {
-        return lookupSIDs(policyHandle, LSAPLookupLevel.LsapLookupWksta, sids);
     }
 
     private PolicyHandle parsePolicyHandle(final byte[] handle) {
