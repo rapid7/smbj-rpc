@@ -26,6 +26,7 @@ import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSIDs;
 import com.rapid7.client.dcerpc.objects.RPCSID;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
@@ -51,23 +52,22 @@ public class Test_LookupNames {
         final LsarLookupNamesResponse response = new LsarLookupNamesResponse();
         response.fromHexString(
             "00000200010000000400020020000000010000001a001c00080002000c0002000e000000000000000d0000005700310030002d0045004e0054002d005800360034002d005500000004000000010400000000000515000000a43cb4affe0503bd73de0f3501000000100002000100000001000000f4010000000000000100000000000000");
-        LSAPRReferencedDomainList lsaprReferencedDomainList = response.getLsaprReferencedDomainList();
-        LSAPRTranslatedSIDs lsaprTranslatedSIDs = response.getLsaprTranslatedSIDs();
+        LSAPRReferencedDomainList lsaprReferencedDomainList = response.getReferencedDomains();
+        LSAPRTranslatedSIDs lsaprTranslatedSIDs = response.getTranslatedSIDs();
 
         RPCSID expectSid = new RPCSID();
         expectSid.setRevision((char) 1);
         expectSid.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
         expectSid.setSubAuthority(new long[]{21, 2947824804L, 3171091966L, 890232435});
-        assertEquals(lsaprReferencedDomainList.getLsaprTrustInformations()[0].getSid(), expectSid);
-        assertEquals(lsaprTranslatedSIDs.getLsaprTranslatedSIDArray()[0].getRelativeId(), 500);
+        assertEquals(lsaprReferencedDomainList.getDomains()[0].getSid(), expectSid);
+        assertEquals(lsaprTranslatedSIDs.getSIDs()[0].getRelativeId(), 500);
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void encodeLookupNamesRequest()
-        throws IOException {
+    public void encodeLookupNamesRequest() throws IOException {
         final byte[] fakePolicyHandle = Hex.decode("000000008e3039708fdd9f488f9665426d0d9c57");
-        final String[] names = {"Administrator"};
+        final RPCUnicodeString.NonNullTerminated[] names = {RPCUnicodeString.NonNullTerminated.of("Administrator")};
         final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names);
         assertEquals(request.toHexString(), "000000008e3039708fdd9f488f9665426d0d9c5701000000010000001a001a00000002000d000000000000000d000000410064006d0069006e006900730074007200610074006f007200000000000000000000000100000000000000");
     }

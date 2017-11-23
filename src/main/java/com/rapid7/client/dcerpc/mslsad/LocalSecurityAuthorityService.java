@@ -8,11 +8,11 @@
  * * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
  *
- * * Redistributions in binary form must reproduce the above copyright
+ * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  *
- * * Neither the name of the copyright holder nor the names of its contributors
+ * Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
  */
@@ -198,12 +198,13 @@ public class LocalSecurityAuthorityService extends Service {
     public SID[] lookupNames(final PolicyHandle policyHandle, String... names) throws IOException {
         if (names == null)
             names = new String[0];
-        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(parseHandle(policyHandle), names);
+        final LsarLookupNamesRequest request =
+                new LsarLookupNamesRequest(parseHandle(policyHandle), parseNonNullTerminatedStrings(names));
         final LsarLookupNamesResponse response = callExpect(request, "LsarLookupNames",
                 SystemErrorCode.ERROR_SUCCESS,
                 SystemErrorCode.STATUS_SOME_NOT_MAPPED);
-        final LSAPRTranslatedSID[] translatedSIDs = response.getLsaprTranslatedSIDs().getLsaprTranslatedSIDArray();
-        final LSAPRTrustInformation[] domainArray = response.getLsaprReferencedDomainList().getLsaprTrustInformations();
+        final LSAPRTranslatedSID[] translatedSIDs = response.getTranslatedSIDs().getSIDs();
+        final LSAPRTrustInformation[] domainArray = response.getReferencedDomains().getDomains();
         // Create DTO SIDs
         final SID[] sids = new SID[translatedSIDs.length];
         for (int i = 0; i < translatedSIDs.length; i++) {
@@ -240,9 +241,8 @@ public class LocalSecurityAuthorityService extends Service {
         final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(parseHandle(policyHandle), parseSIDs(sids));
         final LsarLookupSIDsResponse lsarLookupSIDsResponse = callExpect(request, "LsarLookupSIDs",
                 SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED);
-
-        LSAPRTranslatedName[] nameArray = lsarLookupSIDsResponse.getLsaprTranslatedNames().getlsaprTranslatedNameArray();
-        String[] mappedNames = new String[nameArray.length];
+        final LSAPRTranslatedName[] nameArray = lsarLookupSIDsResponse.getTranslatedNames().getNames();
+        final String[] mappedNames = new String[nameArray.length];
         for (int i = 0; i < nameArray.length; i++) {
             mappedNames[i] = nameArray[i].getName().getValue();
         }

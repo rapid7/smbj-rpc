@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRSIDEnumBuffer;
 import com.rapid7.client.dcerpc.objects.RPCSID;
@@ -111,8 +112,10 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
     private final static short OP_NUM = 15;
     private final static int LSA_LOOKUP_NAMES_ALL = 0x1;
 
-    private final LSAPRSIDEnumBuffer lsaprsidEnumBuffer;
+    // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
     private final byte[] policyHandle;
+    // <NDR: struct> [in] PLSAPR_SID_ENUM_BUFFER SidEnumBuffer
+    private final LSAPRSIDEnumBuffer lsaprsidEnumBuffer;
 
     public LsarLookupSIDsRequest(final byte[] policyHandle, final RPCSID[] rpcSIDs) {
         super(OP_NUM);
@@ -127,16 +130,20 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
 
     @Override
     public void marshal(final PacketOutput packetOut) throws IOException {
+        // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
+        // Alignment: 1 - Already aligned
         packetOut.write(policyHandle);
-
+        // <NDR: struct> [in] PLSAPR_SID_ENUM_BUFFER SidEnumBuffer
         packetOut.writeMarshallable(lsaprsidEnumBuffer);
-
-        //TranslatedNames
+        // <NDR: struct> [in, out] PLSAPR_TRANSLATED_NAMES TranslatedNames
+        packetOut.align(Alignment.FOUR);
         packetOut.writeInt(0); //count of names
         packetOut.writeNull();
-        //LookupLevel
-        packetOut.writeInt(LSA_LOOKUP_NAMES_ALL);
-
+        // <NDR: short> [in] LSAP_LOOKUP_LEVEL LookupLevel
+        // Alignment: 2 - Already aligned
+        packetOut.writeShort(LSA_LOOKUP_NAMES_ALL);
+        // <NDR: unsigned long> [in, out] unsigned long* MappedCount
+        packetOut.pad(2);
         packetOut.writeNull(); // Count (ignored on input)
     }
 }

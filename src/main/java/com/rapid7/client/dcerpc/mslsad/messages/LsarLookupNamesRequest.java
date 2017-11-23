@@ -100,13 +100,13 @@ public class LsarLookupNamesRequest extends RequestCall<LsarLookupNamesResponse>
     private final static short OP_NUM = 14;
     private final static int LSA_LOOKUP_NAMES_ALL = 0x1;
 
-    private final String[] names;
     private final byte[] policyHandle;
+    private final RPCUnicodeString.NonNullTerminated[] names;
 
-    public LsarLookupNamesRequest(final byte[] policyHandle, final String[] names) {
+    public LsarLookupNamesRequest(final byte[] policyHandle, final RPCUnicodeString.NonNullTerminated[] names) {
         super(OP_NUM);
-        this.names = names;
         this.policyHandle = policyHandle;
+        this.names = names;
     }
 
     @Override
@@ -115,37 +115,39 @@ public class LsarLookupNamesRequest extends RequestCall<LsarLookupNamesResponse>
     }
 
     @Override
-    public void marshal(final PacketOutput packetOut)
-        throws IOException
-    {
-        packetOut.write(policyHandle);
-        packetOut.writeInt(names.length);
+    public void marshal(final PacketOutput packetOut) throws IOException {
+        // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
+        // Alignment: 1 - Already aligned
+        packetOut.write(this.policyHandle);
+        // <NDR: unsigned long> [in, range(0,1000)] unsigned long Count,
+        // Alignment; 4 - Already aligned, wrote 20 bytes above
+        packetOut.writeInt(this.names.length);
+        // <NDR: unsigned long> [in, size_is(Count)] PRPC_UNICODE_STRING Names
         writeNames(packetOut);
-        packetOut.align(Alignment.FOUR); // Names is variable length; align for SID
-
         //TODO: Write as packetOut.writeMarshalable(new LSAPRTranslatedSIDs())
+        // <NDR: struct> [in, out] PLSAPR_TRANSLATED_SIDS TranslatedSids
+        packetOut.align(Alignment.FOUR); // Names is variable length; align for SID
         packetOut.writeInt(0); //count for SID
         packetOut.writeNull(); // SID
-
+        // <NDR: short> [in] LSAP_LOOKUP_LEVEL LookupLevel,
         packetOut.writeInt(LSA_LOOKUP_NAMES_ALL);
+        // <NDR: unsigned long> [in, out] unsigned long* MappedCount
         packetOut.writeNull(); // Count (ignored on input)
     }
 
-    private void writeNames(final PacketOutput packetOut)
-        throws IOException
-    {
+    private void writeNames(final PacketOutput packetOut) throws IOException {
+        // MaximumCount: [in, size_is(Count)] PRPC_UNICODE_STRING Names
+        // Alignment: 4 - Already aligned
         packetOut.writeInt(names.length);
-
-        RPCUnicodeString[] rpcNames = new RPCUnicodeString[names.length];
-        for (int i = 0; i < rpcNames.length; i++){
-            rpcNames[i] = RPCUnicodeString.NonNullTerminated.of(names[i]);
-            rpcNames[i].marshalPreamble(packetOut);
+        // Entries: [in, size_is(Count)] PRPC_UNICODE_STRING Names
+        for (RPCUnicodeString.NonNullTerminated name : names) {
+            name.marshalPreamble(packetOut);
         }
-        for (RPCUnicodeString rpcName: rpcNames){
-            rpcName.marshalEntity(packetOut);
+        for (RPCUnicodeString.NonNullTerminated name : names) {
+            name.marshalEntity(packetOut);
         }
-        for (RPCUnicodeString rpcName: rpcNames){
-            rpcName.marshalDeferrals(packetOut);
+        for (RPCUnicodeString.NonNullTerminated name : names) {
+            name.marshalDeferrals(packetOut);
         }
     }
 }

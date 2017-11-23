@@ -29,6 +29,7 @@ import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.dto.SID;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public abstract class Service {
@@ -60,6 +61,16 @@ public abstract class Service {
             }
         }
         throw new RPCException(name, returnValue);
+    }
+
+    protected RPCUnicodeString.NonNullTerminated[] parseNonNullTerminatedStrings(String[] strings) {
+        if (strings == null)
+            return null;
+        final RPCUnicodeString.NonNullTerminated[] ret = new RPCUnicodeString.NonNullTerminated[strings.length];
+        for (int i = 0; i < strings.length; i++) {
+            ret[i] = RPCUnicodeString.NonNullTerminated.of(strings[i]);
+        }
+        return ret;
     }
 
     protected byte[] parseHandle(final ContextHandle handle) {

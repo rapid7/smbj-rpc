@@ -56,65 +56,74 @@ import java.util.Arrays;
  */
 public class LSAPRTranslatedNames implements Unmarshallable
 {
-    private LSAPRTranslatedName[] lsaprTranslatedNameArray;
+    // <NDR: unsigned long> [range(0,20480)] unsigned long Entries;
+    // Only used in marshalling
+    // <NDR: pointer[conformant array]> [size_is(Entries)] PLSAPR_TRANSLATED_NAME Names;
+    private LSAPRTranslatedName[] names;
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
+        // No preamble
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
         in.align(Alignment.FOUR);
-        int entries = in.readInt();
-        if (in.readReferentID() != 0) {
-            lsaprTranslatedNameArray = new LSAPRTranslatedName[entries];
-        } else lsaprTranslatedNameArray = null;
+        // [range(0,20480)] unsigned long Entries;
+        // Alignment: 4 - Already aligned
+        final int entries = in.readInt();
+        // <NDR: pointer[conformant array]> [size_is(Entries)] PLSAPR_TRANSLATED_NAME Names;
+        // Alignment: 4 - Already aligned
+        if (in.readReferentID() != 0)
+            names = new LSAPRTranslatedName[entries];
+        else
+            names = null;
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        if (lsaprTranslatedNameArray != null) {
+        if (names != null) {
+            // MaximumCount: [size_is(Entries)] PLSAPR_TRANSLATED_NAME Names;
             in.align(Alignment.FOUR);
-            in.readInt(); //count
-            
-            for (int i = 0; i < lsaprTranslatedNameArray.length; i++){
+            in.fullySkipBytes(4);
+
+            // Entries: [size_is(Entries)] PLSAPR_TRANSLATED_NAME Names;
+            for (int i = 0; i < names.length; i++){
                 LSAPRTranslatedName lsaprTranslatedName = new LSAPRTranslatedName();
                 lsaprTranslatedName.unmarshalPreamble(in);
-                lsaprTranslatedNameArray[i] = lsaprTranslatedName;
+                names[i] = lsaprTranslatedName;
             }
-            for (LSAPRTranslatedName lsaprTranslatedName: lsaprTranslatedNameArray){
+            for (LSAPRTranslatedName lsaprTranslatedName: names){
                 lsaprTranslatedName.unmarshalEntity(in);
             }
-            for (LSAPRTranslatedName lsaprTranslatedName: lsaprTranslatedNameArray){
+            for (LSAPRTranslatedName lsaprTranslatedName: names){
                 lsaprTranslatedName.unmarshalDeferrals(in);
             }
         }
     }
 
-    public LSAPRTranslatedName[] getlsaprTranslatedNameArray() {
-        return lsaprTranslatedNameArray;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        LSAPRTranslatedNames that = (LSAPRTranslatedNames) o;
-
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(lsaprTranslatedNameArray, that.lsaprTranslatedNameArray);
+    public LSAPRTranslatedName[] getNames() {
+        return names;
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(lsaprTranslatedNameArray);
+        return Arrays.hashCode(names);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof LSAPRTranslatedNames)) {
+            return false;
+        }
+        return Arrays.equals(this.names, ((LSAPRTranslatedNames) obj).names);
     }
 
     @Override
     public String toString() {
-        return "lsaprTranslatedNames{" +
-                "lsaprTranslatedNameArray=" + Arrays.toString(lsaprTranslatedNameArray) +
-                '}';
+        return String.format("LSAPR_TRANSLATED_NAMES{Names:%s}", Arrays.toString(names));
     }
 }
