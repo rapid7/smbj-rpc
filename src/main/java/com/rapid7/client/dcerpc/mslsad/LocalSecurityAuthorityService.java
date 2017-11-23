@@ -189,7 +189,7 @@ public class LocalSecurityAuthorityService extends Service {
     }
 
     /**
-     * Look up {@link SID}s for the given names. Uses {@link LSAPLookupLevel#LsapLookupWksta} as a lookup level.
+     * Look up {@link SID}s for the given names. Uses {@link LSAPLookupLevel#LSAP_LOOKUP_WKSTA} as a lookup level.
      * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
      * @param names Array of names to lookup {@link SID}s for.
      * @return An array of {@link SID}s. Each entry index in this list corresponds to the same entry index in
@@ -198,7 +198,7 @@ public class LocalSecurityAuthorityService extends Service {
      * returns an unsuccessful response.
      */
     public SID[] lookupNames(final PolicyHandle policyHandle, String... names) throws IOException {
-        return lookupNames(policyHandle, LSAPLookupLevel.LsapLookupWksta, names);
+        return lookupNames(policyHandle, LSAPLookupLevel.LSAP_LOOKUP_WKSTA, names);
     }
 
     /**
@@ -242,7 +242,7 @@ public class LocalSecurityAuthorityService extends Service {
     }
 
     /**
-     * Look up names for the given {@link SID}s. Uses {@link LSAPLookupLevel#LsapLookupWksta} as a lookup level.
+     * Look up names for the given {@link SID}s. Uses {@link LSAPLookupLevel#LSAP_LOOKUP_WKSTA} as a lookup level.
      * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
      * @param sids Array of {@link SID}s to lookup
      * @return An array of names. Each entry index in this list corresponds to the same entry index in
@@ -251,7 +251,7 @@ public class LocalSecurityAuthorityService extends Service {
      * returns an unsuccessful response.
      */
     public String[] lookupSIDs(final PolicyHandle policyHandle, SID... sids) throws IOException {
-        return lookupSIDs(policyHandle, LSAPLookupLevel.LsapLookupWksta, sids);
+        return lookupSIDs(policyHandle, LSAPLookupLevel.LSAP_LOOKUP_WKSTA, sids);
     }
 
     /**

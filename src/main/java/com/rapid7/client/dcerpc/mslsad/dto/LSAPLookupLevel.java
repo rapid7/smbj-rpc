@@ -125,7 +125,7 @@ public enum LSAPLookupLevel {
      * domains</a> for the domain to which this machine is joined.
      * </p>
      */
-    LsapLookupWksta,
+    LSAP_LOOKUP_WKSTA,
     /**
      * <p>
      * <strong>LsapLookupPDC:</strong> SIDs MUST be searched in the
@@ -163,7 +163,7 @@ public enum LSAPLookupLevel {
      * is joined.
      * </p>
      */
-    LsapLookupPDC,
+    LSAP_LOOKUP_PDC,
     /**
      * <p>
      * <strong>LsapLookupTDL:</strong> SIDs MUST be searched in the
@@ -178,7 +178,7 @@ public enum LSAPLookupLevel {
      * for the domain to which this machine is joined.
      * </p>
      */
-    LsapLookupTDL,
+    LSAP_LOOKUP_TDL,
     /**
      * <p>
      * <strong>LsapLookupGC:</strong> SIDs MUST be searched in the
@@ -191,7 +191,7 @@ public enum LSAPLookupLevel {
      * View of the forest of the domain to which this machine is joined.
      * </p>
      */
-    LsapLookupGC,
+    LSAP_LOOKUP_GC,
     /**
      * <p>
      * <strong>LsapLookupXForestReferral:</strong> SIDs MUST be
@@ -206,7 +206,7 @@ public enum LSAPLookupLevel {
      * joined.
      * </p>
      */
-    LsapLookupXForestReferral,
+    LSAP_LOOKUP_XFOREST_REFERRAL,
     /**
      * <p>
      * <strong>LsapLookupXForestResolve:</strong> SIDs MUST be
@@ -219,7 +219,7 @@ public enum LSAPLookupLevel {
      * View of the forest of the domain to which this machine is joined.
      * </p>
      */
-    LsapLookupXForestResolve,
+    LSAP_LOOKUP_XFOREST_RESOLVE,
     /**
      * <p>
      * <strong>LsapLookupRODCReferralToFullDC:</strong> SIDs MUST be
@@ -242,7 +242,7 @@ public enum LSAPLookupLevel {
      * is joined.
      * </p>
      */
-    LsapLookupRODCReferralToFullDC;
+    LSAP_LOOKUP_RODC_REFERRAL_TO_FULL_DC;
 
     public short getValue() {
         return (short) (ordinal() + 1);

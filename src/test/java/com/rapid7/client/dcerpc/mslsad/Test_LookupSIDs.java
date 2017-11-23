@@ -79,7 +79,7 @@ public class Test_LookupSIDs
         sid3.setSubAuthority(new long[]{21, 2947824804L, 3171091966L, 890232435, 500});
         final RPCSID[] rpcsids = {sid1, sid2, sid3};
         final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(fakePolicyHandle, rpcsids,
-                LSAPLookupLevel.LsapLookupWksta.getValue());
+                LSAPLookupLevel.LSAP_LOOKUP_WKSTA.getValue());
         assertEquals(request.toHexString(), "000000003a668348d29edc4db807b15d0cbf832403000000000002000300000004000200080002000c00020005000000010500000000000515000000a43cb4affe0503bd73de0f35f501000005000000010500000000000515000000a43cb4affe0503bd73de0f35e903000005000000010500000000000515000000a43cb4affe0503bd73de0f35f401000000000000000000000100000000000000");
     }
 
@@ -105,7 +105,7 @@ public class Test_LookupSIDs
         sid3.setSubAuthority(new long[] { 21, 2947824804L, 3171091966L, 890232435, 500 });
         final RPCSID[] rpcsids = { sid1, sid2, sid3 };
         final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(fakePolicyHandle, rpcsids,
-                LSAPLookupLevel.LsapLookupTDL.getValue());
+                LSAPLookupLevel.LSAP_LOOKUP_TDL.getValue());
         assertEquals(request.toHexString(),
             "000000003a668348d29edc4db807b15d0cbf832403000000000002000300000004000200080002000c00020005000000010500000000000515000000a43cb4affe0503bd73de0f35f501000005000000010500000000000515000000a43cb4affe0503bd73de0f35e903000005000000010500000000000515000000a43cb4affe0503bd73de0f35f401000000000000000000000300000000000000");
     }

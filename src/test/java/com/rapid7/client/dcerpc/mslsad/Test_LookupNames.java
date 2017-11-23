@@ -63,7 +63,7 @@ public class Test_LookupNames {
     public void encodeLookupNamesRequest() throws IOException {
         final byte[] fakePolicyHandle = Hex.decode("000000008e3039708fdd9f488f9665426d0d9c57");
         final RPCUnicodeString.NonNullTerminated[] names = {RPCUnicodeString.NonNullTerminated.of("Administrator"), RPCUnicodeString.NonNullTerminated.of("Administrator2")};
-        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names, LSAPLookupLevel.LsapLookupWksta.getValue());
+        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names, LSAPLookupLevel.LSAP_LOOKUP_WKSTA.getValue());
         assertEquals(request.toHexString(), "000000008e3039708fdd9f488f9665426d0d9c5702000000020000001a001a00000002001c001c00040002000d000000000000000d000000410064006d0069006e006900730074007200610074006f00720000000e000000000000000e000000410064006d0069006e006900730074007200610074006f007200320000000000000000000100000000000000");
     }
 
@@ -72,7 +72,7 @@ public class Test_LookupNames {
     public void encodeLookupNamesRequest2() throws IOException {
         final byte[] fakePolicyHandle = Hex.decode("000000008e3039708fdd9f488f9665426d0d9c57");
         final RPCUnicodeString.NonNullTerminated[] names = {RPCUnicodeString.NonNullTerminated.of("Administrator"), RPCUnicodeString.NonNullTerminated.of("Administrator2")};
-        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names, LSAPLookupLevel.LsapLookupTDL.getValue());
+        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names, LSAPLookupLevel.LSAP_LOOKUP_TDL.getValue());
         assertEquals(request.toHexString(),
             "000000008e3039708fdd9f488f9665426d0d9c5702000000020000001a001a00000002001c001c00040002000d000000000000000d000000410064006d0069006e006900730074007200610074006f00720000000e000000000000000e000000410064006d0069006e006900730074007200610074006f007200320000000000000000000300000000000000");
     }
