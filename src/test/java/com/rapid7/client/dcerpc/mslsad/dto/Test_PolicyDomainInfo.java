@@ -28,22 +28,22 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;
 
-public class Test_PolicyPrimaryDomainInfo {
+public class Test_PolicyDomainInfo {
 
     @Test
     public void test_getters() {
         final String name = "Test";
         final SID sid = new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32});
-        PolicyPrimaryDomainInfo obj = new PolicyPrimaryDomainInfo(name, sid);
+        PolicyDomainInfo obj = new PolicyDomainInfo(name, sid);
         assertSame(obj.getDomainName(), name);
         assertSame(obj.getDomainSID(), sid);
     }
 
     @Test
     public void test_hashCode() {
-        PolicyPrimaryDomainInfo obj1 = new PolicyPrimaryDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
-        PolicyPrimaryDomainInfo obj2 = new PolicyPrimaryDomainInfo("Test", new SID((byte) 2, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
-        PolicyPrimaryDomainInfo obj3 = new PolicyPrimaryDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 6}, new long[]{32}));
+        PolicyDomainInfo obj1 = new PolicyDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
+        PolicyDomainInfo obj2 = new PolicyDomainInfo("Test", new SID((byte) 2, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
+        PolicyDomainInfo obj3 = new PolicyDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 6}, new long[]{32}));
         assertEquals(obj1.hashCode(), obj1.hashCode());
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
         assertNotEquals(obj1.hashCode(), obj3.hashCode());
@@ -51,9 +51,9 @@ public class Test_PolicyPrimaryDomainInfo {
 
     @Test
     public void test_equals() {
-        PolicyPrimaryDomainInfo obj1 = new PolicyPrimaryDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
-        PolicyPrimaryDomainInfo obj2 = new PolicyPrimaryDomainInfo("Test", new SID((byte) 2, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
-        PolicyPrimaryDomainInfo obj3 = new PolicyPrimaryDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 6}, new long[]{32}));
+        PolicyDomainInfo obj1 = new PolicyDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
+        PolicyDomainInfo obj2 = new PolicyDomainInfo("Test", new SID((byte) 2, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
+        PolicyDomainInfo obj3 = new PolicyDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 6}, new long[]{32}));
         assertEquals(obj1, obj1);
         assertNotEquals(obj1, null);
         assertNotEquals(obj1, obj2);
@@ -62,7 +62,7 @@ public class Test_PolicyPrimaryDomainInfo {
 
     @Test
     public void test_toString() {
-        PolicyPrimaryDomainInfo obj = new PolicyPrimaryDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
+        PolicyDomainInfo obj = new PolicyDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
         assertEquals(obj.toString(), "PolicyPrimaryDomainInfo{domainName: \"Test\", domainSID: S-1-5-32}");
     }
 }
