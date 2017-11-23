@@ -21,10 +21,9 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import java.io.IOException;
-import java.util.List;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSIDInformation;
 import com.rapid7.client.dcerpc.objects.MalformedSIDException;
+import com.rapid7.client.dcerpc.objects.RPCSID;
 
 public class Test_SamrGetMembersInAliasResponse {
 
@@ -33,11 +32,15 @@ public class Test_SamrGetMembersInAliasResponse {
         final SamrGetMembersInAliasResponse response = new SamrGetMembersInAliasResponse();
         response.fromHexString(
             "03000000000002000300000004000200080002000c00020005000000010500000000000515000000000000000000000000000000f401000005000000010500000000000515000000000000000000000000000000e903000005000000010500000000000515000000000000000000000000000000eb03000000000000");
-        List<SAMPRSIDInformation> list = response.getSIDs();
+        RPCSID[] list = response.getSids();
         assertTrue(response.isSuccess());
-        assertEquals(3, list.size());
-        assertEquals(list.get(0).getSidPointer().toString(), "S-1-5-21-0-0-0-500");
-        assertEquals(list.get(1).getSidPointer().toString(), "S-1-5-21-0-0-0-1001");
-        assertEquals(list.get(2).getSidPointer().toString(), "S-1-5-21-0-0-0-1003");
+
+        assertEquals(3, list.length);
+        assertEquals(list[0].toString(),
+            "RPC_SID{Revision:1, SubAuthorityCount:5, IdentifierAuthority:[0, 0, 0, 0, 0, 5], SubAuthority: [21, 0, 0, 0, 500]}");
+        assertEquals(list[1].toString(),
+            "RPC_SID{Revision:1, SubAuthorityCount:5, IdentifierAuthority:[0, 0, 0, 0, 0, 5], SubAuthority: [21, 0, 0, 0, 1001]}");
+        assertEquals(list[2].toString(),
+            "RPC_SID{Revision:1, SubAuthorityCount:5, IdentifierAuthority:[0, 0, 0, 0, 0, 5], SubAuthority: [21, 0, 0, 0, 1003]}");
     }
 }

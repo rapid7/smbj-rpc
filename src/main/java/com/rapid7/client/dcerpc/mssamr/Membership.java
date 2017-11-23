@@ -16,12 +16,26 @@
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr.objects;
+package com.rapid7.client.dcerpc.mssamr;
 
-public class EnumeratedUsers extends SAMPREnumerationBuffer<UserInfo> {
+/**
+ * This class contains the relative ID and attributes for a member of a domain.
+ */
+public class Membership {
 
-    @Override
-    protected UserInfo initEntity() {
-        return new UserInfo();
+    private final int relativeID;
+    private final int attributes;
+
+    public Membership(int relativeID, int attributes) {
+        this.relativeID = relativeID;
+        this.attributes = attributes;
+    }
+
+    public int getRelativeID() {
+        return relativeID;
+    }
+
+    public int getAttributes() {
+        return attributes;
     }
 }

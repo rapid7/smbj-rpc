@@ -19,24 +19,26 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.io.IOException;
 import org.junit.Test;
 
-public class Test_SamrQueryDisplayInformation2Response {
+public class Test_SamrGetAliasMembershipResponse {
 
     @Test
-    public void unmarshallGroupDisplayInfo() throws IOException {
-        SamrQueryDisplayInformation2Response.DomainDisplayGroup response
-                = new SamrQueryDisplayInformation2Response.DomainDisplayGroup();
-        response.fromHexString(
-            "5400000054000000 03000000 00000000 00000000 01000000");
-        assertEquals(84, response.getTotalAvailable());
-        assertEquals(84, response.getTotalReturned());
-        assertEquals(response.getDisplayInformation().getEntriesRead(), 0);
-        assertNull(response.getDisplayInformation().getEntries());
-        assertEquals(response.getReturnValue(), 1);
+    public void unmarshalEmptyResponse() throws IOException {
+        SamrGetAliasMembershipResponse response = new SamrGetAliasMembershipResponse();
+        response.fromHexString("00000000000002000000000000000000");
+        assertEquals(0, response.getList().length);
+        assertEquals(0, response.getReturnValue());
+    }
+
+    @Test
+    public void unmarshalResponse() throws IOException {
+        SamrGetAliasMembershipResponse response = new SamrGetAliasMembershipResponse();
+        response.fromHexString("0100000000000200010000002102000000000000");
+        assertEquals(1, response.getList().length);
+        assertEquals(545, response.getList()[0].intValue());
+        assertEquals(0, response.getReturnValue());
     }
 
 }

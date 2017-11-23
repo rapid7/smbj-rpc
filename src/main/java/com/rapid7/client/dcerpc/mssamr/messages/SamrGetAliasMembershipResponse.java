@@ -18,25 +18,29 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.io.IOException;
-import org.junit.Test;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.objects.RPCConformantIntegerArray;
 
-public class Test_SamrQueryDisplayInformation2Response {
+public class SamrGetAliasMembershipResponse extends RequestResponse {
+    private RPCConformantIntegerArray array;
 
-    @Test
-    public void unmarshallGroupDisplayInfo() throws IOException {
-        SamrQueryDisplayInformation2Response.DomainDisplayGroup response
-                = new SamrQueryDisplayInformation2Response.DomainDisplayGroup();
-        response.fromHexString(
-            "5400000054000000 03000000 00000000 00000000 01000000");
-        assertEquals(84, response.getTotalAvailable());
-        assertEquals(84, response.getTotalReturned());
-        assertEquals(response.getDisplayInformation().getEntriesRead(), 0);
-        assertNull(response.getDisplayInformation().getEntries());
-        assertEquals(response.getReturnValue(), 1);
+    public Integer[] getList() {
+        if (array == null)
+            return null;
+        return array.getArray();
     }
 
+    @Override
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
+        // unused count;
+        int count = packetIn.readInt();
+        if (packetIn.readReferentID() == 0) {
+            array = null;
+            return;
+        }
+        array = new RPCConformantIntegerArray(new Integer[count]);
+        packetIn.readUnmarshallable(array);
+    }
 }

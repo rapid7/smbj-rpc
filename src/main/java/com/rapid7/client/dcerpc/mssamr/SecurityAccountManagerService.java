@@ -32,16 +32,20 @@ import com.hierynomus.msdtyp.SecurityInformation;
 import com.hierynomus.protocol.commons.buffer.Buffer;
 import com.hierynomus.smb.SMBBuffer;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateGroupsInDomainRequest;
-import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateUsersInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetAliasMembershipRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetAliasMembershipResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInAliasRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupDomainInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainResponse;
@@ -71,7 +75,6 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSIDInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
@@ -95,8 +98,8 @@ public class SecurityAccountManagerService extends Service {
         return callExpectSuccess(request, "SamrConnect2").getHandle();
     }
 
-    public DomainHandle openDomain(ServerHandle serverHandle, RPCSID domainId) throws IOException {
-        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, MAXIMUM_ALLOWED, domainId);
+    public DomainHandle openDomain(ServerHandle serverHandle, SID domainId) throws IOException {
+        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, MAXIMUM_ALLOWED, parseSID(domainId));
         return callExpectSuccess(request, "SamrOpenDomain").getHandle();
     }
 
@@ -187,9 +190,10 @@ public class SecurityAccountManagerService extends Service {
         return callExpectSuccess(request, "SamrQueryInformationAlias[1]").getAliasInformation();
     }
 
-    public List<SAMPRSIDInformation> getMembersInAlias(final AliasHandle aliasHandle) throws IOException {
+    public SID[] getMembersInAlias(final AliasHandle aliasHandle) throws IOException {
         final SamrGetMembersInAliasRequest request = new SamrGetMembersInAliasRequest(aliasHandle);
-        return callExpectSuccess(request, "SamrGetMembersInAlias").getSIDs();
+        final RPCSID[] rpcsids = callExpectSuccess(request, "SamrGetMembersInAlias").getSids();
+        return parseRPCSIDs(rpcsids);
     }
 
     public SAMPRDomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
@@ -353,20 +357,11 @@ public class SecurityAccountManagerService extends Service {
         }
     }
 
-    /**
-     * Gets a list of {@link GroupMembership} information for the provided user handle.
-     *
-     * @param userHandle User handle. Must not be {@code null}.
-     */
-    public List<GroupMembership> getGroupsForUser(UserHandle userHandle) throws IOException {
-        final SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
-        return callExpectSuccess(request, "SamrGetGroupsForUser").getGroups();
-    }
-
-    public RPCSID getSIDForDomain(ServerHandle serverHandle, String domainName) throws IOException {
+    public SID getSIDForDomain(ServerHandle serverHandle, String domainName) throws IOException {
         final SamrLookupDomainInSamServerRequest request = new SamrLookupDomainInSamServerRequest(serverHandle,
                 RPCUnicodeString.NonNullTerminated.of(domainName));
-        return callExpectSuccess(request, "SamrLookupDomainInSamServer").getDomainId();
+        final RPCSID rpcsid = callExpectSuccess(request, "SamrLookupDomainInSamServer").getDomainId();
+        return parseRPCSID(rpcsid);
     }
 
     public SamrLookupNamesInDomainResponse getNamesInDomain(DomainHandle domainHandle, String ... names)
@@ -382,7 +377,54 @@ public class SecurityAccountManagerService extends Service {
     }
 
     /**
-     * Helper method for calling {@link SamrEnumerateRequest}(s) enumerating through the buffers for
+     * Gets a list of {@link Membership} information for groups containing the provided user handle.
+     *
+     * @param userHandle User handle. Must not be {@code null}.
+     */
+    public List<Membership> getGroupsForUser(UserHandle userHandle)
+            throws IOException {
+        SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
+        SamrGetGroupsForUserResponse response = callExpectSuccess(request, "GetGroupsForUser");
+        List<Membership> groups = new ArrayList<>();
+        List<GroupMembership> returnedGroups = response.getGroups();
+        for (GroupMembership returnedGroup : returnedGroups) {
+            groups.add(new Membership(returnedGroup.getRelativeID(), returnedGroup.getAttributes()));
+        }
+        return groups;
+    }
+
+    /**
+     * Gets a list of {@link Membership} information for the members of the provided group handle.
+     *
+     * @param handle Group handle. Must not be {@code null}.
+     */
+    public List<Membership> getMembersForGroup(GroupHandle handle)
+            throws IOException {
+        SamrGetMembersInGroupRequest request = new SamrGetMembersInGroupRequest(handle);
+        List<GroupMembership> returnedGroups = callExpectSuccess(request, "GetMembersForGroup").getList();
+        List<Membership> groups = new ArrayList<>();
+        for (GroupMembership returnedGroup : returnedGroups) {
+            groups.add(new Membership(returnedGroup.getRelativeID(), returnedGroup.getAttributes()));
+        }
+        return groups;
+    }
+
+    /**
+     * Gets the union of all aliases that a given set of SIDs is a member of.
+     *
+     * @param handle The domain handle.
+     * @param sids A list of SIDs.
+     * @return An array of alias relativeIDs to the provided SID.
+     * @throws IOException
+     */
+    public Integer[] getAliasMembership(DomainHandle handle, SID... sids) throws IOException {
+        SamrGetAliasMembershipRequest request = new SamrGetAliasMembershipRequest(handle, parseSIDs(sids));
+        SamrGetAliasMembershipResponse response = callExpectSuccess(request, "GetAliasMembership");
+        return response.getList();
+    }
+
+    /**
+     * Helper method for calling enumeration requests and enumerating through the buffers for
      * {@link SamrEnumerateResponse}.
      */
     private <T> List<T> enumerate(ContextHandle handle, List<T> list, EnumerationCallback callback) throws IOException {

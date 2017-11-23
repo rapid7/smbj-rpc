@@ -35,7 +35,7 @@ public abstract class SamrQueryDisplayInformation2Response<T extends Unmarshalla
     private int totalAvailable;
     // <NDR: unsigned long> [out] unsigned long* TotalReturned
     private int totalReturnedBytes;
-    // <NDR: pointer[union]> [out, switch_is(DisplayInformationClass)] PSAMPR_DISPLAY_INFO_BUFFER Buffer
+    // <NDR: union> [out, switch_is(DisplayInformationClass)] PSAMPR_DISPLAY_INFO_BUFFER Buffer
     private T displayInformation;
 
     public abstract DisplayInformationClass getDisplayInformationClass();
@@ -61,22 +61,16 @@ public abstract class SamrQueryDisplayInformation2Response<T extends Unmarshalla
         // <NDR: unsigned long> [out] unsigned long* TotalReturned
         // Alignment: 4 - Already aligned
         this.totalReturnedBytes = packetIn.readInt();
-        // <NDR: pointer[union]> [out, switch_is(DisplayInformationClass)] PSAMPR_DISPLAY_INFO_BUFFER Buffer
-        // Alignment: 4 - Already aligned
-        if(packetIn.readReferentID() != 0) {
-            // switch_is(DisplayInformationClass)
-            // Alignment: 2 - Already aligned
-            final int infoLevel = packetIn.readUnsignedShort();
-            if (infoLevel != getDisplayInformationClass().getInfoLevel()) {
-                throw new UnmarshalException(String.format(
-                        "Incoming DISPLAY_INFORMATION_CLASS %d does not match expected: %d",
-                        infoLevel, getDisplayInformationClass().getInfoLevel()));
-            }
-            this.displayInformation = createDisplayInformation();
-            packetIn.readUnmarshallable(this.displayInformation);
-        } else {
-            this.displayInformation = null;
+        // switch_is(DisplayInformationClass)
+        // Alignment: 2 - Already aligned
+        final int infoLevel = packetIn.readUnsignedShort();
+        if (infoLevel != getDisplayInformationClass().getInfoLevel()) {
+            throw new UnmarshalException(String.format(
+                    "Incoming DISPLAY_INFORMATION_CLASS %d does not match expected: %d",
+                    infoLevel, getDisplayInformationClass().getInfoLevel()));
         }
+        this.displayInformation = createDisplayInformation();
+        packetIn.readUnmarshallable(this.displayInformation);
     }
 
     public static class DomainDisplayGroup extends SamrQueryDisplayInformation2Response<SAMPRDomainDisplayGroupBuffer> {

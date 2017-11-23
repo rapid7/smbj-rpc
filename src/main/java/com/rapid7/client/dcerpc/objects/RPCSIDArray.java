@@ -16,12 +16,16 @@
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.mssamr.objects;
+package com.rapid7.client.dcerpc.objects;
 
-public class EnumeratedUsers extends SAMPREnumerationBuffer<UserInfo> {
+public class RPCSIDArray extends RPCReferentConformantArray<RPCSID> {
+
+    public RPCSIDArray(RPCSID[] sids) {
+        super(sids);
+    }
 
     @Override
-    protected UserInfo initEntity() {
-        return new UserInfo();
+    protected RPCSID createEntity() {
+        return new RPCSID();
     }
 }

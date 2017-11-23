@@ -37,6 +37,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * <p>RelativeId: A RID that represents one membership value.</p>
  * <p>Attributes: Characteristics about the membership represented as a bitmask. Values are defined in
  *    section <a href="https://msdn.microsoft.com/en-us/library/cc245538.aspx"> 2.2.1.10</a>.
+ *    See {@link com.rapid7.client.dcerpc.mssamr.SeGroupAttributes}.
  * </p>
  */
 public class GroupMembership implements Unmarshallable {
@@ -50,6 +51,14 @@ public class GroupMembership implements Unmarshallable {
 
     public int getAttributes() {
         return attributes;
+    }
+
+    public void setRelativeID(final int rid) {
+        this.rid = rid;
+    }
+
+    public void setAttributes(final int attributes) {
+        this.attributes = attributes;
     }
 
     @Override

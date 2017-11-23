@@ -18,25 +18,28 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.io.IOException;
-import org.junit.Test;
+import java.util.List;
+import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGetMembersBuffer;
 
-public class Test_SamrQueryDisplayInformation2Response {
+public class SamrGetMembersInGroupResponse extends RequestResponse {
+    private SAMPRGetMembersBuffer buffer;
 
-    @Test
-    public void unmarshallGroupDisplayInfo() throws IOException {
-        SamrQueryDisplayInformation2Response.DomainDisplayGroup response
-                = new SamrQueryDisplayInformation2Response.DomainDisplayGroup();
-        response.fromHexString(
-            "5400000054000000 03000000 00000000 00000000 01000000");
-        assertEquals(84, response.getTotalAvailable());
-        assertEquals(84, response.getTotalReturned());
-        assertEquals(response.getDisplayInformation().getEntriesRead(), 0);
-        assertNull(response.getDisplayInformation().getEntries());
-        assertEquals(response.getReturnValue(), 1);
+    @Override
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
+        int referenceId = packetIn.readInt();
+        if (referenceId == 0) {
+            buffer = null;
+            return;
+        }
+        buffer = new SAMPRGetMembersBuffer();
+        packetIn.readUnmarshallable(buffer);
     }
 
+    public List<GroupMembership> getList() {
+        return buffer.getGroupMembership();
+    }
 }

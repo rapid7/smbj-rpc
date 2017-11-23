@@ -18,7 +18,6 @@
  *
  *
  */
-
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
@@ -74,6 +73,4 @@ public class SamrGetMembersInAliasRequest extends RequestCall<SamrGetMembersInAl
     public SamrGetMembersInAliasResponse getResponseObject() {
         return new SamrGetMembersInAliasResponse();
     }
-
-
 }
