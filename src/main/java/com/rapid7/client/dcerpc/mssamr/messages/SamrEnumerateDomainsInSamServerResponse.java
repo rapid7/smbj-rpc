@@ -38,7 +38,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.EnumeratedDomains;
  * @see <a href="https://msdn.microsoft.com/en-ca/library/cc245755.aspx">
  *       https://msdn.microsoft.com/en-ca/library/cc245755.aspx</a>
  */
-public class SamrEnumerateDomainsInSamServerResponse extends SamrEnumerateResponse {
+public class SamrEnumerateDomainsInSamServerResponse extends SamrEnumerateResponse<DomainInfo> {
     private EnumeratedDomains domains;
 
     @Override

@@ -36,6 +36,7 @@ import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssamr.dto.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.Membership;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
@@ -386,7 +387,7 @@ public class SecurityAccountManagerService extends Service {
      * @return The enumerated groups.
      * @throws IOException On issue with communication or marshalling.
      */
-    public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle) throws IOException {
+    public String[] getGroupsForDomain(final DomainHandle domainHandle) throws IOException {
         final int bufferSize = 0xffff;
         return getGroupsForDomain(domainHandle, bufferSize);
     }
@@ -400,11 +401,11 @@ public class SecurityAccountManagerService extends Service {
      * @return The enumerated groups.
      * @throws IOException On issue with communication or marshalling.
      */
-    public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
+    public String[] getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
             throws IOException {
         final List<GroupInfo> groups = new ArrayList<>();
         final byte[] domainHandleBytes = parseHandle(domainHandle);
-        return enumerate(groups, new EnumerationCallback() {
+        final List<GroupInfo> groupInfos = enumerate(groups, new EnumerationCallback() {
             @Override
             public String getName() {
                 return "SamrEnumerateGroupsInDomain";
@@ -416,6 +417,12 @@ public class SecurityAccountManagerService extends Service {
                 return call(request);
             }
         });
+        final String[] groupNames = new String[groupInfos.size()];
+        int i = 0;
+        for (final GroupInfo groupInfo : groupInfos) {
+            groupNames[i++] = groupInfo.getName().getValue();
+        }
+        return groupNames;
     }
 
     /**
@@ -426,7 +433,7 @@ public class SecurityAccountManagerService extends Service {
      * @return The enumerated users.
      * @throws IOException On issue with communication or marshalling.
      */
-    public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl)
+    public String[] getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl)
             throws IOException {
         final int bufferSize = 0xffff;
         return getUsersForDomain(domainHandle, userAccountControl, bufferSize);
@@ -442,11 +449,11 @@ public class SecurityAccountManagerService extends Service {
      * @return The enumerated users.
      * @throws IOException On issue with communication or marshalling.
      */
-    public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl,
+    public String[] getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl,
             final int bufferSize) throws IOException {
         final List<UserInfo> users = new ArrayList<>();
         final byte[] domainHandleBytes = parseHandle(domainHandle);
-        return enumerate(users, new EnumerationCallback() {
+        final List<UserInfo> userInfos = enumerate(users, new EnumerationCallback() {
             @Override
             public String getName() {
                 return "SamrEnumerateUsersInDomain";
@@ -458,6 +465,12 @@ public class SecurityAccountManagerService extends Service {
                 return call(request);
             }
         });
+        final String[] userNames = new String[userInfos.size()];
+        int i = 0;
+        for (final UserInfo userInfo : userInfos) {
+            userNames[i++] = userInfo.getName().getValue();
+        }
+        return userNames;
     }
 
     public List<SAMPRDomainDisplayGroup> getDomainGroupInformationForDomain(final DomainHandle handle)

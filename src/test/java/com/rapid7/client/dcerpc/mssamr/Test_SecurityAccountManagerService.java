@@ -30,6 +30,7 @@ import org.mockito.Mockito;
 import com.hierynomus.msdtyp.SID;
 import com.hierynomus.msdtyp.SecurityDescriptor;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import com.rapid7.client.dcerpc.mssamr.dto.Membership;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
