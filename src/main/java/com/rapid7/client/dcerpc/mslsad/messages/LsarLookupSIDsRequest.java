@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRSIDEnumBuffer;
-import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import java.io.IOException;
 
@@ -115,8 +114,7 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
     private final LSAPRSIDEnumBuffer lsaprsidEnumBuffer;
     private final byte[] policyHandle;
 
-    public LsarLookupSIDsRequest(final byte[] policyHandle, final RPCSID[] rpcSIDs)
-        throws MalformedSIDException {
+    public LsarLookupSIDsRequest(final byte[] policyHandle, final RPCSID[] rpcSIDs) {
         super(OP_NUM);
         this.policyHandle = policyHandle;
         this.lsaprsidEnumBuffer = new LSAPRSIDEnumBuffer(rpcSIDs);

@@ -22,7 +22,6 @@ import java.io.IOException;
 import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
-import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
@@ -32,21 +31,21 @@ import static org.junit.Assert.assertThat;
 
 public class Test_SamrOpenDomainRequest {
     @Test
-    public void getOpNum() throws MalformedSIDException {
+    public void getOpNum() {
         assertEquals(SamrOpenDomainRequest.OP_NUM, createRequest().getOpNum());
     }
 
     @Test
-    public void getStub() throws IOException, MalformedSIDException {
+    public void getStub() throws IOException {
         assertEquals("00000000000000000000000000000000000000000000000201000000010100000000000520000000", toHexString(createRequest().getStub()));
     }
 
     @Test
-    public void getResponseObject() throws IOException, MalformedSIDException {
+    public void getResponseObject() throws IOException {
         assertThat(createRequest().getResponseObject(), instanceOf(HandleResponse.class));
     }
 
-    private SamrOpenDomainRequest createRequest() throws MalformedSIDException {
+    private SamrOpenDomainRequest createRequest() {
         RPCSID rpcsid = new RPCSID();
         rpcsid.setRevision((char) 1);
         rpcsid.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
