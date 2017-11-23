@@ -35,6 +35,11 @@ import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.dto.ContextHandle;
 import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.mssamr.dto.AliasHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
@@ -46,6 +51,7 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrGetAliasMembershipRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetAliasMembershipResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupDomainInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainRequest;
@@ -62,11 +68,8 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainReques
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQuerySecurityObjectRequest;
-import com.rapid7.client.dcerpc.mssamr.dto.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasInfo;
-import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
-import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRAliasGeneralInformation;
@@ -78,8 +81,6 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
-import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
-import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
@@ -196,6 +197,12 @@ public class SecurityAccountManagerService extends Service {
         final SamrQueryInformationAliasRequest.AliasGeneralInformation request =
                 new SamrQueryInformationAliasRequest.AliasGeneralInformation(parseHandle(aliasHandle));
         return callExpectSuccess(request, "SamrQueryInformationAlias[1]").getAliasInformation();
+    }
+
+    public SID[] getMembersInAlias(final AliasHandle aliasHandle) throws IOException {
+        final SamrGetMembersInAliasRequest request = new SamrGetMembersInAliasRequest(parseHandle(aliasHandle));
+        final RPCSID[] rpcsids = callExpectSuccess(request, "SamrGetMembersInAlias").getSids();
+        return parseRPCSIDs(rpcsids);
     }
 
     public SAMPRDomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
