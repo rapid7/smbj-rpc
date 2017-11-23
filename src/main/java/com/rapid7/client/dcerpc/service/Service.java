@@ -27,7 +27,6 @@ import com.rapid7.client.dcerpc.dto.ContextHandle;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.mslsad.dto.PolicyHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
