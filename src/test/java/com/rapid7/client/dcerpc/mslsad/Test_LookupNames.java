@@ -19,16 +19,13 @@
 
 package com.rapid7.client.dcerpc.mslsad;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.mslsad.dto.LSAPLookupLevel;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyHandle;
@@ -41,8 +38,6 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class Test_LookupNames {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
     @SuppressWarnings("unchecked")
     @Test
@@ -67,19 +62,19 @@ public class Test_LookupNames {
     @Test
     public void encodeLookupNamesRequest() throws IOException {
         final byte[] fakePolicyHandle = Hex.decode("000000008e3039708fdd9f488f9665426d0d9c57");
-        final RPCUnicodeString.NonNullTerminated[] names = {RPCUnicodeString.NonNullTerminated.of("Administrator")};
+        final RPCUnicodeString.NonNullTerminated[] names = {RPCUnicodeString.NonNullTerminated.of("Administrator"), RPCUnicodeString.NonNullTerminated.of("Administrator2")};
         final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names, LSAPLookupLevel.LsapLookupWksta.getValue());
-        assertEquals(request.toHexString(), "000000008e3039708fdd9f488f9665426d0d9c5701000000010000001a001a00000002000d000000000000000d000000410064006d0069006e006900730074007200610074006f007200000000000000000000000100000000000000");
+        assertEquals(request.toHexString(), "000000008e3039708fdd9f488f9665426d0d9c5702000000020000001a001a00000002001c001c00040002000d000000000000000d000000410064006d0069006e006900730074007200610074006f00720000000e000000000000000e000000410064006d0069006e006900730074007200610074006f007200320000000000000000000100000000000000");
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void encodeLookupNamesRequest2() throws IOException {
         final byte[] fakePolicyHandle = Hex.decode("000000008e3039708fdd9f488f9665426d0d9c57");
-        final RPCUnicodeString.NonNullTerminated[] names = {RPCUnicodeString.NonNullTerminated.of("Administrator")};
+        final RPCUnicodeString.NonNullTerminated[] names = {RPCUnicodeString.NonNullTerminated.of("Administrator"), RPCUnicodeString.NonNullTerminated.of("Administrator2")};
         final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names, LSAPLookupLevel.LsapLookupTDL.getValue());
         assertEquals(request.toHexString(),
-            "000000008e3039708fdd9f488f9665426d0d9c5701000000010000001a001a00000002000d000000000000000d000000410064006d0069006e006900730074007200610074006f007200000000000000000000000300000000000000");
+            "000000008e3039708fdd9f488f9665426d0d9c5702000000020000001a001a00000002001c001c00040002000d000000000000000d000000410064006d0069006e006900730074007200610074006f00720000000e000000000000000e000000410064006d0069006e006900730074007200610074006f007200320000000000000000000300000000000000");
     }
 
     //This test is to verify that the Service correctly sets invalid SIDs to null from a valid response
@@ -109,6 +104,6 @@ public class Test_LookupNames {
         expectedSIDs[2] = expectedDomainSID.resolveRelativeID(501);
         expectedSIDs[3] = null;
 
-        assertArrayEquals(SIDs, expectedSIDs);
+        assertEquals(SIDs, expectedSIDs);
     }
 }
