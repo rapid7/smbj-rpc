@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <b>3.1.5.10 BaseRegEnumKey (Opnum 9)</b><br>
@@ -179,7 +178,7 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
      * {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
      * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
-    private final ContextHandle hKey;
+    private final byte[] hKey;
     /**
      * The index of the subkey to retrieve.
      */
@@ -205,7 +204,7 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
      * @param nameLen  The maximum length of the subkey name to retrieve.
      * @param classLen The maximum length of the subkey class to retrieve.
      */
-    public BaseRegEnumKeyRequest(final ContextHandle hKey, final int index, final int nameLen, final int classLen) {
+    public BaseRegEnumKeyRequest(final byte[] hKey, final int index, final int nameLen, final int classLen) {
         super((short) 9);
         this.hKey = hKey;
         this.index = index;
@@ -251,7 +250,7 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
         //      Pointer to Last Changed Time (NTTIME)
         //          Referent ID: 0x0002000c
         //          Last Changed Time: No time specified (0)
-        packetOut.write(hKey.getBytes());
+        packetOut.write(hKey);
         packetOut.writeInt(index);
         packetOut.writeStringBuffer(nameLen);
         packetOut.writeStringBufferRef(classLen);

@@ -26,7 +26,6 @@ import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -35,7 +34,7 @@ import static org.testng.Assert.assertSame;
 public class Test_SamrQuerySecurityObjectRequest {
     @Test
     public void test_getters() {
-        ContextHandle objectHandle = new ContextHandle();
+        byte[] objectHandle = new byte[20];
         int securityInformation = 50;
         SamrQuerySecurityObjectRequest request = new SamrQuerySecurityObjectRequest(objectHandle, securityInformation);
         assertSame(request.getObjectHandle(), objectHandle);
@@ -53,8 +52,7 @@ public class Test_SamrQuerySecurityObjectRequest {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         PacketOutput out = new PacketOutput(bout);
 
-        ContextHandle objectHandle = new ContextHandle();
-        objectHandle.setBytes(Hex.decode("0102030405060708090A0B0C0E0F101112131415"));
+        byte[] objectHandle = Hex.decode("0102030405060708090A0B0C0E0F101112131415");
         int securityInformation = 50;
         SamrQuerySecurityObjectRequest request = new SamrQuerySecurityObjectRequest(objectHandle, securityInformation);
         request.marshal(out);

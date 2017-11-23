@@ -18,12 +18,12 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
+import java.io.EOFException;
 import java.io.IOException;
-import org.junit.Test;
+import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 public class Test_HandleResponse {
     @Test
@@ -39,35 +39,13 @@ public class Test_HandleResponse {
 
         response.fromHexString("000000000000000000000000000000000000000000000000");
 
-        assertEquals(new ContextHandle(), response.getHandle());
-        assertEquals(0, response.getReturnValue());
+        assertEquals(response.getHandle(), new byte[20]);
+        assertEquals(response.getReturnValue(), 0);
     }
 
-    @Test
-    public void unmarshalNonDefaultSize() throws IOException {
-        // Remote Registry Service, CloseKey
-        //      Operation: CloseKey (5)
-        //      [Request in frame: 11424]
-        //      Pointer to Handle (policy_handle)
-        //          Policy Handle
-        //              Handle: 0000000000000000000000000000000000000000
-        //      Windows Error: WERR_OK (0x00000000)
-        final HandleResponse<CustomHandle> response = new HandleResponse() {
-            @Override
-            protected CustomHandle initHandle() {
-                return new CustomHandle();
-            }
-        };
-
+    @Test(expectedExceptions = {EOFException.class})
+    public void unmarshal_WrongSize() throws IOException {
+        final HandleResponse response = new HandleResponse();
         response.fromHexString("0000000000000000");
-
-        assertEquals(new CustomHandle(), response.getHandle());
-        assertEquals(0, response.getReturnValue());
-    }
-
-    private class CustomHandle extends ContextHandle {
-        public CustomHandle() {
-            super(4);
-        }
     }
 }

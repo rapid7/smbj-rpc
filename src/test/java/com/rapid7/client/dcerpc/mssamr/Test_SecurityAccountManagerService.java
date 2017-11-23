@@ -37,11 +37,11 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
-import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
-import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
-import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class Test_SecurityAccountManagerService {
@@ -50,7 +50,7 @@ public class Test_SecurityAccountManagerService {
     public void getDomainsForServer() throws IOException {
         RPCTransport transport = Mockito.mock(RPCTransport.class);
         SecurityAccountManagerService service = new SecurityAccountManagerService(transport);
-        ServerHandle handle = new ServerHandle();
+        ServerHandle handle = new ServerHandle(new byte[20]);
         SamrEnumerateDomainsInSamServerResponse response = Mockito.mock(SamrEnumerateDomainsInSamServerResponse.class);
         Mockito.when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_SUCCESS.ordinal());
         List<DomainInfo> domains = new ArrayList<>();
@@ -65,7 +65,7 @@ public class Test_SecurityAccountManagerService {
     public void getDomainsForServerMoreEntries() throws IOException {
         RPCTransport transport = Mockito.mock(RPCTransport.class);
         SecurityAccountManagerService service = new SecurityAccountManagerService(transport);
-        ServerHandle handle = new ServerHandle();
+        ServerHandle handle = new ServerHandle(new byte[20]);
         SamrEnumerateDomainsInSamServerResponse response1 = Mockito.mock(SamrEnumerateDomainsInSamServerResponse.class);
         SamrEnumerateDomainsInSamServerResponse response2 = Mockito.mock(SamrEnumerateDomainsInSamServerResponse.class);
         Mockito.when(response1.getReturnValue()).thenReturn(SystemErrorCode.ERROR_MORE_ENTRIES.getValue());

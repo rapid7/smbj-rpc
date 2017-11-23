@@ -23,10 +23,10 @@ import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedName;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -59,7 +59,7 @@ public class Test_LookupSIDs
 
     @Test
     public void encodeLookupSIDsRequest() throws IOException, MalformedSIDException {
-        final ContextHandle fakePolicyHandle = new ContextHandle("000000003a668348d29edc4db807b15d0cbf8324");
+        final byte[] fakePolicyHandle = Hex.decode("000000003a668348d29edc4db807b15d0cbf8324");
         /*
          * "S-1-5-21-2947824804-3171091966-890232435-501",
          * "S-1-5-21-2947824804-3171091966-890232435-1001",

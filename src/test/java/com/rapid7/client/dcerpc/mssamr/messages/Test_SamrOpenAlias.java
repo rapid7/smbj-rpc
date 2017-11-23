@@ -20,7 +20,7 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -30,7 +30,7 @@ import static org.junit.Assert.assertThat;
 
 public class Test_SamrOpenAlias {
     // https://msdn.microsoft.com/en-us/library/cc980032.aspx
-    private final SamrOpenAliasRequest request = new SamrOpenAliasRequest(new DomainHandle(), 0x0002000C, 500);
+    private final SamrOpenAliasRequest request = new SamrOpenAliasRequest(new byte[20], 0x0002000C, 500);
 
     @Test
     public void getOpNum() {
@@ -44,7 +44,7 @@ public class Test_SamrOpenAlias {
 
     @Test
     public void getResponseObject() throws IOException {
-        assertThat(request.getResponseObject(), instanceOf(SamrOpenAliasResponse.class));
+        assertThat(request.getResponseObject(), instanceOf(HandleResponse.class));
     }
 
 }

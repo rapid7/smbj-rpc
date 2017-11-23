@@ -19,11 +19,9 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
-import java.util.EnumSet;
 import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.msdtyp.SID;
-import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 
@@ -45,7 +43,7 @@ public class Test_SamrOpenDomainRequest {
 
     @Test
     public void getResponseObject() throws IOException, MalformedSIDException {
-        assertThat(createRequest().getResponseObject(), instanceOf(SamrOpenDomainResponse.class));
+        assertThat(createRequest().getResponseObject(), instanceOf(HandleResponse.class));
     }
 
     private SamrOpenDomainRequest createRequest() throws MalformedSIDException {
@@ -53,6 +51,6 @@ public class Test_SamrOpenDomainRequest {
         rpcsid.setRevision((char) 1);
         rpcsid.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
         rpcsid.setSubAuthority(new long[]{32});
-        return new SamrOpenDomainRequest(new ServerHandle(), (int) AccessMask.MAXIMUM_ALLOWED.getValue(), rpcsid);
+        return new SamrOpenDomainRequest(new byte[20], (int) AccessMask.MAXIMUM_ALLOWED.getValue(), rpcsid);
     }
 }

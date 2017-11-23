@@ -21,14 +21,13 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.messages.EmptyResponse;
 
 public class RStartServiceWRequest extends RequestCall<EmptyResponse> {
     private final static short OP_NUM = 19;
-    private final ContextHandle serviceHandle;
+    private final byte[] serviceHandle;
 
-    public RStartServiceWRequest(ContextHandle handle) {
+    public RStartServiceWRequest(byte[] handle) {
         super(OP_NUM);
         this.serviceHandle = handle;
     }
@@ -40,7 +39,7 @@ public class RStartServiceWRequest extends RequestCall<EmptyResponse> {
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(serviceHandle.getBytes());
+        packetOut.write(serviceHandle);
         packetOut.writeNull(); //argc (not implemented)
         packetOut.writeNull(); //argv (not implemented)
     }

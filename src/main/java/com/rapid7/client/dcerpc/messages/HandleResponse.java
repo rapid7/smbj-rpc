@@ -20,7 +20,6 @@ package com.rapid7.client.dcerpc.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <b>Example:</b>
@@ -37,37 +36,19 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
  *     Windows Error: WERR_OK (0x00000000)
  * </pre>
  */
-public class HandleResponse<T extends ContextHandle> extends RequestResponse {
-    private final T handle = initHandle();
+public class HandleResponse extends RequestResponse {
+    private byte[] handle;
 
     /**
-     * @return The handle to a opened key.
+     * @return The handle to a opened context.
      */
-    public T getHandle() {
+    public byte[] getHandle() {
         return handle;
     }
 
     @Override
     public void unmarshalResponse(final PacketInput packetIn) throws IOException {
-        // Remote Registry Service, OpenHKLM
-        // Operation: OpenHKLM (2)
-        // [Request in frame: 11174]
-        // Pointer to Handle (policy_handle)
-        // Policy Handle: OpenHKLM(<...>)
-        // Handle: 0000000032daf234b77c86409d29efe60d326683
-        // [Frame handle opened: 11176]
-        // [Frame handle closed: 11424]
-        // Windows Error: WERR_OK (0x00000000)
-        packetIn.readUnmarshallable(handle);
-    }
-
-    /**
-     * Instantiate the context handle.
-     * Can be overriden to return a context handle of a specific type.
-     *
-     * @return The context handle.
-     */
-    protected T initHandle() {
-        return (T) new ContextHandle();
+        this.handle = new byte[20];
+        packetIn.readRawBytes(this.handle);
     }
 }

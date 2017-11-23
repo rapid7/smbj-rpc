@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -28,7 +29,6 @@ import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
 import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -50,7 +50,7 @@ public class Test_RQueryServiceStatus {
     @SuppressWarnings("unchecked")
     @Test
     public void encodeQueryServiceStatus() throws IOException {
-        ContextHandle testHandle = new ContextHandle("0000000055ab1cbf80636842a6058144898e7da4");
+        byte[] testHandle = Hex.decode("0000000055ab1cbf80636842a6058144898e7da4");
         final RQueryServiceStatusRequest request = new RQueryServiceStatusRequest(testHandle);
         assertEquals(request.toHexString(), "0000000055ab1cbf80636842a6058144898e7da4");
     }

@@ -20,8 +20,8 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc245752.aspx">SamrOpenUser</a>
@@ -41,17 +41,17 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
  *
  *  This protocol asks the RPC runtime, via the strict_context_handle attribute, to reject the use of context handles created by a method of a different RPC interface than this one, as specified in [MS-RPCE] section 3.</pre></blockquote>
  */
-public class SamrOpenUserRequest extends RequestCall<SamrOpenUserResponse> {
+public class SamrOpenUserRequest extends RequestCall<HandleResponse> {
     public final static short OP_NUM = 34;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-    private final DomainHandle domainHandle;
+    private final byte[] domainHandle;
     // <NDR: unsigned long> [in] unsigned long DesiredAccess
     // Static
     // <NDR: unsigned long> [in] unsigned long UserId
-    private final int userId;
+    private final long userId;
 
-    public SamrOpenUserRequest(DomainHandle domainHandle, int userId) {
+    public SamrOpenUserRequest(byte[] domainHandle, long userId) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
         this.userId = userId;
@@ -59,7 +59,7 @@ public class SamrOpenUserRequest extends RequestCall<SamrOpenUserResponse> {
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.writeMarshallable(this.domainHandle);
+        packetOut.write(this.domainHandle);
         // Generic rights: 0x00000000
         // Standard rights: 0x00020000
         // SAMR User specific rights: 0x0000011b
@@ -76,8 +76,7 @@ public class SamrOpenUserRequest extends RequestCall<SamrOpenUserResponse> {
     }
 
     @Override
-    public SamrOpenUserResponse getResponseObject() {
-        return new SamrOpenUserResponse();
+    public HandleResponse getResponseObject() {
+        return new HandleResponse();
     }
-
 }

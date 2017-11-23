@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
@@ -39,11 +38,11 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 public class LsarEnumerateAccountsWithUserRightRequest extends RequestCall<LsarEnumerateAccountsWithUserRightResponse> {
     private final static short OP_NUM = 35;
     // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
-    private final ContextHandle policyHandle;
+    private final byte[] policyHandle;
     // <NDR: pointer[struct]> [in, unique] PRPC_UNICODE_STRING UserRight
     private final RPCUnicodeString.NonNullTerminated userRight;
 
-    public LsarEnumerateAccountsWithUserRightRequest(final ContextHandle policyHandle,
+    public LsarEnumerateAccountsWithUserRightRequest(final byte[] policyHandle,
             final RPCUnicodeString.NonNullTerminated userRight) {
         super(OP_NUM);
         this.policyHandle = policyHandle;
@@ -53,7 +52,7 @@ public class LsarEnumerateAccountsWithUserRightRequest extends RequestCall<LsarE
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
-        packetOut.writeMarshallable(this.policyHandle);
+        packetOut.write(this.policyHandle);
         if (this.userRight == null) {
             // Alignment: 4 - Already aligned, wrote 20 bytes above
             packetOut.writeNull();

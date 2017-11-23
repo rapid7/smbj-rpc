@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <b>3.1.5.17 BaseRegQueryValue (Opnum 17)</b> <br>
@@ -191,7 +190,7 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
      * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
      * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
-    private final ContextHandle hKey;
+    private final byte[] hKey;
     /**
      * The name of the value to be queried.
      */
@@ -213,7 +212,7 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
      * @param valueName The name of the value to be queried.
      * @param dataLen   The maximum number of bytes to accept for the value data.
      */
-    public BaseRegQueryValueRequest(final ContextHandle hKey, final String valueName, final int dataLen) {
+    public BaseRegQueryValueRequest(final byte[] hKey, final String valueName, final int dataLen) {
         super((short) 17);
         this.hKey = hKey;
         this.valueName = valueName;
@@ -259,7 +258,7 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
         //      Pointer to Data Length (uint32)
         //          Referent ID: 0x00020010
         //          Data Length: 0
-        packetOut.write(hKey.getBytes());
+        packetOut.write(hKey);
         packetOut.writeStringBuffer(valueName, true);
         packetOut.writeIntRef(0);
         packetOut.writeEmptyArrayRef(dataLen);
