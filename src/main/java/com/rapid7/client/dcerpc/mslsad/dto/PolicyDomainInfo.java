@@ -25,38 +25,44 @@ import java.util.Objects;
 import com.rapid7.client.dcerpc.dto.SID;
 
 /**
- * This class describes a server's account domain.
+ * This class describes a server's domain.
  */
-public class PolicyAccountDomainInfo {
+public class PolicyDomainInfo {
     private final String domainName;
     private final SID domainSID;
 
-    public PolicyAccountDomainInfo(final String domainName, final SID domainSID) {
+    public PolicyDomainInfo(final String domainName, final SID domainSID) {
         this.domainName = domainName;
         this.domainSID = domainSID;
     }
 
+    /**
+     * @return The name of this policy's primary domain. May be null.
+     */
     public String getDomainName() {
         return domainName;
     }
 
+    /**
+     * @return The {@link SID} for this policy's primary domain. May be null.
+     */
     public SID getDomainSID() {
-        return this.domainSID;
+        return domainSID;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDomainName(), this.domainSID);
+        return Objects.hash(this.domainName, this.domainSID);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof PolicyAccountDomainInfo)) {
+        } else if (! (obj instanceof PolicyDomainInfo)) {
             return false;
         }
-        final PolicyAccountDomainInfo other = (PolicyAccountDomainInfo) obj;
+        final PolicyDomainInfo other = (PolicyDomainInfo) obj;
         return Objects.equals(this.domainName, other.domainName)
                 && Objects.equals(this.domainSID, other.domainSID);
     }
@@ -64,7 +70,7 @@ public class PolicyAccountDomainInfo {
     @Override
     public String toString() {
         final String domainNameStr = (this.domainName != null) ? String.format("\"%s\"", this.domainName) : "null";
-        return String.format("PolicyAccountDomainInfo{domainName: %s, domainSID: %s}",
+        return String.format("PolicyDomainInfo{domainName: %s, domainSID: %s}",
                 domainNameStr, this.domainSID);
     }
 }
