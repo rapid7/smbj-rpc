@@ -18,8 +18,6 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
-
 /**
  * The SamrEnumerateGroupsInDomain method enumerates all groups.
  *
@@ -38,7 +36,7 @@ public class SamrEnumerateGroupsInDomainRequest extends SamrEnumerateRequest<Sam
 
     public static final short OP_NUM = 11;
 
-    public SamrEnumerateGroupsInDomainRequest(DomainHandle handle, int enumContext, int maxLength) {
+    public SamrEnumerateGroupsInDomainRequest(byte[] handle, int enumContext, int maxLength) {
         super(OP_NUM, handle, enumContext, maxLength);
     }
 

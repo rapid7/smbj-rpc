@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCSIDArray;
 
@@ -43,10 +42,10 @@ import com.rapid7.client.dcerpc.objects.RPCSIDArray;
 public class SamrGetAliasMembershipRequest extends RequestCall<SamrGetAliasMembershipResponse> {
     public static final short OP_NUM = 16;
 
-    private final DomainHandle handle;
+    private final byte[] handle;
     private final RPCSID[] sids;
 
-    public SamrGetAliasMembershipRequest(DomainHandle handle, RPCSID... sids) {
+    public SamrGetAliasMembershipRequest(byte[] handle, RPCSID... sids) {
         super(OP_NUM);
         this.handle = handle;
         this.sids = sids;
@@ -54,7 +53,7 @@ public class SamrGetAliasMembershipRequest extends RequestCall<SamrGetAliasMembe
 
     @Override
     public void marshal(PacketOutput out) throws IOException {
-        out.write(handle.getBytes());
+        out.write(handle);
         RPCSIDArray array = new RPCSIDArray(sids);
         out.writeInt(sids.length);
         out.writeReferentID();

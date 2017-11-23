@@ -25,7 +25,6 @@ import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <b>3.1.5.15 BaseRegOpenKey (Opnum 15)</b><br>
@@ -177,7 +176,7 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
      * {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
      * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
-    private final ContextHandle hKey;
+    private final byte[] hKey;
     /**
      * The name of a key to open.
      */
@@ -328,7 +327,7 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
      * @see <a href="https://msdn.microsoft.com/en-us/cc230294">2.4.3 ACCESS_MASK</a>
      * @see <a href="https://msdn.microsoft.com/en-us/cc244886">3.1.1.2 Key Types</a>
      */
-    public BaseRegOpenKey(final ContextHandle hKey, final String subKey, final int options, final EnumSet<AccessMask> accessMask) {
+    public BaseRegOpenKey(final byte[] hKey, final String subKey, final int options, final EnumSet<AccessMask> accessMask) {
         super((short) 15);
         this.hKey = hKey;
         this.subKey = subKey;
@@ -367,7 +366,7 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
         //          .... .... 0... .... .... .... .... .... = Access SACL: Not set
         //          Standard rights: 0x00000000
         //          WINREG specific rights: 0x00000000
-        packetOut.write(hKey.getBytes());
+        packetOut.write(hKey);
         packetOut.writeStringBuffer(subKey, true);
         packetOut.writeInt(options);
         packetOut.writeInt((int) EnumUtils.toLong(accessMask));

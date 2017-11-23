@@ -26,7 +26,6 @@ import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 import static org.testng.Assert.assertEquals;
@@ -37,7 +36,7 @@ public class Test_SamrLookupDomainInSamServerRequest {
 
     @Test
     public void test_getters() {
-        ServerHandle serverHandle = new ServerHandle();
+        byte[] serverHandle = new byte[20];
         RPCUnicodeString.NonNullTerminated name = new RPCUnicodeString.NonNullTerminated();
         SamrLookupDomainInSamServerRequest obj = new SamrLookupDomainInSamServerRequest(serverHandle, name);
         assertSame(obj.getServerHandle(), serverHandle);
@@ -57,8 +56,7 @@ public class Test_SamrLookupDomainInSamServerRequest {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         PacketOutput out = new PacketOutput(bout);
 
-        ServerHandle serverHandle = new ServerHandle();
-        serverHandle.setBytes(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20});
+        byte[] serverHandle = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
         RPCUnicodeString.NonNullTerminated name = RPCUnicodeString.NonNullTerminated.of("test123");
         SamrLookupDomainInSamServerRequest obj = new SamrLookupDomainInSamServerRequest(serverHandle, name);
         obj.marshal(out);

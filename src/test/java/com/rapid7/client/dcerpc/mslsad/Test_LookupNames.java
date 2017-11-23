@@ -20,15 +20,15 @@
 package com.rapid7.client.dcerpc.mslsad;
 
 import com.rapid7.client.dcerpc.dto.SID;
+import com.rapid7.client.dcerpc.mslsad.dto.PolicyHandle;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSIDs;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
-import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -66,7 +66,7 @@ public class Test_LookupNames {
     @Test
     public void encodeLookupNamesRequest()
         throws IOException {
-        final ContextHandle fakePolicyHandle = new ContextHandle("000000008e3039708fdd9f488f9665426d0d9c57");
+        final byte[] fakePolicyHandle = Hex.decode("000000008e3039708fdd9f488f9665426d0d9c57");
         final String[] names = {"Administrator"};
         final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names);
         assertEquals(request.toHexString(), "000000008e3039708fdd9f488f9665426d0d9c5701000000010000001a001a00000002000d000000000000000d000000410064006d0069006e006900730074007200610074006f007200000000000000000000000100000000000000");
@@ -74,9 +74,9 @@ public class Test_LookupNames {
 
     //This test is to verify that the Service correctly sets invalid SIDs to null from a valid response
     @Test
-    public void testLookupNamesService() throws IOException, MalformedSIDException {
+    public void testLookupNamesService() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
-        final byte[] fakePolicyHandle = "000000008e3039708fdd".getBytes();
+        final PolicyHandle fakePolicyHandle = new PolicyHandle("000000008e3039708fdd".getBytes());
         final LocalSecurityAuthorityService localSecurityAuthorityService = new LocalSecurityAuthorityService(transport);
 
         final LsarLookupNamesResponse response = new LsarLookupNamesResponse();

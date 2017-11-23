@@ -23,7 +23,6 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssamr.objects.DisplayInformationClass;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroupBuffer;
 
 /**
@@ -50,7 +49,7 @@ public abstract class SamrQueryDisplayInformation2Request<T extends Unmarshallab
     public static final short OP_NUM = 48;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-    private final DomainHandle domainHandle;
+    private final byte[] domainHandle;
     // <NDR: short> [in] DOMAIN_DISPLAY_INFORMATION DisplayInformationClass
     // Supplied by child classes
     // <NDR: unsigned long> [in] unsigned long Index
@@ -60,7 +59,7 @@ public abstract class SamrQueryDisplayInformation2Request<T extends Unmarshallab
     // <NDR: unsigned long> [in] unsigned long PreferredMaximumLength
     private final int preferredMaximumLength;
 
-    public SamrQueryDisplayInformation2Request(DomainHandle domainHandle, int index,
+    public SamrQueryDisplayInformation2Request(byte[] domainHandle, int index,
             int entryCount, int preferredMaximumLength) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
@@ -74,7 +73,7 @@ public abstract class SamrQueryDisplayInformation2Request<T extends Unmarshallab
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-        packetOut.writeMarshallable(this.domainHandle);
+        packetOut.write(this.domainHandle);
         // <NDR: short> [in] DOMAIN_DISPLAY_INFORMATION DisplayInformationClass
         // Alignment: 2 - Already aligned, wrote 20 bytes above
         packetOut.writeShort(getDisplayInformationClass().getInfoLevel());
@@ -92,7 +91,7 @@ public abstract class SamrQueryDisplayInformation2Request<T extends Unmarshallab
 
     public static class DomainDisplayGroup extends SamrQueryDisplayInformation2Request<SAMPRDomainDisplayGroupBuffer> {
 
-        public DomainDisplayGroup(DomainHandle domainHandle, int index, int entryCount, int preferredMaximumLength) {
+        public DomainDisplayGroup(byte[] domainHandle, int index, int entryCount, int preferredMaximumLength) {
             super(domainHandle, index, entryCount, preferredMaximumLength);
         }
 

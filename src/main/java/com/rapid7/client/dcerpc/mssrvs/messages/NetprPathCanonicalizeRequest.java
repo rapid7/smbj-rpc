@@ -24,7 +24,6 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssrvs.NetrOpCode;
 
-
 /**
  * <h1 class="title">3.1.4.30 NetprPathCanonicalize (Opnum 31)</h1>
  * <p>The NetprPathCanonicalize method converts a path name to the

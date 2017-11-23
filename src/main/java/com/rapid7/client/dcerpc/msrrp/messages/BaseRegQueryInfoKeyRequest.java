@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <b>3.1.5.16 BaseRegQueryInfoKey (Opnum 16)</b><br>
@@ -186,7 +185,7 @@ public class BaseRegQueryInfoKeyRequest extends RequestCall<BaseRegQueryInfoKeyR
      * {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
      * {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
-    private final ContextHandle hKey;
+    private final byte[] hKey;
 
     /**
      * The BaseRegQueryInfoKey method is called by the client. In response, the server returns relevant information on
@@ -197,7 +196,7 @@ public class BaseRegQueryInfoKeyRequest extends RequestCall<BaseRegQueryInfoKeyR
      *             {@link OpenPerformanceData}, {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey},
      *             {@link OpenCurrentConfig}, {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
-    public BaseRegQueryInfoKeyRequest(final ContextHandle hKey) {
+    public BaseRegQueryInfoKeyRequest(final byte[] hKey) {
         super((short) 16);
 
         this.hKey = hKey;
@@ -227,7 +226,7 @@ public class BaseRegQueryInfoKeyRequest extends RequestCall<BaseRegQueryInfoKeyR
         //                  Max Count: 0
         //                  Offset: 0
         //                  Actual Count: 0
-        packetOut.write(hKey.getBytes());
+        packetOut.write(hKey);
         packetOut.writeStringBuffer(0);
     }
 }

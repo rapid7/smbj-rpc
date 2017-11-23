@@ -25,28 +25,23 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 
 public class Test_SamrGetMembersForGroupRequest {
-
-    private final GroupHandle handle = new GroupHandle();
-
-    private final SamrGetMembersInGroupRequest request1 = new SamrGetMembersInGroupRequest(handle);
-
     @Test
     public void getStub() throws IOException {
-        handle.setBytes(Hex.decode("000000005f32a420f68b2645b4e0e8467cc2e111"));
-        assertEquals("000000005f32a420f68b2645b4e0e8467cc2e111", toHexString(request1.getStub()));
+        byte[] handle = Hex.decode("000000005f32a420f68b2645b4e0e8467cc2e111");
+        assertEquals("000000005f32a420f68b2645b4e0e8467cc2e111", toHexString(new SamrGetMembersInGroupRequest(handle).getStub()));
     }
 
     @Test
     public void getResponseObject() throws IOException {
-        assertThat(request1.getResponseObject(), instanceOf(SamrGetMembersInGroupResponse.class));
+        assertThat(new SamrGetMembersInGroupRequest(new byte[20]).getResponseObject(), instanceOf(SamrGetMembersInGroupResponse.class));
     }
 
     @Test
     public void getOpNum() {
-        assertEquals(SamrGetMembersInGroupRequest.OP_NUM, request1.getOpNum());
+        assertEquals(SamrGetMembersInGroupRequest.OP_NUM, new SamrGetMembersInGroupRequest(new byte[20]).getOpNum());
     }
 
 }

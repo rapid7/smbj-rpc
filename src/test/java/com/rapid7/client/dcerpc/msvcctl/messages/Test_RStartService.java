@@ -19,11 +19,11 @@
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.messages.EmptyResponse;
 
 import static org.junit.Assert.assertEquals;
@@ -44,7 +44,7 @@ public class Test_RStartService {
     @SuppressWarnings("unchecked")
     @Test
     public void encodeRStartServiceRequest() throws IOException {
-        ContextHandle dummyServiceHandle = new ContextHandle("000000008d71be1681207a429536b4d0fbb9b1d1");
+        byte[] dummyServiceHandle = Hex.decode("000000008d71be1681207a429536b4d0fbb9b1d1");
         RStartServiceWRequest request = new RStartServiceWRequest(dummyServiceHandle);
         assertEquals(request.toHexString(), "000000008d71be1681207a429536b4d0fbb9b1d10000000000000000");
     }

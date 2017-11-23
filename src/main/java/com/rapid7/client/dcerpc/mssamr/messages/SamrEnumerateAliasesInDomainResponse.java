@@ -37,5 +37,4 @@ public class SamrEnumerateAliasesInDomainResponse extends SamrEnumerateResponse 
     public List<AliasInfo> getList() {
         return aliases.getEntries();
     }
-
 }

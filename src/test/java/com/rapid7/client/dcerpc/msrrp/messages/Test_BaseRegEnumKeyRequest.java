@@ -19,8 +19,8 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class Test_BaseRegEnumKeyRequest {
-    private final ContextHandle contextHandle = new ContextHandle("0000000032daf234b77c86409d29efe60d326683");
+    private final byte[] contextHandle = Hex.decode("0000000032daf234b77c86409d29efe60d326683");
     private final BaseRegEnumKeyRequest request = new BaseRegEnumKeyRequest(contextHandle, 0, 256, 32767);
 
     @Test

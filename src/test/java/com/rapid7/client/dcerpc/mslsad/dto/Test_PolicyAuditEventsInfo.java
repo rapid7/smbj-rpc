@@ -24,10 +24,8 @@ package com.rapid7.client.dcerpc.mslsad.dto;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.rapid7.client.dcerpc.mslsad.dto.PolicyAuditEventType;
-import com.rapid7.client.dcerpc.mslsad.dto.PolicyAuditEventsInfo;
-
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 
 public class Test_PolicyAuditEventsInfo {
 
@@ -76,5 +74,32 @@ public class Test_PolicyAuditEventsInfo {
     public void test_getEventAuditingOptions(PolicyAuditEventType type, int expectValue) {
         PolicyAuditEventsInfo obj = new PolicyAuditEventsInfo(true, new int[]{10, 20, 30, 40, 50, 60, 70, 80, 90});
         assertEquals(obj.getEventAuditingOptions(type), expectValue);
+    }
+
+    @Test
+    public void test_hashCode() {
+        PolicyAuditEventsInfo obj1 = new PolicyAuditEventsInfo(true, new int[]{10, 20, 30, 40, 50, 60, 70, 80, 90});
+        PolicyAuditEventsInfo obj2 = new PolicyAuditEventsInfo(false, new int[]{10, 20, 30, 40, 50, 60, 70, 80, 90});
+        PolicyAuditEventsInfo obj3 = new PolicyAuditEventsInfo(true, new int[]{11, 20, 30, 40, 50, 60, 70, 80, 90});
+        assertEquals(obj1.hashCode(), obj1.hashCode());
+        assertNotEquals(obj1.hashCode(), obj2.hashCode());
+        assertNotEquals(obj1.hashCode(), obj3.hashCode());
+    }
+
+    @Test
+    public void test_equals() {
+        PolicyAuditEventsInfo obj1 = new PolicyAuditEventsInfo(true, new int[]{10, 20, 30, 40, 50, 60, 70, 80, 90});
+        PolicyAuditEventsInfo obj2 = new PolicyAuditEventsInfo(false, new int[]{10, 20, 30, 40, 50, 60, 70, 80, 90});
+        PolicyAuditEventsInfo obj3 = new PolicyAuditEventsInfo(true, new int[]{11, 20, 30, 40, 50, 60, 70, 80, 90});
+        assertEquals(obj1, obj1);
+        assertNotEquals(obj1, null);
+        assertNotEquals(obj1, obj2);
+        assertNotEquals(obj1, obj3);
+    }
+
+    @Test
+    public void test_toString() {
+        PolicyAuditEventsInfo obj = new PolicyAuditEventsInfo(true, new int[]{10, 20, 30, 40, 50, 60, 70, 80, 90});
+        assertEquals(obj.toString(), "PolicyAuditEventsInfo{auditMode:true, eventAuditingOptions:[10, 20, 30, 40, 50, 60, 70, 80, 90]}");
     }
 }

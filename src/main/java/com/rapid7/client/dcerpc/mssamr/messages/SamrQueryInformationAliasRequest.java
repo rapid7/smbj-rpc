@@ -25,7 +25,6 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasInformationClass;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRAliasGeneralInformation;
 
@@ -54,14 +53,14 @@ public abstract class SamrQueryInformationAliasRequest<T extends Unmarshallable>
     public static final short OP_NUM = 28;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE AliasHandle
-    private final AliasHandle aliasHandle;
+    private final byte[] aliasHandle;
 
-    SamrQueryInformationAliasRequest(AliasHandle aliasHandle) {
+    SamrQueryInformationAliasRequest(byte[] aliasHandle) {
         super(OP_NUM);
         this.aliasHandle = aliasHandle;
     }
 
-    public AliasHandle getAliasHandle() {
+    public byte[] getAliasHandle() {
         return aliasHandle;
     }
 
@@ -70,14 +69,14 @@ public abstract class SamrQueryInformationAliasRequest<T extends Unmarshallable>
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SAMPR_HANDLE AliasHandle
-        packetOut.writeMarshallable(getAliasHandle());
+        packetOut.write(getAliasHandle());
         // <NDR: unsigned short> [in] ALIAS_INFORMATION_CLASS AliasInformationClass,
         // Alignment: 2 - Already aligned. ContextHandle writes 20 bytes above
         packetOut.writeShort(getAliasInformationClass().getInfoLevel());
     }
 
     public static class AliasGeneralInformation extends SamrQueryInformationAliasRequest<SAMPRAliasGeneralInformation> {
-        public AliasGeneralInformation(AliasHandle aliasHandle) {
+        public AliasGeneralInformation(byte[] aliasHandle) {
             super(aliasHandle);
         }
 

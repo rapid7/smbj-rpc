@@ -28,8 +28,6 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountRightsRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountRightsResponse;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
-import com.rapid7.client.dcerpc.objects.MalformedSIDException;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 
 import static org.junit.Assert.assertEquals;
@@ -62,10 +60,8 @@ public class Test_LsarEnumerateAccountRights {
     }
 
     @Test
-    public void lsar_LsarEnumerateAccountRightsResponse() throws MalformedSIDException, IOException {
-        ContextHandle handle = new ContextHandle();
-        final byte[] b = Hex.decode("000000003451f9262c047d43b9c38648900abf7c");
-        handle.setBytes(b);
+    public void lsar_LsarEnumerateAccountRightsResponse() throws IOException {
+        final byte[] handle = Hex.decode("000000003451f9262c047d43b9c38648900abf7c");
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);

@@ -22,7 +22,6 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <b>3.1.5.6 BaseRegCloseKey (Opnum 5)</b><br>
@@ -132,7 +131,7 @@ public class BaseRegCloseKey extends RequestCall<HandleResponse> {
      * OpenCurrentUser, OpenLocalMachine, OpenPerformanceData, OpenUsers, BaseRegCreateKey, BaseRegOpenKey,
      * OpenCurrentConfig, OpenPerformanceText, OpenPerformanceNlsText.
      */
-    private final ContextHandle hKey;
+    private final byte[] hKey;
 
     /**
      * The BaseRegCloseKey method is called by the client. In response, the server destroys (closes) the handle to the
@@ -142,7 +141,7 @@ public class BaseRegCloseKey extends RequestCall<HandleResponse> {
      *             OpenClassesRoot, OpenCurrentUser, OpenLocalMachine, OpenPerformanceData, OpenUsers, BaseRegCreateKey,
      *             BaseRegOpenKey, OpenCurrentConfig, OpenPerformanceText, OpenPerformanceNlsText.
      */
-    public BaseRegCloseKey(final ContextHandle hKey) {
+    public BaseRegCloseKey(final byte[] hKey) {
         super((short) 5);
 
         this.hKey = hKey;
@@ -163,6 +162,6 @@ public class BaseRegCloseKey extends RequestCall<HandleResponse> {
         //              Handle: 0000000032daf234b77c86409d29efe60d326683
         //              [Frame handle opened: 11176]
         //              [Frame handle closed: 11424]
-        packetOut.write(hKey.getBytes());
+        packetOut.write(hKey);
     }
 }

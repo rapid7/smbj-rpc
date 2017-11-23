@@ -25,7 +25,6 @@ import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.*;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -46,8 +45,8 @@ public class RegistryService extends Service {
     private final static int MAX_REGISTRY_VALUE_NAME_SIZE = 32767;
     private final static int MAX_REGISTRY_VALUE_DATA_SIZE = 1048576;
     private final static EnumSet<AccessMask> ACCESS_MASK = EnumSet.of(AccessMask.MAXIMUM_ALLOWED);
-    private final Map<RegistryHive, ContextHandle> hiveCache = new HashMap<>();
-    private final Map<String, ContextHandle> keyPathCache = new HashMap<>();
+    private final Map<RegistryHive, byte[]> hiveCache = new HashMap<>();
+    private final Map<String, byte[]> keyPathCache = new HashMap<>();
 
     public RegistryService(final RPCTransport transport) {
         super(transport);
@@ -87,7 +86,7 @@ public class RegistryService extends Service {
     }
 
     public RegistryKeyInfo getKeyInfo(final String hiveName, final String keyPath) throws IOException {
-        final ContextHandle handle = openKey(hiveName, keyPath);
+        final byte[] handle = openKey(hiveName, keyPath);
         final BaseRegQueryInfoKeyRequest request = new BaseRegQueryInfoKeyRequest(handle);
         final BaseRegQueryInfoKeyResponse response = callExpectSuccess(request, "BaseRegQueryInfoKey");
         return new RegistryKeyInfo(response.getSubKeys(), response.getMaxSubKeyLen(), response.getMaxClassLen(), response.getValues(), response.getMaxValueNameLen(), response.getMaxValueLen(), response.getSecurityDescriptor(), response.getLastWriteTime());
@@ -95,7 +94,7 @@ public class RegistryService extends Service {
 
     public List<RegistryKey> getSubKeys(final String hiveName, final String keyPath) throws IOException {
         final List<RegistryKey> keyNames = new LinkedList<>();
-        final ContextHandle handle = openKey(hiveName, keyPath);
+        final byte[] handle = openKey(hiveName, keyPath);
         for (int index = 0; ; index++) {
             final BaseRegEnumKeyRequest request = new BaseRegEnumKeyRequest(handle, index, MAX_REGISTRY_KEY_NAME_SIZE, MAX_REGISTRY_KEY_CLASS_SIZE);
             final BaseRegEnumKeyResponse response = call(request);
@@ -113,7 +112,7 @@ public class RegistryService extends Service {
 
     public List<RegistryValue> getValues(final String hiveName, final String keyPath) throws IOException {
         final List<RegistryValue> values = new LinkedList<>();
-        final ContextHandle handle = openKey(hiveName, keyPath);
+        final byte[] handle = openKey(hiveName, keyPath);
         for (int index = 0; ; index++) {
             final BaseRegEnumValueRequest request = new BaseRegEnumValueRequest(handle, index, MAX_REGISTRY_VALUE_NAME_SIZE, MAX_REGISTRY_VALUE_DATA_SIZE);
             final BaseRegEnumValueResponse response = call(request);
@@ -132,7 +131,7 @@ public class RegistryService extends Service {
     public RegistryValue getValue(final String hiveName, final String keyPath, final String valueName)
             throws IOException {
         final String canonicalizedValueName = Strings.nullToEmpty(valueName);
-        final ContextHandle handle = openKey(hiveName, keyPath);
+        final byte[] handle = openKey(hiveName, keyPath);
         final BaseRegQueryValueRequest request = new BaseRegQueryValueRequest(handle, canonicalizedValueName, MAX_REGISTRY_VALUE_DATA_SIZE);
         final BaseRegQueryValueResponse response = callExpectSuccess(request, "BaseRegQueryValue");
         return new RegistryValue(canonicalizedValueName, response.getType(), response.getData());
@@ -150,7 +149,7 @@ public class RegistryService extends Service {
         return keyPath;
     }
 
-    protected ContextHandle openHive(final String hiveName) throws IOException {
+    protected byte[] openHive(final String hiveName) throws IOException {
         if (hiveName == null) {
             throw new IllegalArgumentException("Invalid hive: " + hiveName);
         }
@@ -165,14 +164,14 @@ public class RegistryService extends Service {
                 final short opNum = hive.getOpNum();
                 final HandleRequest request = new HandleRequest(opNum, ACCESS_MASK);
                 final HandleResponse response = callExpectSuccess(request, hive.getOpName());
-                final ContextHandle handle = response.getHandle();
+                final byte[] handle = response.getHandle();
                 hiveCache.put(hive, handle);
                 return handle;
             }
         }
     }
 
-    protected ContextHandle openKey(final String hiveName, final String keyPath) throws IOException {
+    protected byte[] openKey(final String hiveName, final String keyPath) throws IOException {
         final String canonicalizedKeyPath = canonicalize(keyPath);
         if (canonicalizedKeyPath.isEmpty()) {
             return openHive(hiveName);
@@ -181,10 +180,10 @@ public class RegistryService extends Service {
             if (keyPathCache.containsKey(canonicalizedKeyPath)) {
                 return keyPathCache.get(canonicalizedKeyPath);
             }
-            final ContextHandle hiveHandle = openHive(hiveName);
+            final byte[] hiveHandle = openHive(hiveName);
             final BaseRegOpenKey request = new BaseRegOpenKey(hiveHandle, canonicalizedKeyPath, 0, ACCESS_MASK);
             final HandleResponse response = callExpectSuccess(request, "BaseRegOpenKey");
-            final ContextHandle keyHandle = response.getHandle();
+            final byte[] keyHandle = response.getHandle();
             keyPathCache.put(canonicalizedKeyPath, keyHandle);
             return keyHandle;
         }

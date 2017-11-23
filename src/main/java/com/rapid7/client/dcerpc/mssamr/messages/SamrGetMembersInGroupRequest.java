@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
 
 /**
  * The SamrGetMembersInGroup method reads the members of a group.
@@ -38,16 +37,16 @@ import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
 public class SamrGetMembersInGroupRequest extends RequestCall<SamrGetMembersInGroupResponse> {
 
     public static final short OP_NUM = 25;
-    private final GroupHandle handle;
+    private final byte[] groupHandle;
 
-    public SamrGetMembersInGroupRequest(GroupHandle handle) {
+    public SamrGetMembersInGroupRequest(byte[] groupHandle) {
         super(OP_NUM);
-        this.handle = handle;
+        this.groupHandle = groupHandle;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.writeMarshallable(handle);
+        packetOut.write(this.groupHandle);
     }
 
     @Override

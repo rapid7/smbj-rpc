@@ -18,8 +18,6 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
-
 /**
  * The SamrEnumerateDomainsInSamServer method obtains a listing of all domains hosted by the server side of this
  * protocol.
@@ -42,7 +40,7 @@ public class SamrEnumerateDomainsInSamServerRequest
 
     public static final short OP_NUM = 6;
 
-    public SamrEnumerateDomainsInSamServerRequest(ServerHandle serverHandle,
+    public SamrEnumerateDomainsInSamServerRequest(byte[] serverHandle,
             int enumerationContext, int preferredMaximumLength) {
         super(OP_NUM, serverHandle, enumerationContext, preferredMaximumLength);
     }

@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <b>3.1.5.11 BaseRegEnumValue (Opnum 10)</b><br>
@@ -181,7 +180,7 @@ public class BaseRegEnumValueRequest extends RequestCall<BaseRegEnumValueRespons
      * {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
      * {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      */
-    private final ContextHandle hKey;
+    private final byte[] hKey;
     /**
      * The index of the value to be retrieved.
      */
@@ -207,7 +206,7 @@ public class BaseRegEnumValueRequest extends RequestCall<BaseRegEnumValueRespons
      * @param valueNameLen The maximum length of the value name to be retrieved.
      * @param dataLen      The maximum length of the value data to be retrieved.
      */
-    public BaseRegEnumValueRequest(final ContextHandle hKey, final int index, final int valueNameLen, final int dataLen) {
+    public BaseRegEnumValueRequest(final byte[] hKey, final int index, final int valueNameLen, final int dataLen) {
         super((short) 10);
         this.hKey = hKey;
         this.index = index;
@@ -246,7 +245,7 @@ public class BaseRegEnumValueRequest extends RequestCall<BaseRegEnumValueRespons
         //          .... .... 0... .... .... .... .... .... = Access SACL: Not set
         //          Standard rights: 0x00000000
         //          WINREG specific rights: 0x00000000
-        packetOut.write(hKey.getBytes());
+        packetOut.write(hKey);
         packetOut.writeInt(index);
         packetOut.writeStringBuffer(valueNameLen);
         packetOut.writeIntRef(0);

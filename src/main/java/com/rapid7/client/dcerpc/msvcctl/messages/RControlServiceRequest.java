@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class RControlServiceRequest extends RequestCall<RQueryServiceStatusResponse> {
 
@@ -36,10 +35,10 @@ public class RControlServiceRequest extends RequestCall<RQueryServiceStatusRespo
     public final static int SERVICE_CONTROL_NETBINDDISABLE = 0xA;
 
     private final static short OP_NUM = 1;
-    private final ContextHandle serviceHandle;
+    private final byte[] serviceHandle;
     private final int operation;
 
-    public RControlServiceRequest(final ContextHandle handle, final int operation) {
+    public RControlServiceRequest(final byte[] handle, final int operation) {
         super(OP_NUM);
         this.serviceHandle = handle;
         this.operation = operation;
@@ -52,7 +51,7 @@ public class RControlServiceRequest extends RequestCall<RQueryServiceStatusRespo
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(serviceHandle.getBytes());
+        packetOut.write(serviceHandle);
         packetOut.writeInt(operation);
     }
 }

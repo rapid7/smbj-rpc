@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
 /**
  * The SamrEnumerateUsersInDomain method enumerates all users.
@@ -43,7 +42,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 public class SamrEnumerateUsersInDomainRequest extends RequestCall<SamrEnumerateUsersInDomainResponse> {
     public static final short OP_NUM = 13;
     // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-    private final DomainHandle domainHandle;
+    private final byte[] domainHandle;
     // <NDR: unsigned long> [in, out] unsigned long* EnumerationContext
     private final int enumerationContext;
     // <NDR: unsigned long> [in] unsigned long UserAccountControl
@@ -51,7 +50,7 @@ public class SamrEnumerateUsersInDomainRequest extends RequestCall<SamrEnumerate
     // <NDR: unsigned long> [in] unsigned long PreferedMaximumLength
     private final int maxLength;
 
-    public SamrEnumerateUsersInDomainRequest(DomainHandle domainHandle, int enumerationContext,
+    public SamrEnumerateUsersInDomainRequest(byte[] domainHandle, int enumerationContext,
             int userAccountControl, int maxLength) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
@@ -63,7 +62,7 @@ public class SamrEnumerateUsersInDomainRequest extends RequestCall<SamrEnumerate
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-        packetOut.writeMarshallable(this.domainHandle);
+        packetOut.write(this.domainHandle);
         // <NDR: unsigned long> [in, out] unsigned long* EnumerationContext
         // Alignment: 4 - Already aligned, wrote 20 bytes above
         packetOut.writeInt(this.enumerationContext);

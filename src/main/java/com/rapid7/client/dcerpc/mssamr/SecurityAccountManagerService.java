@@ -32,7 +32,9 @@ import com.hierynomus.msdtyp.SecurityInformation;
 import com.hierynomus.protocol.commons.buffer.Buffer;
 import com.hierynomus.smb.SMBBuffer;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.dto.ContextHandle;
 import com.rapid7.client.dcerpc.dto.SID;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateAliasesInDomainRequest;
@@ -60,11 +62,11 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationDomainReques
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQueryInformationUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrQuerySecurityObjectRequest;
-import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasInfo;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
-import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRAliasGeneralInformation;
@@ -76,10 +78,9 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
-import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
-import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.service.Service;
@@ -93,36 +94,42 @@ public class SecurityAccountManagerService extends Service {
     }
 
     public ServerHandle openServer(String serverName) throws IOException {
-        final SamrConnect2Request request = new SamrConnect2Request(Strings.nullToEmpty(serverName), MAXIMUM_ALLOWED);
-        return callExpectSuccess(request, "SamrConnect2").getHandle();
+        final SamrConnect2Request request =
+                new SamrConnect2Request(Strings.nullToEmpty(serverName), MAXIMUM_ALLOWED);
+        return parseServerHandle(callExpectSuccess(request, "SamrConnect2"));
     }
 
-    public DomainHandle openDomain(ServerHandle serverHandle, SID domainId) throws IOException {
-        final SamrOpenDomainRequest request = new SamrOpenDomainRequest(serverHandle, MAXIMUM_ALLOWED, parseSID(domainId));
-        return callExpectSuccess(request, "SamrOpenDomain").getHandle();
+    public DomainHandle openDomain(final ServerHandle serverHandle, final SID domainId) throws IOException {
+        final SamrOpenDomainRequest request =
+                new SamrOpenDomainRequest(parseHandle(serverHandle), MAXIMUM_ALLOWED, parseSID(domainId));
+        return parseDomainHandle(callExpectSuccess(request, "SamrOpenDomain"));
     }
 
-    public GroupHandle openGroup(DomainHandle domainHandle, int groupId) throws IOException {
-        final SamrOpenGroupRequest request = new SamrOpenGroupRequest(domainHandle, MAXIMUM_ALLOWED, groupId);
-        return callExpectSuccess(request, "SamrOpenGroupRequest").getHandle();
+    public GroupHandle openGroup(final DomainHandle domainHandle, final long groupRID) throws IOException {
+        final SamrOpenGroupRequest request =
+                new SamrOpenGroupRequest(parseHandle(domainHandle), MAXIMUM_ALLOWED, groupRID);
+        return parseGroupHandle(callExpectSuccess(request, "SamrOpenGroupRequest"));
     }
 
-    public UserHandle openUser(DomainHandle domainHandle, int sid) throws IOException {
-        final SamrOpenUserRequest request = new SamrOpenUserRequest(domainHandle, sid);
-        return callExpectSuccess(request, "SamrOpenUserRequest").getHandle();
+    public UserHandle openUser(final DomainHandle domainHandle, final long userRID) throws IOException {
+        final SamrOpenUserRequest request =
+                new SamrOpenUserRequest(parseHandle(domainHandle), userRID);
+        return parseUserHandle(callExpectSuccess(request, "SamrOpenUserRequest"));
     }
 
-    public AliasHandle openAlias(DomainHandle domainHandle, int sid) throws IOException {
+    public AliasHandle openAlias(final DomainHandle domainHandle, final long aliasRID) throws IOException {
         // AccessMask(0x0002000C)
         // SAMR Alias specific rights: 0x0000000c
         // - SAMR_ALIAS_ACCESS_LOOKUP_INFO is SET(8)
         // - SAMR_ALIAS_ACCESS_GET_MEMBERS is SET(4)
-        final SamrOpenAliasRequest request = new SamrOpenAliasRequest(domainHandle, 0x0002000C, sid);
-        return callExpectSuccess(request, "SamrOpenAlias").getHandle();
+        final SamrOpenAliasRequest request =
+                new SamrOpenAliasRequest(parseHandle(domainHandle), 0x0002000C, aliasRID);
+        return parseAliasHandle(callExpectSuccess(request, "SamrOpenAlias"));
     }
 
-    public void closeHandle(ContextHandle handle) throws IOException {
-        final SamrCloseHandleRequest request = new SamrCloseHandleRequest(handle);
+    public void closeHandle(final ContextHandle handle) throws IOException {
+        final SamrCloseHandleRequest request =
+                new SamrCloseHandleRequest(parseHandle(handle));
         callExpectSuccess(request, "SamrCloseHandle");
     }
 
@@ -134,15 +141,16 @@ public class SecurityAccountManagerService extends Service {
     public List<DomainInfo> getDomainsForServer(final ServerHandle serverHandle, final int bufferSize)
             throws IOException {
         final List<DomainInfo> domains = new ArrayList<>();
-        return enumerate(serverHandle, domains, new EnumerationCallback() {
+        final byte[] serverHandleBytes = parseHandle(serverHandle);
+        return enumerate(domains, new EnumerationCallback() {
             @Override
             public String getName() {
                 return "SamrEnumerateDomainsInSamServer";
             }
             @Override
-            public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
-                final SamrEnumerateDomainsInSamServerRequest request = new SamrEnumerateDomainsInSamServerRequest(
-                        serverHandle, enumContext, bufferSize);
+            public SamrEnumerateResponse request(final int enumContext) throws IOException {
+                final SamrEnumerateDomainsInSamServerRequest request =
+                        new SamrEnumerateDomainsInSamServerRequest(serverHandleBytes, enumContext, bufferSize);
                 return call(request);
             }
         });
@@ -156,16 +164,17 @@ public class SecurityAccountManagerService extends Service {
 
     public List<AliasInfo> getAliasesForDomain(final DomainHandle domainHandle, final int bufferSize)
             throws IOException {
-        List<AliasInfo> aliases = new ArrayList<>();
-        return enumerate(domainHandle, aliases, new EnumerationCallback() {
+        final List<AliasInfo> aliases = new ArrayList<>();
+        final byte[] domainHandleBytes = parseHandle(domainHandle);
+        return enumerate(aliases, new EnumerationCallback() {
             @Override
             public String getName() {
                 return "SamrEnumerateAliasesInDomain";
             }
             @Override
-            public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
-                final SamrEnumerateAliasesInDomainRequest request = new SamrEnumerateAliasesInDomainRequest(
-                        domainHandle, enumContext, bufferSize);
+            public SamrEnumerateResponse request(final int enumContext) throws IOException {
+                final SamrEnumerateAliasesInDomainRequest request =
+                        new SamrEnumerateAliasesInDomainRequest(domainHandleBytes, enumContext, bufferSize);
                 return call(request);
             }
         });
@@ -173,37 +182,37 @@ public class SecurityAccountManagerService extends Service {
 
     public SAMPRUserAllInformation getUserAllInformation(final UserHandle userHandle) throws IOException {
         final SamrQueryInformationUserRequest.UserAllInformation request =
-                new SamrQueryInformationUserRequest.UserAllInformation(userHandle);
+                new SamrQueryInformationUserRequest.UserAllInformation(parseHandle(userHandle));
         return callExpectSuccess(request, "SamrQueryInformationUser[21]").getUserInformation();
     }
 
     public SAMPRGroupGeneralInformation getGroupGeneralInformation(final GroupHandle groupHandle) throws IOException {
         final SamrQueryInformationGroupRequest.GroupGeneralInformation request =
-                new SamrQueryInformationGroupRequest.GroupGeneralInformation(groupHandle);
+                new SamrQueryInformationGroupRequest.GroupGeneralInformation(parseHandle(groupHandle));
         return callExpectSuccess(request, "SamrQueryInformationGroup[1]").getGroupInformation();
     }
 
     public SAMPRAliasGeneralInformation getAliasGeneralInformation(final AliasHandle aliasHandle) throws IOException {
         final SamrQueryInformationAliasRequest.AliasGeneralInformation request =
-                new SamrQueryInformationAliasRequest.AliasGeneralInformation(aliasHandle);
+                new SamrQueryInformationAliasRequest.AliasGeneralInformation(parseHandle(aliasHandle));
         return callExpectSuccess(request, "SamrQueryInformationAlias[1]").getAliasInformation();
     }
 
     public SAMPRDomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
         final SamrQueryInformationDomainRequest.DomainPasswordInformation request =
-                new SamrQueryInformationDomainRequest.DomainPasswordInformation(domainHandle);
+                new SamrQueryInformationDomainRequest.DomainPasswordInformation(parseHandle(domainHandle));
         return callExpectSuccess(request, "SamrQueryInformationDomain[1]").getDomainInformation();
     }
 
     public SAMPRDomainLogOffInfo getDomainLogOffInfo(final DomainHandle domainHandle) throws IOException {
         final SamrQueryInformationDomainRequest.DomainLogOffInformation request =
-                new SamrQueryInformationDomainRequest.DomainLogOffInformation(domainHandle);
+                new SamrQueryInformationDomainRequest.DomainLogOffInformation(parseHandle(domainHandle));
         return callExpectSuccess(request, "SamrQueryInformationDomain[3]").getDomainInformation();
     }
 
     public SAMPRDomainLockoutInfo getDomainLockoutInfo(final DomainHandle domainHandle) throws IOException {
         final SamrQueryInformationDomain2Request.DomainLockoutInfo request =
-                new SamrQueryInformationDomain2Request.DomainLockoutInfo(domainHandle);
+                new SamrQueryInformationDomain2Request.DomainLockoutInfo(parseHandle(domainHandle));
         return callExpectSuccess(request, "SamrQueryInformationDomain2[12]").getDomainInformation();
     }
 
@@ -231,15 +240,16 @@ public class SecurityAccountManagerService extends Service {
     public List<GroupInfo> getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
             throws IOException {
         final List<GroupInfo> groups = new ArrayList<>();
-        return enumerate(domainHandle, groups, new EnumerationCallback() {
+        final byte[] domainHandleBytes = parseHandle(domainHandle);
+        return enumerate(groups, new EnumerationCallback() {
             @Override
             public String getName() {
                 return "SamrEnumerateGroupsInDomain";
             }
             @Override
-            public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
-                final SamrEnumerateGroupsInDomainRequest request = new SamrEnumerateGroupsInDomainRequest(domainHandle,
-                        enumContext, bufferSize);
+            public SamrEnumerateResponse request(int enumContext) throws IOException {
+                final SamrEnumerateGroupsInDomainRequest request = new SamrEnumerateGroupsInDomainRequest(
+                    domainHandleBytes, enumContext, bufferSize);
                 return call(request);
             }
         });
@@ -272,15 +282,16 @@ public class SecurityAccountManagerService extends Service {
     public List<UserInfo> getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl,
             final int bufferSize) throws IOException {
         final List<UserInfo> users = new ArrayList<>();
-        return enumerate(domainHandle, users, new EnumerationCallback() {
+        final byte[] domainHandleBytes = parseHandle(domainHandle);
+        return enumerate(users, new EnumerationCallback() {
             @Override
             public String getName() {
                 return "SamrEnumerateUsersInDomain";
             }
             @Override
-            public SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException {
-                final SamrEnumerateUsersInDomainRequest request = new SamrEnumerateUsersInDomainRequest(domainHandle,
-                        enumContext, userAccountControl, bufferSize);
+            public SamrEnumerateResponse request(int enumContext) throws IOException {
+                final SamrEnumerateUsersInDomainRequest request = new SamrEnumerateUsersInDomainRequest(
+                        domainHandleBytes, enumContext, userAccountControl, bufferSize);
                 return call(request);
             }
         });
@@ -294,23 +305,24 @@ public class SecurityAccountManagerService extends Service {
         return getDomainGroupInformationForDomain(handle, entryCount, maxLength);
     }
 
-    public List<SAMPRDomainDisplayGroup> getDomainGroupInformationForDomain(final DomainHandle handle,
+    public List<SAMPRDomainDisplayGroup> getDomainGroupInformationForDomain(final DomainHandle domainHandle,
             final int entryCount,
             final int maxLength) throws IOException {
+        final byte[] domainHandleBytes = parseHandle(domainHandle);
         final List<SAMPRDomainDisplayGroup> groups = new ArrayList<>();
         int enumContext = 0;
         int totalReturnedBytes = 0;
         while (true) {
             final SamrQueryDisplayInformation2Request.DomainDisplayGroup request =
-                    new SamrQueryDisplayInformation2Request.DomainDisplayGroup(handle, enumContext, entryCount, maxLength);
+                    new SamrQueryDisplayInformation2Request.DomainDisplayGroup(
+                            domainHandleBytes, enumContext, entryCount, maxLength);
             final SamrQueryDisplayInformation2Response<SAMPRDomainDisplayGroupBuffer> response = call(request);
-
             List<SAMPRDomainDisplayGroup> buffer = response.getDisplayInformation().getEntries();
             if (buffer == null)
                 buffer = new ArrayList<>();
             enumContext += buffer.size();
             totalReturnedBytes += response.getTotalReturned();
-            int returnCode = response.getReturnValue();
+            final int returnCode = response.getReturnValue();
             if (ERROR_MORE_ENTRIES.is(returnCode)) {
                 groups.addAll(buffer);
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)
@@ -333,11 +345,12 @@ public class SecurityAccountManagerService extends Service {
                 securityInformationValue |= v.getValue();
             }
         }
-        final SamrQuerySecurityObjectRequest request = new SamrQuerySecurityObjectRequest(objectHandle, securityInformationValue);
+        final SamrQuerySecurityObjectRequest request =
+                new SamrQuerySecurityObjectRequest(parseHandle(objectHandle), securityInformationValue);
         return parseSecurityDescriptor(callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor());
     }
 
-    SecurityDescriptor parseSecurityDescriptor(SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
+    SecurityDescriptor parseSecurityDescriptor(final SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
         if (securityDescriptor == null)
             return null;
         byte[] payload = securityDescriptor.getSecurityDescriptor();
@@ -350,14 +363,15 @@ public class SecurityAccountManagerService extends Service {
         }
     }
 
-    public SID getSIDForDomain(ServerHandle serverHandle, String domainName) throws IOException {
-        final SamrLookupDomainInSamServerRequest request = new SamrLookupDomainInSamServerRequest(serverHandle,
-                RPCUnicodeString.NonNullTerminated.of(domainName));
+    public SID getSIDForDomain(final ServerHandle serverHandle, final String domainName) throws IOException {
+        final SamrLookupDomainInSamServerRequest request =
+                new SamrLookupDomainInSamServerRequest(
+                        parseHandle(serverHandle), RPCUnicodeString.NonNullTerminated.of(domainName));
         final RPCSID rpcsid = callExpectSuccess(request, "SamrLookupDomainInSamServer").getDomainId();
         return parseRPCSID(rpcsid);
     }
 
-    public SamrLookupNamesInDomainResponse getNamesInDomain(DomainHandle domainHandle, String ... names)
+    public SamrLookupNamesInDomainResponse getNamesInDomain(final DomainHandle domainHandle, String ... names)
             throws IOException {
         if (names == null)
             names = new String[0];
@@ -365,7 +379,8 @@ public class SecurityAccountManagerService extends Service {
         for (int i = 0; i < names.length; i++) {
             inNames[i] = RPCUnicodeString.NonNullTerminated.of(names[i]);
         }
-        final SamrLookupNamesInDomainRequest request = new SamrLookupNamesInDomainRequest(domainHandle, inNames);
+        final SamrLookupNamesInDomainRequest request =
+                new SamrLookupNamesInDomainRequest(parseHandle(domainHandle), inNames);
         return callExpectSuccess(request, "SamrLookupNamesInDomain");
     }
 
@@ -374,12 +389,11 @@ public class SecurityAccountManagerService extends Service {
      *
      * @param userHandle User handle. Must not be {@code null}.
      */
-    public List<Membership> getGroupsForUser(UserHandle userHandle)
-            throws IOException {
-        SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(userHandle);
-        SamrGetGroupsForUserResponse response = callExpectSuccess(request, "GetGroupsForUser");
-        List<Membership> groups = new ArrayList<>();
-        List<GroupMembership> returnedGroups = response.getGroups();
+    public List<Membership> getGroupsForUser(final UserHandle userHandle) throws IOException {
+        final SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(parseHandle(userHandle));
+        final SamrGetGroupsForUserResponse response = callExpectSuccess(request, "GetGroupsForUser");
+        final List<Membership> groups = new ArrayList<>();
+        final List<GroupMembership> returnedGroups = response.getGroups();
         for (GroupMembership returnedGroup : returnedGroups) {
             groups.add(new Membership(returnedGroup.getRelativeID(), returnedGroup.getAttributes()));
         }
@@ -389,13 +403,13 @@ public class SecurityAccountManagerService extends Service {
     /**
      * Gets a list of {@link Membership} information for the members of the provided group handle.
      *
-     * @param handle Group handle. Must not be {@code null}.
+     * @param groupHandle Group handle. Must not be {@code null}.
      */
-    public List<Membership> getMembersForGroup(GroupHandle handle)
+    public List<Membership> getMembersForGroup(GroupHandle groupHandle)
             throws IOException {
-        SamrGetMembersInGroupRequest request = new SamrGetMembersInGroupRequest(handle);
-        List<GroupMembership> returnedGroups = callExpectSuccess(request, "GetMembersForGroup").getList();
-        List<Membership> groups = new ArrayList<>();
+        final SamrGetMembersInGroupRequest request = new SamrGetMembersInGroupRequest(parseHandle(groupHandle));
+        final List<GroupMembership> returnedGroups = callExpectSuccess(request, "GetMembersForGroup").getList();
+        final List<Membership> groups = new ArrayList<>();
         for (GroupMembership returnedGroup : returnedGroups) {
             groups.add(new Membership(returnedGroup.getRelativeID(), returnedGroup.getAttributes()));
         }
@@ -405,14 +419,15 @@ public class SecurityAccountManagerService extends Service {
     /**
      * Gets the union of all aliases that a given set of SIDs is a member of.
      *
-     * @param handle The domain handle.
+     * @param domainHandle The domain handle.
      * @param sids A list of SIDs.
      * @return An array of alias relativeIDs to the provided SID.
      * @throws IOException
      */
-    public Integer[] getAliasMembership(DomainHandle handle, SID... sids) throws IOException {
-        SamrGetAliasMembershipRequest request = new SamrGetAliasMembershipRequest(handle, parseSIDs(sids));
-        SamrGetAliasMembershipResponse response = callExpectSuccess(request, "GetAliasMembership");
+    public Integer[] getAliasMembership(final DomainHandle domainHandle, SID... sids) throws IOException {
+        final SamrGetAliasMembershipRequest request =
+                new SamrGetAliasMembershipRequest(parseHandle(domainHandle), parseSIDs(sids));
+        final SamrGetAliasMembershipResponse response = callExpectSuccess(request, "GetAliasMembership");
         return response.getList();
     }
 
@@ -420,9 +435,10 @@ public class SecurityAccountManagerService extends Service {
      * Helper method for calling enumeration requests and enumerating through the buffers for
      * {@link SamrEnumerateResponse}.
      */
-    private <T> List<T> enumerate(ContextHandle handle, List<T> list, EnumerationCallback callback) throws IOException {
+    private <T> List<T> enumerate(final List<T> list, final EnumerationCallback callback)
+            throws IOException {
         for (int enumContext = 0;;) {
-            SamrEnumerateResponse response = callback.request(handle, enumContext);
+            final SamrEnumerateResponse response = callback.request(enumContext);
             final int returnCode = response.getReturnValue();
             enumContext = response.getResumeHandle();
             if (ERROR_MORE_ENTRIES.is(returnCode)) {
@@ -441,6 +457,26 @@ public class SecurityAccountManagerService extends Service {
      */
     private interface EnumerationCallback {
         String getName();
-        SamrEnumerateResponse request(ContextHandle handle, int enumContext) throws IOException;
+        SamrEnumerateResponse request(int enumContext) throws IOException;
+    }
+
+    private ServerHandle parseServerHandle(final HandleResponse response) {
+        return new ServerHandle(response.getHandle());
+    }
+
+    private DomainHandle parseDomainHandle(final HandleResponse response) {
+        return new DomainHandle(response.getHandle());
+    }
+
+    private GroupHandle parseGroupHandle(final HandleResponse response) {
+        return new GroupHandle(response.getHandle());
+    }
+
+    private UserHandle parseUserHandle(final HandleResponse response) {
+        return new UserHandle(response.getHandle());
+    }
+
+    private AliasHandle parseAliasHandle(final HandleResponse response) {
+        return new AliasHandle(response.getHandle());
     }
 }

@@ -27,7 +27,6 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountsWithUserRightRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountsWithUserRightResponse;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
@@ -100,9 +99,7 @@ public class Test_LsarEnumerateAccountsWithUserRight {
 
     @Test
     public void lsar_LsarEnumerateAccountsWithUserRightRequest() throws IOException {
-        ContextHandle handle = new ContextHandle();
-        final byte[] b = Hex.decode("00000000e65642fb8690d346879621aa30ed8486");
-        handle.setBytes(b);
+        final byte[] handle = Hex.decode("00000000e65642fb8690d346879621aa30ed8486");
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
@@ -116,9 +113,7 @@ public class Test_LsarEnumerateAccountsWithUserRight {
 
     @Test
     public void LsarEnumerateAccountsWithUserRightRequest_NoRight() throws IOException {
-        ContextHandle handle = new ContextHandle();
-        final byte[] b = Hex.decode("000000000041fa2f0270204bafe49cd42e5b4584");
-        handle.setBytes(b);
+        final byte[] handle = Hex.decode("000000000041fa2f0270204bafe49cd42e5b4584");
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
