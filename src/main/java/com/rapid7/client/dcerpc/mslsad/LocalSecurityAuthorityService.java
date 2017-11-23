@@ -66,9 +66,9 @@ public class LocalSecurityAuthorityService extends Service {
     }
 
     /**
-     * Open a new {@link PolicyHandle} against the given server identified by serverName.
+     * Open a new {@link PolicyHandle}.
      *
-     * @return A new {@link PolicyHandle} for the given server identified by serverName.
+     * @return A new {@link PolicyHandle}.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
@@ -101,7 +101,7 @@ public class LocalSecurityAuthorityService extends Service {
      * Use LsarQueryInformationPolicy to retrieve the {@link PolicyAuditEventsInfo} for the given
      * policy handle.
      *
-     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
      * @return The {@link PolicyAuditEventsInfo} for the given policy handle.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
@@ -120,7 +120,7 @@ public class LocalSecurityAuthorityService extends Service {
      * Use LsarQueryInformationPolicy to retrieve the {@link PolicyDomainInfo} for the given
      * policy handle.
      *
-     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
      * @return The {@link PolicyDomainInfo} for the given policy handle.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
@@ -140,7 +140,7 @@ public class LocalSecurityAuthorityService extends Service {
      * Use LsarQueryInformationPolicy to retrieve the {@link PolicyDomainInfo} for the given
      * policy handle.
      *
-     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
      * @return The {@link PolicyDomainInfo} for the given policy handle.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
@@ -158,7 +158,7 @@ public class LocalSecurityAuthorityService extends Service {
     /**
      * Use LsaEnumerateAccountRights to retrieve a list of account rights for the given sid belonging to the server
      * which is represented by the policyHandle.
-     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
      * @param sid The account to lookup rights for represented as an {@link SID}.
      * @return A list of account rights belonging to the given {@link SID} on the server represented by {@link PolicyHandle}.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
@@ -173,7 +173,7 @@ public class LocalSecurityAuthorityService extends Service {
     /**
      * Use LsarEnumerateAccountsWithUserRight to retrieve a list of {@link SID}s which represent accounts
      * that have the provided userRight.
-     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
      * @param userRight The user right to lookup accounts for.
      * @return A list of {@link SID}s which represent accounts that have the provided userRight.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
@@ -190,7 +190,7 @@ public class LocalSecurityAuthorityService extends Service {
 
     /**
      * Look up {@link SID}s for the given names. Uses {@link LSAPLookupLevel#LSAP_LOOKUP_WKSTA} as a lookup level.
-     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
      * @param names Array of names to lookup {@link SID}s for.
      * @return An array of {@link SID}s. Each entry index in this list corresponds to the same entry index in
      * the provided names array. A null entry indicates that the given name was not found.
@@ -202,7 +202,7 @@ public class LocalSecurityAuthorityService extends Service {
     }
 
     /**
-     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
      * @param lookupLevel Look up level as defined in {@link LSAPLookupLevel}.
      * @param names Array of names to lookup {@link SID}s for.
      * @return An array of {@link SID}s. Each entry index in this list corresponds to the same entry index in
@@ -243,7 +243,7 @@ public class LocalSecurityAuthorityService extends Service {
 
     /**
      * Look up names for the given {@link SID}s. Uses {@link LSAPLookupLevel#LSAP_LOOKUP_WKSTA} as a lookup level.
-     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
      * @param sids Array of {@link SID}s to lookup
      * @return An array of names. Each entry index in this list corresponds to the same entry index in
      * the provided sods array. A null entry indicates that the given {@link SID} was not found.
@@ -255,7 +255,7 @@ public class LocalSecurityAuthorityService extends Service {
     }
 
     /**
-     * @param policyHandle A valid policy handle obtained from {@link LocalSecurityAuthorityService#openPolicyHandle()}.
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
      * @param lookupLevel Look up level as defined in {@link LSAPLookupLevel}.
      * @param sids Array of {@link SID}s to lookup
      * @return An array of names. Each entry index in this list corresponds to the same entry index in
