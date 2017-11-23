@@ -23,7 +23,6 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc245810.aspx">SamrGetMembersInAlias</a>
@@ -57,16 +56,16 @@ import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 public class SamrGetMembersInAliasRequest extends RequestCall<SamrGetMembersInAliasResponse> {
     public static final short OP_NUM = 33;
 
-    private final AliasHandle aliasHandle;
+    private final byte[] aliasHandle;
 
-    public SamrGetMembersInAliasRequest(AliasHandle aliasHandle) {
+    public SamrGetMembersInAliasRequest(byte[] aliasHandle) {
         super(OP_NUM);
         this.aliasHandle = aliasHandle;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(aliasHandle.getBytes());
+        packetOut.write(aliasHandle);
     }
 
     @Override

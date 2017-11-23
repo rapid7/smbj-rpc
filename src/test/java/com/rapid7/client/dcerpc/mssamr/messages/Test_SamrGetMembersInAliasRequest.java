@@ -24,14 +24,12 @@ import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 
 public class Test_SamrGetMembersInAliasRequest {
 
     @DataProvider
     public Object[][] data_requests() {
-        AliasHandle handle = new AliasHandle();
-        handle.setBytes(Hex.decode("000000006a2faac1903cb042b9de41d5cf38cc74"));
+        byte[] handle = Hex.decode("000000006a2faac1903cb042b9de41d5cf38cc74");
         return new Object[][] { { new SamrGetMembersInAliasRequest(handle) } };
     }
 
