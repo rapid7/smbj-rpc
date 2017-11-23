@@ -25,7 +25,6 @@ import java.util.Objects;
 import com.rapid7.client.dcerpc.dto.SID;
 
 /**
-<<<<<<< HEAD:src/main/java/com/rapid7/client/dcerpc/mslsad/dto/PolicyDomainInfo.java
  * This class describes a server's domain.
  */
 public class PolicyDomainInfo {
@@ -33,15 +32,6 @@ public class PolicyDomainInfo {
     private final SID domainSID;
 
     public PolicyDomainInfo(final String domainName, final SID domainSID) {
-=======
- * This class describes a server's primary domain.
- */
-public class PolicyPrimaryDomainInfo {
-    private final String domainName;
-    private final SID domainSID;
-
-    public PolicyPrimaryDomainInfo(final String domainName, final SID domainSID) {
->>>>>>> origin/master:src/main/java/com/rapid7/client/dcerpc/mslsad/dto/PolicyPrimaryDomainInfo.java
         this.domainName = domainName;
         this.domainSID = domainSID;
     }
@@ -72,11 +62,7 @@ public class PolicyPrimaryDomainInfo {
         } else if (! (obj instanceof PolicyDomainInfo)) {
             return false;
         }
-<<<<<<< HEAD:src/main/java/com/rapid7/client/dcerpc/mslsad/dto/PolicyDomainInfo.java
         final PolicyDomainInfo other = (PolicyDomainInfo) obj;
-=======
-        final PolicyPrimaryDomainInfo other = (PolicyPrimaryDomainInfo) obj;
->>>>>>> origin/master:src/main/java/com/rapid7/client/dcerpc/mslsad/dto/PolicyPrimaryDomainInfo.java
         return Objects.equals(this.domainName, other.domainName)
                 && Objects.equals(this.domainSID, other.domainSID);
     }
@@ -84,7 +70,7 @@ public class PolicyPrimaryDomainInfo {
     @Override
     public String toString() {
         final String domainNameStr = (this.domainName != null) ? String.format("\"%s\"", this.domainName) : "null";
-        return String.format("PolicyPrimaryDomainInfo{domainName: %s, domainSID: %s}",
+        return String.format("PolicyDomainInfo{domainName: %s, domainSID: %s}",
                 domainNameStr, this.domainSID);
     }
 }
