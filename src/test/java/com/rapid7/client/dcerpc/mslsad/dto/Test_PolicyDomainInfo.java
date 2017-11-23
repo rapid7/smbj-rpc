@@ -34,7 +34,11 @@ public class Test_PolicyDomainInfo {
     public void test_getters() {
         final String name = "Test";
         final SID sid = new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32});
+<<<<<<< HEAD:src/test/java/com/rapid7/client/dcerpc/mslsad/dto/Test_PolicyDomainInfo.java
         PolicyDomainInfo obj = new PolicyDomainInfo(name, sid);
+=======
+        PolicyPrimaryDomainInfo obj = new PolicyPrimaryDomainInfo(name, sid);
+>>>>>>> origin/master:src/test/java/com/rapid7/client/dcerpc/mslsad/dto/Test_PolicyPrimaryDomainInfo.java
         assertSame(obj.getDomainName(), name);
         assertSame(obj.getDomainSID(), sid);
     }
@@ -62,7 +66,11 @@ public class Test_PolicyDomainInfo {
 
     @Test
     public void test_toString() {
+<<<<<<< HEAD:src/test/java/com/rapid7/client/dcerpc/mslsad/dto/Test_PolicyDomainInfo.java
         PolicyDomainInfo obj = new PolicyDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
+=======
+        PolicyPrimaryDomainInfo obj = new PolicyPrimaryDomainInfo("Test", new SID((byte) 1, new byte[]{0, 0, 0, 0, 0, 5}, new long[]{32}));
+>>>>>>> origin/master:src/test/java/com/rapid7/client/dcerpc/mslsad/dto/Test_PolicyPrimaryDomainInfo.java
         assertEquals(obj.toString(), "PolicyPrimaryDomainInfo{domainName: \"Test\", domainSID: S-1-5-32}");
     }
 }
