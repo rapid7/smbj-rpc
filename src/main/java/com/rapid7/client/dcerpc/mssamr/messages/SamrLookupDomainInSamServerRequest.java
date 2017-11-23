@@ -24,7 +24,6 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
@@ -45,17 +44,17 @@ public class SamrLookupDomainInSamServerRequest extends RequestCall<SamrLookupDo
     public static final short OP_NUM = 5;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE ServerHandle
-    private final ServerHandle serverHandle;
+    private final byte[] serverHandle;
     // <NDR: struct> [in] PRPC_UNICODE_STRING Name,
     private final RPCUnicodeString.NonNullTerminated name;
 
-    public SamrLookupDomainInSamServerRequest(final ServerHandle serverHandle, RPCUnicodeString.NonNullTerminated name) {
+    public SamrLookupDomainInSamServerRequest(final byte[] serverHandle, RPCUnicodeString.NonNullTerminated name) {
         super(OP_NUM);
         this.serverHandle = serverHandle;
         this.name = name;
     }
 
-    public ServerHandle getServerHandle() {
+    public byte[] getServerHandle() {
         return serverHandle;
     }
 
@@ -71,7 +70,7 @@ public class SamrLookupDomainInSamServerRequest extends RequestCall<SamrLookupDo
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SAMPR_HANDLE ServerHandle
-        packetOut.writeMarshallable(getServerHandle());
+        packetOut.write(getServerHandle());
         // <NDR: struct> [in] PRPC_UNICODE_STRING Name
         packetOut.writeMarshallable(getName());
     }

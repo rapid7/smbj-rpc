@@ -24,7 +24,6 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc245718.aspx">SamrQuerySecurityObject</a>
@@ -58,18 +57,18 @@ public class SamrQuerySecurityObjectRequest extends RequestCall<SamrQuerySecurit
     public static final short OP_NUM = 3;
 
     // <NDR: struct> [in] SAMPR_HANDLE ObjectHandle,
-    private final ContextHandle objectHandle;
+    private final byte[] objectHandle;
     // <NDR: unsigned long> [in] SECURITY_INFORMATION SecurityInformation,
     // This is a bitmask, so can store as an int
     private final int securityInformation;
 
-    public SamrQuerySecurityObjectRequest(final ContextHandle objectHandle, final int securityInformation) {
+    public SamrQuerySecurityObjectRequest(final byte[] objectHandle, final int securityInformation) {
         super(OP_NUM);
         this.objectHandle = objectHandle;
         this.securityInformation = securityInformation;
     }
 
-    public ContextHandle getObjectHandle() {
+    public byte[] getObjectHandle() {
         return objectHandle;
     }
 
@@ -86,7 +85,7 @@ public class SamrQuerySecurityObjectRequest extends RequestCall<SamrQuerySecurit
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: struct> [in] SAMPR_HANDLE ObjectHandle,
-        packetOut.writeMarshallable(getObjectHandle());
+        packetOut.write(getObjectHandle());
         // <NDR: unsigned long> [in] SECURITY_INFORMATION SecurityInformation,
         // Alignment: 4 - Already aligned, we wrote 20 bytes above
         packetOut.writeInt(getSecurityInformation());

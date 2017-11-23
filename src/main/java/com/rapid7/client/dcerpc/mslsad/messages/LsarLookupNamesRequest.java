@@ -21,8 +21,6 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSIDs;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import java.io.IOException;
 
@@ -103,9 +101,9 @@ public class LsarLookupNamesRequest extends RequestCall<LsarLookupNamesResponse>
     private final static int LSA_LOOKUP_NAMES_ALL = 0x1;
 
     private final String[] names;
-    private final ContextHandle policyHandle;
+    private final byte[] policyHandle;
 
-    public LsarLookupNamesRequest(final ContextHandle policyHandle, final String[] names) {
+    public LsarLookupNamesRequest(final byte[] policyHandle, final String[] names) {
         super(OP_NUM);
         this.names = names;
         this.policyHandle = policyHandle;
@@ -120,7 +118,7 @@ public class LsarLookupNamesRequest extends RequestCall<LsarLookupNamesResponse>
     public void marshal(final PacketOutput packetOut)
         throws IOException
     {
-        packetOut.writeMarshallable(policyHandle);
+        packetOut.write(policyHandle);
         packetOut.writeInt(names.length);
         writeNames(packetOut);
         packetOut.align(Alignment.FOUR); // Names is variable length; align for SID

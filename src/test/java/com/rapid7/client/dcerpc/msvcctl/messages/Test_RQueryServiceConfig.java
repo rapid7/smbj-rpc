@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -27,7 +28,6 @@ import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -50,7 +50,7 @@ public class Test_RQueryServiceConfig {
     @SuppressWarnings("unchecked")
     @Test
     public void encodeQueryServiceConfig() throws IOException {
-        ContextHandle testHandle = new ContextHandle("000000000815c0569f05b143befdb8e2112c22d9");
+        byte[] testHandle = Hex.decode("000000000815c0569f05b143befdb8e2112c22d9");
         final RQueryServiceConfigWRequest request = new RQueryServiceConfigWRequest(testHandle, RQueryServiceConfigWRequest.MAX_BUFFER_SIZE);
         assertEquals(request.toHexString(), "000000000815c0569f05b143befdb8e2112c22d900200000");
     }

@@ -24,49 +24,53 @@ package com.rapid7.client.dcerpc.mslsad.dto;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.dto.SID;
 
-public class PolicyPrimaryDomInfo {
-    private final String name;
-    private final SID sid;
+/**
+ * This class describes a server's domain.
+ */
+public class PolicyDomainInfo {
+    private final String domainName;
+    private final SID domainSID;
 
-    public PolicyPrimaryDomInfo(final String name, final SID sid) {
-        this.name = name;
-        this.sid = sid;
+    public PolicyDomainInfo(final String domainName, final SID domainSID) {
+        this.domainName = domainName;
+        this.domainSID = domainSID;
     }
 
     /**
      * @return The name of this policy's primary domain. May be null.
      */
-    public String getName() {
-        return name;
+    public String getDomainName() {
+        return domainName;
     }
 
     /**
      * @return The {@link SID} for this policy's primary domain. May be null.
      */
-    public SID getSID() {
-        return sid;
+    public SID getDomainSID() {
+        return domainSID;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getSID());
+        return Objects.hash(this.domainName, this.domainSID);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof PolicyPrimaryDomInfo)) {
+        } else if (! (obj instanceof PolicyDomainInfo)) {
             return false;
         }
-        final PolicyPrimaryDomInfo other = (PolicyPrimaryDomInfo) obj;
-        return Objects.equals(getName(), other.getName())
-                && Objects.equals(getSID(), other.getSID());
+        final PolicyDomainInfo other = (PolicyDomainInfo) obj;
+        return Objects.equals(this.domainName, other.domainName)
+                && Objects.equals(this.domainSID, other.domainSID);
     }
 
     @Override
     public String toString() {
-        return String.format("PolicyPrimaryDomInfo{name:%s,sid:%s}",
-                getName(), getSID());
+        final String domainNameStr = (this.domainName != null) ? String.format("\"%s\"", this.domainName) : "null";
+        return String.format("PolicyDomainInfo{domainName: %s, domainSID: %s}",
+                domainNameStr, this.domainSID);
     }
 }

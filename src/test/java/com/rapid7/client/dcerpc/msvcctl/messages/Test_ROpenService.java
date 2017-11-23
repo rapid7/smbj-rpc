@@ -19,11 +19,11 @@
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import com.rapid7.client.dcerpc.msvcctl.ServiceControlManagerService;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,7 +34,7 @@ public class Test_ROpenService {
     @SuppressWarnings("unchecked")
     @Test
     public void encodeROpenServiceRequest() throws IOException {
-        ContextHandle dummyHandle = new ContextHandle("00000000905b8d8804ce08479cb8f06082448314");
+        byte[] dummyHandle = Hex.decode("00000000905b8d8804ce08479cb8f06082448314");
         final ROpenServiceWRequest request = new ROpenServiceWRequest(dummyHandle, ServiceControlManagerService.REMOTE_REGISTRY, ServiceControlManagerService.FULL_ACCESS);
         assertEquals(request.toHexString(), "00000000905b8d8804ce08479cb8f060824483140f000000000000000f000000520065006d006f007400650072006500670069007300740072007900000000003f000f00");
     }

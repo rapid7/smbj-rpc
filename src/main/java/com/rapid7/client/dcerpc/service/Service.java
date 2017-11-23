@@ -23,10 +23,10 @@ package com.rapid7.client.dcerpc.service;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.dto.ContextHandle;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -64,18 +64,6 @@ public abstract class Service {
 
     protected byte[] parseHandle(final ContextHandle handle) {
         return handle.getBytes();
-    }
-
-    protected ContextHandle parseHandle(final byte[] handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Expecting non-null handle");
-        } else if (handle.length != 20) {
-            throw new IllegalArgumentException(String.format(
-                    "Expected handle to contain 20 entries, got: %d", handle.length));
-        }
-        final ContextHandle contextHandle = new ContextHandle();
-        contextHandle.setBytes(handle);
-        return contextHandle;
     }
 
     protected RPCSID parseSID(final SID sid) {

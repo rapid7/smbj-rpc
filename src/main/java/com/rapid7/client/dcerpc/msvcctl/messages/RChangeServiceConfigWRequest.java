@@ -22,16 +22,15 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msvcctl.objects.IServiceConfigInfo;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConfigWResponse>
 {
     private final static short OP_NUM = 11;
-    private ContextHandle serviceHandle;
+    private byte[] serviceHandle;
     private IServiceConfigInfo serviceConfigInfo;
 
     public RChangeServiceConfigWRequest(
-        final ContextHandle handle,
+        final byte[] handle,
         final IServiceConfigInfo serviceConfigInfo){
         super(OP_NUM);
         this.serviceHandle = handle;
@@ -45,7 +44,7 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(serviceHandle.getBytes());
+        packetOut.write(serviceHandle);
         packetOut.writeInt(serviceConfigInfo.getServiceType().getValue());
         packetOut.writeInt(serviceConfigInfo.getStartType().getValue());
         packetOut.writeInt(serviceConfigInfo.getErrorControl().getValue());

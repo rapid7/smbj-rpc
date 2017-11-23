@@ -24,7 +24,6 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
@@ -57,13 +56,13 @@ public class SamrLookupNamesInDomainRequest extends RequestCall<SamrLookupNamesI
     public static final short OP_NUM = 17;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-    private final DomainHandle domainHandle;
+    private final byte[] domainHandle;
     // <NDR: unsigned long> [in, range(0,1000)] unsigned long Count
     // Derived from names
     // <NDR: conformant varying array> [in, size_is(1000), length_is(Count)] RPC_UNICODE_STRING Names[*]
     private final RPCUnicodeString.NonNullTerminated[] names;
 
-    public SamrLookupNamesInDomainRequest(final DomainHandle domainHandle, final RPCUnicodeString.NonNullTerminated[] names) {
+    public SamrLookupNamesInDomainRequest(final byte[] domainHandle, final RPCUnicodeString.NonNullTerminated[] names) {
         super(OP_NUM);
         if (domainHandle == null) {
             throw new IllegalArgumentException("domainHandle must not be null");
@@ -78,7 +77,7 @@ public class SamrLookupNamesInDomainRequest extends RequestCall<SamrLookupNamesI
         this.names = names;
     }
 
-    public DomainHandle getDomainHandle() {
+    public byte[] getDomainHandle() {
         return domainHandle;
     }
 
@@ -95,7 +94,7 @@ public class SamrLookupNamesInDomainRequest extends RequestCall<SamrLookupNamesI
     public void marshal(PacketOutput packetOut) throws IOException {
         // [in] SAMPR_HANDLE DomainHandle
         // Alignment: 1 - Already aligned
-        packetOut.writeMarshallable(this.domainHandle);
+        packetOut.write(this.domainHandle);
         // <NDR: unsigned long> [in, range(0,1000)] unsigned long Count
         // Alignment: 4 - Already aligned, wrote 20 bytes above
         packetOut.writeInt(this.names.length);

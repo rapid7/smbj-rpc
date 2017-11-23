@@ -20,6 +20,7 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 
 /**
@@ -35,7 +36,7 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
  *  ServerHandle: An RPC context handle, as specified in section 2.2.3.2.
  *  DesiredAccess: An ACCESS_MASK that indicates the access requested for ServerHandle on output. See section 2.2.1.3 for a listing of possible values.</pre></blockquote>
  */
-public class SamrConnect2Request extends RequestCall<SamrConnect2Response> {
+public class SamrConnect2Request extends RequestCall<HandleResponse> {
     public final static short OP_NUM = 57;
 
     // <NDR: pointer[struct]> [in, unique, string] PSAMPR_SERVER_NAME ServerName
@@ -58,7 +59,7 @@ public class SamrConnect2Request extends RequestCall<SamrConnect2Response> {
     }
 
     @Override
-    public SamrConnect2Response getResponseObject() {
-        return new SamrConnect2Response();
+    public HandleResponse getResponseObject() {
+        return new HandleResponse();
     }
 }

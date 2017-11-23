@@ -20,8 +20,8 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc245751.aspx">SamrOpenAlias</a>
@@ -42,17 +42,17 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
  *
  *  This protocol asks the RPC runtime, via the strict_context_handle attribute, to reject the use of context handles created by a method of a different RPC interface than this one, as specified in [MS-RPCE] section 3.</pre></blockquote>
  */
-public class SamrOpenAliasRequest extends RequestCall<SamrOpenAliasResponse> {
+public class SamrOpenAliasRequest extends RequestCall<HandleResponse> {
     public final static short OP_NUM = 27;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-    private final DomainHandle domainHandle;
+    private final byte[] domainHandle;
     // <NDR: unsigned long> [in] unsigned long DesiredAccess
     private final int desiredAccess;
     // <NDR: unsigned long> [in] unsigned long AliasId
-    private final int aliasId;
+    private final long aliasId;
 
-    public SamrOpenAliasRequest(DomainHandle domainHandle, int desiredAccess, int aliasId) {
+    public SamrOpenAliasRequest(byte[] domainHandle, int desiredAccess, long aliasId) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
         this.desiredAccess = desiredAccess;
@@ -62,7 +62,7 @@ public class SamrOpenAliasRequest extends RequestCall<SamrOpenAliasResponse> {
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-        packetOut.writeMarshallable(this.domainHandle);
+        packetOut.write(this.domainHandle);
         // <NDR: unsigned long> [in] unsigned long AliasId
         // Alignment: 4 - Already aligned
         packetOut.writeInt(this.desiredAccess);
@@ -72,8 +72,8 @@ public class SamrOpenAliasRequest extends RequestCall<SamrOpenAliasResponse> {
     }
 
     @Override
-    public SamrOpenAliasResponse getResponseObject() {
-        return new SamrOpenAliasResponse();
+    public HandleResponse getResponseObject() {
+        return new HandleResponse();
     }
 
 }

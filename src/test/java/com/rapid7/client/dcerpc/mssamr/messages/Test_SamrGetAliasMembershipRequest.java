@@ -26,12 +26,9 @@ import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.dto.SID;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 
 public class Test_SamrGetAliasMembershipRequest {
-
-    private final DomainHandle handle = new DomainHandle();
 
     @Test
     public void getStub() throws IOException {
@@ -45,9 +42,8 @@ public class Test_SamrGetAliasMembershipRequest {
         rpcSid2.setRevision((char) sid2.getRevision());
         rpcSid2.setIdentifierAuthority(sid2.getIdentifierAuthority());
         rpcSid2.setSubAuthority(sid2.getSubAuthorities());
+        byte[] handle = Hex.decode("000000005f32a420f68b2645b4e0e8467cc2e111");
         SamrGetAliasMembershipRequest request1 = new SamrGetAliasMembershipRequest(handle, rpcSid1, rpcSid2);
-
-        handle.setBytes(Hex.decode("000000005f32a420f68b2645b4e0e8467cc2e111"));
         assertEquals(
             "000000005f32a420f68b2645b4e0e8467cc2e11102000000000002000200000004000200080002000100000001010000000000052000000001000000010100000000000515000000",
             toHexString(request1.getStub()));
@@ -55,21 +51,21 @@ public class Test_SamrGetAliasMembershipRequest {
 
     @Test
     public void getStubEmptyArray() throws IOException {
+        byte[] handle = Hex.decode("000000005f32a420f68b2645b4e0e8467cc2e111");
         SamrGetAliasMembershipRequest request1 = new SamrGetAliasMembershipRequest(handle);
-        handle.setBytes(Hex.decode("000000005f32a420f68b2645b4e0e8467cc2e111"));
         assertEquals("000000005f32a420f68b2645b4e0e8467cc2e111000000000000020000000000",
             toHexString(request1.getStub()));
     }
 
     @Test
     public void getResponseObject() throws IOException {
-        SamrGetAliasMembershipRequest request1 = new SamrGetAliasMembershipRequest(handle);
+        SamrGetAliasMembershipRequest request1 = new SamrGetAliasMembershipRequest(new byte[20]);
         assertThat(request1.getResponseObject(), instanceOf(SamrGetAliasMembershipResponse.class));
     }
 
     @Test
     public void getOpNum() {
-        SamrGetAliasMembershipRequest request1 = new SamrGetAliasMembershipRequest(handle);
+        SamrGetAliasMembershipRequest request1 = new SamrGetAliasMembershipRequest(new byte[20]);
         assertEquals(SamrGetAliasMembershipRequest.OP_NUM, request1.getOpNum());
     }
 }

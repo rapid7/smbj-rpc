@@ -18,8 +18,6 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
-
 /**
  * The SamrEnumerateAliasesInDomain method enumerates all aliases.
  *
@@ -39,7 +37,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 public class SamrEnumerateAliasesInDomainRequest extends SamrEnumerateRequest<SamrEnumerateAliasesInDomainResponse> {
     public static final short OP_NUM = 15;
 
-    public SamrEnumerateAliasesInDomainRequest(DomainHandle handle, int enumContext, int maxLength) {
+    public SamrEnumerateAliasesInDomainRequest(byte[] handle, int enumContext, int maxLength) {
         super(OP_NUM, handle, enumContext, maxLength);
     }
 

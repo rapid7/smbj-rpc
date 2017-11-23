@@ -19,8 +19,10 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
+
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -28,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class Test_SamrCloseHandleRequest {
-    SamrCloseHandleRequest request = new SamrCloseHandleRequest(new ContextHandle("0000000032daf234b77c86409d29efe60d326683"));
+    SamrCloseHandleRequest request = new SamrCloseHandleRequest(Hex.decode("0000000032daf234b77c86409d29efe60d326683"));
 
     @Test
     public void getOpNum() {
@@ -42,7 +44,7 @@ public class Test_SamrCloseHandleRequest {
 
     @Test
     public void getResponseObject() throws IOException {
-        assertThat(request.getResponseObject(), instanceOf(SamrCloseHandleResponse.class));
+        assertThat(request.getResponseObject(), instanceOf(HandleResponse.class));
     }
 
 }

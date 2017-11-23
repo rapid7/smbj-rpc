@@ -23,7 +23,6 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 
@@ -59,14 +58,14 @@ public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable
     public final static short OP_NUM = 8;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-    private final DomainHandle domainHandle;
+    private final byte[] domainHandle;
 
-    public SamrQueryInformationDomainRequest(final DomainHandle domainHandle) {
+    public SamrQueryInformationDomainRequest(final byte[] domainHandle) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
     }
 
-    public DomainHandle getDomainHandle() {
+    public byte[] getDomainHandle() {
         return domainHandle;
     }
 
@@ -75,15 +74,15 @@ public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-        packetOut.write(getDomainHandle().getBytes());
+        packetOut.write(this.domainHandle);
         // <NDR: short> switch_is(DomainInformationClass)
         // Alignment: 2 - Already aligned, wrote 20 bytes above
         packetOut.writeShort(getDomainInformationClass().getInfoLevel());
     }
 
     public static class DomainPasswordInformation extends SamrQueryInformationDomainRequest<SAMPRDomainPasswordInfo> {
-        public DomainPasswordInformation(final DomainHandle handle) {
-            super(handle);
+        public DomainPasswordInformation(final byte[] domainHandle) {
+            super(domainHandle);
         }
 
         @Override
@@ -98,8 +97,8 @@ public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable
     }
 
     public static class DomainLogOffInformation extends SamrQueryInformationDomainRequest<SAMPRDomainLogOffInfo> {
-        public DomainLogOffInformation(final DomainHandle handle) {
-            super(handle);
+        public DomainLogOffInformation(final byte[] domainHandle) {
+            super(domainHandle);
         }
 
         @Override
