@@ -65,6 +65,18 @@ public class LocalSecurityAuthorityService extends Service {
     }
 
     /**
+     * Open a new {@link PolicyHandle} against the given server identified by serverName.
+     *
+     * @return A new {@link PolicyHandle} for the given server identified by serverName.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public PolicyHandle openPolicyHandle() throws IOException {
+        final LsarOpenPolicy2Request request = new LsarOpenPolicy2Request("", MAXIMUM_ALLOWED);
+        return parsePolicyHandle(callExpectSuccess(request, "LsarOpenPolicy2").getHandle());
+    }
+
+    /**
      * Close the provided {@link PolicyHandle}.
      * If the handle has already been closed or is otherwise invalid it will be ignored.
      * @param handle The handle to close.
@@ -82,18 +94,6 @@ public class LocalSecurityAuthorityService extends Service {
             return false;
         }
         throw new RPCException("LsarClose", response.getReturnValue());
-    }
-
-    /**
-     * Open a new {@link PolicyHandle} against the given server identified by serverName.
-     *
-     * @return A new {@link PolicyHandle} for the given server identified by serverName.
-     * @throws IOException Thrown if either a communication failure is encountered, or the call
-     * returns an unsuccessful response.
-     */
-    public PolicyHandle openPolicyHandle() throws IOException {
-        final LsarOpenPolicy2Request request = new LsarOpenPolicy2Request("", MAXIMUM_ALLOWED);
-        return parsePolicyHandle(callExpectSuccess(request, "LsarOpenPolicy2").getHandle());
     }
 
     /**
