@@ -19,17 +19,17 @@
 
 package com.rapid7.client.dcerpc.mslsad;
 
-import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsRequest;
-import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsResponse;
-import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
-import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedName;
-import com.rapid7.client.dcerpc.objects.RPCSID;
+import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static org.junit.Assert.assertEquals;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsResponse;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedName;
+import com.rapid7.client.dcerpc.objects.RPCSID;
 
 public class Test_LookupSIDs
 {
@@ -77,7 +77,7 @@ public class Test_LookupSIDs
         sid3.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
         sid3.setSubAuthority(new long[]{21, 2947824804L, 3171091966L, 890232435, 500});
         final RPCSID[] rpcsids = {sid1, sid2, sid3};
-        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(fakePolicyHandle, rpcsids);
+        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(fakePolicyHandle, rpcsids, 1);
         assertEquals(request.toHexString(), "000000003a668348d29edc4db807b15d0cbf832403000000000002000300000004000200080002000c00020005000000010500000000000515000000a43cb4affe0503bd73de0f35f501000005000000010500000000000515000000a43cb4affe0503bd73de0f35e903000005000000010500000000000515000000a43cb4affe0503bd73de0f35f401000000000000000000000100000000000000");
     }
 }

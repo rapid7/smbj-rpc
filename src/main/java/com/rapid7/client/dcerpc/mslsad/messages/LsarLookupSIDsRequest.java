@@ -18,11 +18,11 @@
  */
 package com.rapid7.client.dcerpc.mslsad.messages;
 
+import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRSIDEnumBuffer;
 import com.rapid7.client.dcerpc.objects.RPCSID;
-import java.io.IOException;
 
 /**
  *    <h1 class="title">3.1.4.11 LsarLookupSids (Opnum 15)</h1>
@@ -109,15 +109,16 @@ import java.io.IOException;
 
 public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
     private final static short OP_NUM = 15;
-    private final static int LSA_LOOKUP_NAMES_ALL = 0x1;
 
     private final LSAPRSIDEnumBuffer lsaprsidEnumBuffer;
     private final byte[] policyHandle;
+    private final int lookupLevel;
 
-    public LsarLookupSIDsRequest(final byte[] policyHandle, final RPCSID[] rpcSIDs) {
+    public LsarLookupSIDsRequest(final byte[] policyHandle, final RPCSID[] rpcSIDs, final int lookupLevel) {
         super(OP_NUM);
         this.policyHandle = policyHandle;
         this.lsaprsidEnumBuffer = new LSAPRSIDEnumBuffer(rpcSIDs);
+        this.lookupLevel = lookupLevel;
     }
 
     @Override
@@ -135,7 +136,7 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
         packetOut.writeInt(0); //count of names
         packetOut.writeNull();
         //LookupLevel
-        packetOut.writeInt(LSA_LOOKUP_NAMES_ALL);
+        packetOut.writeInt(lookupLevel);
 
         packetOut.writeNull(); // Count (ignored on input)
     }

@@ -18,11 +18,11 @@
  */
 package com.rapid7.client.dcerpc.mslsad.messages;
 
+import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
-import java.io.IOException;
 
 /**
  *  <h1 class="title">3.1.4.8 LsarLookupNames (Opnum 14)</h1>
@@ -102,11 +102,13 @@ public class LsarLookupNamesRequest extends RequestCall<LsarLookupNamesResponse>
 
     private final String[] names;
     private final byte[] policyHandle;
+    private final int lookupLevel;
 
-    public LsarLookupNamesRequest(final byte[] policyHandle, final String[] names) {
+    public LsarLookupNamesRequest(final byte[] policyHandle, final String[] names, int lookupLevel) {
         super(OP_NUM);
         this.names = names;
         this.policyHandle = policyHandle;
+        this.lookupLevel = lookupLevel;
     }
 
     @Override
@@ -127,7 +129,7 @@ public class LsarLookupNamesRequest extends RequestCall<LsarLookupNamesResponse>
         packetOut.writeInt(0); //count for SID
         packetOut.writeNull(); // SID
 
-        packetOut.writeInt(LSA_LOOKUP_NAMES_ALL);
+        packetOut.writeInt(lookupLevel);
         packetOut.writeNull(); // Count (ignored on input)
     }
 

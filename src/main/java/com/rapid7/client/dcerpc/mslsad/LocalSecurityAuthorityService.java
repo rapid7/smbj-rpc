@@ -18,32 +18,32 @@
  */
 package com.rapid7.client.dcerpc.mslsad;
 
+import java.io.IOException;
+import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyAccountDomainInfo;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyAuditEventsInfo;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyHandle;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyPrimaryDomainInfo;
-import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAccountDomInfo;
-import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAuditEventsInfo;
-import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyPrimaryDomInfo;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarCloseRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountRightsRequest;
+import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountsWithUserRightRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupNamesResponse;
-import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountsWithUserRightRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarLookupSIDsResponse;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarOpenPolicy2Request;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarQueryInformationPolicyRequest;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAccountDomInfo;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAuditEventsInfo;
+import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyPrimaryDomInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedName;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSID;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTrustInformation;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.service.Service;
-import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
-import java.io.IOException;
 
 /**
  * This class implements a partial Local Security Authority service in according with [MS-LSAD] and [MS-LSAT].
@@ -142,14 +142,16 @@ public class LocalSecurityAuthorityService extends Service {
     }
 
     /**
-     *
      * @param policyHandle Handle to the policy
+     * @param lookupLevel Look up level as defined in {@link LSAPLookupLevel}.
      * @param names Names to lookup SIDs for
      * @return Returns a list of SIDs
      * @throws IOException Thrown if exception happens at the RPC layer
      */
-    public SID[] lookupNames(final PolicyHandle policyHandle, final String... names) throws IOException {
-        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(parseHandle(policyHandle), names);
+    public SID[] lookupNames(final PolicyHandle policyHandle, final LSAPLookupLevel lookupLevel, final String... names)
+            throws IOException {
+        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(parseHandle(policyHandle), names,
+                lookupLevel.getValue());
         LsarLookupNamesResponse response = callExpect(request, "LsarLookupNames",
                 SystemErrorCode.ERROR_SUCCESS,
                 SystemErrorCode.STATUS_SOME_NOT_MAPPED);
@@ -174,14 +176,21 @@ public class LocalSecurityAuthorityService extends Service {
         return sids;
     }
 
+    public SID[] lookupNames(final PolicyHandle policyHandle, String... names) throws IOException {
+        return lookupNames(policyHandle, LSAPLookupLevel.LsapLookupWksta, names);
+    }
+
     /**
      * @param policyHandle Handle to the policy
+     * @param lookupLevel Look up level as defined in {@link LSAPLookupLevel}.
      * @param sids List of SIDs to lookup
      * @return A list of Strings containing account names. Where account names are not mapped, null is returned.
      * @throws IOException Thrown if exception happens at the RPC layer
      */
-    public String[] lookupSIDs(final PolicyHandle policyHandle, SID ... sids) throws IOException {
-        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(parseHandle(policyHandle), parseSIDs(sids));
+    public String[] lookupSIDs(final PolicyHandle policyHandle, final LSAPLookupLevel lookupLevel, SID... sids)
+            throws IOException {
+        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(parseHandle(policyHandle), parseSIDs(sids),
+                lookupLevel.getValue());
         final LsarLookupSIDsResponse lsarLookupSIDsResponse = callExpect(request, "LsarLookupSIDs",
                 SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED);
 
@@ -191,6 +200,10 @@ public class LocalSecurityAuthorityService extends Service {
             mappedNames[i] = nameArray[i].getName().getValue();
         }
         return mappedNames;
+    }
+
+    public String[] lookupSIDs(final PolicyHandle policyHandle, SID... sids) throws IOException {
+        return lookupSIDs(policyHandle, LSAPLookupLevel.LsapLookupWksta, sids);
     }
 
     private PolicyHandle parsePolicyHandle(final byte[] handle) {
