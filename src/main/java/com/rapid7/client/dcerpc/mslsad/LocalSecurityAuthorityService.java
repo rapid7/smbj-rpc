@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.mslsad;
 
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import com.rapid7.client.dcerpc.mslsad.dto.PolicyAccountDomainInfo;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyAuditEventsInfo;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyHandle;
 import com.rapid7.client.dcerpc.mslsad.dto.PolicyPrimaryDomainInfo;
@@ -81,6 +82,15 @@ public class LocalSecurityAuthorityService extends Service {
                 policyInformation.getEventAuditingOptions());
     }
 
+    /**
+     * Use LsarQueryInformationPolicy to retrieve the {@link PolicyPrimaryDomainInfo} for the given
+     * policy handle.
+     *
+     * @param policyHandle The policy which corresponds to the returned {@link PolicyPrimaryDomainInfo}
+     * @return The {@link PolicyPrimaryDomainInfo} for the given policy handle.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
     public PolicyPrimaryDomainInfo getPolicyPrimaryDomainInformation(final PolicyHandle policyHandle)
             throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyPrimaryDomainInformation request =
@@ -92,11 +102,23 @@ public class LocalSecurityAuthorityService extends Service {
                 parseRPCSID(policyInformation.getSid()));
     }
 
-    public LSAPRPolicyAccountDomInfo getPolicyAccountDomainInformation(final PolicyHandle policyHandle)
+    /**
+     * Use LsarQueryInformationPolicy to retrieve the {@link PolicyAccountDomainInfo} for the given
+     * policy handle.
+     *
+     * @param policyHandle The policy which corresponds to the returned {@link PolicyAccountDomainInfo}
+     * @return The {@link PolicyAccountDomainInfo} for the given policy handle.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public PolicyAccountDomainInfo getPolicyAccountDomainInformation(final PolicyHandle policyHandle)
             throws IOException {
         final LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation request =
                 new LsarQueryInformationPolicyRequest.PolicyAccountDomainInformation(parseHandle(policyHandle));
-        return callExpectSuccess(request, "LsarQueryInformationPolicy[5]").getPolicyInformation();
+        final LSAPRPolicyAccountDomInfo policyInformation =
+                callExpectSuccess(request, "LsarQueryInformationPolicy[5]").getPolicyInformation();
+        return new PolicyAccountDomainInfo(policyInformation.getDomainName().getValue(),
+                parseRPCSID(policyInformation.getDomainSid()));
     }
 
     public String[] getLookupAcctPrivs(final PolicyHandle policyHandle, final SID sid) throws IOException {

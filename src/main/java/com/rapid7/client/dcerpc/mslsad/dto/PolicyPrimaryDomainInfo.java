@@ -24,32 +24,35 @@ package com.rapid7.client.dcerpc.mslsad.dto;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.dto.SID;
 
+/**
+ * This class describes a server's primary domain.
+ */
 public class PolicyPrimaryDomainInfo {
-    private final String name;
-    private final SID sid;
+    private final String domainName;
+    private final SID domainSID;
 
-    public PolicyPrimaryDomainInfo(final String name, final SID sid) {
-        this.name = name;
-        this.sid = sid;
+    public PolicyPrimaryDomainInfo(final String domainName, final SID domainSID) {
+        this.domainName = domainName;
+        this.domainSID = domainSID;
     }
 
     /**
      * @return The name of this policy's primary domain. May be null.
      */
-    public String getName() {
-        return name;
+    public String getDomainName() {
+        return domainName;
     }
 
     /**
      * @return The {@link SID} for this policy's primary domain. May be null.
      */
-    public SID getSID() {
-        return sid;
+    public SID getDomainSID() {
+        return domainSID;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getSID());
+        return Objects.hash(this.domainName, this.domainSID);
     }
 
     @Override
@@ -60,15 +63,14 @@ public class PolicyPrimaryDomainInfo {
             return false;
         }
         final PolicyPrimaryDomainInfo other = (PolicyPrimaryDomainInfo) obj;
-        return Objects.equals(getName(), other.getName())
-                && Objects.equals(getSID(), other.getSID());
+        return Objects.equals(this.domainName, other.domainName)
+                && Objects.equals(this.domainSID, other.domainSID);
     }
 
     @Override
     public String toString() {
-        final String name = getName();
-        final String nameStr = (name != null) ? String.format("\"%s\"", name) : "null";
-        return String.format("PolicyPrimaryDomainInfo{name:%s, sid:%s}",
-                nameStr, getSID());
+        final String domainNameStr = (this.domainName != null) ? String.format("\"%s\"", this.domainName) : "null";
+        return String.format("PolicyPrimaryDomainInfo{domainName: %s, domainSID: %s}",
+                domainNameStr, this.domainSID);
     }
 }
