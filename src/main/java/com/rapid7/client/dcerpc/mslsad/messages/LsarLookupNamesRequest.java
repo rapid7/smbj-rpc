@@ -98,13 +98,12 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 public class LsarLookupNamesRequest extends RequestCall<LsarLookupNamesResponse> {
     private final static short OP_NUM = 14;
-    private final static int LSA_LOOKUP_NAMES_ALL = 0x1;
 
     private final String[] names;
     private final byte[] policyHandle;
-    private final int lookupLevel;
+    private final short lookupLevel;
 
-    public LsarLookupNamesRequest(final byte[] policyHandle, final String[] names, int lookupLevel) {
+    public LsarLookupNamesRequest(final byte[] policyHandle, final String[] names, short lookupLevel) {
         super(OP_NUM);
         this.names = names;
         this.policyHandle = policyHandle;
@@ -129,7 +128,8 @@ public class LsarLookupNamesRequest extends RequestCall<LsarLookupNamesResponse>
         packetOut.writeInt(0); //count for SID
         packetOut.writeNull(); // SID
 
-        packetOut.writeInt(lookupLevel);
+        packetOut.writeShort(lookupLevel);
+        packetOut.pad(2);
         packetOut.writeNull(); // Count (ignored on input)
     }
 

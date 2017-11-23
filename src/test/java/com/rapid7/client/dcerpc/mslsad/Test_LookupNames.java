@@ -67,8 +67,20 @@ public class Test_LookupNames {
         throws IOException {
         final byte[] fakePolicyHandle = Hex.decode("000000008e3039708fdd9f488f9665426d0d9c57");
         final String[] names = {"Administrator"};
-        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names, 1);
+        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names,
+                LSAPLookupLevel.LsapLookupWksta.getValue());
         assertEquals(request.toHexString(), "000000008e3039708fdd9f488f9665426d0d9c5701000000010000001a001a00000002000d000000000000000d000000410064006d0069006e006900730074007200610074006f007200000000000000000000000100000000000000");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void encodeLookupNamesRequest2() throws IOException {
+        final byte[] fakePolicyHandle = Hex.decode("000000008e3039708fdd9f488f9665426d0d9c57");
+        final String[] names = { "Administrator" };
+        final LsarLookupNamesRequest request = new LsarLookupNamesRequest(fakePolicyHandle, names,
+                LSAPLookupLevel.LsapLookupTDL.getValue());
+        assertEquals(request.toHexString(),
+            "000000008e3039708fdd9f488f9665426d0d9c5701000000010000001a001a00000002000d000000000000000d000000410064006d0069006e006900730074007200610074006f007200000000000000000000000300000000000000");
     }
 
     //This test is to verify that the Service correctly sets invalid SIDs to null from a valid response

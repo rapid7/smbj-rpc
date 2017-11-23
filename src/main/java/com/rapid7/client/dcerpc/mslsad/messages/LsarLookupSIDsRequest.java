@@ -112,9 +112,9 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
 
     private final LSAPRSIDEnumBuffer lsaprsidEnumBuffer;
     private final byte[] policyHandle;
-    private final int lookupLevel;
+    private final short lookupLevel;
 
-    public LsarLookupSIDsRequest(final byte[] policyHandle, final RPCSID[] rpcSIDs, final int lookupLevel) {
+    public LsarLookupSIDsRequest(final byte[] policyHandle, final RPCSID[] rpcSIDs, final short lookupLevel) {
         super(OP_NUM);
         this.policyHandle = policyHandle;
         this.lsaprsidEnumBuffer = new LSAPRSIDEnumBuffer(rpcSIDs);
@@ -136,7 +136,8 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
         packetOut.writeInt(0); //count of names
         packetOut.writeNull();
         //LookupLevel
-        packetOut.writeInt(lookupLevel);
+        packetOut.writeShort(lookupLevel);
+        packetOut.pad(2);
 
         packetOut.writeNull(); // Count (ignored on input)
     }

@@ -242,7 +242,7 @@ public enum LSAPLookupLevel {
      */
     LsapLookupRODCReferralToFullDC;
 
-    public int getValue() {
-        return ordinal() + 1;
+    public short getValue() {
+        return (short) (ordinal() + 1);
     }
 }

@@ -77,7 +77,36 @@ public class Test_LookupSIDs
         sid3.setIdentifierAuthority(new byte[]{0, 0, 0, 0, 0, 5});
         sid3.setSubAuthority(new long[]{21, 2947824804L, 3171091966L, 890232435, 500});
         final RPCSID[] rpcsids = {sid1, sid2, sid3};
-        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(fakePolicyHandle, rpcsids, 1);
+        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(fakePolicyHandle, rpcsids,
+                LSAPLookupLevel.LsapLookupWksta.getValue());
         assertEquals(request.toHexString(), "000000003a668348d29edc4db807b15d0cbf832403000000000002000300000004000200080002000c00020005000000010500000000000515000000a43cb4affe0503bd73de0f35f501000005000000010500000000000515000000a43cb4affe0503bd73de0f35e903000005000000010500000000000515000000a43cb4affe0503bd73de0f35f401000000000000000000000100000000000000");
     }
+
+    @Test
+    public void encodeLookupSIDsRequest2() throws IOException {
+        final byte[] fakePolicyHandle = Hex.decode("000000003a668348d29edc4db807b15d0cbf8324");
+        /*
+         * "S-1-5-21-2947824804-3171091966-890232435-501",
+         * "S-1-5-21-2947824804-3171091966-890232435-1001",
+         * "S-1-5-21-2947824804-3171091966-890232435-500"
+         */
+        RPCSID sid1 = new RPCSID();
+        sid1.setRevision((char) 1);
+        sid1.setIdentifierAuthority(new byte[] { 0, 0, 0, 0, 0, 5 });
+        sid1.setSubAuthority(new long[] { 21, 2947824804L, 3171091966L, 890232435, 501 });
+        RPCSID sid2 = new RPCSID();
+        sid2.setRevision((char) 1);
+        sid2.setIdentifierAuthority(new byte[] { 0, 0, 0, 0, 0, 5 });
+        sid2.setSubAuthority(new long[] { 21, 2947824804L, 3171091966L, 890232435, 1001 });
+        RPCSID sid3 = new RPCSID();
+        sid3.setRevision((char) 1);
+        sid3.setIdentifierAuthority(new byte[] { 0, 0, 0, 0, 0, 5 });
+        sid3.setSubAuthority(new long[] { 21, 2947824804L, 3171091966L, 890232435, 500 });
+        final RPCSID[] rpcsids = { sid1, sid2, sid3 };
+        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(fakePolicyHandle, rpcsids,
+                LSAPLookupLevel.LsapLookupTDL.getValue());
+        assertEquals(request.toHexString(),
+            "000000003a668348d29edc4db807b15d0cbf832403000000000002000300000004000200080002000c00020005000000010500000000000515000000a43cb4affe0503bd73de0f35f501000005000000010500000000000515000000a43cb4affe0503bd73de0f35e903000005000000010500000000000515000000a43cb4affe0503bd73de0f35f401000000000000000000000300000000000000");
+    }
+
 }
