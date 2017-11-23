@@ -18,12 +18,12 @@
  */
 package com.rapid7.client.dcerpc.mslsad.messages;
 
+import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRSIDEnumBuffer;
 import com.rapid7.client.dcerpc.objects.RPCSID;
-import java.io.IOException;
 
 /**
  *    <h1 class="title">3.1.4.11 LsarLookupSids (Opnum 15)</h1>
@@ -110,17 +110,21 @@ import java.io.IOException;
 
 public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
     private final static short OP_NUM = 15;
-    private final static int LSA_LOOKUP_NAMES_ALL = 0x1;
 
     // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
     private final byte[] policyHandle;
     // <NDR: struct> [in] PLSAPR_SID_ENUM_BUFFER SidEnumBuffer
     private final LSAPRSIDEnumBuffer lsaprsidEnumBuffer;
+    // <NDR: short> [in] LSAP_LOOKUP_LEVEL LookupLevel
+    private final short lookupLevel;
+    // <NDR: unsigned long> [in, out] unsigned long* MappedCount
+    // Only considered during marshalling
 
-    public LsarLookupSIDsRequest(final byte[] policyHandle, final RPCSID[] rpcSIDs) {
+    public LsarLookupSIDsRequest(final byte[] policyHandle, final RPCSID[] rpcSIDs, final short lookupLevel) {
         super(OP_NUM);
         this.policyHandle = policyHandle;
         this.lsaprsidEnumBuffer = new LSAPRSIDEnumBuffer(rpcSIDs);
+        this.lookupLevel = lookupLevel;
     }
 
     @Override
@@ -141,9 +145,11 @@ public class LsarLookupSIDsRequest extends RequestCall<LsarLookupSIDsResponse> {
         packetOut.writeNull();
         // <NDR: short> [in] LSAP_LOOKUP_LEVEL LookupLevel
         // Alignment: 2 - Already aligned
-        packetOut.writeShort(LSA_LOOKUP_NAMES_ALL);
+        packetOut.writeShort(lookupLevel);
         // <NDR: unsigned long> [in, out] unsigned long* MappedCount
         packetOut.pad(2);
+        // <NDR: unsigned long> [in, out] unsigned long* MappedCount
+        // Alignment: 4 - Already aligned
         packetOut.writeNull(); // Count (ignored on input)
     }
 }
