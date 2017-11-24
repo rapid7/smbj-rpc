@@ -25,8 +25,6 @@ import static org.testng.Assert.assertSame;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.rmi.MarshalException;
-import java.rmi.UnmarshalException;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -71,12 +69,14 @@ public class Test_RPCSID {
         new RPCSID().marshalEntity(new PacketOutput(new ByteArrayOutputStream()));
     }
 
-    @Test(expectedExceptions = {MarshalException.class},
-            expectedExceptionsMessageRegExp = "Expecting at least one SubAuthority entry")
+    @Test
     public void test_marsalEntity_NoSubAuthorities() throws IOException {
         RPCSID rpcsid = new RPCSID();
+        rpcsid.setRevision((char) 1);
+        rpcsid.setIdentifierAuthority(new byte[] { 0, 0, 0, 0, 0, 0 });
         rpcsid.setSubAuthority(new long[]{});
         rpcsid.marshalEntity(new PacketOutput(new ByteArrayOutputStream()));
+        assertEquals(rpcsid.getSubAuthority().length, 0);
     }
 
     @DataProvider
@@ -136,14 +136,16 @@ public class Test_RPCSID {
         assertEquals(rpc_sid.getSubAuthority(), null);
     }
 
-    @Test(expectedExceptions = {UnmarshalException.class},
-            expectedExceptionsMessageRegExp = "Expecting at least one SubAuthority entry")
+    @Test()
     public void test_unmarshalEntity_NoSubAuthorities() throws IOException {
-        // Revision: 1, SubAuthorityCount: 0
-        String hex = "0100 0000";
+        // Revision: 1, Authority: 0, SubAuthorityCount: 0
+        String hex = "0100 0000 0000 0000";
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
-        new RPCSID().unmarshalEntity(in);
+        RPCSID sid = new RPCSID();
+        sid.unmarshalEntity(in);
+        assertEquals(0, sid.getSubAuthority().length);
+        assertEquals((char) 0, sid.getSubAuthorityCount());
     }
 
     @DataProvider
