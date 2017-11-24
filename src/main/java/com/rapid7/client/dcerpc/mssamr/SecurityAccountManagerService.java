@@ -32,8 +32,10 @@ import com.rapid7.client.dcerpc.dto.ContextHandle;
 import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import com.rapid7.client.dcerpc.mssamr.dto.AliasGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.GroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.LogonHours;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
@@ -434,10 +436,16 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public SAMPRGroupGeneralInformation getGroupGeneralInformation(final GroupHandle groupHandle) throws IOException {
+    public GroupGeneralInformation getGroupGeneralInformation(final GroupHandle groupHandle) throws IOException {
         final SamrQueryInformationGroupRequest.GroupGeneralInformation request =
                 new SamrQueryInformationGroupRequest.GroupGeneralInformation(parseHandle(groupHandle));
-        return callExpectSuccess(request, "SamrQueryInformationGroup[1]").getGroupInformation();
+        final SAMPRGroupGeneralInformation groupGeneralInformation =
+                callExpectSuccess(request, "SamrQueryInformationGroup[1]").getGroupInformation();
+        return new GroupGeneralInformation(
+                groupGeneralInformation.getName().getValue(),
+                groupGeneralInformation.getAttributes(),
+                groupGeneralInformation.getMemberCount(),
+                groupGeneralInformation.getAdminComment().getValue());
     }
 
     /**
@@ -447,10 +455,15 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public SAMPRAliasGeneralInformation getAliasGeneralInformation(final AliasHandle aliasHandle) throws IOException {
+    public AliasGeneralInformation getAliasGeneralInformation(final AliasHandle aliasHandle) throws IOException {
         final SamrQueryInformationAliasRequest.AliasGeneralInformation request =
                 new SamrQueryInformationAliasRequest.AliasGeneralInformation(parseHandle(aliasHandle));
-        return callExpectSuccess(request, "SamrQueryInformationAlias[1]").getAliasInformation();
+        final SAMPRAliasGeneralInformation aliasGeneralInformation =
+                callExpectSuccess(request, "SamrQueryInformationAlias[1]").getAliasInformation();
+        return new AliasGeneralInformation(
+                aliasGeneralInformation.getName().getValue(),
+                aliasGeneralInformation.getMemberCount(),
+                aliasGeneralInformation.getAdminComment().getValue());
     }
 
     /**
