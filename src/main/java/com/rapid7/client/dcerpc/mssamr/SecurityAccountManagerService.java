@@ -25,8 +25,6 @@ import java.util.Collections;
 import java.util.List;
 import com.google.common.base.Strings;
 import com.hierynomus.msdtyp.SecurityInformation;
-import com.hierynomus.protocol.commons.buffer.Buffer;
-import com.hierynomus.smb.SMBBuffer;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.dto.ContextHandle;
 import com.rapid7.client.dcerpc.dto.SID;
@@ -35,6 +33,7 @@ import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssamr.dto.AliasGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.DomainPasswordInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.LogonHours;
@@ -486,10 +485,17 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public SAMPRDomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
+    public DomainPasswordInformation getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
         final SamrQueryInformationDomainRequest.DomainPasswordInformation request =
                 new SamrQueryInformationDomainRequest.DomainPasswordInformation(parseHandle(domainHandle));
-        return callExpectSuccess(request, "SamrQueryInformationDomain[1]").getDomainInformation();
+        final SAMPRDomainPasswordInfo passwordInfo =
+                callExpectSuccess(request, "SamrQueryInformationDomain[1]").getDomainInformation();
+        return new DomainPasswordInformation(
+                passwordInfo.getMinPasswordLength(),
+                passwordInfo.getPasswordHistoryLength(),
+                passwordInfo.getPasswordProperties(),
+                passwordInfo.getMaxPasswordAge(),
+                passwordInfo.getMinPasswordAge());
     }
 
     /**
@@ -701,20 +707,20 @@ public class SecurityAccountManagerService extends Service {
     }
 
     private MembershipWithName[] parseSAMPRRIDEnumerations(final List<? extends SAMPRRIDEnumeration> list) {
-        final MembershipWithName[] ret = new MembershipWithName[list.size()];
+        final MembershipWithName[] memberships = new MembershipWithName[list.size()];
         int i = 0;
         for (final SAMPRRIDEnumeration info : list) {
-            ret[i] = new MembershipWithName(info.getRelativeId(), info.getName().getValue());
+            memberships[i++] = new MembershipWithName(info.getRelativeId(), info.getName().getValue());
         }
-        return ret;
+        return memberships;
     }
 
     private MembershipWithAttributes[] parseGroupMemberships(final List<GroupMembership> list) {
-        final MembershipWithAttributes[] groups = new MembershipWithAttributes[list.size()];
+        final MembershipWithAttributes[] memberships = new MembershipWithAttributes[list.size()];
         int i = 0;
         for (GroupMembership groupMembership : list) {
-            groups[i++] = new MembershipWithAttributes(groupMembership.getRelativeID(), groupMembership.getAttributes());
+            memberships[i++] = new MembershipWithAttributes(groupMembership.getRelativeID(), groupMembership.getAttributes());
         }
-        return groups;
+        return memberships;
     }
 }

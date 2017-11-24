@@ -18,6 +18,7 @@
  */
 package com.rapid7.client.dcerpc.mssamr;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
+import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithName;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
@@ -37,6 +39,7 @@ import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class Test_SecurityAccountManagerService {
@@ -49,11 +52,21 @@ public class Test_SecurityAccountManagerService {
         SamrEnumerateDomainsInSamServerResponse response = Mockito.mock(SamrEnumerateDomainsInSamServerResponse.class);
         Mockito.when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_SUCCESS.ordinal());
         List<DomainInfo> domains = new ArrayList<>();
-        domains.add(Mockito.mock(DomainInfo.class));
-        domains.add(Mockito.mock(DomainInfo.class));
+        DomainInfo domainInfo1 = Mockito.mock(DomainInfo.class);
+        Mockito.when(domainInfo1.getName()).thenReturn(RPCUnicodeString.NonNullTerminated.of("test123"));
+        Mockito.when(domainInfo1.getRelativeId()).thenReturn(1);
+        domains.add(domainInfo1);
+        DomainInfo domainInfo2 = Mockito.mock(DomainInfo.class);
+        Mockito.when(domainInfo2.getName()).thenReturn(RPCUnicodeString.NonNullTerminated.of(null));
+        Mockito.when(domainInfo2.getRelativeId()).thenReturn(2);
+        domains.add(domainInfo2);
         Mockito.when(response.getList()).thenReturn(domains);
         Mockito.when(transport.call(Mockito.any(SamrEnumerateDomainsInSamServerRequest.class))).thenReturn(response);
-        assertEquals(2, service.getDomainsForServer(handle).length);
+        MembershipWithName[] expected = new MembershipWithName[]{
+                new MembershipWithName(1L, "test123"),
+                new MembershipWithName(2L, null),
+        };
+        assertArrayEquals(expected, service.getDomainsForServer(handle));
     }
 
     @Test
@@ -69,13 +82,24 @@ public class Test_SecurityAccountManagerService {
         Mockito.when(response2.getResumeHandle()).thenReturn(2);
         List<DomainInfo> domains1 = new ArrayList<>();
         List<DomainInfo> domains2 = new ArrayList<>();
-        domains1.add(Mockito.mock(DomainInfo.class));
-        domains2.add(Mockito.mock(DomainInfo.class));
+        DomainInfo domainInfo1 = Mockito.mock(DomainInfo.class);
+        Mockito.when(domainInfo1.getName()).thenReturn(RPCUnicodeString.NonNullTerminated.of("test123"));
+        Mockito.when(domainInfo1.getRelativeId()).thenReturn(1);
+        domains1.add(domainInfo1);
+        DomainInfo domainInfo2 = Mockito.mock(DomainInfo.class);
+        Mockito.when(domainInfo2.getName()).thenReturn(RPCUnicodeString.NonNullTerminated.of(null));
+        Mockito.when(domainInfo2.getRelativeId()).thenReturn(2);
+        domains2.add(domainInfo2);
         Mockito.when(response1.getList()).thenReturn(domains1);
         Mockito.when(response2.getList()).thenReturn(domains2);
         Mockito.when(transport.call(Mockito.any(SamrEnumerateDomainsInSamServerRequest.class))).thenReturn(response1)
             .thenReturn(response2);
-        assertEquals(2, service.getDomainsForServer(handle).length);
+
+        MembershipWithName[] expected = new MembershipWithName[]{
+                new MembershipWithName(1L, "test123"),
+                new MembershipWithName(2L, null),
+        };
+        assertArrayEquals(expected, service.getDomainsForServer(handle));
     }
 
     @Test

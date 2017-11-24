@@ -38,10 +38,10 @@ public class Test_SamrQueryInformationDomain {
         response.unmarshal(getPacketInput(hexString));
         SAMPRDomainPasswordInfo passInfo = response.getDomainInformation();
 
-        assertEquals(-37108517437440L, passInfo.getMaximumPasswordAge());
-        assertEquals(0, passInfo.getMinimumPasswordAge());
+        assertEquals(-37108517437440L, passInfo.getMaxPasswordAge());
+        assertEquals(0, passInfo.getMinPasswordAge());
         assertEquals(0, passInfo.getPasswordProperties());
-        assertEquals(0, passInfo.getMinimumPasswordLength());
+        assertEquals(0, passInfo.getMinPasswordLength());
         assertEquals(0, passInfo.getPasswordHistoryLength());
     }
 

@@ -58,6 +58,6 @@ public class MembershipWithName extends Membership {
     @Override
     public String toString() {
         final String nameStr = (this.name != null) ? String.format("\"%s\"", this.name) : "null";
-        return String.format("MembershipWithName{relativeID: %d, name:%s}", getRelativeID(), nameStr);
+        return String.format("MembershipWithName{relativeID: %d, name: %s}", getRelativeID(), nameStr);
     }
 }
