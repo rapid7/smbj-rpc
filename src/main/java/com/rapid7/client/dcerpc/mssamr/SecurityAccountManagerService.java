@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mssamr;
 import java.io.IOException;
 import java.rmi.UnmarshalException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import com.google.common.base.Strings;
 import com.hierynomus.msdtyp.SecurityInformation;
@@ -42,6 +41,7 @@ import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithName;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithUse;
 import com.rapid7.client.dcerpc.mssamr.dto.SecurityDescriptor;
+import com.rapid7.client.dcerpc.mssamr.dto.SecurityInformationQueryType;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.UserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
@@ -87,7 +87,6 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRRIDEnumeration;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRULongArray;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.RPCSID;
@@ -609,18 +608,58 @@ public class SecurityAccountManagerService extends Service {
         return ret;
     }
 
+    /**
+     * Return the access control {@link SecurityDescriptor} for the given object.
+     * This method requests all security information, which will include owner, group, SACL, and DACL security information.
+     *
+     * @param objectHandle The object to query. Typically one of:
+     * {@link DomainHandle}, {@link UserHandle}, {@link GroupHandle}, {@link AliasHandle}.
+     * @return The access control {@link SecurityDescriptor} for the given object.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle) throws IOException {
+        return getSecurityObject(objectHandle, 0x0F);
+    }
+
+    /**
+     * Return the access control {@link SecurityDescriptor} for the given object.
+     *
+     * @param objectHandle The object to query. Typically one of:
+     * {@link DomainHandle}, {@link UserHandle}, {@link GroupHandle}, {@link AliasHandle}.
+     * @param securityInformation Dictates what security information should be returned.
+     * @return The access control {@link SecurityDescriptor} for the given object.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
     public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle,
-            final SecurityInformation ... securityInformation) throws IOException {
+            final SecurityInformationQueryType ... securityInformation) throws IOException {
         int securityInformationValue = 0;
         if (securityInformation != null) {
-            for (SecurityInformation v : securityInformation) {
+            for (SecurityInformationQueryType v : securityInformation) {
                 if (v == null)
                     continue;
                 securityInformationValue |= v.getValue();
             }
         }
+        return getSecurityObject(objectHandle, securityInformationValue);
+    }
+
+    /**
+     * Return the access control {@link SecurityDescriptor} for the given object.
+     *
+     * @param objectHandle The object to query. Typically one of:
+     * {@link DomainHandle}, {@link UserHandle}, {@link GroupHandle}, {@link AliasHandle}.
+     * @param securityInformation Dictates what security information should be returned.
+     *                            See {@link SecurityInformationQueryType} if you are unsure what bit field to provide.
+     * @return The access control {@link SecurityDescriptor} for the given object.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle,
+            int securityInformation) throws IOException {
         final SamrQuerySecurityObjectRequest request =
-                new SamrQuerySecurityObjectRequest(parseHandle(objectHandle), securityInformationValue);
+                new SamrQuerySecurityObjectRequest(parseHandle(objectHandle), securityInformation);
         return parseSecurityDescriptor(callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor());
     }
 
