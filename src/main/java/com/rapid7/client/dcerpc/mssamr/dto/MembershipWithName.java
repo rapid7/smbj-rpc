@@ -21,37 +21,43 @@
 
 package com.rapid7.client.dcerpc.mssamr.dto;
 
-/**
- * This class contains the relative ID for a member of a security issuer.
- */
-public class Membership {
-    private final long relativeID;
+import java.util.Objects;
 
-    public Membership(final long relativeID) {
-        this.relativeID = relativeID;
+/**
+ * This class contains the relative ID and name for a member of a security issuer.
+ */
+public class MembershipWithName extends Membership {
+
+    private final String name;
+
+    public MembershipWithName(final long relativeID, final String name) {
+        super(relativeID);
+        this.name = name;
     }
 
-    public long getRelativeID() {
-        return relativeID;
+    public String getName() {
+        return name;
     }
 
     @Override
     public int hashCode() {
-        return (int) this.relativeID;
+        return (super.hashCode() * 31) + Objects.hashCode(this.name);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof Membership)) {
+        } else if (! (obj instanceof MembershipWithName)) {
             return false;
         }
-        return this.relativeID == ((Membership) obj).relativeID;
+        return super.equals(obj) &&
+                Objects.equals(this.name, ((MembershipWithName) obj).name);
     }
 
     @Override
     public String toString() {
-        return String.format("Membership{relativeID:%d}", this.relativeID);
+        final String nameStr = (this.name != null) ? String.format("\"%s\"", this.name) : "null";
+        return String.format("MembershipWithName{relativeID: %d, name:%s}", getRelativeID(), nameStr);
     }
 }

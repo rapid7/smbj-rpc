@@ -30,7 +30,7 @@ import org.mockito.Mockito;
 import com.hierynomus.msdtyp.SID;
 import com.hierynomus.msdtyp.SecurityDescriptor;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.mssamr.dto.Membership;
+import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
@@ -59,7 +59,7 @@ public class Test_SecurityAccountManagerService {
         domains.add(Mockito.mock(DomainInfo.class));
         Mockito.when(response.getList()).thenReturn(domains);
         Mockito.when(transport.call(Mockito.any(SamrEnumerateDomainsInSamServerRequest.class))).thenReturn(response);
-        assertEquals(2, service.getDomainsForServer(handle).size());
+        assertEquals(2, service.getDomainsForServer(handle).length);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class Test_SecurityAccountManagerService {
         Mockito.when(response2.getList()).thenReturn(domains2);
         Mockito.when(transport.call(Mockito.any(SamrEnumerateDomainsInSamServerRequest.class))).thenReturn(response1)
             .thenReturn(response2);
-        assertEquals(2, service.getDomainsForServer(handle).size());
+        assertEquals(2, service.getDomainsForServer(handle).length);
     }
 
     @Test
@@ -126,10 +126,10 @@ public class Test_SecurityAccountManagerService {
         users.add(returnedMembership);
         Mockito.when(response.getList()).thenReturn(users);
         Mockito.when(transport.call(Mockito.any(SamrGetMembersInGroupRequest.class))).thenReturn(response);
-        List<Membership> membership = service.getMembersForGroup(Mockito.mock(GroupHandle.class));
-        assertEquals(1, membership.size());
-        assertEquals(500, membership.get(0).getRelativeID());
-        assertEquals(7, membership.get(0).getAttributes());
+        MembershipWithAttributes[] membership = service.getMembersForGroup(Mockito.mock(GroupHandle.class));
+        assertEquals(1, membership.length);
+        assertEquals(500, membership[0].getRelativeID());
+        assertEquals(7, membership[0].getAttributes());
     }
 
     @Test
@@ -146,9 +146,9 @@ public class Test_SecurityAccountManagerService {
         users.add(returnedMembership);
         Mockito.when(response.getGroups()).thenReturn(users);
         Mockito.when(transport.call(Mockito.any(SamrGetGroupsForUserRequest.class))).thenReturn(response);
-        List<Membership> membership = service.getGroupsForUser(Mockito.mock(UserHandle.class));
-        assertEquals(1, membership.size());
-        assertEquals(500, membership.get(0).getRelativeID());
-        assertEquals(7, membership.get(0).getAttributes());
+        MembershipWithAttributes[] membership = service.getGroupsForUser(Mockito.mock(UserHandle.class));
+        assertEquals(1, membership.length);
+        assertEquals(500, membership[0].getRelativeID());
+        assertEquals(7, membership[0].getAttributes());
     }
 }

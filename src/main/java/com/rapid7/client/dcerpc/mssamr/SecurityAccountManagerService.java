@@ -36,7 +36,8 @@ import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssamr.dto.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
-import com.rapid7.client.dcerpc.mssamr.dto.Membership;
+import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
+import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithName;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
@@ -52,6 +53,7 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetGroupsForUserResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupDomainInSamServerRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainResponse;
@@ -78,6 +80,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRRIDEnumeration;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
@@ -211,19 +214,21 @@ public class SecurityAccountManagerService extends Service {
     }
 
     /**
-     * Return a list of all domains hosted by the server side of this protocol.
+     * Gets the domain RID and name pairs of domains hosted by the provided domain.
+     *
      * @param serverHandle A valid server handle obtained from {@link #openServer()}
      * @return A list of all domains hosted by the server side of this protocol.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public List<DomainInfo> getDomainsForServer(final ServerHandle serverHandle) throws IOException {
+    public MembershipWithName[] getDomainsForServer(final ServerHandle serverHandle) throws IOException {
         final int bufferSize = 0xffff;
         return getDomainsForServer(serverHandle, bufferSize);
     }
 
     /**
-     * Return a list of all domains hosted by the server side of this protocol.
+     * Gets the domain RID and name pairs of domains hosted by the provided domain.
+     *
      * @param serverHandle A valid server handle obtained from {@link #openServer()}
      * @param bufferSize Maximum number of entries in each response. Since this method returns a list,
      *                   0xFFFF is suggested.
@@ -231,11 +236,11 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public List<DomainInfo> getDomainsForServer(final ServerHandle serverHandle, final int bufferSize)
+    public MembershipWithName[] getDomainsForServer(final ServerHandle serverHandle, final int bufferSize)
             throws IOException {
-        final List<DomainInfo> domains = new ArrayList<>();
+        final List<DomainInfo> domainInfos = new ArrayList<>();
         final byte[] serverHandleBytes = parseHandle(serverHandle);
-        return enumerate(domains, new EnumerationCallback() {
+        enumerate(domainInfos, new EnumerationCallback() {
             @Override
             public String getName() {
                 return "SamrEnumerateDomainsInSamServer";
@@ -247,23 +252,25 @@ public class SecurityAccountManagerService extends Service {
                 return call(request);
             }
         });
+        return parseSAMPRRIDEnumerations(domainInfos);
     }
 
     /**
-     * Return a list of all aliases in the given domain.
+     * Gets the alias RID and name pairs of all aliases in the provided domain.
+     *
      * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
      * @return A list of all aliases in the given domain.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public List<AliasInfo> getAliasesForDomain(final DomainHandle domainHandle)
-            throws IOException {
+    public MembershipWithName[] getAliasesForDomain(final DomainHandle domainHandle) throws IOException {
         final int bufferSize = 0xffff;
         return getAliasesForDomain(domainHandle, bufferSize);
     }
 
     /**
-     * Return a list of all aliases in the given domain.
+     * Gets the alias RID and name pairs of all aliases in the provided domain.
+     *
      * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
      * @param bufferSize Maximum number of entries in each response. Since this method returns a list,
      *                   0xFFFF is suggested.
@@ -271,11 +278,11 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public List<AliasInfo> getAliasesForDomain(final DomainHandle domainHandle, final int bufferSize)
+    public MembershipWithName[] getAliasesForDomain(final DomainHandle domainHandle, final int bufferSize)
             throws IOException {
         final List<AliasInfo> aliases = new ArrayList<>();
         final byte[] domainHandleBytes = parseHandle(domainHandle);
-        return enumerate(aliases, new EnumerationCallback() {
+        enumerate(aliases, new EnumerationCallback() {
             @Override
             public String getName() {
                 return "SamrEnumerateAliasesInDomain";
@@ -287,10 +294,86 @@ public class SecurityAccountManagerService extends Service {
                 return call(request);
             }
         });
+        return parseSAMPRRIDEnumerations(aliases);
+    }
+
+    /**
+     * Gets the group RID and name pairs for the provided domain.
+     * Multiple request may be sent based on the entries read and buffer size.
+     *
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
+     * @param bufferSize Maximum number of entries in each response. Since this method returns a list,
+     *                   0xFFFF is suggested.
+     * @return The enumerated groups.
+     * @throws IOException On issue with communication or marshalling.
+     */
+    public MembershipWithName[] getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
+            throws IOException {
+        final List<GroupInfo> groupInfos = new ArrayList<>();
+        final byte[] domainHandleBytes = parseHandle(domainHandle);
+        enumerate(groupInfos, new EnumerationCallback() {
+            @Override
+            public String getName() {
+                return "SamrEnumerateGroupsInDomain";
+            }
+            @Override
+            public SamrEnumerateResponse request(int enumContext) throws IOException {
+                final SamrEnumerateGroupsInDomainRequest request = new SamrEnumerateGroupsInDomainRequest(
+                        domainHandleBytes, enumContext, bufferSize);
+                return call(request);
+            }
+        });
+        return parseSAMPRRIDEnumerations(groupInfos);
+    }
+
+    /**
+     * Gets the user RID and name pairs for the provided domain.
+     * Max buffer size will be used
+     *
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
+     * @param userAccountControl The UserAccountControl flags that filters the returned users.
+     * @return The enumerated users.
+     * @throws IOException On issue with communication or marshalling.
+     */
+    public MembershipWithName[] getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl)
+            throws IOException {
+        final int bufferSize = 0xffff;
+        return getUsersForDomain(domainHandle, userAccountControl, bufferSize);
+    }
+
+    /**
+     * Gets the user RID and name pairs for the provided domain.
+     * Multiple request may be sent based on the entries read and buffer size.
+     *
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
+     * @param userAccountControl The UserAccountControl flags that filters the returned users.
+     * @param bufferSize Maximum number of entries in each response. Since this method returns a list,
+     *                   0xFFFF is suggested.
+     * @return The enumerated users.
+     * @throws IOException On issue with communication or marshalling.
+     */
+    public MembershipWithName[] getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl,
+            final int bufferSize) throws IOException {
+        final List<UserInfo> userInfos = new ArrayList<>();
+        final byte[] domainHandleBytes = parseHandle(domainHandle);
+        enumerate(userInfos, new EnumerationCallback() {
+            @Override
+            public String getName() {
+                return "SamrEnumerateUsersInDomain";
+            }
+            @Override
+            public SamrEnumerateResponse request(int enumContext) throws IOException {
+                final SamrEnumerateUsersInDomainRequest request = new SamrEnumerateUsersInDomainRequest(
+                        domainHandleBytes, enumContext, userAccountControl, bufferSize);
+                return call(request);
+            }
+        });
+        return parseSAMPRRIDEnumerations(userInfos);
     }
 
     /**
      * Retrieve information about a user using info level 21 (UserAllInformation).
+     *
      * @param userHandle A valid user handle obtained from {@link #openUser(DomainHandle, long)}
      * @return User information using level 21 (UserAllInformation).
      * @throws IOException Thrown if either a communication failure is encountered, or the call
@@ -381,96 +464,16 @@ public class SecurityAccountManagerService extends Service {
     }
 
     /**
-     * Gets the group names for the provided domain. Max buffer size will be used.
+     * Gets the group RID and name pairs for the provided domain.
+     * Max buffer size will be used.
      *
      * @param domainHandle The domain handle.
      * @return The enumerated groups.
      * @throws IOException On issue with communication or marshalling.
      */
-    public String[] getGroupsForDomain(final DomainHandle domainHandle) throws IOException {
+    public MembershipWithName[] getGroupsForDomain(final DomainHandle domainHandle) throws IOException {
         final int bufferSize = 0xffff;
         return getGroupsForDomain(domainHandle, bufferSize);
-    }
-
-    /**
-     * Gets the group names for the provided domain. Multiple request may be sent based on the entries read and buffer
-     * size.
-     *
-     * @param domainHandle The domain handle.
-     * @param bufferSize The buffer size for each request.
-     * @return The enumerated groups.
-     * @throws IOException On issue with communication or marshalling.
-     */
-    public String[] getGroupsForDomain(final DomainHandle domainHandle, final int bufferSize)
-            throws IOException {
-        final List<GroupInfo> groups = new ArrayList<>();
-        final byte[] domainHandleBytes = parseHandle(domainHandle);
-        final List<GroupInfo> groupInfos = enumerate(groups, new EnumerationCallback() {
-            @Override
-            public String getName() {
-                return "SamrEnumerateGroupsInDomain";
-            }
-            @Override
-            public SamrEnumerateResponse request(int enumContext) throws IOException {
-                final SamrEnumerateGroupsInDomainRequest request = new SamrEnumerateGroupsInDomainRequest(
-                    domainHandleBytes, enumContext, bufferSize);
-                return call(request);
-            }
-        });
-        final String[] groupNames = new String[groupInfos.size()];
-        int i = 0;
-        for (final GroupInfo groupInfo : groupInfos) {
-            groupNames[i++] = groupInfo.getName().getValue();
-        }
-        return groupNames;
-    }
-
-    /**
-     * Gets the user names for the provided domain. Max buffer size will be used
-     *
-     * @param domainHandle The domain handle.
-     * @param userAccountControl The UserAccountControl flags that filters the returned users.
-     * @return The enumerated users.
-     * @throws IOException On issue with communication or marshalling.
-     */
-    public String[] getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl)
-            throws IOException {
-        final int bufferSize = 0xffff;
-        return getUsersForDomain(domainHandle, userAccountControl, bufferSize);
-    }
-
-    /**
-     * Gets the user names for the provided domain. Multiple request may be sent based on the entries read and buffer
-     * size.
-     *
-     * @param domainHandle The domain handle.
-     * @param userAccountControl The UserAccountControl flags that filters the returned users.
-     * @param bufferSize The buffer size for each request.
-     * @return The enumerated users.
-     * @throws IOException On issue with communication or marshalling.
-     */
-    public String[] getUsersForDomain(final DomainHandle domainHandle, final int userAccountControl,
-            final int bufferSize) throws IOException {
-        final List<UserInfo> users = new ArrayList<>();
-        final byte[] domainHandleBytes = parseHandle(domainHandle);
-        final List<UserInfo> userInfos = enumerate(users, new EnumerationCallback() {
-            @Override
-            public String getName() {
-                return "SamrEnumerateUsersInDomain";
-            }
-            @Override
-            public SamrEnumerateResponse request(int enumContext) throws IOException {
-                final SamrEnumerateUsersInDomainRequest request = new SamrEnumerateUsersInDomainRequest(
-                        domainHandleBytes, enumContext, userAccountControl, bufferSize);
-                return call(request);
-            }
-        });
-        final String[] userNames = new String[userInfos.size()];
-        int i = 0;
-        for (final UserInfo userInfo : userInfos) {
-            userNames[i++] = userInfo.getName().getValue();
-        }
-        return userNames;
     }
 
     public List<SAMPRDomainDisplayGroup> getDomainGroupInformationForDomain(final DomainHandle handle)
@@ -561,35 +564,25 @@ public class SecurityAccountManagerService extends Service {
     }
 
     /**
-     * Gets a list of {@link Membership} information for groups containing the provided user handle.
+     * Gets a list of {@link MembershipWithAttributes} information for groups containing the provided user handle.
      *
      * @param userHandle User handle. Must not be {@code null}.
      */
-    public List<Membership> getGroupsForUser(final UserHandle userHandle) throws IOException {
+    public MembershipWithAttributes[] getGroupsForUser(final UserHandle userHandle) throws IOException {
         final SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(parseHandle(userHandle));
         final SamrGetGroupsForUserResponse response = callExpectSuccess(request, "GetGroupsForUser");
-        final List<Membership> groups = new ArrayList<>();
-        final List<GroupMembership> returnedGroups = response.getGroups();
-        for (GroupMembership returnedGroup : returnedGroups) {
-            groups.add(new Membership(returnedGroup.getRelativeID(), returnedGroup.getAttributes()));
-        }
-        return groups;
+        return parseGroupMemberships(response.getGroups());
     }
 
     /**
-     * Gets a list of {@link Membership} information for the members of the provided group handle.
+     * Gets a list of {@link MembershipWithAttributes} information for the members of the provided group handle.
      *
      * @param groupHandle Group handle. Must not be {@code null}.
      */
-    public List<Membership> getMembersForGroup(GroupHandle groupHandle)
-            throws IOException {
+    public MembershipWithAttributes[] getMembersForGroup(GroupHandle groupHandle) throws IOException {
         final SamrGetMembersInGroupRequest request = new SamrGetMembersInGroupRequest(parseHandle(groupHandle));
-        final List<GroupMembership> returnedGroups = callExpectSuccess(request, "GetMembersForGroup").getList();
-        final List<Membership> groups = new ArrayList<>();
-        for (GroupMembership returnedGroup : returnedGroups) {
-            groups.add(new Membership(returnedGroup.getRelativeID(), returnedGroup.getAttributes()));
-        }
-        return groups;
+        final SamrGetMembersInGroupResponse response = callExpectSuccess(request, "GetMembersForGroup");
+        return parseGroupMemberships(response.getList());
     }
 
     /**
@@ -611,7 +604,7 @@ public class SecurityAccountManagerService extends Service {
      * Helper method for calling enumeration requests and enumerating through the buffers for
      * {@link SamrEnumerateResponse}.
      */
-    private <T> List<T> enumerate(final List<T> list, final EnumerationCallback callback)
+    private <T> void enumerate(final List<T> list, final EnumerationCallback callback)
             throws IOException {
         for (int enumContext = 0;;) {
             final SamrEnumerateResponse response = callback.request(enumContext);
@@ -621,7 +614,7 @@ public class SecurityAccountManagerService extends Service {
                 list.addAll(response.getList());
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
                 list.addAll(response.getList());
-                return Collections.unmodifiableList(list);
+                return;
             } else {
                 throw new RPCException(response.getClass().getName(), returnCode);
             }
@@ -654,5 +647,23 @@ public class SecurityAccountManagerService extends Service {
 
     private AliasHandle parseAliasHandle(final HandleResponse response) {
         return new AliasHandle(response.getHandle());
+    }
+
+    private MembershipWithName[] parseSAMPRRIDEnumerations(final List<? extends SAMPRRIDEnumeration> list) {
+        final MembershipWithName[] ret = new MembershipWithName[list.size()];
+        int i = 0;
+        for (final SAMPRRIDEnumeration info : list) {
+            ret[i] = new MembershipWithName(info.getRelativeId(), info.getName().getValue());
+        }
+        return ret;
+    }
+
+    private MembershipWithAttributes[] parseGroupMemberships(final List<GroupMembership> list) {
+        final MembershipWithAttributes[] groups = new MembershipWithAttributes[list.size()];
+        int i = 0;
+        for (GroupMembership groupMembership : list) {
+            groups[i++] = new MembershipWithAttributes(groupMembership.getRelativeID(), groupMembership.getAttributes());
+        }
+        return groups;
     }
 }
