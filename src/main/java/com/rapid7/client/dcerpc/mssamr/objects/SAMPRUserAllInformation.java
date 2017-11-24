@@ -416,20 +416,12 @@ public class SAMPRUserAllInformation implements Unmarshallable {
         return lmPasswordPresent;
     }
 
-    public boolean isLmPasswordPresent() {
-        return getLmPasswordPresent() != 0;
-    }
-
     public void setLmPasswordPresent(char lmPasswordPresent) {
         this.lmPasswordPresent = lmPasswordPresent;
     }
 
     public char getNtPasswordPresent() {
         return ntPasswordPresent;
-    }
-
-    public boolean isNtPasswordPresent() {
-        return getNtPasswordPresent() != 0;
     }
 
     public void setNtPasswordPresent(char ntPasswordPresent) {
@@ -440,20 +432,12 @@ public class SAMPRUserAllInformation implements Unmarshallable {
         return passwordExpired;
     }
 
-    public boolean isPasswordExpired() {
-        return getPasswordExpired() != 0;
-    }
-
     public void setPasswordExpired(char passwordExpired) {
         this.passwordExpired = passwordExpired;
     }
 
     public char getPrivateDataSensitive() {
         return privateDataSensitive;
-    }
-
-    public boolean isPrivateDataSensitive() {
-        return getPrivateDataSensitive() != 0;
     }
 
     public void setPrivateDataSensitive(char privateDataSensitive) {

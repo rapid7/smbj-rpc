@@ -38,77 +38,42 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
   } DOMAIN_PASSWORD_INFORMATION, *PDOMAIN_PASSWORD_INFORMATION;
   */
 public class SAMPRDomainPasswordInfo implements Unmarshallable {
-    private static final int DOMAIN_PASSWORD_COMPLEX = 0x00000001;
-    private static final int DOMAIN_PASSWORD_NO_ANON_CHANGE = 0x00000002;
-    private static final int DOMAIN_PASSWORD_STORE_CLEARTEXT = 0x00000010;
-    /**
-     * A 32-bit bit field indicating the password properties policy setting. The defined bits are shown in the
-     * following table. All bits can be combined using a logical OR in any combination. Undefined bits SHOULD be
-     * persisted by the server (that is, stored in its database) and returned to future queries. Clients SHOULD ignore
-     * undefined bits.
-     *
-     * +---------------------------------+--------------------------------------------------------------------------+
-     * | Name/value                      | Description                                                              |
-     * +---------------------------------+--------------------------------------------------------------------------+
-     * | DOMAIN_PASSWORD_COMPLEX         | The server enforces password complexity policy.                          |
-     * | 0x00000001                      |                                                                          |
-     * +---------------------------------+--------------------------------------------------------------------------+
-     * | DOMAIN_PASSWORD_NO_ANON_CHANGE  | Reserved. No effect on password policy.                                  |
-     * | 0x00000002                      |                                                                          |
-     * +---------------------------------+--------------------------------------------------------------------------+
-     * | DOMAIN_PASSWORD_NO_CLEAR_CHANGE | Change-password methods that provide the cleartext password are disabled |
-     * | 0x00000004                      | by the server.                                                           |
-     * +---------------------------------+--------------------------------------------------------------------------+
-     * | DOMAIN_LOCKOUT_ADMINS           | Reserved. No effect on password policy.                                  |
-     * | 0x00000008                      |                                                                          |
-     * +---------------------------------+--------------------------------------------------------------------------+
-     * | DOMAIN_PASSWORD_STORE_CLEARTEXT | The server MUST store the cleartext password, not just the computed      |
-     * | 0x00000010                      | hashes.                                                                  |
-     * +---------------------------------+--------------------------------------------------------------------------+
-     * | DOMAIN_REFUSE_PASSWORD_CHANGE   | Reserved. No effect on password policy.                                  |
-     * | 0x00000020                      |                                                                          |
-     * +---------------------------------+--------------------------------------------------------------------------+
-     */
-    private int minimumPasswordLength;
+
+    // <NDR: unsigned short> USHORT MinPasswordLength;
+    private int minPasswordLength;
+    // <NDR: unsigned short> USHORT PasswordHistoryLength;
     private int passwordHistoryLength;
-    private long passwordProperties;
-    private long maximumPasswordAge;
-    private long minimumPasswordAge;
+    // <NDR: unsigned long> ULONG PasswordProperties;
+    // This is a bit field so we can store as an int
+    private int passwordProperties;
+    // <NDR: hyper> LARGE_INTEGER MaxPasswordAge;
+    private long maxPasswordAge;
+    // <NDR: hyper> LARGE_INTEGER MinPasswordAge;
+    private long minPasswordAge;
 
-    public boolean isDomainPasswordComplex() {
-        return (this.passwordProperties & DOMAIN_PASSWORD_COMPLEX) != 0;
-    }
-
-    public boolean isDomainPasswordNoAnonChange() {
-        return (this.passwordProperties & DOMAIN_PASSWORD_NO_ANON_CHANGE) != 0;
-    }
-
-    public boolean isDomainPasswordStoredClearText() {
-        return (this.passwordProperties & DOMAIN_PASSWORD_STORE_CLEARTEXT) != 0;
-    }
-
-    public int getMinimumPasswordLength() {
-        return minimumPasswordLength;
+    public int getMinPasswordLength() {
+        return minPasswordLength;
     }
 
     public int getPasswordHistoryLength() {
         return passwordHistoryLength;
     }
 
-    public long getPasswordProperties() {
+    public int getPasswordProperties() {
         return passwordProperties;
     }
 
-    public long getMaximumPasswordAge() {
-        return maximumPasswordAge;
+    public long getMaxPasswordAge() {
+        return maxPasswordAge;
     }
 
-    public long getMinimumPasswordAge() {
-        return minimumPasswordAge;
+    public long getMinPasswordAge() {
+        return minPasswordAge;
     }
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
+        // No premable
     }
 
     @Override
@@ -117,7 +82,7 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
         in.align(Alignment.EIGHT);
         // <NDR: unsigned short> MinPasswordLength;
         // Alignment: 2 - Already aligned
-        this.minimumPasswordLength = in.readShort();
+        this.minPasswordLength = in.readShort();
         // <NDR: unsigned short> PasswordHistoryLength;
         // Alignment: 2 - Already aligned
         this.passwordHistoryLength = in.readShort();
@@ -126,20 +91,21 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
         this.passwordProperties = in.readInt();
         // <NDR: hyper> OLD_LARGE_INTEGER MaxPasswordAge;
         // Alignment: 8 - Already aligned
-        this.maximumPasswordAge = in.readLong();
+        this.maxPasswordAge = in.readLong();
         // <NDR: hyper> OLD_LARGE_INTEGER MinPasswordAge;
         // Alignment: 8 - Already aligned
-        this.minimumPasswordAge = in.readLong();
+        this.minPasswordAge = in.readLong();
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
+        // No deferrals
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getMinimumPasswordLength(), getPasswordHistoryLength(), getPasswordProperties(),
-            getMaximumPasswordAge(), getMinimumPasswordAge());
+        return Objects.hash(getMinPasswordLength(), getPasswordHistoryLength(), getPasswordProperties(),
+            getMaxPasswordAge(), getMinPasswordAge());
     }
 
     @Override
@@ -150,21 +116,19 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
             return false;
         }
         SAMPRDomainPasswordInfo other = (SAMPRDomainPasswordInfo) obj;
-        return Objects.equals(getMinimumPasswordLength(), other.getMinimumPasswordLength())
+        return Objects.equals(getMinPasswordLength(), other.getMinPasswordLength())
             && Objects.equals(getPasswordHistoryLength(), other.getPasswordHistoryLength())
             && Objects.equals(getPasswordProperties(), other.getPasswordProperties())
-            && Objects.equals(getMaximumPasswordAge(), other.getMaximumPasswordAge())
-            && Objects.equals(getMinimumPasswordAge(), other.getMinimumPasswordAge());
+            && Objects.equals(getMaxPasswordAge(), other.getMaxPasswordAge())
+            && Objects.equals(getMinPasswordAge(), other.getMinPasswordAge());
     }
 
     @Override
     public String toString() {
         return String.format(
             "SAMPRDomainPasswordInfo{minimumPasswordLength:%s, passwordHistoryLength:%s,passwordProperties:%s, "
-                + "maximumPasswordAge:%s, minimumPasswordAge:%s, isDomainPasswordComplex:%s, isDomainPasswordNoAnonChange:%s, "
-                + "isDomainPasswordStoredClearText:%s}",
-            getMinimumPasswordLength(), getPasswordHistoryLength(), getPasswordProperties(), getMaximumPasswordAge(),
-            getMinimumPasswordAge(), isDomainPasswordComplex(), isDomainPasswordNoAnonChange(),
-            isDomainPasswordStoredClearText());
+                + "maximumPasswordAge:%s, minimumPasswordAge:%s}",
+            getMinPasswordLength(), getPasswordHistoryLength(), getPasswordProperties(), getMaxPasswordAge(),
+            getMinPasswordAge());
     }
 }

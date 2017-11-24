@@ -80,8 +80,8 @@ public abstract class SamrQueryInformationDomain2Request<T extends Unmarshallabl
         packetOut.writeShort(getDomainInformationClass().getInfoLevel());
     }
 
-    public static class DomainLockoutInfo extends SamrQueryInformationDomain2Request<SAMPRDomainLockoutInfo> {
-        public DomainLockoutInfo(byte[] handle) {
+    public static class DomainLockoutInformation extends SamrQueryInformationDomain2Request<SAMPRDomainLockoutInfo> {
+        public DomainLockoutInformation(byte[] handle) {
             super(handle);
         }
 

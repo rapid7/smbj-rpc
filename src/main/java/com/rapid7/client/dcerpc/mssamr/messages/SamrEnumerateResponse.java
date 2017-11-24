@@ -24,14 +24,14 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 
-public abstract class SamrEnumerateResponse extends RequestResponse {
+public abstract class SamrEnumerateResponse<T> extends RequestResponse {
 
     private int resumeHandle;
     private int numEntries;
 
     protected abstract void unmarshallBuffer(PacketInput packetIn) throws IOException;
 
-    public abstract List getList();
+    public abstract List<T> getList();
 
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {

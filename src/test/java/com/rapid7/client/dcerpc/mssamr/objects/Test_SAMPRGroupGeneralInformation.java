@@ -50,7 +50,7 @@ public class Test_SAMPRGroupGeneralInformation {
         SAMPRGroupGeneralInformation obj = new SAMPRGroupGeneralInformation();
         RPCUnicodeString.NonNullTerminated name = RPCUnicodeString.NonNullTerminated.of("Name");
         obj.setName(name);
-        obj.setAttributes(50L);
+        obj.setAttributes(50);
         obj.setMemberCount(100L);
         RPCUnicodeString.NonNullTerminated adminComment = RPCUnicodeString.NonNullTerminated.of("AdminComment");
         obj.setAdminComment(adminComment);
@@ -78,14 +78,14 @@ public class Test_SAMPRGroupGeneralInformation {
         String hex1 = "1000100000000200 32000000 FFFFFFFF 1000100000000200";
         SAMPRGroupGeneralInformation expect1 = new SAMPRGroupGeneralInformation();
         expect1.setName(RPCUnicodeString.NonNullTerminated.of(""));
-        expect1.setAttributes(50L);
+        expect1.setAttributes(50);
         expect1.setMemberCount(4294967295L);
         expect1.setAdminComment(RPCUnicodeString.NonNullTerminated.of(""));
         // Name: Null, Attributes: 0, MemberCount: 0 AdminComment: Null
         String hex2 = "0000000000000000 00000000 00000000 0000000000000000";
         SAMPRGroupGeneralInformation expect2 = new SAMPRGroupGeneralInformation();
         expect2.setName(RPCUnicodeString.NonNullTerminated.of(null));
-        expect2.setAttributes(0L);
+        expect2.setAttributes(0);
         expect2.setMemberCount(0L);
         expect2.setAdminComment(RPCUnicodeString.NonNullTerminated.of(null));
         // Alignment: 4b Name: Non-Null, Attributes: 50, MemberCount: 4294967295 AdminComment: Non-Null
@@ -121,23 +121,23 @@ public class Test_SAMPRGroupGeneralInformation {
                 "08000000000000000800000074006500730074009f01310032003200 ";
         SAMPRGroupGeneralInformation obj1 = new SAMPRGroupGeneralInformation();
         obj1.setName(RPCUnicodeString.NonNullTerminated.of(""));
-        obj1.setAttributes(50L);
+        obj1.setAttributes(50);
         obj1.setMemberCount(100L);
         obj1.setAdminComment(RPCUnicodeString.NonNullTerminated.of(""));
         SAMPRGroupGeneralInformation expected1 = new SAMPRGroupGeneralInformation();
         expected1.setName(RPCUnicodeString.NonNullTerminated.of("testƟ121"));
-        expected1.setAttributes(50L);
+        expected1.setAttributes(50);
         expected1.setMemberCount(100L);
         expected1.setAdminComment(RPCUnicodeString.NonNullTerminated.of("testƟ122"));
         String hex2 = "";
         SAMPRGroupGeneralInformation obj2 = new SAMPRGroupGeneralInformation();
         obj2.setName(RPCUnicodeString.NonNullTerminated.of(null));
-        obj2.setAttributes(50L);
+        obj2.setAttributes(50);
         obj2.setMemberCount(100L);
         obj2.setAdminComment(RPCUnicodeString.NonNullTerminated.of(null));
         SAMPRGroupGeneralInformation expected2 = new SAMPRGroupGeneralInformation();
         expected2.setName(RPCUnicodeString.NonNullTerminated.of(null));
-        expected2.setAttributes(50L);
+        expected2.setAttributes(50);
         expected2.setMemberCount(100L);
         expected2.setAdminComment(RPCUnicodeString.NonNullTerminated.of(null));
         String hex3 = "00000000" + hex1;
@@ -170,9 +170,9 @@ public class Test_SAMPRGroupGeneralInformation {
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
         obj2.setName(RPCUnicodeString.NonNullTerminated.of("Name"));
         assertEquals(obj1.hashCode(), obj2.hashCode());
-        obj1.setAttributes(50L);
+        obj1.setAttributes(50);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
-        obj2.setAttributes(50L);
+        obj2.setAttributes(50);
         assertEquals(obj1.hashCode(), obj2.hashCode());
         obj1.setMemberCount(100L);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
@@ -193,9 +193,9 @@ public class Test_SAMPRGroupGeneralInformation {
         assertNotEquals(obj1, obj2);
         obj2.setName(RPCUnicodeString.NonNullTerminated.of("Name"));
         assertEquals(obj1, obj2);
-        obj1.setAttributes(50L);
+        obj1.setAttributes(50);
         assertNotEquals(obj1, obj2);
-        obj2.setAttributes(50L);
+        obj2.setAttributes(50);
         assertEquals(obj1, obj2);
         obj1.setMemberCount(100L);
         assertNotEquals(obj1, obj2);
@@ -216,7 +216,7 @@ public class Test_SAMPRGroupGeneralInformation {
     public void test_toString() {
         SAMPRGroupGeneralInformation obj = new SAMPRGroupGeneralInformation();
         obj.setName(RPCUnicodeString.NonNullTerminated.of("Name"));
-        obj.setAttributes(50L);
+        obj.setAttributes(50);
         obj.setMemberCount(100L);
         obj.setAdminComment(RPCUnicodeString.NonNullTerminated.of("AdminComment"));
         assertEquals(obj.toString(), "SAMPR_GROUP_GENERAL_INFORMATION{Name:RPC_UNICODE_STRING{value:\"Name\", nullTerminated:false},Attributes:50,MemberCount:100,AdminComment:RPC_UNICODE_STRING{value:\"AdminComment\", nullTerminated:false}}");

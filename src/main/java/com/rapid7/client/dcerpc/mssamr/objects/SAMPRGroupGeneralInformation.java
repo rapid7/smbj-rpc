@@ -49,7 +49,8 @@ public class SAMPRGroupGeneralInformation implements Unmarshallable {
     // <NDR: struct> RPC_UNICODE_STRING Name;
     private RPCUnicodeString.NonNullTerminated name;
     // <NDR: unsigned long> unsigned long Attributes;
-    private long attributes;
+    // This is a bit field so representing as an int is fine
+    private int attributes;
     // <NDR: unsigned long> unsigned long MemberCount;
     private long memberCount;
     // <NDR: struct> RPC_UNICODE_STRING AdminComment;
@@ -63,11 +64,11 @@ public class SAMPRGroupGeneralInformation implements Unmarshallable {
         this.name = name;
     }
 
-    public long getAttributes() {
+    public int getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(long attributes) {
+    public void setAttributes(int attributes) {
         this.attributes = attributes;
     }
 
@@ -105,7 +106,7 @@ public class SAMPRGroupGeneralInformation implements Unmarshallable {
         name.unmarshalEntity(in);
         // <NDR: unsigned long> unsigned long Attributes;
         in.align(Alignment.FOUR);
-        attributes = in.readUnsignedInt();
+        attributes = in.readInt();
         // <NDR: unsigned long> unsigned long MemberCount;
         // Alignment: 4 - Already aligned
         memberCount = in.readUnsignedInt();
