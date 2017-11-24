@@ -125,6 +125,7 @@ public class Test_SID {
     @Test
     public void test_fromString_noSubAuthority() {
         SID sid = SID.fromString("S-1-5");
+        assertEquals(sid.getSubAuthorities().length, 0);
         assertNull(sid.getRelativeID());
     }
 
