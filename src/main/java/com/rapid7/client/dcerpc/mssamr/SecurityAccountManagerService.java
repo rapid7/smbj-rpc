@@ -32,6 +32,7 @@ import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssamr.dto.AliasGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.AliasHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.DomainDisplayGroup;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainPasswordInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupGeneralInformation;
@@ -539,7 +540,7 @@ public class SecurityAccountManagerService extends Service {
         return getGroupsForDomain(domainHandle, bufferSize);
     }
 
-    public List<SAMPRDomainDisplayGroup> getDomainGroupInformationForDomain(final DomainHandle handle)
+    public DomainDisplayGroup[] getDomainGroupInformationForDomain(final DomainHandle handle)
             throws IOException {
         // no limit.
         final int entryCount = 0xffffffff;
@@ -547,11 +548,10 @@ public class SecurityAccountManagerService extends Service {
         return getDomainGroupInformationForDomain(handle, entryCount, maxLength);
     }
 
-    public List<SAMPRDomainDisplayGroup> getDomainGroupInformationForDomain(final DomainHandle domainHandle,
-            final int entryCount,
-            final int maxLength) throws IOException {
+    public DomainDisplayGroup[] getDomainGroupInformationForDomain(final DomainHandle domainHandle,
+            final int entryCount, final int maxLength) throws IOException {
         final byte[] domainHandleBytes = parseHandle(domainHandle);
-        final List<SAMPRDomainDisplayGroup> groups = new ArrayList<>();
+        final List<SAMPRDomainDisplayGroup> displayGroups = new ArrayList<>();
         int enumContext = 0;
         int totalReturnedBytes = 0;
         while (true) {
@@ -566,15 +566,22 @@ public class SecurityAccountManagerService extends Service {
             totalReturnedBytes += response.getTotalReturned();
             final int returnCode = response.getReturnValue();
             if (ERROR_MORE_ENTRIES.is(returnCode)) {
-                groups.addAll(buffer);
+                displayGroups.addAll(buffer);
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)
                     || totalReturnedBytes == response.getTotalAvailable()) {
-                groups.addAll(buffer);
-                return Collections.unmodifiableList(groups);
+                displayGroups.addAll(buffer);
+                break;
             } else {
                 throw new RPCException("QueryDisplayInformation2", returnCode);
             }
         }
+        final DomainDisplayGroup[] ret = new DomainDisplayGroup[displayGroups.size()];
+        int i = 0;
+        for (SAMPRDomainDisplayGroup displayGroup : displayGroups) {
+            ret[i++] = new DomainDisplayGroup(displayGroup.getRid(), displayGroup.getAccountName(),
+                    displayGroup.getDescription(), displayGroup.getAttributes());
+        }
+        return ret;
     }
 
     public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle,
