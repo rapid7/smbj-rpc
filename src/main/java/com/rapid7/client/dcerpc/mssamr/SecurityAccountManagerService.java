@@ -221,6 +221,7 @@ public class SecurityAccountManagerService extends Service {
 
     /**
      * Gets the domain RID and name pairs of domains hosted by the provided domain.
+     * Max buffer size will be used.
      *
      * @param serverHandle A valid server handle obtained from {@link #openServer()}
      * @return A list of all domains hosted by the server side of this protocol.
@@ -234,6 +235,7 @@ public class SecurityAccountManagerService extends Service {
 
     /**
      * Gets the domain RID and name pairs of domains hosted by the provided domain.
+     * Multiple request may be sent based on the entries read and buffer size.
      *
      * @param serverHandle A valid server handle obtained from {@link #openServer()}
      * @param bufferSize Maximum number of entries in each response. Since this method returns a list,
@@ -263,6 +265,7 @@ public class SecurityAccountManagerService extends Service {
 
     /**
      * Gets the alias RID and name pairs of all aliases in the provided domain.
+     * Max buffer size will be used.
      *
      * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
      * @return A list of all aliases in the given domain.
@@ -276,6 +279,7 @@ public class SecurityAccountManagerService extends Service {
 
     /**
      * Gets the alias RID and name pairs of all aliases in the provided domain.
+     * Multiple request may be sent based on the entries read and buffer size.
      *
      * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
      * @param bufferSize Maximum number of entries in each response. Since this method returns a list,
@@ -301,6 +305,19 @@ public class SecurityAccountManagerService extends Service {
             }
         });
         return parseSAMPRRIDEnumerations(aliases);
+    }
+
+    /**
+     * Gets the group RID and name pairs for the provided domain.
+     * Max buffer size will be used.
+     *
+     * @param domainHandle The domain handle.
+     * @return The enumerated groups.
+     * @throws IOException On issue with communication or marshalling.
+     */
+    public MembershipWithName[] getGroupsForDomain(final DomainHandle domainHandle) throws IOException {
+        final int bufferSize = 0xffff;
+        return getGroupsForDomain(domainHandle, bufferSize);
     }
 
     /**
@@ -334,7 +351,7 @@ public class SecurityAccountManagerService extends Service {
 
     /**
      * Gets the user RID and name pairs for the provided domain.
-     * Max buffer size will be used
+     * Max buffer size will be used.
      *
      * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
      * @param userAccountControl The UserAccountControl flags that filters the returned users.
@@ -528,26 +545,34 @@ public class SecurityAccountManagerService extends Service {
     }
 
     /**
-     * Gets the group RID and name pairs for the provided domain.
+     * Retrieve domain display information ({@link DomainDisplayGroup}) for all groups in the given domain.
      * Max buffer size will be used.
      *
-     * @param domainHandle The domain handle.
-     * @return The enumerated groups.
-     * @throws IOException On issue with communication or marshalling.
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}
+     * @return All groups in the given domain represented by {@link DomainDisplayGroup}.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
      */
-    public MembershipWithName[] getGroupsForDomain(final DomainHandle domainHandle) throws IOException {
-        final int bufferSize = 0xffff;
-        return getGroupsForDomain(domainHandle, bufferSize);
-    }
-
-    public DomainDisplayGroup[] getDomainGroupInformationForDomain(final DomainHandle handle)
+    public DomainDisplayGroup[] getDomainGroupInformationForDomain(final DomainHandle domainHandle)
             throws IOException {
         // no limit.
         final int entryCount = 0xffffffff;
         final int maxLength = 0xffff;
-        return getDomainGroupInformationForDomain(handle, entryCount, maxLength);
+        return getDomainGroupInformationForDomain(domainHandle, entryCount, maxLength);
     }
 
+    /**
+     * Retrieve domain display information ({@link DomainDisplayGroup}) for all groups in the given domain.
+     * Max buffer size will be used.
+     *
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}
+     * @param entryCount The number of accounts requested.
+     * @param maxLength The requested maximum number of bytes to return in this request;
+     *                  this value overrides entryCount if this value is reached before entryCount is reached.
+     * @return All groups in the given domain represented by {@link DomainDisplayGroup}.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
     public DomainDisplayGroup[] getDomainGroupInformationForDomain(final DomainHandle domainHandle,
             final int entryCount, final int maxLength) throws IOException {
         final byte[] domainHandleBytes = parseHandle(domainHandle);
