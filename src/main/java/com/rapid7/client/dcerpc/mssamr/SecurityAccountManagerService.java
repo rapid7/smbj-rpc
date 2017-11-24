@@ -41,7 +41,6 @@ import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithName;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithUse;
 import com.rapid7.client.dcerpc.mssamr.dto.SecurityDescriptor;
-import com.rapid7.client.dcerpc.mssamr.dto.SecurityInformationQueryType;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.UserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
@@ -619,45 +618,35 @@ public class SecurityAccountManagerService extends Service {
      * returns an unsuccessful response.
      */
     public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle) throws IOException {
-        return getSecurityObject(objectHandle, 0x0F);
+        return getSecurityObject(objectHandle, true, true, true, true);
     }
 
     /**
      * Return the access control {@link SecurityDescriptor} for the given object.
+     * This method requests all security information, which will include owner, group, SACL, and DACL security information.
      *
      * @param objectHandle The object to query. Typically one of:
      * {@link DomainHandle}, {@link UserHandle}, {@link GroupHandle}, {@link AliasHandle}.
-     * @param securityInformation Dictates what security information should be returned.
+     * @param queryOwner Retrieve and populate the owner SID.
+     * @param queryGroup Retrieve and populate the group SID.
+     * @param queryDACL Retrieve and populate the DACL.
+     * @param querySACL Retrieve and populate the SACL.
      * @return The access control {@link SecurityDescriptor} for the given object.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
     public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle,
-            final SecurityInformationQueryType ... securityInformation) throws IOException {
-        int securityInformationValue = 0;
-        if (securityInformation != null) {
-            for (SecurityInformationQueryType v : securityInformation) {
-                if (v == null)
-                    continue;
-                securityInformationValue |= v.getValue();
-            }
-        }
-        return getSecurityObject(objectHandle, securityInformationValue);
-    }
-
-    /**
-     * Return the access control {@link SecurityDescriptor} for the given object.
-     *
-     * @param objectHandle The object to query. Typically one of:
-     * {@link DomainHandle}, {@link UserHandle}, {@link GroupHandle}, {@link AliasHandle}.
-     * @param securityInformation Dictates what security information should be returned.
-     *                            See {@link SecurityInformationQueryType} if you are unsure what bit field to provide.
-     * @return The access control {@link SecurityDescriptor} for the given object.
-     * @throws IOException Thrown if either a communication failure is encountered, or the call
-     * returns an unsuccessful response.
-     */
-    public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle,
-            int securityInformation) throws IOException {
+            final boolean queryOwner, final boolean queryGroup,
+            final boolean queryDACL, final boolean querySACL) throws IOException {
+        int securityInformation = 0;
+        if (queryOwner)
+            securityInformation = securityInformation & 0x01;
+        if (queryGroup)
+            securityInformation = securityInformation & 0x02;
+        if (querySACL)
+            securityInformation = securityInformation & 0x04;
+        if (queryDACL)
+            securityInformation = securityInformation & 0x08;
         final SamrQuerySecurityObjectRequest request =
                 new SamrQuerySecurityObjectRequest(parseHandle(objectHandle), securityInformation);
         return parseSecurityDescriptor(callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor());
