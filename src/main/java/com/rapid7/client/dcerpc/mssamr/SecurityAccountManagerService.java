@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import com.google.common.base.Strings;
-import com.hierynomus.msdtyp.SecurityDescriptor;
 import com.hierynomus.msdtyp.SecurityInformation;
 import com.hierynomus.protocol.commons.buffer.Buffer;
 import com.hierynomus.smb.SMBBuffer;
@@ -36,9 +35,12 @@ import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssamr.dto.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.LogonHours;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithName;
+import com.rapid7.client.dcerpc.mssamr.dto.SecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.UserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrCloseHandleRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrConnect2Request;
@@ -379,10 +381,50 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public SAMPRUserAllInformation getUserAllInformation(final UserHandle userHandle) throws IOException {
+    public UserAllInformation getUserAllInformation(final UserHandle userHandle) throws IOException {
         final SamrQueryInformationUserRequest.UserAllInformation request =
                 new SamrQueryInformationUserRequest.UserAllInformation(parseHandle(userHandle));
-        return callExpectSuccess(request, "SamrQueryInformationUser[21]").getUserInformation();
+        final SAMPRUserAllInformation userInformation =
+                callExpectSuccess(request, "SamrQueryInformationUser[21]").getUserInformation();
+        try {
+            return new UserAllInformation(
+                    userInformation.getLastLogon(),
+                    userInformation.getLastLogoff(),
+                    userInformation.getPasswordLastSet(),
+                    userInformation.getAccountExpires(),
+                    userInformation.getPasswordCanChange(),
+                    userInformation.getPasswordMustChange(),
+                    userInformation.getUserName().getValue(),
+                    userInformation.getFullName().getValue(),
+                    userInformation.getHomeDirectory().getValue(),
+                    userInformation.getHomeDirectoryDrive().getValue(),
+                    userInformation.getScriptPath().getValue(),
+                    userInformation.getProfilePath().getValue(),
+                    userInformation.getAdminComment().getValue(),
+                    userInformation.getWorkStations().getValue(),
+                    userInformation.getUserComment().getValue(),
+                    userInformation.getParameters().getValue(),
+                    userInformation.getLmOwfPassword().getBuffer(),
+                    userInformation.getNtOwfPassword().getBuffer(),
+                    userInformation.getPrivateData().getValue(),
+                    parseSecurityDescriptor(userInformation.getSecurityDescriptor()),
+                    userInformation.getUserId(),
+                    userInformation.getPrimaryGroupId(),
+                    userInformation.getUserAccountControl(),
+                    userInformation.getWhichFields(),
+                    new LogonHours(userInformation.getLogonHours().getLogonHours()),
+                    userInformation.getBadPasswordCount(),
+                    userInformation.getLogonCount(),
+                    userInformation.getCountryCode(),
+                    userInformation.getCodePage(),
+                    userInformation.getLmPasswordPresent() != 0,
+                    userInformation.getNtPasswordPresent() != 0,
+                    userInformation.getPasswordExpired() != 0,
+                    userInformation.getPrivateDataSensitive() != 0
+            );
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new UnmarshalException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -529,17 +571,13 @@ public class SecurityAccountManagerService extends Service {
         return parseSecurityDescriptor(callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor());
     }
 
-    SecurityDescriptor parseSecurityDescriptor(final SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
+    private SecurityDescriptor parseSecurityDescriptor(final SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
         if (securityDescriptor == null)
             return null;
         byte[] payload = securityDescriptor.getSecurityDescriptor();
         if (payload == null)
             return null;
-        try {
-            return SecurityDescriptor.read(new SMBBuffer(payload));
-        } catch (Buffer.BufferException e) {
-            throw new UnmarshalException(String.format("Failed to parse %s", SAMPRSRSecurityDescriptor.class.getSimpleName()), e);
-        }
+        return new SecurityDescriptor(payload);
     }
 
     public SID getSIDForDomain(final ServerHandle serverHandle, final String domainName) throws IOException {

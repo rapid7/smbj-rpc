@@ -19,16 +19,11 @@
 package com.rapid7.client.dcerpc.mssamr;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import org.mockito.Mockito;
-import com.hierynomus.msdtyp.SID;
-import com.hierynomus.msdtyp.SecurityDescriptor;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrEnumerateDomainsInSamServerRequest;
@@ -40,7 +35,6 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.DomainInfo;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupMembership;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -82,35 +76,6 @@ public class Test_SecurityAccountManagerService {
         Mockito.when(transport.call(Mockito.any(SamrEnumerateDomainsInSamServerRequest.class))).thenReturn(response1)
             .thenReturn(response2);
         assertEquals(2, service.getDomainsForServer(handle).length);
-    }
-
-    @Test
-    public void test_parseSecurityDescriptor() throws IOException {
-        String hex = "01000080140000002400000000000000000000000102000000000005200000002002000001020000000000052000000020020000";
-
-        RPCTransport transport = Mockito.mock(RPCTransport.class);
-        SecurityAccountManagerService service = new SecurityAccountManagerService(transport);
-        SAMPRSRSecurityDescriptor samprsrSecurityDescriptor = new SAMPRSRSecurityDescriptor();
-        samprsrSecurityDescriptor.setSecurityDescriptor(Hex.decode(hex));
-
-        SecurityDescriptor securityDescriptor = service.parseSecurityDescriptor(samprsrSecurityDescriptor);
-        assertEquals(Collections.singleton(SecurityDescriptor.Control.SR), securityDescriptor.getControl());
-        assertEquals(SID.fromString("S-1-5-32-544"), securityDescriptor.getOwnerSid());
-        assertEquals(SID.fromString("S-1-5-32-544"), securityDescriptor.getGroupSid());
-    }
-
-    @Test
-    public void test_parseSecurityDescriptor_nullSAMPRSRSecurityDescriptor() throws IOException {
-        RPCTransport transport = Mockito.mock(RPCTransport.class);
-        SecurityAccountManagerService service = new SecurityAccountManagerService(transport);
-        assertNull(service.parseSecurityDescriptor(null));
-    }
-
-    @Test
-    public void test_parseSecurityDescriptor_nullPayload() throws IOException {
-        RPCTransport transport = Mockito.mock(RPCTransport.class);
-        SecurityAccountManagerService service = new SecurityAccountManagerService(transport);
-        assertNull(service.parseSecurityDescriptor(new SAMPRSRSecurityDescriptor()));
     }
 
     @Test

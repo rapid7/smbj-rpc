@@ -22,6 +22,7 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
+import com.rapid7.client.dcerpc.mssamr.dto.GroupAttributes;
 
 /**
  * The GROUP_MEMBERSHIP structure holds information on a group membership.
@@ -37,7 +38,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * <p>RelativeId: A RID that represents one membership value.</p>
  * <p>Attributes: Characteristics about the membership represented as a bitmask. Values are defined in
  *    section <a href="https://msdn.microsoft.com/en-us/library/cc245538.aspx"> 2.2.1.10</a>.
- *    See {@link com.rapid7.client.dcerpc.mssamr.SeGroupAttributes}.
+ *    See {@link GroupAttributes}.
  * </p>
  */
 public class GroupMembership implements Unmarshallable {

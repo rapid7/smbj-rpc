@@ -32,6 +32,10 @@ public class MembershipWithAttributes extends Membership {
         this.attributes = attributes;
     }
 
+    /**
+     * @return A bit field of attributes associated with this membership.
+     * If this membership is for a group, {@link GroupAttributes} can be used to inspect the values.
+     */
     public int getAttributes() {
         return attributes;
     }
