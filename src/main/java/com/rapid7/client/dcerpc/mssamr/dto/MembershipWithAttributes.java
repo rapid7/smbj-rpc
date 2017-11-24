@@ -58,6 +58,6 @@ public class MembershipWithAttributes extends Membership {
 
     @Override
     public String toString() {
-        return String.format("Membership{relativeID: %d, attributes: %d}", getRelativeID(), getAttributes());
+        return String.format("MembershipWithAttributes{relativeID: %d, attributes: %d}", getRelativeID(), getAttributes());
     }
 }

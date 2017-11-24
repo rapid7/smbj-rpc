@@ -22,36 +22,39 @@
 package com.rapid7.client.dcerpc.mssamr.dto;
 
 /**
- * This class contains the relative ID for a member of a security issuer.
+ * This class contains the relative ID and use for a member of a security issuer.
  */
-public class Membership {
-    private final long relativeID;
+public class MembershipWithUse extends Membership {
 
-    public Membership(final long relativeID) {
-        this.relativeID = relativeID;
+    private final int use;
+
+    public MembershipWithUse(final long relativeID, final int use) {
+        super(relativeID);
+        this.use = use;
     }
 
-    public long getRelativeID() {
-        return relativeID;
+    public int getUse() {
+        return use;
     }
 
     @Override
     public int hashCode() {
-        return (int) this.relativeID;
+        return (super.hashCode() * 31) + this.use;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof Membership)) {
+        } else if (! (obj instanceof MembershipWithUse)) {
             return false;
         }
-        return this.relativeID == ((Membership) obj).relativeID;
+        return super.equals(obj)
+                && this.use == ((MembershipWithUse) obj).use;
     }
 
     @Override
     public String toString() {
-        return String.format("Membership{relativeID: %d}", this.relativeID);
+        return String.format("MembershipWithUse{relativeID: %d, use: %d}", getRelativeID(), this.use);
     }
 }

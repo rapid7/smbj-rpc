@@ -65,7 +65,7 @@ public abstract class Service {
 
     protected RPCUnicodeString.NonNullTerminated[] parseNonNullTerminatedStrings(String[] strings) {
         if (strings == null)
-            return null;
+            return new RPCUnicodeString.NonNullTerminated[0];
         final RPCUnicodeString.NonNullTerminated[] ret = new RPCUnicodeString.NonNullTerminated[strings.length];
         for (int i = 0; i < strings.length; i++) {
             ret[i] = RPCUnicodeString.NonNullTerminated.of(strings[i]);

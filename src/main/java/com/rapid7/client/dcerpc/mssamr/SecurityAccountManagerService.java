@@ -39,6 +39,7 @@ import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.LogonHours;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithName;
+import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithUse;
 import com.rapid7.client.dcerpc.mssamr.dto.SecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.UserAllInformation;
@@ -85,6 +86,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRRIDEnumeration;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRULongArray;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.RPCSID;
@@ -607,17 +609,29 @@ public class SecurityAccountManagerService extends Service {
         return parseRPCSID(rpcsid);
     }
 
-    public SamrLookupNamesInDomainResponse getNamesInDomain(final DomainHandle domainHandle, String ... names)
-            throws IOException {
-        if (names == null)
-            names = new String[0];
-        final RPCUnicodeString.NonNullTerminated[] inNames = new RPCUnicodeString.NonNullTerminated[names.length];
-        for (int i = 0; i < names.length; i++) {
-            inNames[i] = RPCUnicodeString.NonNullTerminated.of(names[i]);
-        }
+    public MembershipWithUse[] getNamesInDomain(final DomainHandle domainHandle, String ... names) throws IOException {
         final SamrLookupNamesInDomainRequest request =
-                new SamrLookupNamesInDomainRequest(parseHandle(domainHandle), inNames);
-        return callExpectSuccess(request, "SamrLookupNamesInDomain");
+                new SamrLookupNamesInDomainRequest(parseHandle(domainHandle), parseNonNullTerminatedStrings(names));
+        final SamrLookupNamesInDomainResponse response =
+                callExpect(request, "SamrLookupNamesInDomain",
+                        SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED);
+        long[] relativeIds = response.getRelativeIds().getArray();
+        // This is a pointer, it can be null
+        if (relativeIds == null)
+            relativeIds = new long[0];
+        long[] uses = response.getUse().getArray();
+        // This is a pointer, it can be null
+        if (uses == null)
+            uses = new long[0];
+        if (relativeIds.length != uses.length) {
+            throw new UnmarshalException(String.format(
+                    "Expected RelativeIds.length == Uses.length but %d != %d", relativeIds.length, uses.length));
+        }
+        final MembershipWithUse[] memberships = new MembershipWithUse[relativeIds.length];
+        for (int i = 0; i < memberships.length; i++) {
+            memberships[i] = new MembershipWithUse(relativeIds[i], (int) uses[i]);
+        }
+        return memberships;
     }
 
     /**
