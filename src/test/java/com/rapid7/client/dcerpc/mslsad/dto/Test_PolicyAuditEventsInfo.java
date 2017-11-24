@@ -21,11 +21,11 @@
 
 package com.rapid7.client.dcerpc.mslsad.dto;
 
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
 public class Test_PolicyAuditEventsInfo {
 
