@@ -21,13 +21,13 @@
 
 package com.rapid7.client.dcerpc.dto;
 
-import org.testng.annotations.Test;
-
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertSame;
+import org.testng.annotations.Test;
 
 public class Test_SID {
 
@@ -49,10 +49,10 @@ public class Test_SID {
         new SID((byte) 200, new byte[]{1, 2, 3, 4, 5, 6}, null);
     }
 
-    @Test(expectedExceptions = {IllegalArgumentException.class},
-            expectedExceptionsMessageRegExp = "Expected at least one entry in subAuthorities, got: 0")
+    @Test
     public void test_init_SubAuthoritiesWrongLength() {
-        new SID((byte) 200, new byte[]{1, 2, 3, 4, 5, 6}, new long[]{});
+        SID sid = new SID((byte) 200, new byte[] { 1, 2, 3, 4, 5, 6 }, new long[] {});
+        assertEquals(sid.getSubAuthorities().length, 0);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class Test_SID {
         assertEquals(sid.getRevision(), (byte) 200);
         assertSame(sid.getIdentifierAuthority(), identifierAuthority);
         assertSame(sid.getSubAuthorities(), subAuthorities);
-        assertEquals(sid.getRelativeID(), 3);
+        assertEquals(sid.getRelativeID().longValue(), 3);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class Test_SID {
         assertEquals(sid2.getRevision(), (byte) 200);
         assertEquals(sid2.getIdentifierAuthority(), new byte[]{1, 2, 3, 4, 5, 6});
         assertEquals(sid2.getSubAuthorities(), new long[] {1, 2, 3, 500});
-        assertEquals(sid2.getRelativeID(), 500);
+        assertEquals(sid2.getRelativeID().longValue(), 500);
     }
 
     @Test
@@ -122,10 +122,10 @@ public class Test_SID {
         SID.fromString("S-1-");
     }
 
-    @Test(expectedExceptions = {SID.MalformedSIDStringException.class},
-            expectedExceptionsMessageRegExp = "Expecting at least one sub authority: S-1-5")
-    public void test_fromString_test() {
-        SID.fromString("S-1-5");
+    @Test
+    public void test_fromString_noSubAuthority() {
+        SID sid = SID.fromString("S-1-5");
+        assertNull(sid.getRelativeID());
     }
 
     @Test
