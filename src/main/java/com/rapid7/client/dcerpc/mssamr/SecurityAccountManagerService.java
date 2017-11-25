@@ -640,13 +640,13 @@ public class SecurityAccountManagerService extends Service {
             final boolean queryDACL, final boolean querySACL) throws IOException {
         int securityInformation = 0;
         if (queryOwner)
-            securityInformation = securityInformation & 0x01;
+            securityInformation |= 0x01;
         if (queryGroup)
-            securityInformation = securityInformation & 0x02;
-        if (querySACL)
-            securityInformation = securityInformation & 0x04;
+            securityInformation |= 0x02;
         if (queryDACL)
-            securityInformation = securityInformation & 0x08;
+            securityInformation |= 0x04;
+        if (querySACL)
+            securityInformation |= 0x08;
         final SamrQuerySecurityObjectRequest request =
                 new SamrQuerySecurityObjectRequest(parseHandle(objectHandle), securityInformation);
         return parseSecurityDescriptor(callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor());
