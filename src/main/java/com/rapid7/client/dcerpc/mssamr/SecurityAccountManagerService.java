@@ -23,7 +23,6 @@ import java.rmi.UnmarshalException;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.common.base.Strings;
-import com.hierynomus.msdtyp.SecurityInformation;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.dto.ContextHandle;
 import com.rapid7.client.dcerpc.dto.SID;
@@ -85,7 +84,6 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRRIDEnumeration;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.RPCSID;
@@ -426,7 +424,7 @@ public class SecurityAccountManagerService extends Service {
                     userInformation.getLmOwfPassword().getBuffer(),
                     userInformation.getNtOwfPassword().getBuffer(),
                     userInformation.getPrivateData().getValue(),
-                    parseSecurityDescriptor(userInformation.getSecurityDescriptor()),
+                    userInformation.getSecurityDescriptor().getSecurityDescriptor(),
                     userInformation.getUserId(),
                     userInformation.getPrimaryGroupId(),
                     userInformation.getUserAccountControl(),
@@ -613,11 +611,11 @@ public class SecurityAccountManagerService extends Service {
      *
      * @param objectHandle The object to query. Typically one of:
      * {@link DomainHandle}, {@link UserHandle}, {@link GroupHandle}, {@link AliasHandle}.
-     * @return The access control {@link SecurityDescriptor} for the given object.
+     * @return The access control security descriptor for the given object.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle) throws IOException {
+    public byte[] getSecurityObject(final ContextHandle objectHandle) throws IOException {
         return getSecurityObject(objectHandle, true, true, true, true);
     }
 
@@ -631,11 +629,11 @@ public class SecurityAccountManagerService extends Service {
      * @param queryGroup Retrieve and populate the group SID.
      * @param queryDACL Retrieve and populate the DACL.
      * @param querySACL Retrieve and populate the SACL.
-     * @return The access control {@link SecurityDescriptor} for the given object.
+     * @return The access control security descriptor for the given object.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public SecurityDescriptor getSecurityObject(final ContextHandle objectHandle,
+    public byte[] getSecurityObject(final ContextHandle objectHandle,
             final boolean queryOwner, final boolean queryGroup,
             final boolean queryDACL, final boolean querySACL) throws IOException {
         int securityInformation = 0;
@@ -649,16 +647,7 @@ public class SecurityAccountManagerService extends Service {
             securityInformation |= 0x08;
         final SamrQuerySecurityObjectRequest request =
                 new SamrQuerySecurityObjectRequest(parseHandle(objectHandle), securityInformation);
-        return parseSecurityDescriptor(callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor());
-    }
-
-    private SecurityDescriptor parseSecurityDescriptor(final SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
-        if (securityDescriptor == null)
-            return null;
-        byte[] payload = securityDescriptor.getSecurityDescriptor();
-        if (payload == null)
-            return null;
-        return new SecurityDescriptor(payload);
+        return callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor().getSecurityDescriptor();
     }
 
     public SID getSIDForDomain(final ServerHandle serverHandle, final String domainName) throws IOException {
