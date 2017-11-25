@@ -21,6 +21,8 @@
 
 package com.rapid7.client.dcerpc.dto;
 
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Objects;
 import org.bouncycastle.util.encoders.Hex;
@@ -148,6 +150,25 @@ public class SID {
         MalformedSIDStringException(String reason, String sidStr) {
             super(String.format("%s: %s", reason, sidStr));
         }
+    }
+
+    public static SID read(final ByteBuffer buffer) {
+        if (buffer == null) {
+            throw new IllegalArgumentException("Expecting non-null buffer");
+        }
+        final byte revision = buffer.get();
+        final byte subAuthorityCount = buffer.get();
+        if (subAuthorityCount <= 0) {
+            throw new IllegalArgumentException(String.format(
+                    "Expected subAuthority count >= 0, got: %d", subAuthorityCount));
+        }
+        final byte[] identifierAuthority = new byte[6];
+        buffer.get(identifierAuthority);
+        final long[] subAuthorities = new long[subAuthorityCount];
+        for (int i = 0; i < subAuthorities.length; i++) {
+            subAuthorities[i] = (long) buffer.getInt();
+        }
+        return new SID(revision, identifierAuthority, subAuthorities);
     }
 
     /**

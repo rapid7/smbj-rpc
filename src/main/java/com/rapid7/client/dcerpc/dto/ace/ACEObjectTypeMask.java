@@ -19,19 +19,30 @@
  *
  */
 
-package com.rapid7.client.dcerpc.mssamr.dto;
+package com.rapid7.client.dcerpc.dto.ace;
 
 /**
- * TODO: Describe Me!
+ * This enum represents an <a href="https://msdn.microsoft.com/en-us/library/cc230289.aspx">ACE ObjectType</a>
  */
-public class SecurityDescriptor {
-    private final byte[] securityDescriptor;
+public enum ACEObjectTypeMask {
+    ADS_RIGHT_DS_CONTROL_ACCESS((short) 0x0100),
+    ADS_RIGHT_DS_CREATE_CHILD((short) 0x0001),
+    ADS_RIGHT_DS_DELETE_CHILD((short) 0x0002),
+    ADS_RIGHT_DS_READ_PROP((short) 0x0010),
+    ADS_RIGHT_DS_WRITE_PROP((short) 0x0020),
+    ADS_RIGHT_DS_SELF((short) 0x0008);
 
-    public SecurityDescriptor(final byte[] securityDescriptor) {
-        this.securityDescriptor = securityDescriptor;
+    private final short value;
+
+    ACEObjectTypeMask(final short value) {
+        this.value = value;
     }
 
-    public byte[] getSecurityDescriptor() {
-        return securityDescriptor;
+    public short getValue() {
+        return value;
+    }
+
+    public boolean isSet(final int bitField) {
+        return (bitField & getValue()) != 0;
     }
 }

@@ -23,6 +23,7 @@ package com.rapid7.client.dcerpc.mssamr.dto;
 
 import java.util.Arrays;
 import java.util.Objects;
+import com.rapid7.client.dcerpc.dto.SecurityDescriptor;
 
 /**
  * Represents information retrieved from SamrQueryUserInfomration using info level 21 (UserAllInformation).

@@ -23,7 +23,6 @@ import java.rmi.UnmarshalException;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.common.base.Strings;
-import com.hierynomus.msdtyp.SecurityInformation;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.dto.ContextHandle;
 import com.rapid7.client.dcerpc.dto.SID;
@@ -40,7 +39,7 @@ import com.rapid7.client.dcerpc.mssamr.dto.LogonHours;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithName;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithUse;
-import com.rapid7.client.dcerpc.mssamr.dto.SecurityDescriptor;
+import com.rapid7.client.dcerpc.dto.SecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.UserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.UserHandle;
@@ -640,25 +639,16 @@ public class SecurityAccountManagerService extends Service {
             final boolean queryDACL, final boolean querySACL) throws IOException {
         int securityInformation = 0;
         if (queryOwner)
-            securityInformation = securityInformation & 0x01;
+            securityInformation |= 0x01;
         if (queryGroup)
-            securityInformation = securityInformation & 0x02;
-        if (querySACL)
-            securityInformation = securityInformation & 0x04;
+            securityInformation |= 0x02;
         if (queryDACL)
-            securityInformation = securityInformation & 0x08;
+            securityInformation |= 0x04;
+        if (querySACL)
+            securityInformation |= 0x08;
         final SamrQuerySecurityObjectRequest request =
                 new SamrQuerySecurityObjectRequest(parseHandle(objectHandle), securityInformation);
         return parseSecurityDescriptor(callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor());
-    }
-
-    private SecurityDescriptor parseSecurityDescriptor(final SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
-        if (securityDescriptor == null)
-            return null;
-        byte[] payload = securityDescriptor.getSecurityDescriptor();
-        if (payload == null)
-            return null;
-        return new SecurityDescriptor(payload);
     }
 
     public SID getSIDForDomain(final ServerHandle serverHandle, final String domainName) throws IOException {
@@ -796,5 +786,14 @@ public class SecurityAccountManagerService extends Service {
             memberships[i++] = new MembershipWithAttributes(groupMembership.getRelativeID(), groupMembership.getAttributes());
         }
         return memberships;
+    }
+
+    private SecurityDescriptor parseSecurityDescriptor(final SAMPRSRSecurityDescriptor securityDescriptor) throws IOException {
+        if (securityDescriptor == null)
+            return null;
+        byte[] payload = securityDescriptor.getSecurityDescriptor();
+        if (payload == null)
+            return null;
+        return SecurityDescriptor.read(payload);
     }
 }
