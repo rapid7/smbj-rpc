@@ -49,15 +49,15 @@ public abstract class ObjectACE extends ACE {
         this.flags = buffer.getInt();
         if (isACEObjectPresent()) {
             // TODO
-            buffer.get(16);
+            buffer.get(new byte[16]);
         } else {
-            buffer.get(16);
+            buffer.get(new byte[16]);
         }
         if (isACEInheritedObjectPresent()) {
             // TODO
-            buffer.get(16);
+            buffer.get(new byte[16]);
         } else {
-            buffer.get(16);
+            buffer.get(new byte[16]);
         }
         this.objectType = null;
         this.inheritedObjectType = null;
