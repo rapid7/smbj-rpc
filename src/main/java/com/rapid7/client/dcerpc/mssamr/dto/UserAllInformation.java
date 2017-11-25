@@ -47,7 +47,7 @@ public class UserAllInformation {
     private final int[] lmOwfPassword;
     private final int[] ntOwfPassword;
     private final String privateData;
-    private final SecurityDescriptor securityDescriptor;
+    private final byte[] securityDescriptor;
     private final long userId;
     private final long primaryGroupId;
     private final long userAccountControl;
@@ -66,7 +66,7 @@ public class UserAllInformation {
             long passwordCanChange, long passwordMustChange, String userName, String fullName, String homeDirectory,
             String homeDirectoryDrive, String scriptPath, String profilePath, String adminComment, String workStations,
             String userComment, String parameters, int[] lmOwfPassword, int[] ntOwfPassword, String privateData,
-            SecurityDescriptor securityDescriptor, long userId, long primaryGroupId, long userAccountControl,
+            byte[] securityDescriptor, long userId, long primaryGroupId, long userAccountControl,
             long whichFields, LogonHours logonHours, int badPasswordCount, int logonCount, int countryCode,
             int codePage, boolean lmPasswordPresent, boolean ntPasswordPresent, boolean passwordExpired,
             boolean privateDataSensitive) {
@@ -181,7 +181,7 @@ public class UserAllInformation {
         return privateData;
     }
 
-    public SecurityDescriptor getSecurityDescriptor() {
+    public byte[] getSecurityDescriptor() {
         return securityDescriptor;
     }
 
@@ -277,7 +277,7 @@ public class UserAllInformation {
                 && Arrays.equals(getLmOwfPassword(), other.getLmOwfPassword())
                 && Arrays.equals(getNtOwfPassword(), other.getNtOwfPassword())
                 && Objects.equals(getPrivateData(), other.getPrivateData())
-                && Objects.equals(getSecurityDescriptor(), other.getSecurityDescriptor())
+                && Arrays.equals(getSecurityDescriptor(), other.getSecurityDescriptor())
                 && Objects.equals(getUserId(), other.getUserId())
                 && Objects.equals(getPrimaryGroupId(), other.getPrimaryGroupId())
                 && Objects.equals(getUserAccountControl(), other.getUserAccountControl())
