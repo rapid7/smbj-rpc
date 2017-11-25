@@ -23,7 +23,7 @@ package com.rapid7.client.dcerpc.mslsad.dto;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
+import static org.junit.Assert.assertArrayEquals;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -73,7 +73,8 @@ public class Test_PolicyAuditEventsInfo {
     @Test(dataProvider = "data_getEventAuditingOptions")
     public void test_getEventAuditingOptions(PolicyAuditEventType type, int expectValue) {
         PolicyAuditEventsInfo obj = new PolicyAuditEventsInfo(true, new int[]{10, 20, 30, 40, 50, 60, 70, 80, 90});
-        assertEquals(obj.getEventAuditingOptions(type), expectValue);
+        assertEquals(obj.getEventAuditingOptionForType(type), expectValue);
+        assertArrayEquals(new int[] { 10, 20, 30, 40, 50, 60, 70, 80, 90 }, obj.getEventAuditingOptions());
     }
 
     @Test

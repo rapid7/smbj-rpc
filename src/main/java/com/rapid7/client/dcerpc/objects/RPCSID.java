@@ -20,7 +20,6 @@ package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
 import java.rmi.MarshalException;
-import java.rmi.UnmarshalException;
 import java.util.Arrays;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
@@ -109,9 +108,6 @@ public class RPCSID implements Unmarshallable, Marshallable {
             throw new MarshalException(String.format("SubAuthorityCount (%d) != SubAuthority[] length (%d)",
                     (int) this.subAuthorityCount, this.subAuthority.length));
         }
-        if (this.subAuthority.length <= 0) {
-            throw new MarshalException("Expecting at least one SubAuthority entry");
-        }
         // Structure alignment
         out.align(Alignment.FOUR);
         // <NDR: unsigned char> unsigned char Revision;
@@ -154,9 +150,6 @@ public class RPCSID implements Unmarshallable, Marshallable {
         // <NDR: unsigned char> unsigned char SubAuthorityCount;
         // Alignment: 1 - Already aligned
         this.subAuthorityCount = in.readUnsignedByte();
-        if (this.subAuthorityCount <= 0) {
-            throw new UnmarshalException("Expecting at least one SubAuthority entry");
-        }
         // <NDR: fixed array> RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
         // Alignment: 1 - Already aligned
         this.identifierAuthority = new byte[6];

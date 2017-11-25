@@ -56,9 +56,6 @@ public class SID {
         }
         if (subAuthorities == null) {
             throw new IllegalArgumentException("Expecting non-null subAuthorities");
-        } else if (subAuthorities.length <= 0) {
-            throw new IllegalArgumentException(String.format(
-                    "Expected at least one entry in subAuthorities, got: %d", subAuthorities.length));
         }
         this.revision = revision;
         this.identifierAuthority = identifierAuthority;
@@ -82,10 +79,13 @@ public class SID {
 
     /**
      * @return The last subauthority, which is the relative identifier (RID).
-     * This is guaranteed to be available as at least one subauthority is required to construct a valid SID.
+     *         May be {@code null} if no sub-authority exists.
+     *
      * The RID is typically only useful in situations where this SID represents an issuer (i.e. domain).
      */
-    public long getRelativeID() {
+    public Long getRelativeID() {
+        if (subAuthorities.length == 0)
+            return null;
         return subAuthorities[subAuthorities.length-1];
     }
 
@@ -203,8 +203,6 @@ public class SID {
                 };
             }
             final long[] subAuthorities = new long[split.length - 3];
-            if (subAuthorities.length <= 0)
-                throw new MalformedSIDStringException("Expecting at least one sub authority", sidString);
             for (int i = 0; i < subAuthorities.length; i++) {
                 subAuthorities[i] = Long.parseLong(split[i + 3]);
             }

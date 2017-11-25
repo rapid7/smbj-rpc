@@ -58,8 +58,22 @@ public class PolicyAuditEventsInfo {
      * @param eventType What auditing options to return. All types are supported.
      * @return The auditing options for a particular {@link PolicyAuditEventType}.
      */
-    public int getEventAuditingOptions(PolicyAuditEventType eventType) {
+    public int getEventAuditingOptionForType(PolicyAuditEventType eventType) {
         return this.eventAuditingOptions[eventType.getValue()-1];
+    }
+
+    /**
+     * Gets an array of POLICY_AUDIT_EVENT_OPTIONS (@see
+     * {@link EventAuditOptions})variables. Each element in this array specifies
+     * the auditing options for an audit event type. The index of each array
+     * element corresponds to an audit event type value in the
+     * POLICY_AUDIT_EVENT_TYPE enumeration type.
+     *
+     * @return an array of POLICY_AUDIT_EVENT_OPTIONS variables as
+     *         {@code int[]}.
+     */
+    public int[] getEventAuditingOptions() {
+        return this.eventAuditingOptions;
     }
 
     @Override
