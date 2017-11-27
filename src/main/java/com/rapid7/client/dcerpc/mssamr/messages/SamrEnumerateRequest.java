@@ -21,15 +21,14 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public abstract class SamrEnumerateRequest<T extends SamrEnumerateResponse> extends RequestCall<T> {
 
-    private final ContextHandle handle;
+    private final byte[] handle;
     private final int enumContext;
     private final int maxLength;
 
-    protected SamrEnumerateRequest(short opNum, ContextHandle handle,
+    protected SamrEnumerateRequest(short opNum, byte[] handle,
             int enumerationContext, int preferredMaximumLength) {
         super(opNum);
         this.handle = handle;
@@ -37,10 +36,9 @@ public abstract class SamrEnumerateRequest<T extends SamrEnumerateResponse> exte
         this.maxLength = preferredMaximumLength;
     }
 
-
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(handle.getBytes());
+        packetOut.write(handle);
         packetOut.writeInt(enumContext);
         packetOut.writeInt(maxLength);
     }

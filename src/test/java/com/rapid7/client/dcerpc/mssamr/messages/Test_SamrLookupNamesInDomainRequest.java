@@ -27,7 +27,6 @@ import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.Test;
 
 import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 import static org.testng.Assert.assertEquals;
@@ -37,7 +36,7 @@ import static org.testng.Assert.assertSame;
 public class Test_SamrLookupNamesInDomainRequest {
     @Test
     public void test_getters() {
-        DomainHandle domainHandle = new DomainHandle();
+        byte[] domainHandle = new byte[20];
         RPCUnicodeString.NonNullTerminated[] names = new RPCUnicodeString.NonNullTerminated[2];
 
         SamrLookupNamesInDomainRequest obj = new SamrLookupNamesInDomainRequest(domainHandle, names);
@@ -56,13 +55,13 @@ public class Test_SamrLookupNamesInDomainRequest {
     @Test(expectedExceptions = {IllegalArgumentException.class},
             expectedExceptionsMessageRegExp = "names must not be null")
     public void test_NamesNull() {
-        new SamrLookupNamesInDomainRequest(new DomainHandle(), null);
+        new SamrLookupNamesInDomainRequest(new byte[20], null);
     }
 
     @Test(expectedExceptions = {IllegalArgumentException.class},
             expectedExceptionsMessageRegExp = "names must not contain more than 1000 elements, got: 1001")
     public void test_NamesTooLong() {
-        new SamrLookupNamesInDomainRequest(new DomainHandle(), new RPCUnicodeString.NonNullTerminated[1001]);
+        new SamrLookupNamesInDomainRequest(new byte[20], new RPCUnicodeString.NonNullTerminated[1001]);
     }
 
     @Test
@@ -90,8 +89,7 @@ public class Test_SamrLookupNamesInDomainRequest {
                 "0000" +
                 // RPCUnicodeString.NonNullTerminated deferral: {MaximumCount:7,Offset:0,ActualCount:7,Value:Test123}
                 "0700000000000000070000005400650073007400310032003300";
-        DomainHandle domainHandle = new DomainHandle();
-        domainHandle.setBytes(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20});
+        byte[] domainHandle = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
         RPCUnicodeString.NonNullTerminated[] names = new RPCUnicodeString.NonNullTerminated[] {
             RPCUnicodeString.NonNullTerminated.of("Administrator"),
             RPCUnicodeString.NonNullTerminated.of(null),

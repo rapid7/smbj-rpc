@@ -22,17 +22,16 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class ROpenServiceWRequest extends RequestCall<HandleResponse> {
 
     private final static short OP_NUM = 16;
 
     private final String serviceName;
-    private final ContextHandle serviceManagerHandle;
+    private final byte[] serviceManagerHandle;
     private final int access;
 
-    public ROpenServiceWRequest(ContextHandle serviceManagerHandle, String serviceName, int access) {
+    public ROpenServiceWRequest(byte[] serviceManagerHandle, String serviceName, int access) {
         super(OP_NUM);
         this.serviceManagerHandle = serviceManagerHandle;
         this.serviceName = serviceName;
@@ -41,7 +40,7 @@ public class ROpenServiceWRequest extends RequestCall<HandleResponse> {
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(serviceManagerHandle.getBytes());
+        packetOut.write(serviceManagerHandle);
         if (serviceName != null) packetOut.writeString(serviceName, true);
         else packetOut.writeNull();
         packetOut.writeInt(access);

@@ -19,13 +19,9 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.msdtyp.SID;
-import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.ServerHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 
 /**
@@ -44,17 +40,17 @@ import com.rapid7.client.dcerpc.objects.RPCSID;
  *
  *  This protocol asks the RPC runtime, via the strict_context_handle attribute, to reject the use of context handles created by a method of a different RPC interface than this one, as specified in [MS-RPCE] section 3.</pre></blockquote>
  */
-public class SamrOpenDomainRequest extends RequestCall<SamrOpenDomainResponse> {
+public class SamrOpenDomainRequest extends RequestCall<HandleResponse> {
     public final static short OP_NUM = 7;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE ServerHandle
-    private final ServerHandle handle;
+    private final byte[] handle;
     // <NDR: unsigned long> [in] unsigned long DesiredAccess
     private final int desiredAccess;
     // <NDR: struct> [in] PRPC_SID DomainId
     private final RPCSID domainId;
 
-    public SamrOpenDomainRequest(ServerHandle handle, int desiredAccess, RPCSID domainId) {
+    public SamrOpenDomainRequest(byte[] handle, int desiredAccess, RPCSID domainId) {
         super(OP_NUM);
         this.handle = handle;
         this.desiredAccess = desiredAccess;
@@ -64,7 +60,7 @@ public class SamrOpenDomainRequest extends RequestCall<SamrOpenDomainResponse> {
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SAMPR_HANDLE ServerHandle
-        packetOut.writeMarshallable(this.handle);
+        packetOut.write(this.handle);
         // <NDR: unsigned long> [in] unsigned long DesiredAccess
         // Alignment: 4 - Already aligned, wrote 20 bytes above
         packetOut.writeInt(this.desiredAccess);
@@ -73,7 +69,7 @@ public class SamrOpenDomainRequest extends RequestCall<SamrOpenDomainResponse> {
     }
 
     @Override
-    public SamrOpenDomainResponse getResponseObject() {
-        return new SamrOpenDomainResponse();
+    public HandleResponse getResponseObject() {
+        return new HandleResponse();
     }
 }

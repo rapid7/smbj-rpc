@@ -30,12 +30,10 @@ import com.rapid7.client.dcerpc.objects.RPCShortBlob;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
 
 public class Test_SAMPRUserAllInformation {
 
@@ -74,46 +72,6 @@ public class Test_SAMPRUserAllInformation {
         assertEquals(obj.getNtPasswordPresent(), (char) 0);
         assertEquals(obj.getPasswordExpired(), (char) 0);
         assertEquals(obj.getPrivateDataSensitive(), (char) 0);
-    }
-
-    @Test
-    public void test_isLmPasswordPresent() {
-        SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
-        assertFalse(obj.isLmPasswordPresent());
-        obj.setLmPasswordPresent((char) 1);
-        assertTrue(obj.isLmPasswordPresent());
-        obj.setLmPasswordPresent((char) 0);
-        assertFalse(obj.isLmPasswordPresent());
-    }
-
-    @Test
-    public void test_isNtPasswordPresent() {
-        SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
-        assertFalse(obj.isNtPasswordPresent());
-        obj.setNtPasswordPresent((char) 1);
-        assertTrue(obj.isNtPasswordPresent());
-        obj.setNtPasswordPresent((char) 0);
-        assertFalse(obj.isNtPasswordPresent());
-    }
-
-    @Test
-    public void test_isPasswordExpired() {
-        SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
-        assertFalse(obj.isPasswordExpired());
-        obj.setPasswordExpired((char) 1);
-        assertTrue(obj.isPasswordExpired());
-        obj.setPasswordExpired((char) 0);
-        assertFalse(obj.isPasswordExpired());
-    }
-
-    @Test
-    public void test_isPrivateDataSensitive() {
-        SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
-        assertFalse(obj.isPrivateDataSensitive());
-        obj.setPrivateDataSensitive((char) 1);
-        assertTrue(obj.isPrivateDataSensitive());
-        obj.setPrivateDataSensitive((char) 0);
-        assertFalse(obj.isPrivateDataSensitive());
     }
 
     @Test
@@ -186,7 +144,7 @@ public class Test_SAMPRUserAllInformation {
         assertEquals(obj.getWhichFields(), 10L);
         SAMPRLogonHours samprLogonHours = new SAMPRLogonHours();
         samprLogonHours.setUnitsPerWeek((short) 50);
-        samprLogonHours.setLogonHours(new char[50]);
+        samprLogonHours.setLogonHours(new byte[50]);
         obj.setLogonHours(samprLogonHours);
         assertSame(obj.getLogonHours(), samprLogonHours);
         obj.setBadPasswordCount(11);
@@ -321,7 +279,7 @@ public class Test_SAMPRUserAllInformation {
         expectedObj.getNtOwfPassword().setBuffer(new int[]{1, 2, 3, 5});
         expectedObj.getPrivateData().setValue("testƟ131");
         expectedObj.getSecurityDescriptor().setSecurityDescriptor(new byte[]{1, 2});
-        expectedObj.getLogonHours().setLogonHours(new char[]{3});
+        expectedObj.getLogonHours().setLogonHours(new byte[]{3});
 
         String hex =
                 // UserName: testƟ121
@@ -487,7 +445,7 @@ public class Test_SAMPRUserAllInformation {
         assertEquals(obj1.hashCode(), obj2.hashCode());
         SAMPRLogonHours samprLogonHours = new SAMPRLogonHours();
         samprLogonHours.setUnitsPerWeek((short) 50);
-        samprLogonHours.setLogonHours(new char[50]);
+        samprLogonHours.setLogonHours(new byte[50]);
         obj1.setLogonHours(samprLogonHours);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
         obj2.setLogonHours(samprLogonHours);
@@ -646,7 +604,7 @@ public class Test_SAMPRUserAllInformation {
         assertEquals(obj1, obj2);
         SAMPRLogonHours samprLogonHours = new SAMPRLogonHours();
         samprLogonHours.setUnitsPerWeek((short) 50);
-        samprLogonHours.setLogonHours(new char[50]);
+        samprLogonHours.setLogonHours(new byte[50]);
         obj1.setLogonHours(samprLogonHours);
         assertNotEquals(obj1, obj2);
         obj2.setLogonHours(samprLogonHours);
@@ -734,7 +692,7 @@ public class Test_SAMPRUserAllInformation {
         obj.setWhichFields(10L);
         SAMPRLogonHours logonHours = new SAMPRLogonHours();
         logonHours.setUnitsPerWeek((short) 7);
-        logonHours.setLogonHours(new char[1]);
+        logonHours.setLogonHours(new byte[1]);
         obj.setLogonHours(logonHours);
         obj.setBadPasswordCount(11);
         obj.setLogonCount(12);

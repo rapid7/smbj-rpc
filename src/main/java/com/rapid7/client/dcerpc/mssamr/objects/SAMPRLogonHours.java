@@ -46,7 +46,7 @@ public class SAMPRLogonHours implements Unmarshallable {
     // <NDR: unsigned short> unsigned short UnitsPerWeek;
     private short unitsPerWeek;
     // <NDR: pointer> [size_is(1260), length_is((UnitsPerWeek+7)/8)] unsigned char* LogonHours;
-    private char[] logonHours;
+    private byte[] logonHours;
 
     public short getUnitsPerWeek() {
         return unitsPerWeek;
@@ -56,11 +56,11 @@ public class SAMPRLogonHours implements Unmarshallable {
         this.unitsPerWeek = unitsPerWeek;
     }
 
-    public char[] getLogonHours() {
+    public byte[] getLogonHours() {
         return logonHours;
     }
 
-    public void setLogonHours(char[] logonHours) {
+    public void setLogonHours(byte[] logonHours) {
         this.logonHours = logonHours;
     }
 
@@ -79,7 +79,7 @@ public class SAMPRLogonHours implements Unmarshallable {
         // <NDR: pointer> [size_is(1260), length_is((UnitsPerWeek+7)/8)] unsigned char* LogonHours;
         in.fullySkipBytes(2); // Alignment: 4 - Wrote exactly two bytes above since alignment
         if (in.readReferentID() != 0) {
-            logonHours = new char[(unitsPerWeek + 7) / 8]; // Integer division is intended - Adding 7 allows this to round down
+            logonHours = new byte[(unitsPerWeek + 7) / 8]; // Integer division is intended - Adding 7 allows this to round down
         }
     }
 
@@ -101,7 +101,7 @@ public class SAMPRLogonHours implements Unmarshallable {
             // <NDR: unsigned char> unsigned char
             // Alignment: 1 - Already aligned
             for (int i = 0; i < logonHours.length; i++) {
-                logonHours[i] = in.readUnsignedByte();
+                logonHours[i] = in.readByte();
             }
         }
     }

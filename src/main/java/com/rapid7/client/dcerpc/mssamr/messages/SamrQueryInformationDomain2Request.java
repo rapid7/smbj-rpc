@@ -23,7 +23,6 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 
 /**
@@ -59,14 +58,14 @@ public abstract class SamrQueryInformationDomain2Request<T extends Unmarshallabl
     public final static short OP_NUM = 46;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-    private final DomainHandle domainHandle;
+    private final byte[] domainHandle;
 
-    public SamrQueryInformationDomain2Request(final DomainHandle domainHandle) {
+    public SamrQueryInformationDomain2Request(final byte[] domainHandle) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
     }
 
-    public DomainHandle getDomainHandle() {
+    public byte[] getDomainHandle() {
         return this.domainHandle;
     }
 
@@ -75,14 +74,14 @@ public abstract class SamrQueryInformationDomain2Request<T extends Unmarshallabl
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-        packetOut.writeMarshallable(this.domainHandle);
+        packetOut.write(this.domainHandle);
         // <NDR: short> switch_is(DomainInformationClass)
         // Alignment: 2 - Already aligned, wrote 20 bytes above
         packetOut.writeShort(getDomainInformationClass().getInfoLevel());
     }
 
-    public static class DomainLockoutInfo extends SamrQueryInformationDomain2Request<SAMPRDomainLockoutInfo> {
-        public DomainLockoutInfo(DomainHandle handle) {
+    public static class DomainLockoutInformation extends SamrQueryInformationDomain2Request<SAMPRDomainLockoutInfo> {
+        public DomainLockoutInformation(byte[] handle) {
             super(handle);
         }
 

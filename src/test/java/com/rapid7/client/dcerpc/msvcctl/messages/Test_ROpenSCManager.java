@@ -19,26 +19,21 @@
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.bouncycastle.util.encoders.Hex;
+import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msvcctl.ServiceControlManagerService;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 public class Test_ROpenSCManager {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
-
     @SuppressWarnings("unchecked")
     @Test
     public void parseROpenSCManagerResponse() throws IOException {
         final HandleResponse response = new HandleResponse();
         response.fromHexString("000000003a2177b63ee8844398f35fc12e3a8fc500000000");
-        ContextHandle managerHandle = new ContextHandle("000000003a2177b63ee8844398f35fc12e3a8fc5");
+        byte[] managerHandle = Hex.decode("000000003a2177b63ee8844398f35fc12e3a8fc5");
         assertEquals(SystemErrorCode.ERROR_SUCCESS.getValue(), response.getReturnValue());
         assertEquals(managerHandle, response.getHandle());
     }

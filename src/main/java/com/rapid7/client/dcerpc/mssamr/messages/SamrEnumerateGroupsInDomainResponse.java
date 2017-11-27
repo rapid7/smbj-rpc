@@ -27,7 +27,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.GroupInfo;
 /**
  * The {@link SamrEnumerateResponse} implementation for request {@link SamrEnumerateGroupsInDomainRequest}.
  */
-public class SamrEnumerateGroupsInDomainResponse extends SamrEnumerateResponse {
+public class SamrEnumerateGroupsInDomainResponse extends SamrEnumerateResponse<GroupInfo> {
     private EnumeratedGroups groups;
 
     @Override

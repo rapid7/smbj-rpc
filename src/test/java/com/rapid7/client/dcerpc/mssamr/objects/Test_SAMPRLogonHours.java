@@ -47,7 +47,7 @@ public class Test_SAMPRLogonHours {
     public void test_setters() {
         SAMPRLogonHours obj = new SAMPRLogonHours();
         obj.setUnitsPerWeek((short) 50);
-        char[] logonHours = new char[]{1, 2, 3};
+        byte[] logonHours = new byte[]{1, 2, 3};
         obj.setLogonHours(logonHours);
         assertEquals(obj.getUnitsPerWeek(), (short) 50);
         assertSame(obj.getLogonHours(), logonHours);
@@ -63,9 +63,9 @@ public class Test_SAMPRLogonHours {
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
         obj2.setUnitsPerWeek((short) 50);
         assertEquals(obj1.hashCode(), obj2.hashCode());
-        obj1.setLogonHours(new char[]{1, 2, 3});
+        obj1.setLogonHours(new byte[]{1, 2, 3});
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
-        obj2.setLogonHours(new char[]{1, 2, 3});
+        obj2.setLogonHours(new byte[]{1, 2, 3});
         assertEquals(obj1.hashCode(), obj2.hashCode());
     }
 
@@ -81,9 +81,9 @@ public class Test_SAMPRLogonHours {
         assertNotEquals(obj1, obj2);
         obj2.setUnitsPerWeek((short) 50);
         assertEquals(obj1, obj2);
-        obj1.setLogonHours(new char[]{1, 2, 3});
+        obj1.setLogonHours(new byte[]{1, 2, 3});
         assertNotEquals(obj1, obj2);
-        obj2.setLogonHours(new char[]{1, 2, 3});
+        obj2.setLogonHours(new byte[]{1, 2, 3});
         assertEquals(obj1, obj2);
     }
 
@@ -159,22 +159,22 @@ public class Test_SAMPRLogonHours {
                 {"", 0, null, null},
 
                 // MaximumCount: 1, Offset: 2, ActualCount: 3
-                {"01000000 02000000 03000000", 0, new char[0], new char[0]},
+                {"01000000 02000000 03000000", 0, new byte[0], new byte[0]},
                 // MaximumCount: 0, Offset: 0, ActualCount: 0, LogonHours: {1, 2, 3}
-                {"00000000 00000000 00000000 01 02 FF", 0, new char[3], new char[]{1, 2, 255}},
+                {"00000000 00000000 00000000 01 02 FF", 0, new byte[3], new byte[]{1, 2, -1}},
 
                 // Alignments
                 // MaximumCount: 1, Offset: 2, ActualCount: 3
-                {"00000000 01000000 02000000 03000000", 1, new char[0], new char[0]},
+                {"00000000 01000000 02000000 03000000", 1, new byte[0], new byte[0]},
                 // MaximumCount: 1, Offset: 2, ActualCount: 3
-                {"00000000 01000000 02000000 03000000", 2, new char[0], new char[0]},
+                {"00000000 01000000 02000000 03000000", 2, new byte[0], new byte[0]},
                 // MaximumCount: 1, Offset: 2, ActualCount: 3
-                {"00000000 01000000 02000000 03000000", 3, new char[0], new char[0]}
+                {"00000000 01000000 02000000 03000000", 3, new byte[0], new byte[0]}
         };
     }
 
     @Test(dataProvider = "data_unmarshalDeferrals")
-    public void test_unmarshalDeferrals(String hex, int mark, char[] logonHours, char[] expectedLogonHours) throws IOException {
+    public void test_unmarshalDeferrals(String hex, int mark, byte[] logonHours, byte[] expectedLogonHours) throws IOException {
         ByteArrayInputStream bout = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bout);
         in.fullySkipBytes(mark);
@@ -195,7 +195,7 @@ public class Test_SAMPRLogonHours {
     public void test_toString() {
         SAMPRLogonHours obj = new SAMPRLogonHours();
         obj.setUnitsPerWeek((short) 50);
-        obj.setLogonHours(new char[]{1, 2, 3});
+        obj.setLogonHours(new byte[]{1, 2, 3});
         assertEquals(obj.toString(), "SAMPR_LOGON_HOURS{UnitsPerWeek:50,size(LogonHours):3}");
     }
 }

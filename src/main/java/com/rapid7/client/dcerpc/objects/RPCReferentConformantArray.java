@@ -21,6 +21,7 @@ package com.rapid7.client.dcerpc.objects;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
@@ -33,6 +34,7 @@ public abstract class RPCReferentConformantArray<T extends Unmarshallable & Mars
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        in.align(Alignment.FOUR);
         for (int i = 0; i < array.length; i++) {
             int refId = in.readReferentID();
             // Not contained in the deferrals.
@@ -46,9 +48,6 @@ public abstract class RPCReferentConformantArray<T extends Unmarshallable & Mars
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        if (array == null)
-            return;
-
         for (T t : array) {
             if (t != null)
                 in.readUnmarshallable(t);
@@ -57,9 +56,7 @@ public abstract class RPCReferentConformantArray<T extends Unmarshallable & Mars
 
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
-        if (array == null)
-            return;
-
+        out.align(Alignment.FOUR);
         for (T t : array) {
             if (t != null)
                 out.writeReferentID();
@@ -70,9 +67,6 @@ public abstract class RPCReferentConformantArray<T extends Unmarshallable & Mars
 
     @Override
     public void marshalDeferrals(PacketOutput out) throws IOException {
-        if (array == null)
-            return;
-
         for (T t : array) {
             if (t != null)
                 out.writeMarshallable(t);

@@ -24,7 +24,7 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.mssamr.objects.AliasInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.EnumeratedAliases;
 
-public class SamrEnumerateAliasesInDomainResponse extends SamrEnumerateResponse {
+public class SamrEnumerateAliasesInDomainResponse extends SamrEnumerateResponse<AliasInfo> {
     private EnumeratedAliases aliases;
 
     @Override
@@ -37,5 +37,4 @@ public class SamrEnumerateAliasesInDomainResponse extends SamrEnumerateResponse 
     public List<AliasInfo> getList() {
         return aliases.getEntries();
     }
-
 }

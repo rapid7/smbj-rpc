@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 
 /**
  * The SamrGetGroupsForUser method obtains a listing of groups that a user is a member of.
@@ -42,16 +41,16 @@ public class SamrGetGroupsForUserRequest extends RequestCall<SamrGetGroupsForUse
     public static final short OP_NUM = 39;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE UserHandle
-    private final UserHandle userHandle;
+    private final byte[] userHandle;
 
-    public SamrGetGroupsForUserRequest(UserHandle userHandle) {
+    public SamrGetGroupsForUserRequest(byte[] userHandle) {
         super(OP_NUM);
         this.userHandle = userHandle;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.writeMarshallable(this.userHandle);
+        packetOut.write(this.userHandle);
     }
 
     @Override

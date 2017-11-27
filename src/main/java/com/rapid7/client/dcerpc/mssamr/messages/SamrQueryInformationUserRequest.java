@@ -26,7 +26,6 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
-import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
 
 /**
@@ -50,14 +49,14 @@ import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
 public abstract class SamrQueryInformationUserRequest<T extends Unmarshallable> extends RequestCall<SamrQueryInformationUserResponse<T>> {
     public static final short OP_NUM = 36;
 
-    private final UserHandle userHandle;
+    private final byte[] userHandle;
 
-    SamrQueryInformationUserRequest(UserHandle userHandle) {
+    SamrQueryInformationUserRequest(byte[] userHandle) {
         super(OP_NUM);
         this.userHandle = userHandle;
     }
 
-    public UserHandle getUserHandle() {
+    public byte[] getUserHandle() {
         return userHandle;
     }
 
@@ -66,14 +65,14 @@ public abstract class SamrQueryInformationUserRequest<T extends Unmarshallable> 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: struct> [in] SAMPR_HANDLE UserHandle,
-        packetOut.writeMarshallable(getUserHandle());
+        packetOut.write(getUserHandle());
         // <NDR: unsigned short> [in] USER_INFORMATION_CLASS UserInformationClass,
         // Alignment: 2 - Already aligned. ContextHandle writes 20 bytes above
         packetOut.writeShort(getUserInformationClass().getInfoLevel());
     }
 
     public static class UserAllInformation extends SamrQueryInformationUserRequest<SAMPRUserAllInformation> {
-        public UserAllInformation(UserHandle userHandle) {
+        public UserAllInformation(byte[] userHandle) {
             super(userHandle);
         }
 

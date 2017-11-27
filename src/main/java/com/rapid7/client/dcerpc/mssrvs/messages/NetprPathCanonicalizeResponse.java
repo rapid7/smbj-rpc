@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mssrvs.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssrvs.NetprPathType;
 
 /**

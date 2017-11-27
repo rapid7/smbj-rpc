@@ -31,35 +31,40 @@ import java.io.IOException;
  */
 
 public class LsarLookupSIDsResponse extends RequestResponse {
+    // <NDR: pointer[struct]> [out] PLSAPR_REFERENCED_DOMAIN_LIST* ReferencedDomains
+    private LSAPRReferencedDomainList referencedDomains;
+    // <NDR: struct> [in, out] PLSAPR_TRANSLATED_NAMES TranslatedNames
+    private LSAPRTranslatedNames translatedNames;
+    // <NDR: unsigned long> [in, out] unsigned long* MappedCount
     private int mappedCount;
-    private LSAPRReferencedDomainList lsaprReferencedDomainList;
-    private LSAPRTranslatedNames lsaprTranslatedNames;
 
     @Override
-    public void unmarshalResponse(final PacketInput packetIn)
-            throws IOException {
-
+    public void unmarshalResponse(final PacketInput packetIn) throws IOException {
+        // <NDR: pointer[struct]> [out] PLSAPR_REFERENCED_DOMAIN_LIST* ReferencedDomains
+        // Alignment: 4 - Already aligned
         if (packetIn.readReferentID() != 0) {
-            lsaprReferencedDomainList = new LSAPRReferencedDomainList();
-            packetIn.readUnmarshallable(lsaprReferencedDomainList);
+            referencedDomains = new LSAPRReferencedDomainList();
+            packetIn.readUnmarshallable(referencedDomains);
+        } else {
+            referencedDomains = null;
         }
-
-        lsaprTranslatedNames = new LSAPRTranslatedNames();
-        packetIn.readUnmarshallable(lsaprTranslatedNames);
-        //Mapped Count
+        // <NDR: struct> [in, out] PLSAPR_TRANSLATED_NAMES TranslatedNames
+        translatedNames = new LSAPRTranslatedNames();
+        packetIn.readUnmarshallable(translatedNames);
+        // <NDR: unsigned long> [in, out] unsigned long* MappedCount
         packetIn.align(Alignment.FOUR);
         mappedCount = packetIn.readInt();
     }
 
+    public LSAPRReferencedDomainList getReferencedDomains() {
+        return referencedDomains;
+    }
+
+    public LSAPRTranslatedNames getTranslatedNames() {
+        return translatedNames;
+    }
+
     public int getMappedCount() {
         return mappedCount;
-    }
-
-    public LSAPRReferencedDomainList getLsaprReferencedDomainList() {
-        return lsaprReferencedDomainList;
-    }
-
-    public LSAPRTranslatedNames getLsaprTranslatedNames() {
-        return lsaprTranslatedNames;
     }
 }

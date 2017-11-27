@@ -25,8 +25,10 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
+ * <b>Alignment: 4</b>
  * Documentation from https://msdn.microsoft.com/en-us/library/cc234455.aspx
  *  <h1 class="title">2.2.14 LSA_TRANSLATED_SID</h1>
  *
@@ -62,27 +64,37 @@ import java.io.IOException;
  */
 public class LSAPRTranslatedSID implements Unmarshallable
 {
-    private int use;
+    // <NDR: short> SID_NAME_USE Use;
+    private short use;
+    // <NDR: unsigned long> unsigned long RelativeId;
     private long relativeId;
-    private long domainIndex;
+    // <NDR: long> long DomainIndex;
+    private int domainIndex;
 
     @Override
-    public void unmarshalPreamble(PacketInput in)
-        throws IOException {
+    public void unmarshalPreamble(PacketInput in) throws IOException {
+        // No preamble
     }
 
     @Override
-    public void unmarshalEntity(PacketInput in)
-        throws IOException {
+    public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
         in.align(Alignment.FOUR);
-        use = in.readInt();
-        relativeId = in.readUnsignedInt();
-        domainIndex = in.readUnsignedInt();
+        // <NDR: short> SID_NAME_USE Use;
+        // Alignment: 2 - Already aligned
+        this.use = in.readShort();
+        // <NDR: unsigned long> unsigned long RelativeId;
+        // Alignment: 4
+        in.fullySkipBytes(2);
+        this.relativeId = in.readUnsignedInt();
+        // <NDR: long> long DomainIndex;
+        // Alignment: 4 - Already aligned
+        domainIndex = in.readInt();
     }
 
     @Override
-    public void unmarshalDeferrals(PacketInput in)
-        throws IOException {
+    public void unmarshalDeferrals(PacketInput in) throws IOException {
+        // No deferrals
     }
 
     public int getUse() {
@@ -98,31 +110,27 @@ public class LSAPRTranslatedSID implements Unmarshallable
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof LSAPRTranslatedSID)) {
+            return false;
+        }
 
-        LSAPRTranslatedSID that = (LSAPRTranslatedSID) o;
-
-        if (use != that.use) return false;
-        if (relativeId != that.relativeId) return false;
-        return domainIndex == that.domainIndex;
+        final LSAPRTranslatedSID other = (LSAPRTranslatedSID) obj;
+        return Objects.equals(this.use, other.use)
+                && Objects.equals(this.relativeId, other.relativeId)
+                && Objects.equals(this.domainIndex, other.domainIndex);
     }
 
     @Override
     public int hashCode() {
-        int result = use;
-        result = 31 * result + (int) (relativeId ^ (relativeId >>> 32));
-        result = 31 * result + (int) (domainIndex ^ (domainIndex >>> 32));
-        return result;
+        return Objects.hash(this.use, this.relativeId, this.domainIndex);
     }
 
     @Override
     public String toString() {
-        return "LSAPRTranslatedSID{" +
-                "use=" + use +
-                ", relativeId=" + relativeId +
-                ", domainIndex=" + domainIndex +
-                '}';
+        return String.format("LSA_TRANSLATED_SID{Use:%d,RelativeId:%d,DomainIndex;%d}",
+                this.use, this.relativeId, this.domainIndex);
     }
 }

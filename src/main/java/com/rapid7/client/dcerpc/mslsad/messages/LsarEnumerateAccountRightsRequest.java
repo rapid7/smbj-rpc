@@ -19,11 +19,8 @@
 package com.rapid7.client.dcerpc.mslsad.messages;
 
 import java.io.IOException;
-import java.rmi.MarshalException;
-import com.hierynomus.msdtyp.SID;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 
 /**
@@ -44,11 +41,11 @@ public class LsarEnumerateAccountRightsRequest extends RequestCall<LsarEnumerate
     private final static short OP_NUM = 36;
 
     // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
-    private final ContextHandle policyHandle;
+    private final byte[] policyHandle;
     // <NDR: struct> [in] PRPC_SID AccountSid
     private final RPCSID accountSid;
 
-    public LsarEnumerateAccountRightsRequest(final ContextHandle policyHandle, final RPCSID accountSid) {
+    public LsarEnumerateAccountRightsRequest(final byte[] policyHandle, final RPCSID accountSid) {
         super(OP_NUM);
         this.policyHandle = policyHandle;
         this.accountSid = accountSid;
@@ -57,7 +54,7 @@ public class LsarEnumerateAccountRightsRequest extends RequestCall<LsarEnumerate
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
-        packetOut.writeMarshallable(this.policyHandle);
+        packetOut.write(this.policyHandle);
         // <NDR: struct> [in] PRPC_SID AccountSid
         packetOut.writeMarshallable(this.accountSid);
     }

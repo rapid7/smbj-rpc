@@ -28,7 +28,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
-import com.rapid7.client.dcerpc.mssamr.objects.AliasHandle;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -37,8 +36,7 @@ public class Test_SamrQueryInformationAliasRequest {
 
     @DataProvider
     public Object[][] data_requests() {
-        AliasHandle handle = new AliasHandle();
-        handle.setBytes(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20});
+        byte[] handle = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
         return new Object[][] {
                 {new SamrQueryInformationAliasRequest.AliasGeneralInformation(handle)}
         };
@@ -62,7 +60,7 @@ public class Test_SamrQueryInformationAliasRequest {
 
         ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
         PacketInput in = new PacketInput(bin);
-        assertEquals(in.readRawBytes(20), request.getAliasHandle().getBytes());
+        assertEquals(in.readRawBytes(20), request.getAliasHandle());
         assertEquals(in.readUnsignedShort(), request.getAliasInformationClass().getInfoLevel());
         assertEquals(bin.available(), 0);
     }

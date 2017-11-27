@@ -19,12 +19,9 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.protocol.commons.EnumWithValue;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc245750.aspx">SamrOpenGroup</a>
@@ -44,17 +41,17 @@ import com.rapid7.client.dcerpc.mssamr.objects.DomainHandle;
  *
  *  This protocol asks the RPC runtime, via the strict_context_handle attribute, to reject the use of context handles created by a method of a different RPC interface than this one, as specified in [MS-RPCE] section 3.</pre></blockquote>
  */
-public class SamrOpenGroupRequest extends RequestCall<SamrOpenGroupResponse> {
+public class SamrOpenGroupRequest extends RequestCall<HandleResponse> {
     public final static short OP_NUM = 19;
 
     // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-    private final DomainHandle domainHandle;
+    private final byte[] domainHandle;
     // <NDR: unsigned long> [in] unsigned long DesiredAccess
     private final int desiredAccess;
     // <NDR: unsigned long> [in] unsigned long GroupId
     private final long groupId;
 
-    public SamrOpenGroupRequest(DomainHandle domainHandle, int desiredAccess, long groupId) {
+    public SamrOpenGroupRequest(byte[] domainHandle, int desiredAccess, long groupId) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
         this.desiredAccess = desiredAccess;
@@ -64,7 +61,7 @@ public class SamrOpenGroupRequest extends RequestCall<SamrOpenGroupResponse> {
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
-        packetOut.writeMarshallable(this.domainHandle);
+        packetOut.write(this.domainHandle);
         // <NDR: unsigned long> [in] unsigned long DesiredAccess
         // No align necessary - Always 20 bytes written
         packetOut.writeInt(this.desiredAccess);
@@ -74,7 +71,7 @@ public class SamrOpenGroupRequest extends RequestCall<SamrOpenGroupResponse> {
     }
 
     @Override
-    public SamrOpenGroupResponse getResponseObject() {
-        return new SamrOpenGroupResponse();
+    public HandleResponse getResponseObject() {
+        return new HandleResponse();
     }
 }

@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -27,7 +28,6 @@ import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -59,7 +59,7 @@ public class Test_RChangeServiceConfig {
     @SuppressWarnings("unchecked")
     @Test
     public void encodeRChangeServiceConfigRequest_nullParams() throws IOException {
-        ContextHandle testHandle = new ContextHandle("000000004ba33dee35ec1246bd1a407779babf11");
+        byte[] testHandle = Hex.decode("000000004ba33dee35ec1246bd1a407779babf11");
         ServiceConfigInfo serviceConfigInfo = new ServiceConfigInfo(ServiceType.NO_CHANGE, ServiceStartType.DEMAND_START, ServiceError.NORMAL, null, null, 0, null, null, null);
         RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(testHandle, serviceConfigInfo);
         assertEquals(request.toHexString(), "000000004ba33dee35ec1246bd1a407779babf11ffffffff0300000001000000000000000000000000000000000000000000000000000000000000000000000000000000");
@@ -68,7 +68,7 @@ public class Test_RChangeServiceConfig {
     @SuppressWarnings("unchecked")
     @Test
     public void encodeRChangeServiceConfigRequest() throws IOException {
-        ContextHandle testHandle = new ContextHandle("00000000f3fdced6b714df4ba7c770d115f24601");
+        byte[] testHandle = Hex.decode("00000000f3fdced6b714df4ba7c770d115f24601");
         ServiceConfigInfo serviceConfigInfo = new ServiceConfigInfo(ServiceType.NO_CHANGE, ServiceStartType.DEMAND_START, ServiceError.NORMAL, "Some binary path", "TestLOG", 1, "abc", null, "TestDisplayName");
         serviceConfigInfo.setPassword("Password");
         RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(testHandle, serviceConfigInfo);

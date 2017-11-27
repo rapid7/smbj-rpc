@@ -21,21 +21,20 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 public class RQueryServiceStatusRequest extends RequestCall<RQueryServiceStatusResponse> {
 
     private final static short OP_NUM = 6;
-    private final ContextHandle handle;
+    private final byte[] handle;
 
-    public RQueryServiceStatusRequest(ContextHandle handle) {
+    public RQueryServiceStatusRequest(byte[] handle) {
         super(OP_NUM);
         this.handle = handle;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        packetOut.write(handle.getBytes());
+        packetOut.write(handle);
     }
 
     @Override

@@ -25,12 +25,8 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssamr.objects.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupInformationClass;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
-import com.rapid7.client.dcerpc.mssamr.objects.UserHandle;
-import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc245780.aspx">SamrQueryInformationGroup</a>
@@ -61,14 +57,14 @@ import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
 public abstract class SamrQueryInformationGroupRequest<T extends Unmarshallable> extends RequestCall<SamrQueryInformationGroupResponse<T>> {
     public static final short OP_NUM = 20;
 
-    private final GroupHandle groupHandle;
+    private final byte[] groupHandle;
 
-    SamrQueryInformationGroupRequest(GroupHandle groupHandle) {
+    SamrQueryInformationGroupRequest(byte[] groupHandle) {
         super(OP_NUM);
         this.groupHandle = groupHandle;
     }
 
-    public GroupHandle getGroupHandle() {
+    public byte[] getGroupHandle() {
         return groupHandle;
     }
 
@@ -77,14 +73,14 @@ public abstract class SamrQueryInformationGroupRequest<T extends Unmarshallable>
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: struct> [in] SAMPR_HANDLE GroupHandle,
-        packetOut.writeMarshallable(getGroupHandle());
+        packetOut.write(getGroupHandle());
         // <NDR: unsigned short> [in] GROUP_INFORMATION_CLASS GroupInformationClass,
         // Alignment: 2 - Already aligned. ContextHandle writes 20 bytes above
         packetOut.writeShort(getGroupInformationClass().getInfoLevel());
     }
 
     public static class GroupGeneralInformation extends SamrQueryInformationGroupRequest<SAMPRGroupGeneralInformation> {
-        public GroupGeneralInformation(GroupHandle groupHandle) {
+        public GroupGeneralInformation(byte[] groupHandle) {
             super(groupHandle);
         }
 

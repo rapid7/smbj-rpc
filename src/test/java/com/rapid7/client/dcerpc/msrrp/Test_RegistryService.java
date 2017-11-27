@@ -20,9 +20,8 @@ package com.rapid7.client.dcerpc.msrrp;
 
 import java.io.IOException;
 import java.util.List;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.bouncycastle.util.encoders.Hex;
+import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
@@ -30,7 +29,6 @@ import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumValueResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -40,14 +38,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class Test_RegistryService {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+        expectedExceptionsMessageRegExp = "Expecting non-null transport")
     public void constructorNullTransport() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Expecting non-null transport");
-
         new RegistryService(null);
     }
 
@@ -117,7 +111,8 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse);
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 1 \\(ERROR_INVALID_FUNCTION\\)")
     public void doesHiveExistUnknown() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -125,10 +120,6 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 1 (ERROR_INVALID_FUNCTION)");
-
         registryService.doesKeyExist("HKLM", "key");
     }
 
@@ -173,7 +164,8 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse, keyResponse);
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 1 \\(ERROR_INVALID_FUNCTION\\)")
     public void doesKeyExistUnknown() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -183,32 +175,22 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("BaseRegOpenKey returned error code: 1 (ERROR_INVALID_FUNCTION)");
-
         registryService.doesKeyExist("HKLM", "key");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptionsMessageRegExp = "Unknown hive: ")
     public void doesKeyExistWithEmptyHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Unknown hive: ");
-
         registryService.doesKeyExist("", "key");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptionsMessageRegExp = "Invalid hive: null")
     public void doesKeyExistWithNullHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid hive: null");
-
         registryService.doesKeyExist(null, "key");
     }
 
@@ -264,7 +246,8 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse, keyResponse, valueResponse);
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "BaseRegQueryValue returned error code: 1 \\(ERROR_INVALID_FUNCTION\\)")
     public void doesValueExistUnknown() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -276,32 +259,20 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getReturnValue()).thenReturn(ERROR_INVALID_FUNCTION.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("BaseRegQueryValue returned error code: 1 (ERROR_INVALID_FUNCTION)");
-
         registryService.doesValueExist("HKLM", "key", "value");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Unknown hive: ")
     public void doesValueExistWithEmptyHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Unknown hive: ");
-
         registryService.doesValueExist("", "key", "value");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid hive: null")
     public void doesValueExistWithNullHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid hive: null");
-
         registryService.doesValueExist(null, "key", "value");
     }
 
@@ -466,29 +437,21 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse, keyResponse, infoResponse);
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Unknown hive: ")
     public void getKeyInfoWithEmptyHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Unknown hive: ");
-
         registryService.getKeyInfo("", "key");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid hive: null")
     public void getKeyInfoWithNullHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid hive: null");
-
         registryService.getKeyInfo(null, "key");
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getKeyInfoWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -496,14 +459,10 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getKeyInfo("HKLM", "");
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getKeyInfoWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -511,14 +470,10 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getKeyInfo("HKLM", null);
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getKeyInfoWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -529,10 +484,6 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(infoResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("BaseRegOpenKey returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getKeyInfo("HKLM", "key");
     }
 
@@ -606,29 +557,24 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse, keyResponse, enumResponse);
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptionsMessageRegExp = "Unknown hive: ")
     public void getSubKeysWithEmptyHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Unknown hive: ");
-
         registryService.getSubKeys("", "key");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptionsMessageRegExp = "Invalid hive: null")
     public void getSubKeysWithNullHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid hive: null");
-
         registryService.getSubKeys(null, "key");
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getSubKeysWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -636,14 +582,11 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getSubKeys("HKLM", "");
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getSubKeysWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -651,14 +594,11 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getSubKeys("HKLM", null);
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getSubKeysWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -668,10 +608,6 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("BaseRegOpenKey returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getSubKeys("HKLM", "key");
     }
 
@@ -749,29 +685,24 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse, keyResponse, enumResponse);
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptionsMessageRegExp = "Unknown hive: ")
     public void getValuesWithEmptyHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Unknown hive: ");
-
         registryService.getValues("", "key");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptionsMessageRegExp = "Invalid hive: null")
     public void getValuesWithNullHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid hive: null");
-
         registryService.getValues(null, "key");
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValuesWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -779,14 +710,11 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getValues("HKLM", "");
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValuesWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -794,14 +722,10 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getValues("HKLM", null);
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValuesWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -811,10 +735,6 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("BaseRegOpenKey returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getValues("HKLM", "key");
     }
 
@@ -914,7 +834,8 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse, keyResponse, valueResponse);
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "BaseRegQueryValue returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValueWhenDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -926,36 +847,24 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("BaseRegQueryValue returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getValue("HKLM", "key", "value");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Unknown hive: ")
     public void getValueWithEmptyHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Unknown hive: ");
-
         registryService.getValue("", "key", "value");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid hive: null")
     public void getValueWithNullHive() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid hive: null");
-
         registryService.getValue(null, "key", "value");
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValueWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -963,14 +872,11 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getValue("HKLM", "", "value");
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValueWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -978,14 +884,11 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getValue("HKLM", null, "value");
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValueWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -995,10 +898,6 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("BaseRegOpenKey returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.getValue("HKLM", "key", "value");
     }
 
@@ -1022,12 +921,12 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
+        when(hiveResponse.getHandle()).thenReturn(Hex.decode("01234567"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
-        final ContextHandle handle = registryService.openHive("HKLM");
+        final byte[] handle = registryService.openHive("HKLM");
 
-        assertEquals(new ContextHandle("01234567"), handle);
+        assertArrayEquals(Hex.decode("01234567"), handle);
 
         verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
@@ -1035,7 +934,8 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse);
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void openHiveWhenHiveDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -1043,10 +943,6 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.openKey("HKLM", "key");
     }
 
@@ -1057,14 +953,14 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
+        when(hiveResponse.getHandle()).thenReturn(Hex.decode("01234567"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
-        final ContextHandle handle1 = registryService.openHive("HKLM");
-        final ContextHandle handle2 = registryService.openHive("HKLM");
+        final byte[] handle1 = registryService.openHive("HKLM");
+        final byte[] handle2 = registryService.openHive("HKLM");
 
-        assertEquals(new ContextHandle("01234567"), handle1);
-        assertEquals(new ContextHandle("01234567"), handle2);
+        assertArrayEquals(Hex.decode("01234567"), handle1);
+        assertArrayEquals(Hex.decode("01234567"), handle2);
 
         verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
@@ -1080,16 +976,16 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse1).thenReturn(hiveResponse2);
-        when(hiveResponse1.getHandle()).thenReturn(new ContextHandle("11111111"));
+        when(hiveResponse1.getHandle()).thenReturn(Hex.decode("11111111"));
         when(hiveResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(hiveResponse2.getHandle()).thenReturn(new ContextHandle("22222222"));
+        when(hiveResponse2.getHandle()).thenReturn(Hex.decode("22222222"));
         when(hiveResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
-        final ContextHandle handle1 = registryService.openHive("HKLM");
-        final ContextHandle handle2 = registryService.openHive("HKU");
+        final byte[] handle1 = registryService.openHive("HKLM");
+        final byte[] handle2 = registryService.openHive("HKU");
 
-        assertEquals(new ContextHandle("11111111"), handle1);
-        assertEquals(new ContextHandle("22222222"), handle2);
+        assertArrayEquals(Hex.decode("11111111"), handle1);
+        assertArrayEquals(Hex.decode("22222222"), handle2);
 
         verify(transport, times(2)).call(any(RequestCall.class));
         verify(hiveResponse1, times(1)).getHandle();
@@ -1099,25 +995,19 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse1, hiveResponse2);
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptionsMessageRegExp = "Unknown hive: ")
     public void openHiveWithEmptyHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Unknown hive: ");
-
         registryService.openHive("");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptionsMessageRegExp = "Invalid hive: null")
     public void openHiveWithNullHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid hive: null");
-
         registryService.openHive(null);
     }
 
@@ -1129,14 +1019,14 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
-        when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
+        when(hiveResponse.getHandle()).thenReturn(Hex.decode("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(keyResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
+        when(keyResponse.getHandle()).thenReturn(Hex.decode("01234567"));
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
-        final ContextHandle handle = registryService.openKey("HKLM", "key");
+        final byte[] handle = registryService.openKey("HKLM", "key");
 
-        assertEquals(new ContextHandle("01234567"), handle);
+        assertArrayEquals(Hex.decode("01234567"), handle);
 
         verify(transport, times(2)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
@@ -1146,7 +1036,8 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse, keyResponse);
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void openKeyWhenHiveDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -1154,14 +1045,11 @@ public class Test_RegistryService {
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("OpenLocalMachine returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.openKey("HKLM", "key");
     }
 
-    @Test
+    @Test(expectedExceptions = {RPCException.class},
+            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
     public void openKeyWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -1169,13 +1057,9 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
-        when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
+        when(hiveResponse.getHandle()).thenReturn(Hex.decode("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_FILE_NOT_FOUND.getValue());
-
-        thrown.expect(RPCException.class);
-        thrown.expectMessage("BaseRegOpenKey returned error code: 2 (ERROR_FILE_NOT_FOUND)");
-
         registryService.openKey("HKLM", "key");
     }
 
@@ -1187,16 +1071,16 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse);
-        when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
+        when(hiveResponse.getHandle()).thenReturn(Hex.decode("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(keyResponse.getHandle()).thenReturn(new ContextHandle("01234567"));
+        when(keyResponse.getHandle()).thenReturn(Hex.decode("01234567"));
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
-        final ContextHandle handle1 = registryService.openKey("HKLM", "key");
-        final ContextHandle handle2 = registryService.openKey("HKLM", "key");
+        final byte[] handle1 = registryService.openKey("HKLM", "key");
+        final byte[] handle2 = registryService.openKey("HKLM", "key");
 
-        assertEquals(new ContextHandle("01234567"), handle1);
-        assertEquals(new ContextHandle("01234567"), handle2);
+        assertArrayEquals(Hex.decode("01234567"), handle1);
+        assertArrayEquals(Hex.decode("01234567"), handle2);
 
         verify(transport, times(2)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
@@ -1215,18 +1099,18 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse1).thenReturn(keyResponse2);
-        when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
+        when(hiveResponse.getHandle()).thenReturn(Hex.decode("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(keyResponse1.getHandle()).thenReturn(new ContextHandle("11111111"));
+        when(keyResponse1.getHandle()).thenReturn(Hex.decode("11111111"));
         when(keyResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(keyResponse2.getHandle()).thenReturn(new ContextHandle("22222222"));
+        when(keyResponse2.getHandle()).thenReturn(Hex.decode("22222222"));
         when(keyResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
-        final ContextHandle handle1 = registryService.openKey("HKLM", "key1");
-        final ContextHandle handle2 = registryService.openKey("HKLM", "key2");
+        final byte[] handle1 = registryService.openKey("HKLM", "key1");
+        final byte[] handle2 = registryService.openKey("HKLM", "key2");
 
-        assertEquals(new ContextHandle("11111111"), handle1);
-        assertEquals(new ContextHandle("22222222"), handle2);
+        assertArrayEquals(Hex.decode("11111111"), handle1);
+        assertArrayEquals(Hex.decode("22222222"), handle2);
 
         verify(transport, times(3)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
@@ -1238,25 +1122,19 @@ public class Test_RegistryService {
         verifyNoMoreInteractions(transport, hiveResponse, keyResponse1, keyResponse2);
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptionsMessageRegExp = "Unknown hive: ")
     public void openKeyWithEmptyHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Unknown hive: ");
-
         registryService.openKey("", "key");
     }
 
-    @Test
+    @Test(expectedExceptions = {IllegalArgumentException.class},
+            expectedExceptionsMessageRegExp = "Invalid hive: null")
     public void openKeyWithNullHiveName() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final RegistryService registryService = new RegistryService(transport);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Invalid hive: null");
-
         registryService.openKey(null, "key");
     }
 
@@ -1267,12 +1145,12 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
+        when(hiveResponse.getHandle()).thenReturn(Hex.decode("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
-        final ContextHandle handle = registryService.openKey("HKLM", "");
+        final byte[] handle = registryService.openKey("HKLM", "");
 
-        assertEquals(new ContextHandle("76543210"), handle);
+        assertArrayEquals(Hex.decode("76543210"), handle);
 
         verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();
@@ -1287,12 +1165,12 @@ public class Test_RegistryService {
         final RegistryService registryService = new RegistryService(transport);
 
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse);
-        when(hiveResponse.getHandle()).thenReturn(new ContextHandle("76543210"));
+        when(hiveResponse.getHandle()).thenReturn(Hex.decode("76543210"));
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
-        final ContextHandle handle = registryService.openKey("HKLM", null);
+        final byte[] handle = registryService.openKey("HKLM", null);
 
-        assertEquals(new ContextHandle("76543210"), handle);
+        assertArrayEquals(Hex.decode("76543210"), handle);
 
         verify(transport, times(1)).call(any(RequestCall.class));
         verify(hiveResponse, times(1)).getHandle();

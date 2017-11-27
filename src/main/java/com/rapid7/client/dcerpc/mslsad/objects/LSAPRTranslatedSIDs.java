@@ -22,13 +22,10 @@
 package com.rapid7.client.dcerpc.mslsad.objects;
 
 import com.rapid7.client.dcerpc.io.PacketInput;
-import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
-import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  *  Documentation from https://msdn.microsoft.com/en-us/library/cc234457.aspx
@@ -55,61 +52,74 @@ import java.util.List;
  *  this field MUST be non-NULL. If Entries is 0, this field MUST be NULL.</p>
  *
  */
-public class LSAPRTranslatedSIDs implements Unmarshallable
-{
-    private LSAPRTranslatedSID[] lsaprTranslatedSIDArray;
+public class LSAPRTranslatedSIDs implements Unmarshallable {
+    // <NDR: unsigned long> [range(0,1000)] unsigned long Entries;
+    // Only considered during marshalling
+    // <NDR: pointer[conformant array]> [size_is(Entries)] PLSA_TRANSLATED_SID Sids;
+    private LSAPRTranslatedSID[] sids;
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
+        // No preamble
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
         in.align(Alignment.FOUR);
-        int entries = in.readInt();
-        if (in.readReferentID() != 0) {
-            lsaprTranslatedSIDArray = new LSAPRTranslatedSID[entries];
-        } else lsaprTranslatedSIDArray = null;
+        // <NDR: unsigned long> [range(0,1000)] unsigned long Entries;
+        // Alignment: 4 - Already aligned
+        final int entries = in.readInt();
+        // <NDR: pointer[conformant array]> [size_is(Entries)] PLSA_TRANSLATED_SID Sids;
+        // Alignment: 4 - Already aligned
+        if (in.readReferentID() != 0)
+            sids = new LSAPRTranslatedSID[entries];
+        else
+            sids = null;
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        if (lsaprTranslatedSIDArray != null) {
+        if (sids != null) {
+            // MaximumCount: [size_is(Entries)] PLSA_TRANSLATED_SID Sids;
             in.align(Alignment.FOUR);
-            in.readInt(); //count
+            in.fullySkipBytes(4);
             
-            for (int i = 0; i < lsaprTranslatedSIDArray.length; i++){
-                LSAPRTranslatedSID lsaprTranslatedSID = new LSAPRTranslatedSID();
-                in.readUnmarshallable(lsaprTranslatedSID);
-                lsaprTranslatedSIDArray[i] = lsaprTranslatedSID;
+            for (int i = 0; i < sids.length; i++){
+                final LSAPRTranslatedSID lsaprTranslatedSID = new LSAPRTranslatedSID();
+                lsaprTranslatedSID.unmarshalPreamble(in);
+                sids[i] = lsaprTranslatedSID;
+            }
+            for (LSAPRTranslatedSID lsaprTranslatedSID : sids) {
+                lsaprTranslatedSID.unmarshalEntity(in);
+            }
+            for (LSAPRTranslatedSID lsaprTranslatedSID : sids) {
+                lsaprTranslatedSID.unmarshalDeferrals(in);
             }
         }
     }
 
-    public LSAPRTranslatedSID[] getLsaprTranslatedSIDArray() {
-        return lsaprTranslatedSIDArray;
+    public LSAPRTranslatedSID[] getSIDs() {
+        return sids;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        LSAPRTranslatedSIDs that = (LSAPRTranslatedSIDs) o;
-
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(lsaprTranslatedSIDArray, that.lsaprTranslatedSIDArray);
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof LSAPRTranslatedSIDs)) {
+            return false;
+        }
+        return Arrays.equals(this.sids, ((LSAPRTranslatedSIDs) obj).sids);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(lsaprTranslatedSIDArray);
+        return Arrays.hashCode(this.sids);
     }
 
     @Override
     public String toString() {
-        return "LSAPRTranslatedSIDs{" +
-                "lsaprTranslatedSIDArray=" + Arrays.toString(lsaprTranslatedSIDArray) +
-                '}';
+        return String.format("LSAPR_TRANSLATED_SIDS{Sids:%s", Arrays.toString(this.sids));
     }
 }

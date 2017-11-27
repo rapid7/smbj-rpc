@@ -26,7 +26,6 @@ import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAccountDomInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyAuditEventsInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRPolicyPrimaryDomInfo;
 import com.rapid7.client.dcerpc.mslsad.objects.PolicyInformationClass;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc234390.aspx">LsarQueryInformationPolicy</a>
@@ -53,14 +52,14 @@ public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable
     public final static short OP_NUM = 7;
 
     // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
-    private final ContextHandle policyHandle;
+    private final byte[] policyHandle;
 
-    public LsarQueryInformationPolicyRequest(final ContextHandle policyHandle) {
+    public LsarQueryInformationPolicyRequest(final byte[] policyHandle) {
         super(OP_NUM);
         this.policyHandle = policyHandle;
     }
 
-    public ContextHandle getPolicyHandle() {
+    public byte[] getPolicyHandle() {
         return policyHandle;
     }
 
@@ -69,14 +68,14 @@ public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable
     @Override
     public void marshal(final PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
-        packetOut.writeMarshallable(policyHandle);
+        packetOut.write(this.policyHandle);
         // <NDR: unsigned short> [in] POLICY_INFORMATION_CLASS InformationClass,
         // Alignment: 2 - Already aligned. ContextHandle writes 20 bytes above
         packetOut.writeShort(getPolicyInformationClass().getInfoLevel());
     }
 
     public static class PolicyAuditEventsInformation extends LsarQueryInformationPolicyRequest<LSAPRPolicyAuditEventsInfo> {
-        public PolicyAuditEventsInformation(final ContextHandle policyHandle) {
+        public PolicyAuditEventsInformation(final byte[] policyHandle) {
             super(policyHandle);
         }
 
@@ -92,7 +91,7 @@ public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable
     }
 
     public static class PolicyPrimaryDomainInformation extends LsarQueryInformationPolicyRequest<LSAPRPolicyPrimaryDomInfo> {
-        public PolicyPrimaryDomainInformation(final ContextHandle policyHandle) {
+        public PolicyPrimaryDomainInformation(final byte[] policyHandle) {
             super(policyHandle);
         }
 
@@ -108,7 +107,7 @@ public abstract class LsarQueryInformationPolicyRequest<T extends Unmarshallable
     }
 
     public static class PolicyAccountDomainInformation extends LsarQueryInformationPolicyRequest<LSAPRPolicyAccountDomInfo> {
-        public PolicyAccountDomainInformation(final ContextHandle policyHandle) {
+        public PolicyAccountDomainInformation(final byte[] policyHandle) {
             super(policyHandle);
         }
 

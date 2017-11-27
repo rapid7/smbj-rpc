@@ -19,6 +19,7 @@
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -28,7 +29,6 @@ import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
 import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +51,7 @@ public class Test_RControlService {
     @SuppressWarnings("unchecked")
     @Test
     public void encodeRControlServiceRequest() throws IOException {
-        final ContextHandle testServiceHandle = new ContextHandle("00000000c631745ab255a2409443ae2da3216e40");
+        final byte[] testServiceHandle = Hex.decode("00000000c631745ab255a2409443ae2da3216e40");
         final RControlServiceRequest request = new RControlServiceRequest(testServiceHandle, RControlServiceRequest.SERVICE_CONTROL_STOP);
 
         assertEquals(request.toHexString(), "00000000c631745ab255a2409443ae2da3216e4001000000");

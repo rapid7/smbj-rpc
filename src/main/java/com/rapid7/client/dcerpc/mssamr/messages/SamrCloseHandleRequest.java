@@ -20,8 +20,8 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc245722.aspx">SamrCloseHandle</a>
@@ -35,13 +35,13 @@ import com.rapid7.client.dcerpc.objects.ContextHandle;
  *
  *  This protocol asks the RPC runtime, via the strict_context_handle attribute, to reject the use of context handles created by a method of a different RPC interface than this one, as specified in [MS-RPCE] section 3.</pre></blockquote>
  */
-public class SamrCloseHandleRequest extends RequestCall<SamrCloseHandleResponse> {
+public class SamrCloseHandleRequest extends RequestCall<HandleResponse> {
     public static final short OP_NUM = 1;
 
     // <NDR: fixed array> [in, out] SAMPR_HANDLE* SamHandle
-    private final ContextHandle handle;
+    private final byte[] handle;
 
-    public SamrCloseHandleRequest(ContextHandle handle) {
+    public SamrCloseHandleRequest(byte[] handle) {
         super(OP_NUM);
         this.handle = handle;
     }
@@ -49,11 +49,11 @@ public class SamrCloseHandleRequest extends RequestCall<SamrCloseHandleResponse>
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in, out] SAMPR_HANDLE* SamHandle
-        packetOut.writeMarshallable(this.handle);
+        packetOut.write(this.handle);
     }
 
     @Override
-    public SamrCloseHandleResponse getResponseObject() {
-        return new SamrCloseHandleResponse();
+    public HandleResponse getResponseObject() {
+        return new HandleResponse();
     }
 }

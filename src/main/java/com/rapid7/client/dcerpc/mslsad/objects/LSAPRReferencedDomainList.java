@@ -24,12 +24,8 @@ package com.rapid7.client.dcerpc.mslsad.objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-import com.rapid7.client.dcerpc.objects.RPCSID;
-import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  *   Documentation from https://msdn.microsoft.com/en-us/library/cc234453.aspx
@@ -65,78 +61,79 @@ import java.util.List;
  *
  */
 public class LSAPRReferencedDomainList implements Unmarshallable {
-
-    private int entries;
-    private LSAPRTrustInformation[] lsaprTrustInformations;
-    private long maxEntries;
+    // <NDR: unsigned long> unsigned long Entries;
+    // Only used in marshalling
+    // <NDR: pointer[conformant array]> [size_is(Entries)] PLSAPR_TRUST_INFORMATION Domains;
+    private LSAPRTrustInformation[] domains;
+    // <NDR: unsigned long> unsigned long MaxEntries;
+    // Ignored
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
+        // No preamble
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        // Structure Alignment: 4
         in.align(Alignment.FOUR);
-        // Entries
-        entries = in.readInt();
-
-        if (in.readReferentID() != 0) {
-            lsaprTrustInformations = new LSAPRTrustInformation[entries];
-        }
-        else lsaprTrustInformations = null;
-
-        //Max entries
-        maxEntries = in.readUnsignedInt();
+        // <NDR: unsigned long> unsigned long Entries;
+        // Alignment: 4 - Already aligned
+        final int entries = in.readInt();
+        // <NDR: pointer[conformant array]> [size_is(Entries)] PLSAPR_TRUST_INFORMATION Domains;
+        // Alignment: 4 - Already aligned
+        if (in.readReferentID() != 0)
+            domains = new LSAPRTrustInformation[entries];
+        else
+            domains = null;
+        // <NDR: unsigned long> unsigned long MaxEntries;
+        // Alignment: 4 - Already aligned
+        in.fullySkipBytes(4);
     }
 
     @Override
-    public void unmarshalDeferrals(PacketInput in)
-        throws IOException {
+    public void unmarshalDeferrals(PacketInput in) throws IOException {
         // Reading conformant array
-        if (lsaprTrustInformations != null)
-        {
+        if (domains != null) {
+            // MaximumSize: [size_is(Entries)] PLSAPR_TRUST_INFORMATION Domains;
             in.align(Alignment.FOUR);
-            in.readInt(); // Max count
-
-            // LSAPT_TRUST_INFORMATION Domains
-            for (int i = 0; i < entries; i++)
-            {
-                LSAPRTrustInformation lsaprTrustInformation = new LSAPRTrustInformation();
-                in.readUnmarshallable(lsaprTrustInformation);
-                lsaprTrustInformations[i] = lsaprTrustInformation;
+            in.fullySkipBytes(4);
+            // [size_is(Entries)] PLSAPR_TRUST_INFORMATION Domains;
+            for (int i = 0; i < domains.length; i++) {
+                final LSAPRTrustInformation lsaprTrustInformation = new LSAPRTrustInformation();
+                lsaprTrustInformation.unmarshalPreamble(in);
+                domains[i] = lsaprTrustInformation;
+            }
+            for (LSAPRTrustInformation lsaprTrustInformation : domains) {
+                lsaprTrustInformation.unmarshalEntity(in);
+            }
+            for (LSAPRTrustInformation lsaprTrustInformation : domains) {
+                lsaprTrustInformation.unmarshalDeferrals(in);
             }
         }
     }
 
-    public LSAPRTrustInformation[] getLsaprTrustInformations() {
-        return lsaprTrustInformations;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        LSAPRReferencedDomainList that = (LSAPRReferencedDomainList) o;
-
-        if (entries != that.entries) return false;
-        if (maxEntries != that.maxEntries) return false;
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(lsaprTrustInformations, that.lsaprTrustInformations);
+    public LSAPRTrustInformation[] getDomains() {
+        return domains;
     }
 
     @Override
     public int hashCode() {
-        int result = entries;
-        result = 31 * result + Arrays.hashCode(lsaprTrustInformations);
-        result = 31 * result + (int) (maxEntries ^ (maxEntries >>> 32));
-        return result;
+        return Arrays.hashCode(this.domains);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof LSAPRReferencedDomainList)) {
+            return false;
+        }
+        return Arrays.equals(this.domains, ((LSAPRReferencedDomainList) obj).domains);
     }
 
     @Override
     public String toString() {
-        return "LSAPRReferencedDomainList{" +
-                "lsaprTrustInformations=" + Arrays.toString(lsaprTrustInformations) +
-                '}';
+        return String.format("LSAPRReferencedDomainList{domains:%s}", Arrays.toString(domains));
     }
 }
