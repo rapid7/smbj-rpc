@@ -78,13 +78,15 @@ public class RCreateServiceWRequest extends RequestCall<RCreateServiceWResponse>
             sb.append('\u0000');
             sb.append('\u0000');
 
-            //Write unicode byte array
+            //Get unicode byte array
+            byte[] dependencies = sb.toString().getBytes(StandardCharsets.UTF_16LE);
+
             packetOut.writeReferentID();
-            packetOut.writeInt(sb.toString().getBytes(StandardCharsets.UTF_16LE).length);
-            packetOut.write(sb.toString().getBytes(StandardCharsets.UTF_16LE));
+            packetOut.writeInt(dependencies.length);
+            packetOut.write(dependencies);
             packetOut.align();
             //dependency size
-            packetOut.writeInt(sb.toString().getBytes(StandardCharsets.UTF_16LE).length);
+            packetOut.writeInt(dependencies.length);
         } else {
             packetOut.writeNull();
             //dependency size
