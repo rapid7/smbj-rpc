@@ -259,7 +259,8 @@ public class LocalSecurityAuthorityService extends Service {
      * @param lookupLevel Look up level as defined in {@link LSAPLookupLevel}.
      * @param sids Array of {@link SID}s to lookup
      * @return An array of names. Each entry index in this list corresponds to the same entry index in
-     * the provided sods array. A null entry indicates that the given {@link SID} was not found.
+     *         the provided sids array. The original SID would be returned as a string if the given
+     *         {@link SID} was not mapped.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
