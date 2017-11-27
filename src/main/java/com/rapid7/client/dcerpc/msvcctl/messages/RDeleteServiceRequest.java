@@ -24,15 +24,15 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.EmptyResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.msvcctl.dto.ServiceHandle;
 
 import java.io.IOException;
 
 public class RDeleteServiceRequest extends RequestCall<EmptyResponse> {
     private final static short OP_NUM = 2;
-    private final ContextHandle serviceHandle;
+    private final ServiceHandle serviceHandle;
 
-    public RDeleteServiceRequest(ContextHandle handle) {
+    public RDeleteServiceRequest(ServiceHandle handle) {
         super(OP_NUM);
         this.serviceHandle = handle;
     }

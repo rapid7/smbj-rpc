@@ -33,7 +33,7 @@ public class RCreateServiceWResponse extends HandleResponse{
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
         int tagIdRefId = packetIn.readReferentID();
         if (tagIdRefId != 0) tagId = packetIn.readInt();
-        packetIn.readUnmarshallable(getHandle());
+        super.unmarshalResponse(packetIn);
     }
 
     public int getTagId() {

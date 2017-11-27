@@ -21,7 +21,8 @@
 
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
-import com.rapid7.client.dcerpc.objects.ContextHandle;
+import com.rapid7.client.dcerpc.msvcctl.dto.ServiceHandle;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -36,7 +37,7 @@ public class Test_RDeleteService {
 
     @Test
     public void encodeDeleteServiceRequest() throws IOException {
-        ContextHandle handle = new ContextHandle("000000001CCD2628477770489D015EEE8CCFFB01");
+        ServiceHandle handle = new ServiceHandle(Hex.decode("000000001CCD2628477770489D015EEE8CCFFB01"));
         RDeleteServiceRequest request = new RDeleteServiceRequest(handle);
         assertEquals(request.toHexString(), "000000001ccd2628477770489d015eee8ccffb01");
     }

@@ -23,25 +23,25 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.msvcctl.dto.ServiceManagerHandle;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceManagerAccessLevel;
 import com.rapid7.client.dcerpc.msvcctl.objects.IServiceConfigInfo;
-import com.rapid7.client.dcerpc.objects.ContextHandle;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class RCreateServiceWRequest extends RequestCall<RCreateServiceWResponse> {
     private final static short OP_NUM = 12;
-    private ContextHandle serviceHandle;
+    private ServiceManagerHandle serviceHandle;
     private IServiceConfigInfo serviceConfigInfo;
     private int access;
     private String serviceName;
 
     public RCreateServiceWRequest(
-        final ContextHandle handle,
-        final IServiceConfigInfo serviceConfigInfo,
-        final ServiceManagerAccessLevel managerAccessLevel,
-        final String serviceName){
+            final ServiceManagerHandle handle,
+            final IServiceConfigInfo serviceConfigInfo,
+            final ServiceManagerAccessLevel managerAccessLevel,
+            final String serviceName){
         super(OP_NUM);
         this.serviceHandle = handle;
         this.serviceConfigInfo = serviceConfigInfo;

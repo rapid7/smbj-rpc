@@ -93,17 +93,17 @@ public class ServiceControlManagerService extends Service {
         return callExpectSuccess(request, "RQueryServiceConfigW").getServiceConfigInfo();
     }
 
-    public ContextHandle createService(ContextHandle serviceManagerHandle,
+    public ServiceHandle createService(ServiceManagerHandle serviceManagerHandle,
                                        IServiceConfigInfo serviceConfigInfo,
                                        ServiceManagerAccessLevel accessLevel,
                                        String service) throws IOException {
         RCreateServiceWRequest request =
                 new RCreateServiceWRequest(serviceManagerHandle, serviceConfigInfo, accessLevel, service);
         byte[] handle = callExpectSuccess(request, "RCreateServiceW").getHandle();
-        return new ContextHandle(handle);
+        return new ServiceHandle(handle);
     }
 
-    public boolean deleteService(ContextHandle serviceHandle) throws IOException {
+    public boolean deleteService(ServiceHandle serviceHandle) throws IOException {
         RDeleteServiceRequest request = new RDeleteServiceRequest(serviceHandle);
         callExpectSuccess(request, "RDeleteService");
         return true;
