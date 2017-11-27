@@ -52,22 +52,17 @@ public class RCreateServiceWRequest extends RequestCall<RCreateServiceWResponse>
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         packetOut.write(serviceHandle.getBytes());
-        if (serviceName!= null)
-            packetOut.writeString(serviceName, true);
-        else packetOut.writeNull();
+        packetOut.writeString(serviceName, true);
 
         if (serviceConfigInfo.getDisplayName() != null)
             packetOut.writeStringRef(serviceConfigInfo.getDisplayName(), true);
         else packetOut.writeNull();
 
         packetOut.writeInt(access);
-
         packetOut.writeInt(serviceConfigInfo.getServiceType().getValue());
         packetOut.writeInt(serviceConfigInfo.getStartType().getValue());
         packetOut.writeInt(serviceConfigInfo.getErrorControl().getValue());
-        if (serviceConfigInfo.getBinaryPathName() != null)
-            packetOut.writeString(serviceConfigInfo.getBinaryPathName(), true);
-        else packetOut.writeNull();
+        packetOut.writeString(serviceConfigInfo.getBinaryPathName(), true);
 
         if (serviceConfigInfo.getLoadOrderGroup() != null)
             packetOut.writeStringRef(serviceConfigInfo.getLoadOrderGroup(), true);
@@ -77,12 +72,19 @@ public class RCreateServiceWRequest extends RequestCall<RCreateServiceWResponse>
         else packetOut.writeNull();
 
         if (serviceConfigInfo.getDependencies() != null) {
+            StringBuffer sb = new StringBuffer(serviceConfigInfo.getDependencies());
+
+            //Doubly nul-terminated
+            sb.append('\u0000');
+            sb.append('\u0000');
+
+            //Write unicode byte array
             packetOut.writeReferentID();
-            packetOut.writeInt(serviceConfigInfo.getDependencies().getBytes().length); //conformat array, count
-            packetOut.write(serviceConfigInfo.getDependencies().getBytes());
+            packetOut.writeInt(sb.toString().getBytes(StandardCharsets.UTF_16LE).length);
+            packetOut.write(sb.toString().getBytes(StandardCharsets.UTF_16LE));
             packetOut.align();
             //dependency size
-            packetOut.writeInt(serviceConfigInfo.getDependencies().getBytes().length);
+            packetOut.writeInt(sb.toString().getBytes(StandardCharsets.UTF_16LE).length);
         } else {
             packetOut.writeNull();
             //dependency size

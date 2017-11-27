@@ -30,7 +30,7 @@ public class RCreateServiceWResponse extends HandleResponse{
     private int tagId;
 
     @Override
-    public void unmarshal(PacketInput packetIn) throws IOException {
+    public void unmarshalResponse(PacketInput packetIn) throws IOException {
         int tagIdRefId = packetIn.readReferentID();
         if (tagIdRefId != 0) tagId = packetIn.readInt();
         packetIn.readUnmarshallable(getHandle());
