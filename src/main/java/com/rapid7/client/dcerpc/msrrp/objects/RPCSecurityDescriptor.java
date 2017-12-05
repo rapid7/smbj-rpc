@@ -25,62 +25,95 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
+/**
+<p>The RPC_SECURITY_DESCRIPTOR structure represents the <a href="https://msdn.microsoft.com/en-us/library/cc244893.aspx#gt_8a7f6700-8311-45bc-af10-82e10accd331">RPC</a> security descriptors.</p>
+<pre> typedef struct _RPC_SECURITY_DESCRIPTOR {
+   [size_is(cbInSecurityDescriptor), length_is(cbOutSecurityDescriptor)]
+     PBYTE lpSecurityDescriptor;
+   DWORD cbInSecurityDescriptor;
+   DWORD cbOutSecurityDescriptor;
+ } RPC_SECURITY_DESCRIPTOR,
+ *  *PRPC_SECURITY_DESCRIPTOR;
+</pre>
+<p><strong>lpSecurityDescriptor:</strong>  A buffer that
+contains a <a href="https://msdn.microsoft.com/en-us/library/cc230366.aspx">SECURITY_DESCRIPTOR</a>,
+as specified in <a href="https://msdn.microsoft.com/en-us/library/cc230273.aspx">[MS-DTYP]</a>
+section 2.4.6.</p>
+<p><strong>cbInSecurityDescriptor:</strong>  The size in
+bytes of the security descriptor.</p>
+<p><strong>cbOutSecurityDescriptor:</strong>  The size
+in bytes of the security descriptor.</p>
+@see <a href="https://msdn.microsoft.com/en-us/library/cc244924.aspx">https://msdn.microsoft.com/en-us/library/cc244924.aspx</a>
+ */
 public class RPCSecurityDescriptor implements Unmarshallable, Marshallable {
-    private int size;
-    private int maxSize;
-    private int offset;
+    private int cbInSecurityDescriptor;
+    private int cbOutSecurityDescriptor;
     private byte[] rawSecurityDescriptor;
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setCbInSecurityDescriptor(final int size) {
+        this.cbInSecurityDescriptor = size;
     }
 
-    public void setMaxSize(int size) {
-        this.maxSize = size;
+    public void setCbOutSecurityDescriptor(final int size) {
+        this.cbOutSecurityDescriptor = size;
     }
 
-    public RPCSecurityDescriptor() {
-
-    }
-
-    @Override
-    public void unmarshalPreamble(PacketInput in) throws IOException {
+    public void setSecurityDescriptor(final byte[] securityDescriptorBuf) {
+        this.rawSecurityDescriptor = securityDescriptorBuf;
     }
 
     @Override
-    public void unmarshalEntity(PacketInput in) throws IOException {
+    public void unmarshalPreamble(final PacketInput in) throws IOException {
+    }
+
+    @Override
+    public void unmarshalEntity(final PacketInput in) throws IOException {
         in.align(Alignment.FOUR);
-        in.readReferentID();
-        in.readInt();
-        in.readInt();
+        final int refID = in.readReferentID();
+        if (refID != 0) {
+            cbInSecurityDescriptor = in.readInt();
+            cbOutSecurityDescriptor = in.readInt();
+            rawSecurityDescriptor = new byte[cbOutSecurityDescriptor];
+        }
     }
 
     @Override
-    public void unmarshalDeferrals(PacketInput in) throws IOException {
+    public void unmarshalDeferrals(final PacketInput in) throws IOException {
+        if (rawSecurityDescriptor == null)
+            return;
         in.align(Alignment.FOUR);
-        maxSize = in.readInt();
-        offset = in.readInt();
-        size = in.readInt();
+        in.readInt();
+        in.readInt(); // offset
+        in.readInt();
         // TODO: Return parsed object.
-        rawSecurityDescriptor = in.readRawBytes(size);
+        in.readRawBytes(rawSecurityDescriptor);
     }
 
     @Override
-    public void marshalPreamble(PacketOutput out) throws IOException {
+    public void marshalPreamble(final PacketOutput out) throws IOException {
     }
 
     @Override
-    public void marshalEntity(PacketOutput out) throws IOException {
-        out.writeReferentID();
-        out.writeInt(maxSize);
-        out.writeInt(size);
+    public void marshalEntity(final PacketOutput out) throws IOException {
+        if (rawSecurityDescriptor == null) {
+            out.writeNull();
+        } else {
+            out.writeReferentID();
+        }
+
+        out.writeInt(cbInSecurityDescriptor);
+        out.writeInt(cbOutSecurityDescriptor);
     }
 
     @Override
-    public void marshalDeferrals(PacketOutput out) throws IOException {
-        out.writeInt(maxSize);
-        out.writeInt(offset);
-        out.writeInt(size);
+    public void marshalDeferrals(final PacketOutput out) throws IOException {
+        if (rawSecurityDescriptor == null)
+            return;
+
+        out.writeInt(cbInSecurityDescriptor);
+        out.writeInt(0);
+        out.writeInt(cbOutSecurityDescriptor);
+        out.write(rawSecurityDescriptor);
     }
 
     public byte[] getRawSecurityDescriptor() {

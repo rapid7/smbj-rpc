@@ -28,8 +28,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.google.common.base.Strings;
 import com.hierynomus.msdtyp.AccessMask;
+import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyRequest;
@@ -61,10 +63,8 @@ public class RegistryService extends Service {
     private final static int MAX_REGISTRY_VALUE_NAME_SIZE = 32767;
     private final static int MAX_REGISTRY_VALUE_DATA_SIZE = 1048576;
     private final static EnumSet<AccessMask> ACCESS_MASK = EnumSet.of(AccessMask.MAXIMUM_ALLOWED);
-    private final static EnumSet<AccessMask> SYSTEM_ACCESS = EnumSet.of(AccessMask.MAXIMUM_ALLOWED,
-        AccessMask.ACCESS_SYSTEM_SECURITY);
     private final Map<RegistryHive, byte[]> hiveCache = new HashMap<>();
-    private final Map<String, byte[]> keyPathCache = new HashMap<>();
+    private final Map<RegistryHandleKey, byte[]> keyPathCache = new HashMap<>();
 
     public RegistryService(final RPCTransport transport) {
         super(transport);
@@ -157,10 +157,11 @@ public class RegistryService extends Service {
 
     public byte[] getKeySecurity(final String hiveName, final String keyPath, final int securityDescriptorType)
             throws IOException {
-        final byte[] handle = openKey(hiveName, keyPath, SYSTEM_ACCESS);
+        final byte[] handle = openKey(hiveName, keyPath,
+            EnumSet.of(AccessMask.MAXIMUM_ALLOWED, AccessMask.ACCESS_SYSTEM_SECURITY));
         final int size = getKeyInfo(hiveName, keyPath).getSecurityDescriptor();
         final BaseRegGetKeySecurityRequest request = new BaseRegGetKeySecurityRequest(handle, securityDescriptorType,
-                size);
+            size);
         final BaseRegGetKeySecurityResponse response = callExpectSuccess(request, "BaseRegGetKeySecurity");
         return response.getRawSecurityDescriptor();
     }
@@ -209,16 +210,44 @@ public class RegistryService extends Service {
             return openHive(hiveName);
         }
         synchronized (keyPathCache) {
-            if (keyPathCache.containsKey(canonicalizedKeyPath)) {
-                return keyPathCache.get(canonicalizedKeyPath);
+            final RegistryHandleKey cachingKey = new RegistryHandleKey(canonicalizedKeyPath, access);
+            if (keyPathCache.containsKey(cachingKey)) {
+                return keyPathCache.get(cachingKey);
             }
             final byte[] hiveHandle = openHive(hiveName);
             final BaseRegOpenKey request = new BaseRegOpenKey(hiveHandle, canonicalizedKeyPath, 0, access);
             final HandleResponse response = callExpectSuccess(request, "BaseRegOpenKey");
             final byte[] keyHandle = response.getHandle();
-            keyPathCache.put(canonicalizedKeyPath, keyHandle);
+            keyPathCache.put(cachingKey, keyHandle);
             return keyHandle;
         }
     }
 
+    private static class RegistryHandleKey {
+        private final String path;
+        private final int access;
+
+        RegistryHandleKey(final String path, final EnumSet<AccessMask> access) {
+            this(path, (int) EnumUtils.toLong(access));
+        }
+
+        RegistryHandleKey(final String path, final long access) {
+            this.path = path;
+            this.access = (int) access;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (!(o instanceof RegistryHandleKey))
+                return false;
+            final RegistryHandleKey other = (RegistryHandleKey) o;
+            return path.equals(other.path) && access == other.access;
+        }
+
+        @Override
+        public int hashCode() {
+            HashCodeBuilder builder = new HashCodeBuilder();
+            return builder.append(path).append(access).toHashCode();
+        }
+    }
 }
