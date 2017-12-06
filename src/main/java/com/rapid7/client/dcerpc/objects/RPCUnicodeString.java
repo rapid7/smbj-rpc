@@ -83,7 +83,7 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         }
 
         @Override
-        WChar newWChar() {
+        WChar createWChar() {
             return new WChar.NullTerminated();
         }
     }
@@ -103,13 +103,13 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         }
 
         @Override
-        WChar newWChar() {
+        WChar createWChar() {
             return new WChar.NonNullTerminated();
         }
     }
 
     private WChar wChar;
-    abstract WChar newWChar();
+    abstract WChar createWChar();
 
     /**
      * @return The {@link String} representation of this {@link RPCUnicodeString}.
@@ -129,7 +129,7 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         if (value == null) {
             this.wChar = null;
         } else {
-            this.wChar = newWChar();
+            this.wChar = createWChar();
             this.wChar.setValue(value);
         }
     }
@@ -194,8 +194,7 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0)
-            // This is 0 cost - Compile time constants are internal objects
-            this.wChar = newWChar();
+            this.wChar = createWChar();
         else
             this.wChar = null;
     }
