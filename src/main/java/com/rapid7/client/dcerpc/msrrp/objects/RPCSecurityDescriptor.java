@@ -48,18 +48,10 @@ in bytes of the security descriptor.</p>
 public class RPCSecurityDescriptor implements Unmarshallable, Marshallable {
     private int cbInSecurityDescriptor;
     private int cbOutSecurityDescriptor;
-    private byte[] rawSecurityDescriptor;
+    private byte[] rawSecurityDescriptor = new byte[0];
 
-    public void setCbInSecurityDescriptor(final int size) {
-        this.cbInSecurityDescriptor = size;
-    }
-
-    public void setCbOutSecurityDescriptor(final int size) {
-        this.cbOutSecurityDescriptor = size;
-    }
-
-    public void setSecurityDescriptor(final byte[] securityDescriptorBuf) {
-        this.rawSecurityDescriptor = securityDescriptorBuf;
+    public void setCbInSecurityDescriptor(final int cbInSecurityDescriptor) {
+        this.cbInSecurityDescriptor = cbInSecurityDescriptor;
     }
 
     @Override
@@ -84,7 +76,9 @@ public class RPCSecurityDescriptor implements Unmarshallable, Marshallable {
         in.align(Alignment.FOUR);
         in.readInt();
         in.readInt(); // offset
-        in.readInt();
+        final int actualSize = in.readInt();
+        if (cbOutSecurityDescriptor != actualSize)
+            throw new java.rmi.UnmarshalException("The actual size of the array does not match the expected.");
         // TODO: Return parsed object.
         in.readRawBytes(rawSecurityDescriptor);
     }
@@ -95,21 +89,13 @@ public class RPCSecurityDescriptor implements Unmarshallable, Marshallable {
 
     @Override
     public void marshalEntity(final PacketOutput out) throws IOException {
-        if (rawSecurityDescriptor == null) {
-            out.writeNull();
-        } else {
-            out.writeReferentID();
-        }
-
+        out.writeReferentID();
         out.writeInt(cbInSecurityDescriptor);
         out.writeInt(cbOutSecurityDescriptor);
     }
 
     @Override
     public void marshalDeferrals(final PacketOutput out) throws IOException {
-        if (rawSecurityDescriptor == null)
-            return;
-
         out.writeInt(cbInSecurityDescriptor);
         out.writeInt(0);
         out.writeInt(cbOutSecurityDescriptor);

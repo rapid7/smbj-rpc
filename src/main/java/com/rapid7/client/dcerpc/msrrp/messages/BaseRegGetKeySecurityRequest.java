@@ -83,7 +83,6 @@ public class BaseRegGetKeySecurityRequest extends RequestCall<BaseRegGetKeySecur
         out.writeInt(securityDescriptorInfo);
         final RPCSecurityDescriptor sd = new RPCSecurityDescriptor();
         sd.setCbInSecurityDescriptor(securityDescriptorSize);
-        sd.setSecurityDescriptor(new byte[securityDescriptorSize]);
         out.writeMarshallable(sd);
     }
 
