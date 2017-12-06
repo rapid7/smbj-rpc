@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
@@ -158,7 +158,7 @@ public class RegistryService extends Service {
     public byte[] getKeySecurity(final String hiveName, final String keyPath, final int securityDescriptorType)
             throws IOException {
         final byte[] handle = openKey(hiveName, keyPath,
-            EnumSet.of(AccessMask.MAXIMUM_ALLOWED, AccessMask.ACCESS_SYSTEM_SECURITY));
+            (int) EnumUtils.toLong(EnumSet.of(AccessMask.MAXIMUM_ALLOWED, AccessMask.ACCESS_SYSTEM_SECURITY)));
         final int size = getKeyInfo(hiveName, keyPath).getSecurityDescriptor();
         final BaseRegGetKeySecurityRequest request = new BaseRegGetKeySecurityRequest(handle, securityDescriptorType,
             size);
@@ -200,22 +200,23 @@ public class RegistryService extends Service {
         }
     }
 
-    public byte[] openKey(final String hiveName, final String keyPath) throws IOException {
-        return openKey(hiveName, keyPath, ACCESS_MASK);
+    protected byte[] openKey(final String hiveName, final String keyPath) throws IOException {
+        return openKey(hiveName, keyPath, (int) AccessMask.MAXIMUM_ALLOWED.getValue());
     }
 
-    public byte[] openKey(final String hiveName, final String keyPath, EnumSet<AccessMask> access) throws IOException {
+    protected byte[] openKey(final String hiveName, final String keyPath, int desiredAccess)
+            throws IOException {
         final String canonicalizedKeyPath = canonicalize(keyPath);
         if (canonicalizedKeyPath.isEmpty()) {
             return openHive(hiveName);
         }
         synchronized (keyPathCache) {
-            final RegistryHandleKey cachingKey = new RegistryHandleKey(canonicalizedKeyPath, access);
+            final RegistryHandleKey cachingKey = new RegistryHandleKey(canonicalizedKeyPath, desiredAccess);
             if (keyPathCache.containsKey(cachingKey)) {
                 return keyPathCache.get(cachingKey);
             }
             final byte[] hiveHandle = openHive(hiveName);
-            final BaseRegOpenKey request = new BaseRegOpenKey(hiveHandle, canonicalizedKeyPath, 0, access);
+            final BaseRegOpenKey request = new BaseRegOpenKey(hiveHandle, canonicalizedKeyPath, 0, desiredAccess);
             final HandleResponse response = callExpectSuccess(request, "BaseRegOpenKey");
             final byte[] keyHandle = response.getHandle();
             keyPathCache.put(cachingKey, keyHandle);
@@ -227,13 +228,9 @@ public class RegistryService extends Service {
         private final String path;
         private final int access;
 
-        RegistryHandleKey(final String path, final EnumSet<AccessMask> access) {
-            this(path, (int) EnumUtils.toLong(access));
-        }
-
-        RegistryHandleKey(final String path, final long access) {
-            this.path = path;
-            this.access = (int) access;
+        RegistryHandleKey(final String path, final int access) {
+            this.path = Objects.requireNonNull(path);
+            this.access = access;
         }
 
         @Override
@@ -246,8 +243,7 @@ public class RegistryService extends Service {
 
         @Override
         public int hashCode() {
-            HashCodeBuilder builder = new HashCodeBuilder();
-            return builder.append(path).append(access).toHashCode();
+            return Objects.hash(path, access);
         }
     }
 }

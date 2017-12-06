@@ -19,9 +19,6 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
-import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
@@ -248,7 +245,7 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
      * </tr>
      * </table>
      */
-    private final EnumSet<AccessMask> accessMask;
+    private final int accessMask;
 
     /**
      * The BaseRegOpenKey method is called by the client. In response, the server opens a specified key for access and
@@ -327,7 +324,7 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
      * @see <a href="https://msdn.microsoft.com/en-us/cc230294">2.4.3 ACCESS_MASK</a>
      * @see <a href="https://msdn.microsoft.com/en-us/cc244886">3.1.1.2 Key Types</a>
      */
-    public BaseRegOpenKey(final byte[] hKey, final String subKey, final int options, final EnumSet<AccessMask> accessMask) {
+    public BaseRegOpenKey(final byte[] hKey, final String subKey, final int options, final int accessMask) {
         super((short) 15);
         this.hKey = hKey;
         this.subKey = subKey;
@@ -369,6 +366,6 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
         packetOut.write(hKey);
         packetOut.writeStringBuffer(subKey, true);
         packetOut.writeInt(options);
-        packetOut.writeInt((int) EnumUtils.toLong(accessMask));
+        packetOut.writeInt(accessMask);
     }
 }
