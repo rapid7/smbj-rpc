@@ -26,15 +26,21 @@ import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo;
 import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo0;
 import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo1;
 import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo2;
+import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo501;
+import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo502;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetprPathCanonicalizeRequest;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumRequest;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
+import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareGetInfoRequest;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo0;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo1;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo2;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo501;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo502;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfoContainer;
+import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -62,6 +68,41 @@ public class ServerService extends Service {
         return callExpectSuccess(request, "NetprPathCanonicalize").getCanonicalizedPath();
     }
 
+    public NetShareInfo0 getShare0(String shareName) throws IOException {
+        final NetrShareGetInfoRequest.NetrShareGetInfoRequest0 request =
+                new NetrShareGetInfoRequest.NetrShareGetInfoRequest0(WChar.NullTerminated.of(shareName));
+        return parseShareInfo0(callExpectSuccess(request, "NetrShareGetInfo[0]").getShareInfo());
+    }
+
+    public NetShareInfo1 getShare1(String shareName) throws IOException {
+        final NetrShareGetInfoRequest.NetrShareGetInfoRequest1 request =
+                new NetrShareGetInfoRequest.NetrShareGetInfoRequest1(WChar.NullTerminated.of(shareName));
+        return parseShareInfo1(callExpectSuccess(request, "NetrShareGetInfo[1]").getShareInfo());
+    }
+
+    /**
+     * IMPORTANT: This is currently broken against windows targets. Request level 2 results in level 0 being returned.
+     * However, the appropriate struct is in fact returned so we could ignore this issue.
+     */
+    @Deprecated
+    public NetShareInfo2 getShare2(String shareName) throws IOException {
+        final NetrShareGetInfoRequest.NetrShareGetInfoRequest2 request =
+                new NetrShareGetInfoRequest.NetrShareGetInfoRequest2(WChar.NullTerminated.of(shareName));
+        return parseShareInfo2(callExpectSuccess(request, "NetrShareGetInfo[2]").getShareInfo());
+    }
+
+    public NetShareInfo501 getShare501(String shareName) throws IOException {
+        final NetrShareGetInfoRequest.NetrShareGetInfoRequest501 request =
+                new NetrShareGetInfoRequest.NetrShareGetInfoRequest501(WChar.NullTerminated.of(shareName));
+        return parseShareInfo501(callExpectSuccess(request, "NetrShareGetInfo[501]").getShareInfo());
+    }
+
+    public NetShareInfo502 getShare502(String shareName) throws IOException {
+        final NetrShareGetInfoRequest.NetrShareGetInfoRequest502 request =
+                new NetrShareGetInfoRequest.NetrShareGetInfoRequest502(WChar.NullTerminated.of(shareName));
+        return parseShareInfo502(callExpectSuccess(request, "NetrShareGetInfo[502]").getShareInfo());
+    }
+
     public List<NetShareInfo0> getShares0() throws IOException {
         return new GetSharesRequest0().call().getShares();
     }
@@ -77,7 +118,7 @@ public class ServerService extends Service {
     class GetSharesRequest0 extends GetSharesRequest<ShareInfo0, NetShareInfo0> {
         @Override
         NetShareInfo0 convert(ShareInfo0 src) {
-            return new NetShareInfo0(src.getNetName());
+            return ServerService.this.parseShareInfo0(src);
         }
 
         @Override
@@ -90,7 +131,7 @@ public class ServerService extends Service {
     class GetSharesRequest1 extends GetSharesRequest<ShareInfo1, NetShareInfo1> {
         @Override
         NetShareInfo1 convert(ShareInfo1 src) {
-            return new NetShareInfo1(src.getNetName(), src.getType(), src.getRemark());
+            return ServerService.this.parseShareInfo1(src);
         }
 
         @Override
@@ -103,8 +144,7 @@ public class ServerService extends Service {
     class GetSharesRequest2 extends GetSharesRequest<ShareInfo2, NetShareInfo2> {
         @Override
         NetShareInfo2 convert(ShareInfo2 src) {
-            return new NetShareInfo2(src.getNetName(), src.getType(), src.getRemark(),
-                    src.getPermissions(), src.getMaxUses(), src.getCurrentUses(), src.getPath(), src.getPasswd());
+            return ServerService.this.parseShareInfo2(src);
         }
 
         @Override
@@ -146,5 +186,37 @@ public class ServerService extends Service {
                 resumeHandle = response.getResumeHandle();
             }
         }
+    }
+
+    private NetShareInfo0 parseShareInfo0(final ShareInfo0 obj) {
+        if (obj == null)
+            return null;
+        return new NetShareInfo0(obj.getNetName());
+    }
+
+    private NetShareInfo1 parseShareInfo1(final ShareInfo1 obj) {
+        if (obj == null)
+            return null;
+        return new NetShareInfo1(obj.getNetName(), obj.getType(), obj.getRemark());
+    }
+
+    private NetShareInfo2 parseShareInfo2(final ShareInfo2 obj) {
+        if (obj == null)
+            return null;
+        return new NetShareInfo2(obj.getNetName(), obj.getType(), obj.getRemark(),
+                obj.getPermissions(), obj.getMaxUses(), obj.getCurrentUses(), obj.getPath(), obj.getPasswd());
+    }
+
+    private NetShareInfo501 parseShareInfo501(final ShareInfo501 obj) {
+        if (obj == null)
+            return null;
+        return new NetShareInfo501(obj.getNetName(), obj.getType(), obj.getRemark(), obj.getFlags());
+    }
+
+    private NetShareInfo502 parseShareInfo502(final ShareInfo502 obj) {
+        if (obj == null)
+            return null;
+        return new NetShareInfo502(obj.getNetName(), obj.getType(), obj.getRemark(), obj.getPermissions(),
+                obj.getMaxUses(), obj.getCurrentUses(), obj.getPath(), obj.getPasswd(), obj.getSecurityDescriptor());
     }
 }

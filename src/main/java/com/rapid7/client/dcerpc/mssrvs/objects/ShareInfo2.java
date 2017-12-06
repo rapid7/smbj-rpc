@@ -109,12 +109,6 @@ public class ShareInfo2 extends ShareInfo1 {
     }
 
     @Override
-    public void unmarshalPreamble(PacketInput in) throws IOException {
-        super.unmarshalPreamble(in);
-        //No preamble
-    }
-
-    @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
         super.unmarshalEntity(in);
         // <NDR: unsigned long> DWORD shi2_permissions;
