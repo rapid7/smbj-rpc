@@ -20,16 +20,27 @@ package com.rapid7.client.dcerpc.mssrvs;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.mutable.MutableInt;
-import com.hierynomus.protocol.transport.TransportException;
 import com.rapid7.client.dcerpc.RPCException;
-import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.mssrvs.messages.*;
+import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo;
+import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo0;
+import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo1;
+import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo2;
+import com.rapid7.client.dcerpc.mssrvs.messages.NetprPathCanonicalizeRequest;
+import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumRequest;
+import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo0;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo1;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo2;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfoContainer;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
+
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_MORE_ENTRIES;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 
 /**
  * This class implements a partial service service in accordance with [MS-SRVS]: Server Service Remote Protocol which
@@ -44,43 +55,96 @@ public class ServerService extends Service {
         super(transport);
     }
 
-    public List<NetShareInfo0> getShares() throws IOException {
-        final List<NetShareInfo0> shares = new LinkedList<>();
-        final MutableInt resumeHandle = new MutableInt();
-        for (; ; ) {
-            final NetrShareEnumRequest request = new NetrShareEnumRequest(2, resumeHandle.getValue());
-            final NetrShareEnumResponse response = call(request);
-            final int returnCode = response.getReturnValue();
-            if (SystemErrorCode.ERROR_SUCCESS.is(returnCode) || SystemErrorCode.ERROR_MORE_DATA.is(returnCode)) {
-                final List<NetShareInfo0> responseShares = response.getShares();
-                if (SystemErrorCode.ERROR_SUCCESS.is(returnCode)) {
-                    shares.addAll(responseShares);
-                    break;
-                } else {
-                    if (responseShares.isEmpty()) {
-                        throw new TransportException("NetrShareEnum shares empty.");
-                    }
-                    final Integer responseResumeHandle = response.getResumeHandle();
-                    if (responseResumeHandle == resumeHandle.getValue()) {
-                        throw new TransportException("NetrShareEnum resume handle not updated.");
-                    }
-                    if (responseResumeHandle == null) {
-                        throw new TransportException("NetrShareEnum resume handle null.");
-                    }
-                    shares.addAll(responseShares);
-                    resumeHandle.setValue(responseResumeHandle);
-                }
-            } else {
-                throw new RPCException("NetrShareEnum", response.getReturnValue());
-            }
-        }
-        return Collections.unmodifiableList(new ArrayList<>(shares));
-    }
-
     public String getCanonicalizedName(String serverName, String pathName, String prefix,
             int outBufLength, int pathType, int flags) throws IOException {
         final NetprPathCanonicalizeRequest request =
                 new NetprPathCanonicalizeRequest(serverName, pathName, outBufLength, prefix, pathType, flags);
         return callExpectSuccess(request, "NetprPathCanonicalize").getCanonicalizedPath();
+    }
+
+    public List<NetShareInfo0> getShares0() throws IOException {
+        return new GetSharesRequest0().call().getShares();
+    }
+
+    public List<NetShareInfo1> getShares1() throws IOException {
+        return new GetSharesRequest1().call().getShares();
+    }
+
+    public List<NetShareInfo2> getShares2() throws IOException {
+        return new GetSharesRequest2().call().getShares();
+    }
+
+    class GetSharesRequest0 extends GetSharesRequest<ShareInfo0, NetShareInfo0> {
+        @Override
+        NetShareInfo0 convert(ShareInfo0 src) {
+            return new NetShareInfo0(src.getNetName());
+        }
+
+        @Override
+        NetrShareEnumRequest<? extends ShareEnumStruct<? extends ShareInfoContainer<ShareInfo0>>> createRequest(
+                Integer resumeHandle) {
+            return new NetrShareEnumRequest.NetShareEnumRequest0(resumeHandle);
+        }
+    }
+
+    class GetSharesRequest1 extends GetSharesRequest<ShareInfo1, NetShareInfo1> {
+        @Override
+        NetShareInfo1 convert(ShareInfo1 src) {
+            return new NetShareInfo1(src.getNetName(), src.getType(), src.getRemark());
+        }
+
+        @Override
+        NetrShareEnumRequest<? extends ShareEnumStruct<? extends ShareInfoContainer<ShareInfo1>>> createRequest(
+                Integer resumeHandle) {
+            return new NetrShareEnumRequest.NetShareEnumRequest1(resumeHandle);
+        }
+    }
+
+    class GetSharesRequest2 extends GetSharesRequest<ShareInfo2, NetShareInfo2> {
+        @Override
+        NetShareInfo2 convert(ShareInfo2 src) {
+            return new NetShareInfo2(src.getNetName(), src.getType(), src.getRemark(),
+                    src.getPermissions(), src.getMaxUses(), src.getCurrentUses(), src.getPath(), src.getPasswd());
+        }
+
+        @Override
+        NetrShareEnumRequest<? extends ShareEnumStruct<? extends ShareInfoContainer<ShareInfo2>>> createRequest(
+                Integer resumeHandle) {
+            return new NetrShareEnumRequest.NetShareEnumRequest2(resumeHandle);
+        }
+    }
+
+    abstract class GetSharesRequest<S extends ShareInfo, N extends NetShareInfo> {
+        private final List<N> shares;
+
+        GetSharesRequest() {
+            this.shares = new ArrayList<>();
+        }
+
+        List<N> getShares() {
+            return this.shares;
+        }
+
+        abstract N convert(S src);
+        abstract NetrShareEnumRequest<? extends ShareEnumStruct<? extends ShareInfoContainer<S>>> createRequest(Integer resumeHandle);
+
+        GetSharesRequest<S, N> call() throws IOException {
+            Integer resumeHandle = null;
+            while (true) {
+                final NetrShareEnumRequest<? extends ShareEnumStruct<? extends ShareInfoContainer<S>>> request = createRequest(resumeHandle);
+                final NetrShareEnumResponse<? extends ShareEnumStruct<? extends ShareInfoContainer<S>>> response = ServerService.this.call(request);
+                final int returnCode = response.getReturnValue();
+                if (ERROR_MORE_ENTRIES.is(returnCode) || ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
+                    for (S src : response.getShareEnumStruct().getShareInfoContainer().getBuffer()) {
+                        shares.add(convert(src));
+                    }
+                } else {
+                    throw new RPCException("NetrShareEnum", returnCode);
+                }
+                if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode))
+                    return this;
+                resumeHandle = response.getResumeHandle();
+            }
+        }
     }
 }
