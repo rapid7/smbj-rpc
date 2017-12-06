@@ -650,6 +650,15 @@ public class SecurityAccountManagerService extends Service {
         return callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor().getSecurityDescriptor();
     }
 
+    /**
+     * Gets the SID of a given domain. An exception is thrown if it is not found.
+     *
+     * @param serverHandle A valid server handle obtained from {@link #openServer()}
+     * @param domainName The name of the domain to get the {@link SID} for.
+     * @return The SID for the given domain.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
     public SID getSIDForDomain(final ServerHandle serverHandle, final String domainName) throws IOException {
         final SamrLookupDomainInSamServerRequest request =
                 new SamrLookupDomainInSamServerRequest(
@@ -658,6 +667,17 @@ public class SecurityAccountManagerService extends Service {
         return parseRPCSID(rpcsid);
     }
 
+    /**
+     * Gets an array of {@link MembershipWithUse} information for users/groups matching the given names in the provided
+     * domain.
+     *
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}
+     * @param names A list of user/group names.
+     * @return An array of user/group relativeIDs and their use; each entry corresponds 1-1 with the given name list.
+     * If an entry is null, no result was found for that name.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
     public MembershipWithUse[] getNamesInDomain(final DomainHandle domainHandle, String ... names) throws IOException {
         final SamrLookupNamesInDomainRequest request =
                 new SamrLookupNamesInDomainRequest(parseHandle(domainHandle), parseNonNullTerminatedStrings(names));
@@ -686,7 +706,10 @@ public class SecurityAccountManagerService extends Service {
     /**
      * Gets a list of {@link MembershipWithAttributes} information for groups containing the provided user handle.
      *
-     * @param userHandle User handle. Must not be {@code null}.
+     * @param userHandle A valid user handle obtained from {@link #openUser(DomainHandle, long)}
+     * @return An array of groups with their relativeIDs and attributes that the user belongs to.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
      */
     public MembershipWithAttributes[] getGroupsForUser(final UserHandle userHandle) throws IOException {
         final SamrGetGroupsForUserRequest request = new SamrGetGroupsForUserRequest(parseHandle(userHandle));
@@ -697,7 +720,10 @@ public class SecurityAccountManagerService extends Service {
     /**
      * Gets a list of {@link MembershipWithAttributes} information for the members of the provided group handle.
      *
-     * @param groupHandle Group handle. Must not be {@code null}.
+     * @param groupHandle A valid group handle obtained from {@link #openGroup(DomainHandle, long)}
+     * @return An array of user/group relativeIDs and their attributes that belong to the given group.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
      */
     public MembershipWithAttributes[] getMembersForGroup(GroupHandle groupHandle) throws IOException {
         final SamrGetMembersInGroupRequest request = new SamrGetMembersInGroupRequest(parseHandle(groupHandle));
@@ -711,7 +737,8 @@ public class SecurityAccountManagerService extends Service {
      * @param domainHandle The domain handle.
      * @param sids A list of SIDs.
      * @return An array of alias relativeIDs to the provided SID.
-     * @throws IOException
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
      */
     public Integer[] getAliasMembership(final DomainHandle domainHandle, SID... sids) throws IOException {
         final SamrGetAliasMembershipRequest request =

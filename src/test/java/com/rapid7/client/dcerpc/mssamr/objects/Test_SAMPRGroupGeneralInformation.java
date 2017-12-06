@@ -219,6 +219,6 @@ public class Test_SAMPRGroupGeneralInformation {
         obj.setAttributes(50);
         obj.setMemberCount(100L);
         obj.setAdminComment(RPCUnicodeString.NonNullTerminated.of("AdminComment"));
-        assertEquals(obj.toString(), "SAMPR_GROUP_GENERAL_INFORMATION{Name:RPC_UNICODE_STRING{value:\"Name\", nullTerminated:false},Attributes:50,MemberCount:100,AdminComment:RPC_UNICODE_STRING{value:\"AdminComment\", nullTerminated:false}}");
+        assertEquals(obj.toString(), "SAMPR_GROUP_GENERAL_INFORMATION{Name:\"Name\",Attributes:50,MemberCount:100,AdminComment:\"AdminComment\"}");
     }
 }

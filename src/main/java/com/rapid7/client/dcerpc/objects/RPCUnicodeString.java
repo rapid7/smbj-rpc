@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
@@ -19,7 +19,6 @@
 package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
-import java.rmi.UnmarshalException;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
@@ -60,10 +59,10 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * <br>
  * <b>Marshalling Usage:</b><pre>
  *      String myValue = "some string";
- *      RPC_UNICODE_STRING rpcUnicodeString = RPC_UNICODE_STRING.of(true, myValue);
+ *      RPCUnicodeString rpcUnicodeString = RPCUnicodeString.NonNullTerminated.of(myValue);
  *      packetOut.writeMarshallable(rpcUnicodeString);</pre>
  * <b>Unmarshalling Usage:</b><pre>
- *      RPC_UNICODE_STRING rpcUnicodeString = RPC_UNICODE_STRING.of(true);
+ *      RPCUnicodeString rpcUnicodeString = new RPCUnicodeString.NonNullTerminated();
  *      packetIn.readUnmarshallable(rpcUnicodeString);
  *      String myValue = rpcUnicodeString.getValue();</pre>
  */
@@ -73,15 +72,19 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
      * An RPC_UNICODE_STRING which is expected to be null terminated during marshalling/unmarshalling.
      */
     public static class NullTerminated extends RPCUnicodeString {
+        /**
+         * @param value The value; may be null.
+         * @return A new {@link NullTerminated} {@link RPCUnicodeString} with the provided value.
+         */
         public static NullTerminated of(String value) {
-            NullTerminated str = new NullTerminated();
+            final NullTerminated str = new NullTerminated();
             str.setValue(value);
             return str;
         }
 
         @Override
-        boolean isNullTerminated() {
-            return true;
+        WChar createWChar() {
+            return new WChar.NullTerminated();
         }
     }
 
@@ -89,28 +92,46 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
      * An RPC_UNICODE_STRING which is not expected to be null terminated during marshalling/unmarshalling.
      */
     public static class NonNullTerminated extends RPCUnicodeString {
+        /**
+         * @param value The value; may be null.
+         * @return A new {@link NonNullTerminated} {@link RPCUnicodeString} with the provided value.
+         */
         public static NonNullTerminated of(String value) {
-            NonNullTerminated str = new NonNullTerminated();
+            final NonNullTerminated str = new NonNullTerminated();
             str.setValue(value);
             return str;
         }
 
         @Override
-        boolean isNullTerminated() {
-            return false;
+        WChar createWChar() {
+            return new WChar.NonNullTerminated();
         }
     }
 
-    private String value;
+    private WChar wChar;
+    abstract WChar createWChar();
 
-    abstract boolean isNullTerminated();
-
+    /**
+     * @return The {@link String} representation of this {@link RPCUnicodeString}.
+     * May be null. Will never include a null terminator.
+     */
     public String getValue() {
-        return value;
+        if (this.wChar == null)
+            return null;
+        return this.wChar.getValue();
     }
 
+    /**
+     * @param value The {@link String} representation for this {@link RPCUnicodeString}.
+     * May be null. Must not include a null terminator.
+     */
     public void setValue(String value) {
-        this.value = value;
+        if (value == null) {
+            this.wChar = null;
+        } else {
+            this.wChar = createWChar();
+            this.wChar.setValue(value);
+        }
     }
 
     @Override
@@ -122,7 +143,7 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
     public void marshalEntity(PacketOutput out) throws IOException {
         // Structure Alignment
         out.align(Alignment.FOUR);
-        if (value == null) {
+        if (this.wChar == null) {
             // <NDR: unsigned short> unsigned short Length;
             // Alignment 2 - Already aligned
             out.writeShort(0);
@@ -135,7 +156,7 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         } else {
             // UTF-16 encoded string is 2 bytes per count point
             // Null terminator must also be considered
-            final int byteLength = 2 * value.length() + (isNullTerminated() ? 2 : 0);
+            final int byteLength = 2 * this.wChar.getValue().length() + (this.wChar.isNullTerminated() ? 2 : 0);
             // <NDR: unsigned short> unsigned short Length;
             // Alignment 2 - Already aligned
             out.writeShort(byteLength);
@@ -150,22 +171,8 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
 
     @Override
     public void marshalDeferrals(PacketOutput out) throws IOException {
-        if (value != null) {
-            final int codepoints = value.length() + (isNullTerminated() ? 1 : 0);
-            // MaximumCount for conformant array
-            out.align(Alignment.FOUR);
-            out.writeInt(codepoints);
-            // Offset for varying array
-            // Alignment 4 - Already aligned
-            out.writeInt(0);
-            // ActualCount for varying array
-            // Alignment 4 - Already aligned
-            out.writeInt(codepoints);
-            // Entities for conformant+varying array
-            // Alignment 1 - Already aligned
-            out.writeChars(value);
-            if (isNullTerminated())
-                out.writeShort(0);
+        if (this.wChar != null) {
+            out.writeMarshallable(this.wChar);
         }
     }
 
@@ -187,50 +194,21 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0)
-            // This is 0 cost - Compile time constants are internal objects
-            value = "";
+            this.wChar = createWChar();
+        else
+            this.wChar = null;
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        if (value != null) {
-            //Preamble
-            // <NDR: unsigned long> MaximumCount for conformant array - This is *not* the size of the array, so is not useful to us
-            in.align(Alignment.FOUR);
-            in.fullySkipBytes(4);
-
-            //Entity
-            // <NDR: unsigned long> Offset for varying array
-            // Alignment: 4 - Already aligned
-            final int offset = readIndex("Offset", in);
-            // <NDR: unsigned long> ActualCount for varying array
-            // Alignment: 4 - Already aligned
-            final int actualCount = readIndex("ActualCount", in);
-            // If we expect a null terminator, then skip it when reading the string
-            final int stringCount = (isNullTerminated() ? (actualCount - 1) : actualCount);
-
-            //Deferrals
-            // Entities for conformant array
-            final StringBuilder result = new StringBuilder(stringCount);
-            // Read prefix (if any)
-            // Alignment: 2 - Already aligned
-            in.fullySkipBytes(2 * offset);
-            // Read subset
-            for (int i = 0; i < stringCount; i++) {
-                // <NDR: unsigned short>
-                // Alignment: 2 - Already aligned
-                result.append((char) in.readShort());
-            }
-            // Read suffix (if any)
-            // Alignment: 2 - Already aligned
-            in.fullySkipBytes(2 * (actualCount-stringCount));
-            this.value = result.toString();
+        if (this.wChar != null) {
+            in.readUnmarshallable(this.wChar);
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isNullTerminated(), getValue());
+        return Objects.hash(wChar);
     }
 
     @Override
@@ -240,24 +218,11 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         } else if (! (obj instanceof RPCUnicodeString)) {
             return false;
         }
-        RPCUnicodeString other = (RPCUnicodeString) obj;
-        return Objects.equals(isNullTerminated(), other.isNullTerminated())
-                && Objects.equals(getValue(), other.getValue());
+        return Objects.equals(wChar, ((RPCUnicodeString) obj).wChar);
     }
 
     @Override
     public String toString() {
-        return String.format("RPC_UNICODE_STRING{value:%s, nullTerminated:%b}",
-                getValue() == null ? "null" : String.format("\"%s\"", getValue()),
-                isNullTerminated());
-    }
-
-    private int readIndex(String name, PacketInput in) throws IOException {
-        final long ret = in.readUnsignedInt();
-        // Don't allow array length or index values bigger than signed int
-        if (ret > Integer.MAX_VALUE) {
-            throw new UnmarshalException(String.format("%s %d > %d", name, ret, Integer.MAX_VALUE));
-        }
-        return (int) ret;
+        return getValue() == null ? "null" : String.format("\"%s\"", getValue());
     }
 }
