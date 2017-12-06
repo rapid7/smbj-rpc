@@ -200,6 +200,6 @@ public class Test_SAMPRAliasGeneralInformation {
         obj.setName(RPCUnicodeString.NonNullTerminated.of("Name"));
         obj.setMemberCount(100L);
         obj.setAdminComment(RPCUnicodeString.NonNullTerminated.of("AdminComment"));
-        assertEquals(obj.toString(), "SAMPR_ALIAS_GENERAL_INFORMATION{Name:RPC_UNICODE_STRING{value:\"Name\", nullTerminated:false},MemberCount:100,AdminComment:RPC_UNICODE_STRING{value:\"AdminComment\", nullTerminated:false}}");
+        assertEquals(obj.toString(), "SAMPR_ALIAS_GENERAL_INFORMATION{Name:\"Name\",MemberCount:100,AdminComment:\"AdminComment\"}");
     }
 }

@@ -655,7 +655,7 @@ public class Test_SAMPRUserAllInformation {
         obj.setPrimaryGroupId(100L);
         obj.setUserName(RPCUnicodeString.NonNullTerminated.of("UserName1"));
         obj.setFullName(RPCUnicodeString.NonNullTerminated.of("FullName1"));
-        assertEquals(obj.toString(), "SAMPR_USER_ALL_INFORMATION{UserId:50, PrimaryGroupId:100, UserName:RPC_UNICODE_STRING{value:\"UserName1\", nullTerminated:false}, FullName:RPC_UNICODE_STRING{value:\"FullName1\", nullTerminated:false}}");
+        assertEquals(obj.toString(), "SAMPR_USER_ALL_INFORMATION{UserId:50, PrimaryGroupId:100, UserName:\"UserName1\", FullName:\"FullName1\"}");
     }
 
     private SAMPRUserAllInformation createEntity() {

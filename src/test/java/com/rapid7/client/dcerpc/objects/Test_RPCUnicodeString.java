@@ -159,7 +159,6 @@ public class Test_RPCUnicodeString {
         RPCUnicodeString obj = create(nullTerminated);
         obj.setValue(value);
         obj.unmarshalEntity(in);
-        assertEquals(obj.isNullTerminated(), nullTerminated);
         assertEquals(obj.getValue(), value);
         assertEquals(bin.available(), 0);
     }
@@ -196,7 +195,6 @@ public class Test_RPCUnicodeString {
         obj.setValue("");
         obj.unmarshalDeferrals(in);
         assertEquals(bin.available(), 0);
-        assertEquals(obj.isNullTerminated(), nullTerminated);
         assertEquals(obj.getValue(), value);
     }
 
@@ -259,7 +257,7 @@ public class Test_RPCUnicodeString {
         RPCUnicodeString obj_ntn2 = new RPCUnicodeString.NonNullTerminated();
         assertEquals(obj_nt1, obj_nt2);
         assertEquals(obj_ntn1, obj_ntn2);
-        assertNotEquals(obj_nt1, obj_ntn1);
+        assertEquals(obj_nt1, obj_ntn1);
         obj_nt2.setValue("test123");
         obj_ntn2.setValue("test123");
         assertNotEquals(obj_nt1, obj_nt2);
@@ -273,9 +271,9 @@ public class Test_RPCUnicodeString {
     @DataProvider
     public Object[][] data_toString() {
         return new Object[][] {
-                {false, "test", "RPC_UNICODE_STRING{value:\"test\", nullTerminated:false}"},
-                {true, "test", "RPC_UNICODE_STRING{value:\"test\", nullTerminated:true}"},
-                {true, null, "RPC_UNICODE_STRING{value:null, nullTerminated:true}"}
+                {false, "test", "\"test\""},
+                {true, "test", "\"test\""},
+                {true, null, "null"}
         };
     }
 
@@ -286,7 +284,7 @@ public class Test_RPCUnicodeString {
         assertEquals(str.toString(), expected);
     }
 
-    private RPCUnicodeString create(boolean nullterminated) {
-        return nullterminated ? new RPCUnicodeString.NullTerminated() : new RPCUnicodeString.NonNullTerminated();
+    private RPCUnicodeString create(boolean nullTerminated) {
+        return nullTerminated ? new RPCUnicodeString.NullTerminated() : new RPCUnicodeString.NonNullTerminated();
     }
 }
