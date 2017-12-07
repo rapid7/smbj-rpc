@@ -21,8 +21,6 @@
 
 package com.rapid7.client.dcerpc.mssrvs.dto;
 
-import java.util.Objects;
-
 public class NetShareInfo0 extends NetShareInfo {
     public NetShareInfo0(final String netName) {
         super(netName);
