@@ -233,7 +233,8 @@ public class ServerService extends Service {
                         shares.add(convert(src));
                     }
                 } else {
-                    throw new RPCException("NetrShareEnum", returnCode);
+                    throw new RPCException(String.format(
+                            "NetrShareEnum[%d]", request.getShareEnumLevel().getInfoLevel()), returnCode);
                 }
                 if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode))
                     return this;

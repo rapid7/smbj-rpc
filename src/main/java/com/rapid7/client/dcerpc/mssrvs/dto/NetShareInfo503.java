@@ -57,7 +57,7 @@ public class NetShareInfo503 extends NetShareInfo502 {
 
     @Override
     public String toString() {
-        return String.format("NetShareInfo502{netName: %s, type: %d, remark: %s, " +
+        return String.format("NetShareInfo503{netName: %s, type: %d, remark: %s, " +
                         "permissions: %d, maxUses: %d, currentUses: %d, path: %s, " +
                         "passwd: %s, serverName: %s, size(securityDescriptor): %s}",
                 formatString(getNetName()), getType(), formatString(getRemark()),

@@ -42,7 +42,7 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         this.resumeHandle = resumeHandle;
     }
 
-    abstract ShareEnumLevel getShareEnumLevel();
+    public abstract ShareEnumLevel getShareEnumLevel();
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
@@ -67,7 +67,7 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         }
 
         @Override
-        ShareEnumLevel getShareEnumLevel() {
+        public ShareEnumLevel getShareEnumLevel() {
             return ShareEnumLevel.SHARE_INFO_0_CONTAINER;
         }
 
@@ -83,7 +83,7 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         }
 
         @Override
-        ShareEnumLevel getShareEnumLevel() {
+        public ShareEnumLevel getShareEnumLevel() {
             return ShareEnumLevel.SHARE_INFO_1_CONTAINER;
         }
 
@@ -99,7 +99,7 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         }
 
         @Override
-        ShareEnumLevel getShareEnumLevel() {
+        public ShareEnumLevel getShareEnumLevel() {
             return ShareEnumLevel.SHARE_INFO_2_CONTAINER;
         }
 
@@ -115,7 +115,7 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         }
 
         @Override
-        ShareEnumLevel getShareEnumLevel() {
+        public ShareEnumLevel getShareEnumLevel() {
             return ShareEnumLevel.SHARE_INFO_501_CONTAINER;
         }
 
@@ -131,7 +131,7 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         }
 
         @Override
-        ShareEnumLevel getShareEnumLevel() {
+        public ShareEnumLevel getShareEnumLevel() {
             return ShareEnumLevel.SHARE_INFO_502_CONTAINER;
         }
 
@@ -147,7 +147,7 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         }
 
         @Override
-        ShareEnumLevel getShareEnumLevel() {
+        public ShareEnumLevel getShareEnumLevel() {
             return ShareEnumLevel.SHARE_INFO_503_CONTAINER;
         }
 
