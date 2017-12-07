@@ -60,7 +60,7 @@ public class ServerService extends Service {
      * Specifies the preferred maximum length, in bytes, of the returned data. If the specified value is
      * MAX_PREFERRED_LENGTH, the method MUST attempt to return all entries.
      */
-    private final static int MAX_BUFFER_SIZE = 500;
+    private final static int MAX_BUFFER_SIZE = 1048576;
 
     public ServerService(final RPCTransport transport) {
         super(transport);
