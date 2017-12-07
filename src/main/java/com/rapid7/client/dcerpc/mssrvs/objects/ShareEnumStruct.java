@@ -82,7 +82,7 @@ public abstract class ShareEnumStruct<T extends ShareInfoContainer> implements U
         final int enumLevel = in.readInt();
         if (enumLevel != level) {
             throw new UnmarshalException(String.format(
-                    "Expected level %d to match enum level, got: %d", level, enumLevel));
+                    "Expected info level %d to match enum level, got: %d", level, enumLevel));
         }
         // <NDR: pointer[struct]> [switch_is(Level)] SHARE_ENUM_UNION ShareInfo;
         // Alignment: 4 - Already aligned
@@ -94,8 +94,8 @@ public abstract class ShareEnumStruct<T extends ShareInfoContainer> implements U
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        if (this.shareInfoContainer != null) {
-            in.readUnmarshallable(this.shareInfoContainer);
+        if (getShareInfoContainer() != null) {
+            in.readUnmarshallable(getShareInfoContainer());
         }
     }
 

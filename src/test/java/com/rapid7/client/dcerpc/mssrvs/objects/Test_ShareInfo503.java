@@ -68,6 +68,7 @@ public class Test_ShareInfo503 {
         obj.setCurrentUses(40);
         obj.setPath(path);
         obj.setPasswd(passwd);
+        obj.setServerName(serverName);
         obj.setSecurityDescriptor(securityDescriptor);
         assertSame(obj.getNetName(), netName);
         assertEquals(obj.getType(), 25);

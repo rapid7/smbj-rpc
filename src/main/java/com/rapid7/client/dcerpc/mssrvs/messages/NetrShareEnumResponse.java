@@ -23,6 +23,7 @@ package com.rapid7.client.dcerpc.mssrvs.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumLevel;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct;
@@ -30,7 +31,7 @@ import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct;
 public abstract class NetrShareEnumResponse<T extends ShareEnumStruct> extends RequestResponse {
     private T shareEnumStruct;
     private long totalEntries;
-    private Integer resumeHandle;
+    private Long resumeHandle;
 
     public abstract ShareEnumLevel getShareEnumLevel();
 
@@ -42,7 +43,7 @@ public abstract class NetrShareEnumResponse<T extends ShareEnumStruct> extends R
         return totalEntries;
     }
 
-    public Integer getResumeHandle() {
+    public Long getResumeHandle() {
         return resumeHandle;
     }
 
@@ -51,10 +52,17 @@ public abstract class NetrShareEnumResponse<T extends ShareEnumStruct> extends R
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
         this.shareEnumStruct = createShareEnumStruct();
+        // <NDR: struct> [in, out] LPSHARE_ENUM_STRUCT InfoStruct
         packetIn.readUnmarshallable(this.shareEnumStruct);
+        // <NDR: unsigned long> [out] DWORD* TotalEntries
+        packetIn.align(Alignment.FOUR);
         this.totalEntries = packetIn.readUnsignedInt();
+        // <NDR: pointer[unsigned long]> [in, out, unique] DWORD* ResumeHandle
+        // Alignment: 4 - Already aligned
         if (packetIn.readReferentID() != 0)
-            this.resumeHandle = packetIn.readInt();
+            // <NDR: unsigned long> [in, out, unique] DWORD* ResumeHandle
+            // Alignment: 4 - Already aligned
+            this.resumeHandle = packetIn.readUnsignedInt();
         else
             this.resumeHandle = null;
     }
