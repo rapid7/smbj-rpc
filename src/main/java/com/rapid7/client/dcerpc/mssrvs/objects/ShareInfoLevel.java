@@ -30,8 +30,7 @@ public enum ShareInfoLevel {
     LPSHARE_INFO_2(2),
     LPSHARE_INFO_501(501),
     LPSHARE_INFO_502(502),
-    LPSHARE_INFO_503(503),
-    LPSHARE_INFO_1005(1005);
+    LPSHARE_INFO_503(503);
 
     private final int infoLevel;
 

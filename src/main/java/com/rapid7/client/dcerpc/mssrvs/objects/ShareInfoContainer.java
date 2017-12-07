@@ -103,4 +103,156 @@ public abstract class ShareInfoContainer<T extends ShareInfo> implements Unmarsh
         }
         return (int) ret;
     }
+
+    /**
+     * <a href="https://msdn.microsoft.com/en-us/library/cc247156.aspx">SHARE_INFO_0_CONTAINER</a>
+     * <blockquote><pre>The SHARE_INFO_0_CONTAINER structure contains a value that indicates the number of entries that the NetrShareEnum method returns and a pointer to the buffer that contains the entries.
+     *
+     *      typedef struct _SHARE_INFO_0_CONTAINER {
+     *          DWORD EntriesRead;
+     *          [size_is(EntriesRead)] LPSHARE_INFO_0 Buffer;
+     *      } SHARE_INFO_0_CONTAINER;
+     *
+     *  EntriesRead: The number of entries returned by the method.
+     *  Buffer: A pointer to the SHARE_INFO_0 entries returned by the method.</pre></blockquote>
+     */
+    public static class ShareInfo0Container extends ShareInfoContainer<ShareInfo0> {
+        @Override
+        ShareInfo0 createEntry() {
+            return new ShareInfo0();
+        }
+
+        @Override
+        ShareInfo0[] createBuffer(int size) {
+            return new ShareInfo0[size];
+        }
+    }
+
+    /**
+     * <a href="https://msdn.microsoft.com/en-us/library/cc247157.aspx">SHARE_INFO_1_CONTAINER</a>
+     * <blockquote><pre>The SHARE_INFO_1_CONTAINER structure contains a value that indicates the number of entries that the NetrShareEnum method returns and a pointer to the buffer that contains the entries.
+     *
+     *      typedef struct _SHARE_INFO_1_CONTAINER {
+     *          DWORD EntriesRead;
+     *          [size_is(EntriesRead)] LPSHARE_INFO_1 Buffer;
+     *      } SHARE_INFO_1_CONTAINER;
+     *
+     *  EntriesRead: The number of entries returned by the method.
+     *  Buffer: A pointer to the SHARE_INFO_1 entries returned by the method.</pre></blockquote>
+     */
+    public static class ShareInfo1Container extends ShareInfoContainer<ShareInfo1> {
+        @Override
+        ShareInfo1 createEntry() {
+            return new ShareInfo1();
+        }
+
+        @Override
+        ShareInfo1[] createBuffer(int size) {
+            return new ShareInfo1[size];
+        }
+    }
+
+    /**
+     * <a href="https://msdn.microsoft.com/en-us/library/cc247158.aspx">SHARE_INFO_2_CONTAINER</a>
+     * <blockquote><pre>The SHARE_INFO_2_CONTAINER structure contains a value that indicates the number of entries that the NetrShareEnum method returns and a pointer to the buffer that contains the entries.
+     *
+     *      typedef struct _SHARE_INFO_2_CONTAINER {
+     *          DWORD EntriesRead;
+     *          [size_is(EntriesRead)] LPSHARE_INFO_2 Buffer;
+     *      } SHARE_INFO_2_CONTAINER,
+     *      *PSHARE_INFO_2_CONTAINER,
+     *      *LPSHARE_INFO_2_CONTAINER;
+     *
+     *  EntriesRead: The number of entries returned by the method.
+     *  Buffer: A pointer to the SHARE_INFO_2 entries returned by the method.</pre></blockquote>
+     */
+    public static class ShareInfo2Container extends ShareInfoContainer<ShareInfo2> {
+        @Override
+        ShareInfo2 createEntry() {
+            return new ShareInfo2();
+        }
+
+        @Override
+        ShareInfo2[] createBuffer(int size) {
+            return new ShareInfo2[size];
+        }
+    }
+
+    /**
+     * <a href="https://msdn.microsoft.com/en-us/library/cc247159.aspx">SHARE_INFO_501_CONTAINER</a>
+     * <blockquote><pre>The SHARE_INFO_501_CONTAINER structure contains a value that indicates the number of entries that the NetrShareEnum method returns and a pointer to the buffer that contains the entries.
+     *
+     *      typedef struct _SHARE_INFO_501_CONTAINER {
+     *          DWORD EntriesRead;
+     *          [size_is(EntriesRead)] LPSHARE_INFO_501 Buffer;
+     *      } SHARE_INFO_501_CONTAINER,
+     *      *PSHARE_INFO_501_CONTAINER,
+     *      *LPSHARE_INFO_501_CONTAINER;
+     *
+     *  EntriesRead: The number of entries returned by the method.
+     *  Buffer: A pointer to the SHARE_INFO_501 entries returned by the method.</pre></blockquote>
+     */
+    public static class ShareInfo501Container extends ShareInfoContainer<ShareInfo501> {
+        @Override
+        ShareInfo501 createEntry() {
+            return new ShareInfo501();
+        }
+
+        @Override
+        ShareInfo501[] createBuffer(int size) {
+            return new ShareInfo501[size];
+        }
+    }
+
+    /**
+     * <a href="https://msdn.microsoft.com/en-us/library/cc247160.aspx">SHARE_INFO_502_CONTAINER</a>
+     * <blockquote><pre>The SHARE_INFO_502_CONTAINER structure contains a value that indicates the number of entries that the NetrShareEnum method returns and a pointer to the buffer that contains the entries.
+     *
+     *      typedef struct _SHARE_INFO_502_CONTAINER {
+     *          DWORD EntriesRead;
+     *          [size_is(EntriesRead)] LPSHARE_INFO_502_I Buffer;
+     *      } SHARE_INFO_502_CONTAINER,
+     *      *PSHARE_INFO_502_CONTAINER,
+     *      *LPSHARE_INFO_502_CONTAINER;
+     *
+     *  EntriesRead: The number of entries returned by the method.
+     *  Buffer: A pointer to the SHARE_INFO_502_I entries returned by the method.</pre></blockquote>
+     */
+    public static class ShareInfo502Container extends ShareInfoContainer<ShareInfo502> {
+        @Override
+        ShareInfo502 createEntry() {
+            return new ShareInfo502();
+        }
+
+        @Override
+        ShareInfo502[] createBuffer(int size) {
+            return new ShareInfo502[size];
+        }
+    }
+
+    /**
+     * <a href="https://msdn.microsoft.com/en-us/library/dd644739.aspx">SHARE_INFO_503_CONTAINER</a>
+     * <blockquote><pre>The SHARE_INFO_503_CONTAINER structure contains a value that indicates the number of entries the NetrShareEnum method returns and a pointer to the buffer that contains the entries.
+     *
+     *      typedef struct _SHARE_INFO_503_CONTAINER {
+     *          DWORD EntriesRead;
+     *          [size_is(EntriesRead)] LPSHARE_INFO_503_I Buffer;
+     *      } SHARE_INFO_503_CONTAINER,
+     *      *PSHARE_INFO_503_CONTAINER,
+     *      *LPSHARE_INFO_503_CONTAINER;
+     *
+     * EntriesRead: The number of entries returned by the method.
+     * Buffer: A pointer to the SHARE_INFO_503_I entries returned by the method.</pre></blockquote>
+     */
+    public static class ShareInfo503Container extends ShareInfoContainer<ShareInfo503> {
+        @Override
+        ShareInfo503 createEntry() {
+            return new ShareInfo503();
+        }
+
+        @Override
+        ShareInfo503[] createBuffer(int size) {
+            return new ShareInfo503[size];
+        }
+    }
 }

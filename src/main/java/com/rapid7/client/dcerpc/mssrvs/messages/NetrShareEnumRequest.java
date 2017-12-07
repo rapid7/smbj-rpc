@@ -27,9 +27,6 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mssrvs.NetrOpCode;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumLevel;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct;
-import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct0;
-import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct1;
-import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct2;
 
 public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends RequestCall<NetrShareEnumResponse<T>> {
     /**
@@ -64,7 +61,7 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         }
     }
 
-    public static class NetShareEnumRequest0 extends NetrShareEnumRequest<ShareEnumStruct0> {
+    public static class NetShareEnumRequest0 extends NetrShareEnumRequest<ShareEnumStruct.ShareEnumStruct0> {
         public NetShareEnumRequest0(Integer resumeHandle) {
             super(resumeHandle);
         }
@@ -75,12 +72,12 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         }
 
         @Override
-        public NetrShareEnumResponse<ShareEnumStruct0> getResponseObject() {
+        public NetrShareEnumResponse<ShareEnumStruct.ShareEnumStruct0> getResponseObject() {
             return new NetrShareEnumResponse.NetShareEnumResponse0();
         }
     }
 
-    public static class NetShareEnumRequest1 extends NetrShareEnumRequest<ShareEnumStruct1> {
+    public static class NetShareEnumRequest1 extends NetrShareEnumRequest<ShareEnumStruct.ShareEnumStruct1> {
         public NetShareEnumRequest1(Integer resumeHandle) {
             super(resumeHandle);
         }
@@ -91,12 +88,12 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         }
 
         @Override
-        public NetrShareEnumResponse<ShareEnumStruct1> getResponseObject() {
+        public NetrShareEnumResponse<ShareEnumStruct.ShareEnumStruct1> getResponseObject() {
             return new NetrShareEnumResponse.NetShareEnumResponse1();
         }
     }
 
-    public static class NetShareEnumRequest2 extends NetrShareEnumRequest<ShareEnumStruct2> {
+    public static class NetShareEnumRequest2 extends NetrShareEnumRequest<ShareEnumStruct.ShareEnumStruct2> {
         public NetShareEnumRequest2(Integer resumeHandle) {
             super(resumeHandle);
         }
@@ -107,8 +104,56 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         }
 
         @Override
-        public NetrShareEnumResponse<ShareEnumStruct2> getResponseObject() {
+        public NetrShareEnumResponse<ShareEnumStruct.ShareEnumStruct2> getResponseObject() {
             return new NetrShareEnumResponse.NetShareEnumResponse2();
+        }
+    }
+
+    public static class NetShareEnumRequest501 extends NetrShareEnumRequest<ShareEnumStruct.ShareEnumStruct501> {
+        public NetShareEnumRequest501(Integer resumeHandle) {
+            super(resumeHandle);
+        }
+
+        @Override
+        ShareEnumLevel getShareEnumLevel() {
+            return ShareEnumLevel.SHARE_INFO_501_CONTAINER;
+        }
+
+        @Override
+        public NetrShareEnumResponse<ShareEnumStruct.ShareEnumStruct501> getResponseObject() {
+            return new NetrShareEnumResponse.NetShareEnumResponse501();
+        }
+    }
+
+    public static class NetShareEnumRequest502 extends NetrShareEnumRequest<ShareEnumStruct.ShareEnumStruct502> {
+        public NetShareEnumRequest502(Integer resumeHandle) {
+            super(resumeHandle);
+        }
+
+        @Override
+        ShareEnumLevel getShareEnumLevel() {
+            return ShareEnumLevel.SHARE_INFO_502_CONTAINER;
+        }
+
+        @Override
+        public NetrShareEnumResponse<ShareEnumStruct.ShareEnumStruct502> getResponseObject() {
+            return new NetrShareEnumResponse.NetShareEnumResponse502();
+        }
+    }
+
+    public static class NetShareEnumRequest503 extends NetrShareEnumRequest<ShareEnumStruct.ShareEnumStruct503> {
+        public NetShareEnumRequest503(Integer resumeHandle) {
+            super(resumeHandle);
+        }
+
+        @Override
+        ShareEnumLevel getShareEnumLevel() {
+            return ShareEnumLevel.SHARE_INFO_503_CONTAINER;
+        }
+
+        @Override
+        public NetrShareEnumResponse<ShareEnumStruct.ShareEnumStruct503> getResponseObject() {
+            return new NetrShareEnumResponse.NetShareEnumResponse503();
         }
     }
 }

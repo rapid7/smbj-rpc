@@ -31,6 +31,7 @@ import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo1;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo2;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo501;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo502;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo503;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfoLevel;
 
 /**
@@ -122,6 +123,18 @@ public abstract class NetrShareGetInfoResponse<T extends ShareInfo> extends Requ
         @Override
         ShareInfo502 createShareInfo() {
             return new ShareInfo502();
+        }
+    }
+
+    public static class NetrShareGetInfoResponse503 extends NetrShareGetInfoResponse<ShareInfo503> {
+        @Override
+        public ShareInfoLevel getShareInfoLevel() {
+            return ShareInfoLevel.LPSHARE_INFO_503;
+        }
+
+        @Override
+        ShareInfo503 createShareInfo() {
+            return new ShareInfo503();
         }
     }
 }

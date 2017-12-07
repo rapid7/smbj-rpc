@@ -23,16 +23,13 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import com.google.common.collect.Lists;
-import com.hierynomus.protocol.transport.TransportException;
-import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo0;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
-import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct0;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo0;
-import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo0Container;
+import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfoContainer;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 import static org.mockito.Matchers.any;
@@ -53,8 +50,8 @@ public class Test_ServerService {
 
         when(transport.call((RequestCall<NetrShareEnumResponse>) any())).thenReturn(response);
         when(response.getReturnValue()).thenReturn(SystemErrorCode.ERROR_SUCCESS.getValue());
-        ShareEnumStruct0 shareEnumStruct0 = mock(ShareEnumStruct0.class);
-        ShareInfo0Container shareInfo0Container = mock(ShareInfo0Container.class);
+        ShareEnumStruct.ShareEnumStruct0 shareEnumStruct0 = mock(ShareEnumStruct.ShareEnumStruct0.class);
+        ShareInfoContainer.ShareInfo0Container shareInfo0Container = mock(ShareInfoContainer.ShareInfo0Container.class);
         when(shareEnumStruct0.getShareInfoContainer()).thenReturn(shareInfo0Container);
         ShareInfo0[] shareInfo0s = new ShareInfo0[1];
         ShareInfo0 shareInfo0 = new ShareInfo0();

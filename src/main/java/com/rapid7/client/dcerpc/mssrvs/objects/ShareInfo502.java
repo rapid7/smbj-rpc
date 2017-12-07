@@ -29,7 +29,7 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 
 /**
  * <b>Alignment: 4</b>
- * <a href="https://msdn.microsoft.com/en-us/library/cc247147.aspx">SHARE_INFO_1</a>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc247147.aspx">SHARE_INFO_502</a>
  * <blockquote><pre>The SHARE_INFO_502_I structure contains information about the shared resource, including the name of the resource, type, and permissions, the number of connections, and other pertinent information.
  *
  *      typedef struct _SHARE_INFO_502_I {
@@ -120,9 +120,9 @@ public class ShareInfo502 extends ShareInfo2 {
 
     @Override
     public String toString() {
-        return String.format("SHARE_INFO_2{shi2_netname: %s, shi2_type: %d, shi2_remark: %s, shi2_permissions: %d, " +
-                        "shi2_max_uses: %d, shi2_current_uses: %d, shi2_path: %s, shi2_passwd: %s, " +
-                        "size(shi502_security_descriptor): %s}",
+        return String.format("SHARE_INFO_502{shi502_netname: %s, shi502_type: %d, shi502_remark: %s, " +
+                        "shi502_permissions: %d, shi502_max_uses: %d, shi502_current_uses: %d, shi502_path: %s, " +
+                        "shi502_passwd: %s, size(shi502_security_descriptor): %s}",
                 this.netName, this.type, this.remark, this.permissions, this.maxUses, this.currentUses, this.path,
                 this.passwd, (this.securityDescriptor == null ? "null" : this.securityDescriptor.length));
     }

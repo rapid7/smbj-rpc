@@ -31,7 +31,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * <b>Alignment: 4</b>
  * <a href="https://msdn.microsoft.com/en-us/library/cc247161.aspx">SHARE_ENUM_STRUCT</a>
  * This class also encompasses <a href="https://msdn.microsoft.com/en-us/library/cc247119.aspx">SHARE_ENUM_UNION</a>, as
- * that class adds to real value as its own entity.
+ * that class adds no real value as its own entity.
  * <blockquote><pre>The SHARE_ENUM_STRUCT structure specifies the information level that the client requests in the NetrShareEnum method and encapsulates the SHARE_ENUM_UNION union that receives the entries enumerated by the server.
  *
  *      typedef struct _SHARE_ENUM_STRUCT {
@@ -40,6 +40,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *      } SHARE_ENUM_STRUCT,
  *      *PSHARE_ENUM_STRUCT,
  *      *LPSHARE_ENUM_STRUCT;
+ *
  * Level: Specifies the information level of the data. This parameter MUST have one of the following values.
  *      0       SHARE_INFO_0_CONTAINER
  *      1       SHARE_INFO_1_CONTAINER
@@ -95,6 +96,78 @@ public abstract class ShareEnumStruct<T extends ShareInfoContainer> implements U
     public void unmarshalDeferrals(PacketInput in) throws IOException {
         if (this.shareInfoContainer != null) {
             in.readUnmarshallable(this.shareInfoContainer);
+        }
+    }
+
+    public static class ShareEnumStruct0 extends ShareEnumStruct<ShareInfoContainer.ShareInfo0Container> {
+        @Override
+        public ShareEnumLevel getLevel() {
+            return ShareEnumLevel.SHARE_INFO_0_CONTAINER;
+        }
+
+        @Override
+        ShareInfoContainer.ShareInfo0Container createShareInfoContainer() {
+            return new ShareInfoContainer.ShareInfo0Container();
+        }
+    }
+
+    public static class ShareEnumStruct1 extends ShareEnumStruct<ShareInfoContainer.ShareInfo1Container> {
+        @Override
+        public ShareEnumLevel getLevel() {
+            return ShareEnumLevel.SHARE_INFO_1_CONTAINER;
+        }
+
+        @Override
+        ShareInfoContainer.ShareInfo1Container createShareInfoContainer() {
+            return new ShareInfoContainer.ShareInfo1Container();
+        }
+    }
+
+    public static class ShareEnumStruct2 extends ShareEnumStruct<ShareInfoContainer.ShareInfo2Container> {
+        @Override
+        public ShareEnumLevel getLevel() {
+            return ShareEnumLevel.SHARE_INFO_2_CONTAINER;
+        }
+
+        @Override
+        ShareInfoContainer.ShareInfo2Container createShareInfoContainer() {
+            return new ShareInfoContainer.ShareInfo2Container();
+        }
+    }
+
+    public static class ShareEnumStruct501 extends ShareEnumStruct<ShareInfoContainer.ShareInfo501Container> {
+        @Override
+        public ShareEnumLevel getLevel() {
+            return ShareEnumLevel.SHARE_INFO_501_CONTAINER;
+        }
+
+        @Override
+        ShareInfoContainer.ShareInfo501Container createShareInfoContainer() {
+            return new ShareInfoContainer.ShareInfo501Container();
+        }
+    }
+
+    public static class ShareEnumStruct502 extends ShareEnumStruct<ShareInfoContainer.ShareInfo502Container> {
+        @Override
+        public ShareEnumLevel getLevel() {
+            return ShareEnumLevel.SHARE_INFO_502_CONTAINER;
+        }
+
+        @Override
+        ShareInfoContainer.ShareInfo502Container createShareInfoContainer() {
+            return new ShareInfoContainer.ShareInfo502Container();
+        }
+    }
+
+    public static class ShareEnumStruct503 extends ShareEnumStruct<ShareInfoContainer.ShareInfo503Container> {
+        @Override
+        public ShareEnumLevel getLevel() {
+            return ShareEnumLevel.SHARE_INFO_503_CONTAINER;
+        }
+
+        @Override
+        ShareInfoContainer.ShareInfo503Container createShareInfoContainer() {
+            return new ShareInfoContainer.ShareInfo503Container();
         }
     }
 }
