@@ -43,9 +43,9 @@ import com.rapid7.client.dcerpc.objects.WChar;
  */
 public class ShareInfo1 extends ShareInfo0 {
     // <NDR: unsigned long> DWORD shi1_type;
-    int type;
+    private int type;
     // <NDR: pointer[struct]> wchar_t* shi1_remark;
-    WChar.NullTerminated remark;
+    private WChar.NullTerminated remark;
 
     public int getType() {
         return type;
@@ -55,17 +55,12 @@ public class ShareInfo1 extends ShareInfo0 {
         this.type = type;
     }
 
-    public String getRemark() {
-        if (this.remark == null)
-            return null;
-        return this.remark.getValue();
+    public WChar.NullTerminated getRemark() {
+        return this.remark;
     }
 
-    public void setRemark(String remark) {
-        if (remark == null)
-            this.remark = null;
-        else
-            this.remark = WChar.NullTerminated.of(remark);
+    public void setRemark(final WChar.NullTerminated remark) {
+        this.remark = remark;
     }
 
     @Override
@@ -91,7 +86,7 @@ public class ShareInfo1 extends ShareInfo0 {
 
     @Override
     public int hashCode() {
-        return (super.hashCode() * 31) + Objects.hash(this.type, this.remark);
+        return (super.hashCode() * 31) + Objects.hash(getType(), getRemark());
     }
 
     @Override
@@ -104,12 +99,12 @@ public class ShareInfo1 extends ShareInfo0 {
         final ShareInfo1 other = (ShareInfo1) obj;
         return super.equals(obj)
                 && this.type == other.type
-                && Objects.equals(this.remark, other.remark);
+                && Objects.equals(getRemark(), other.getRemark());
     }
 
     @Override
     public String toString() {
         return String.format("SHARE_INFO_1{shi1_netname: %s, shi1_type: %d, shi1_remark: %s}",
-                this.netName, this.type, this.remark);
+                getNetName(), getType(), getRemark());
     }
 }

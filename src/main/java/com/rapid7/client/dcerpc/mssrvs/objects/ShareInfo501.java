@@ -61,7 +61,7 @@ public class ShareInfo501 extends ShareInfo1 {
 
     @Override
     public int hashCode() {
-        return (super.hashCode() * 31) + Objects.hash(this.flags);
+        return (super.hashCode() * 31) + Objects.hash(getFlags());
     }
 
     @Override
@@ -73,12 +73,12 @@ public class ShareInfo501 extends ShareInfo1 {
         }
         final ShareInfo501 other = (ShareInfo501) obj;
         return super.equals(obj)
-                && this.flags == other.flags;
+                && getFlags() == other.getFlags();
     }
 
     @Override
     public String toString() {
         return String.format("SHARE_INFO_501{shi501_netname: %s, shi501_type: %d, shi501_remark: %s, shi501_flags: %d}",
-                this.netName, this.type, this.remark, this.flags);
+                getNetName(), getType(), getRemark(), getFlags());
     }
 }

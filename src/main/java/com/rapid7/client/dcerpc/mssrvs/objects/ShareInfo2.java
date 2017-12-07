@@ -48,21 +48,21 @@ import com.rapid7.client.dcerpc.objects.WChar;
  */
 public class ShareInfo2 extends ShareInfo1 {
     // <NDR: unsigned long> DWORD shi2_permissions;
-    int permissions;
+    private int permissions;
     // <NDR: unsigned long> DWORD shi2_max_uses;
-    int maxUses;
+    private int maxUses;
     // <NDR: unsigned long> DWORD shi2_current_uses;
-    int currentUses;
+    private int currentUses;
     // <NDR: pointer[struct]> wchar_t* shi2_path;
-    WChar.NullTerminated path;
+    private WChar.NullTerminated path;
     // <NDR: pointer[struct]> wchar_t* shi2_passwd;
-    WChar.NullTerminated passwd;
+    private WChar.NullTerminated passwd;
 
     public int getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(int permissions) {
+    public void setPermissions(final int permissions) {
         this.permissions = permissions;
     }
 
@@ -70,7 +70,7 @@ public class ShareInfo2 extends ShareInfo1 {
         return maxUses;
     }
 
-    public void setMaxUses(int maxUses) {
+    public void setMaxUses(final int maxUses) {
         this.maxUses = maxUses;
     }
 
@@ -78,34 +78,24 @@ public class ShareInfo2 extends ShareInfo1 {
         return currentUses;
     }
 
-    public void setCurrentUses(int currentUses) {
+    public void setCurrentUses(final int currentUses) {
         this.currentUses = currentUses;
     }
 
-    public String getPath() {
-        if (this.path == null)
-            return null;
-        return this.path.getValue();
+    public WChar.NullTerminated getPath() {
+        return this.path;
     }
 
-    public void setPath(String path) {
-        if (path == null)
-            this.path = null;
-        else
-            this.path = WChar.NullTerminated.of(path);
+    public void setPath(final WChar.NullTerminated path) {
+        this.path = path;
     }
 
-    public String getPasswd() {
-        if (this.passwd == null)
-            return null;
-        return this.passwd.getValue();
+    public WChar.NullTerminated getPasswd() {
+        return this.passwd;
     }
 
-    public void setPasswd(String passwd) {
-        if (passwd == null)
-            this.passwd = null;
-        else
-            this.passwd = WChar.NullTerminated.of(passwd);
+    public void setPasswd(final WChar.NullTerminated passwd) {
+        this.passwd = passwd;
     }
 
     @Override
@@ -145,7 +135,8 @@ public class ShareInfo2 extends ShareInfo1 {
 
     @Override
     public int hashCode() {
-        return (super.hashCode() * 31) + Objects.hash(this.permissions, this.maxUses, this.currentUses, this.path, this.passwd);
+        return (super.hashCode() * 31) + Objects.hash(getPermissions(), getMaxUses(),
+                getCurrentUses(), getPath(), getPasswd());
     }
 
     @Override
@@ -157,17 +148,18 @@ public class ShareInfo2 extends ShareInfo1 {
         }
         final ShareInfo2 other = (ShareInfo2) obj;
         return super.equals(obj)
-                && this.permissions == other.permissions
-                && this.maxUses == other.maxUses
-                && this.currentUses == other.currentUses
-                && Objects.equals(this.path, other.path)
-                && Objects.equals(this.passwd, other.passwd);
+                && getPermissions() == other.getPermissions()
+                && getMaxUses() == other.getMaxUses()
+                && getCurrentUses() == other.getCurrentUses()
+                && Objects.equals(getPath(), other.getPath())
+                && Objects.equals(getPasswd(), other.getPasswd());
     }
 
     @Override
     public String toString() {
         return String.format("SHARE_INFO_2{shi2_netname: %s, shi2_type: %d, shi2_remark: %s, shi2_permissions: %d, " +
                         "shi2_max_uses: %d, shi2_current_uses: %d, shi2_path: %s, shi2_passwd: %s}",
-                this.netName, this.type, this.remark, this.permissions, this.maxUses, this.currentUses, this.path, this.passwd);
+                getNetName(), getType(), getRemark(), getPermissions(), getMaxUses(),
+                getCurrentUses(), getPath(), getPasswd());
     }
 }

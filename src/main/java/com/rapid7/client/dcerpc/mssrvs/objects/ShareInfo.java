@@ -30,19 +30,14 @@ import com.rapid7.client.dcerpc.objects.WChar;
 
 public class ShareInfo implements Unmarshallable {
     // <NDR: pointer[struct]> wchar_t* shi0_netname;
-    WChar.NullTerminated netName;
+    private WChar.NullTerminated netName;
 
-    public String getNetName() {
-        if (this.netName == null)
-            return null;
-        return this.netName.getValue();
+    public WChar.NullTerminated getNetName() {
+        return this.netName;
     }
 
-    public void setNetName(String netName) {
-        if (netName == null)
-            this.netName = null;
-        else
-            this.netName = WChar.NullTerminated.of(netName);
+    public void setNetName(final WChar.NullTerminated netName) {
+        this.netName = netName;
     }
 
     @Override

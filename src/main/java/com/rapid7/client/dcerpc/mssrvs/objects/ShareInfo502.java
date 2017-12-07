@@ -80,6 +80,7 @@ public class ShareInfo502 extends ShareInfo2 {
         final int reserved = readIndex("reserved", in);
         // <NDR: conformant array> [size_is(shi502_reserved)] unsigned char* shi502_security_descriptor;
         // Alignment: 4 - Already aligned
+        //noinspection Duplicates
         if (in.readReferentID() != 0) {
             if (reserved < 0)
                 throw new UnmarshalException(String.format("Expected reserved >= 0, got: %d", reserved));
@@ -123,8 +124,8 @@ public class ShareInfo502 extends ShareInfo2 {
         return String.format("SHARE_INFO_502{shi502_netname: %s, shi502_type: %d, shi502_remark: %s, " +
                         "shi502_permissions: %d, shi502_max_uses: %d, shi502_current_uses: %d, shi502_path: %s, " +
                         "shi502_passwd: %s, size(shi502_security_descriptor): %s}",
-                this.netName, this.type, this.remark, this.permissions, this.maxUses, this.currentUses, this.path,
-                this.passwd, (this.securityDescriptor == null ? "null" : this.securityDescriptor.length));
+                getNetName(), getType(), getRemark(), getPermissions(), getMaxUses(), getCurrentUses(), getPath(),
+                getPasswd(), (getSecurityDescriptor() == null ? "null" : getSecurityDescriptor().length));
     }
 
     private int readIndex(String name, PacketInput in) throws IOException {

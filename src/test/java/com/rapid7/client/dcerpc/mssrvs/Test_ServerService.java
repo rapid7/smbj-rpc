@@ -30,6 +30,7 @@ import com.rapid7.client.dcerpc.mssrvs.messages.NetrShareEnumResponse;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfo0;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareInfoContainer;
+import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 import static org.mockito.Matchers.any;
@@ -55,7 +56,7 @@ public class Test_ServerService {
         when(shareEnumStruct0.getShareInfoContainer()).thenReturn(shareInfo0Container);
         ShareInfo0[] shareInfo0s = new ShareInfo0[1];
         ShareInfo0 shareInfo0 = new ShareInfo0();
-        shareInfo0.setNetName("test1");
+        shareInfo0.setNetName(WChar.NullTerminated.of("test1"));
         shareInfo0s[0] = shareInfo0;
         when(shareInfo0Container.getBuffer()).thenReturn(shareInfo0s);
         when(response.getShareEnumStruct()).thenReturn(shareEnumStruct0);

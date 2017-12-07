@@ -24,6 +24,7 @@ package com.rapid7.client.dcerpc.mssrvs.objects;
 import java.io.IOException;
 import java.rmi.UnmarshalException;
 import java.util.Arrays;
+import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.objects.WChar;
@@ -69,18 +70,12 @@ public class ShareInfo503 extends ShareInfo2 {
     // <NDR: pointer[conformant array]> [size_is(shi502_reserved)] unsigned char* shi502_security_descriptor;
     private byte[] securityDescriptor;
 
-
-    public String getServerName() {
-        if (this.serverName == null)
-            return null;
-        return this.serverName.getValue();
+    public WChar.NullTerminated getServerName() {
+        return this.serverName;
     }
 
-    public void setServerName(String serverName) {
-        if (serverName == null)
-            this.serverName = null;
-        else
-            this.serverName = WChar.NullTerminated.of(serverName);
+    public void setServerName(WChar.NullTerminated serverName) {
+        this.serverName = serverName;
     }
 
     public byte[] getSecurityDescriptor() {
@@ -105,6 +100,7 @@ public class ShareInfo503 extends ShareInfo2 {
         final int reserved = readIndex("reserved", in);
         // <NDR: conformant array> [size_is(shi502_reserved)] unsigned char* shi502_security_descriptor;
         // Alignment: 4 - Already aligned
+        //noinspection Duplicates
         if (in.readReferentID() != 0) {
             if (reserved < 0)
                 throw new UnmarshalException(String.format("Expected reserved >= 0, got: %d", reserved));
@@ -132,7 +128,9 @@ public class ShareInfo503 extends ShareInfo2 {
 
     @Override
     public int hashCode() {
-        return (super.hashCode() * 31) + Arrays.hashCode(this.securityDescriptor);
+        int ret = super.hashCode();
+        ret = (ret * 31) + Objects.hash(getServerName());
+        return (ret * 31) + Arrays.hashCode(getSecurityDescriptor());
     }
 
     @Override
@@ -144,7 +142,8 @@ public class ShareInfo503 extends ShareInfo2 {
         }
         final ShareInfo503 other = (ShareInfo503) obj;
         return super.equals(obj)
-                && Arrays.equals(this.securityDescriptor, other.securityDescriptor);
+                && Objects.equals(getServerName(), other.getServerName())
+                && Arrays.equals(getSecurityDescriptor(), other.getSecurityDescriptor());
     }
 
     @Override
@@ -152,8 +151,9 @@ public class ShareInfo503 extends ShareInfo2 {
         return String.format("SHARE_INFO_503{shi503_netname: %s, shi503_type: %d, shi503_remark: %s, " +
                         "shi503_permissions: %d, shi503_max_uses: %d, shi503_current_uses: %d, shi503_path: %s, " +
                         "shi503_passwd: %s, shi503_server_name: %s, size(shi503_security_descriptor): %s}",
-                this.netName, this.type, this.remark, this.permissions, this.maxUses, this.currentUses, this.path,
-                this.passwd, this.serverName, (this.securityDescriptor == null ? "null" : this.securityDescriptor.length));
+                getNetName(), getType(), getRemark(), getPermissions(), getMaxUses(),
+                getCurrentUses(), getPath(), getPasswd(), getServerName(),
+                (getSecurityDescriptor() == null ? "null" : getSecurityDescriptor().length));
     }
 
     private int readIndex(String name, PacketInput in) throws IOException {

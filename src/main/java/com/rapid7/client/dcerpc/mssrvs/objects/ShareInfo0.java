@@ -35,6 +35,6 @@ package com.rapid7.client.dcerpc.mssrvs.objects;
 public class ShareInfo0 extends ShareInfo {
     @Override
     public String toString() {
-        return String.format("SHARE_INFO_0{shi0_netname: %s}", this.netName);
+        return String.format("SHARE_INFO_0{shi0_netname: %s}", getNetName());
     }
 }

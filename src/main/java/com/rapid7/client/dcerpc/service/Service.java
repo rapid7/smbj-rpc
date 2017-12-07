@@ -30,6 +30,7 @@ import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
+import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public abstract class Service {
@@ -120,5 +121,11 @@ public abstract class Service {
         if (rpcsid == null)
             return null;
         return new SID((byte) rpcsid.getRevision(), rpcsid.getIdentifierAuthority(), rpcsid.getSubAuthority());
+    }
+
+    protected String parseWChar(final WChar wChar) {
+        if (wChar == null)
+            return null;
+        return wChar.getValue();
     }
 }

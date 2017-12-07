@@ -246,40 +246,43 @@ public class ServerService extends Service {
     private NetShareInfo0 parseShareInfo0(final ShareInfo0 obj) {
         if (obj == null)
             return null;
-        return new NetShareInfo0(obj.getNetName());
+        return new NetShareInfo0(parseWChar(obj.getNetName()));
     }
 
     private NetShareInfo1 parseShareInfo1(final ShareInfo1 obj) {
         if (obj == null)
             return null;
-        return new NetShareInfo1(obj.getNetName(), obj.getType(), obj.getRemark());
+        return new NetShareInfo1(parseWChar(obj.getNetName()), obj.getType(), parseWChar(obj.getRemark()));
     }
 
     private NetShareInfo2 parseShareInfo2(final ShareInfo2 obj) {
         if (obj == null)
             return null;
-        return new NetShareInfo2(obj.getNetName(), obj.getType(), obj.getRemark(),
-                obj.getPermissions(), obj.getMaxUses(), obj.getCurrentUses(), obj.getPath(), obj.getPasswd());
+        return new NetShareInfo2(parseWChar(obj.getNetName()), obj.getType(), parseWChar(obj.getRemark()),
+                obj.getPermissions(), obj.getMaxUses(), obj.getCurrentUses(), parseWChar(obj.getPath()), parseWChar(obj.getPasswd()));
     }
 
     private NetShareInfo501 parseShareInfo501(final ShareInfo501 obj) {
         if (obj == null)
             return null;
-        return new NetShareInfo501(obj.getNetName(), obj.getType(), obj.getRemark(), obj.getFlags());
+        return new NetShareInfo501(parseWChar(obj.getNetName()), obj.getType(), parseWChar(obj.getRemark()), obj.getFlags());
     }
 
     private NetShareInfo502 parseShareInfo502(final ShareInfo502 obj) {
         if (obj == null)
             return null;
-        return new NetShareInfo502(obj.getNetName(), obj.getType(), obj.getRemark(), obj.getPermissions(),
-                obj.getMaxUses(), obj.getCurrentUses(), obj.getPath(), obj.getPasswd(), obj.getSecurityDescriptor());
+        return new NetShareInfo502(parseWChar(obj.getNetName()), obj.getType(), parseWChar(obj.getRemark()),
+                obj.getPermissions(), obj.getMaxUses(), obj.getCurrentUses(),
+                parseWChar(obj.getPath()), parseWChar(obj.getPasswd()), obj.getSecurityDescriptor());
     }
 
     private NetShareInfo503 parseShareInfo503(final ShareInfo503 obj) {
         if (obj == null)
             return null;
-        return new NetShareInfo503(obj.getNetName(), obj.getType(), obj.getRemark(), obj.getPermissions(),
-                obj.getMaxUses(), obj.getCurrentUses(), obj.getPath(), obj.getPasswd(), obj.getServerName(),
+        return new NetShareInfo503(
+                parseWChar(obj.getNetName()), obj.getType(), parseWChar(obj.getRemark()),
+                obj.getPermissions(), obj.getMaxUses(), obj.getCurrentUses(),
+                parseWChar(obj.getPath()), parseWChar(obj.getPasswd()), parseWChar(obj.getServerName()),
                 obj.getSecurityDescriptor());
     }
 }
