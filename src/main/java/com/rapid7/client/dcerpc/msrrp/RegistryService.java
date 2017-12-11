@@ -119,7 +119,7 @@ public class RegistryService extends Service {
             final int returnCode = response.getReturnValue();
 
             if (ERROR_SUCCESS.is(returnCode)) {
-                keyNames.add(new RegistryKey(response.getName(), new FileTime(response.getLastWriteTime())));
+                keyNames.add(new RegistryKey(response.getLpNameOut().getValue(), new FileTime(response.getLastWriteTime())));
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
                 return Collections.unmodifiableList(new ArrayList<>(keyNames));
             } else {

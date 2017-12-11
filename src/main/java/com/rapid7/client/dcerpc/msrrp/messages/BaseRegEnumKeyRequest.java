@@ -20,7 +20,9 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
  * <b>3.1.5.10 BaseRegEnumKey (Opnum 9)</b><br>
@@ -250,10 +252,32 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
         //      Pointer to Last Changed Time (NTTIME)
         //          Referent ID: 0x0002000c
         //          Last Changed Time: No time specified (0)
+        // <NDR: fixed array> [in] RPC_HKEY hKey
         packetOut.write(hKey);
+        // <NDR: unsigned long> [in] DWORD dwIndex
+        // Alignment: 4 - Already aligned, wrote 20 bytes above
         packetOut.writeInt(index);
-        packetOut.writeStringBuffer(nameLen);
-        packetOut.writeStringBufferRef(classLen);
-        packetOut.writeLongRef(Long.valueOf(0));
+        // <NDR: struct> [in] PRRP_UNICODE_STRING lpNameIn
+        // Alignment: 2 - Already aligned
+        writeAllocatedBuffer(packetOut, nameLen);
+        // <NDR: pointer[struct]> [in, unique] PRRP_UNICODE_STRING lpClassIn,
+        // Alignment: 4 - Already aligned
+        packetOut.writeReferentID();
+        writeAllocatedBuffer(packetOut, classLen);
+        // <NDR: hyper> [in, out, unique] PFILETIME lpftLastWriteTime
+        // Alignment: 4 - Already aligned
+        packetOut.writeReferentID();
+        // Alignment: 8 - Already aligned, written 72 bytes at this point
+        packetOut.align(Alignment.EIGHT);
+        packetOut.writeLong(0L);
+    }
+
+    private void writeAllocatedBuffer(PacketOutput out, int length) throws IOException {
+        out.writeShort((short) 0);
+        out.writeShort((short) length << 1);
+        out.writeReferentID();
+        out.writeInt(length);
+        out.writeInt(0);
+        out.writeInt(0);
     }
 }

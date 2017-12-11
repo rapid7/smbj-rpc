@@ -30,6 +30,7 @@ import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumValueResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
 import com.rapid7.client.dcerpc.objects.FileTime;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.*;
@@ -500,10 +501,10 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1).thenReturn(enumResponse2).thenReturn(enumResponse3);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(enumResponse1.getName()).thenReturn("subKey1");
+        when(enumResponse1.getLpNameOut()).thenReturn(RPCUnicodeString.NullTerminated.of("subKey1"));
         when(enumResponse1.getLastWriteTime()).thenReturn(116444736000000000l);
         when(enumResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(enumResponse2.getName()).thenReturn("subKey2");
+        when(enumResponse2.getLpNameOut()).thenReturn(RPCUnicodeString.NullTerminated.of("subKey2"));
         when(enumResponse2.getLastWriteTime()).thenReturn(116444736000000000l);
         when(enumResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(enumResponse3.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getValue());
@@ -521,10 +522,10 @@ public class Test_RegistryService {
         verify(hiveResponse, times(1)).getReturnValue();
         verify(keyResponse, times(1)).getHandle();
         verify(keyResponse, times(1)).getReturnValue();
-        verify(enumResponse1, times(1)).getName();
+        verify(enumResponse1, times(1)).getLpNameOut();
         verify(enumResponse1, times(1)).getLastWriteTime();
         verify(enumResponse1, times(1)).getReturnValue();
-        verify(enumResponse2, times(1)).getName();
+        verify(enumResponse2, times(1)).getLpNameOut();
         verify(enumResponse2, times(1)).getLastWriteTime();
         verify(enumResponse2, times(1)).getReturnValue();
         verify(enumResponse3, times(1)).getReturnValue();
