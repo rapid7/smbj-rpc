@@ -60,7 +60,7 @@ public class Test_SamrQueryInformationDomain {
 
     @Test
     public void SamrQueryLockoutInformationDomain() throws IOException {
-        String hexString = "000002000c00000000cc1dcffbffffff00cc1dcffbffffff000001000000";
+        String hexString = "000002000c00000000cc1dcffbffffff00cc1dcffbffffff0000FFFF01000000";
         SamrQueryInformationDomainResponse<SAMPRDomainLockoutInfo> response =
                 new SamrQueryInformationDomainResponse.DomainLockoutInformation();
         response.unmarshal(getPacketInput(hexString));

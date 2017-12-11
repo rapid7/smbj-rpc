@@ -47,8 +47,10 @@ public class Test_SamrQuerySecurityObjectResponse {
                 "02000000" +
                 // SecurityDescriptor: Length: 2 Reference: 2
                 "02000000 00000200" +
-                // SecurityDescriptor: MaximumCount: 3 SecurityDescriptor: {1, 2}, ReturnValue: 1
-                "02000000 01 02 01000000";
+                // SecurityDescriptor: MaximumCount: 3 SecurityDescriptor: {1, 2}
+                "02000000 01 02" +
+                // Alignment, ReturnValue: 1
+                "FFFF 01000000";
 
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);

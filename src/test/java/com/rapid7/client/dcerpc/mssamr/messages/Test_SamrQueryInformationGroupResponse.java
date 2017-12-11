@@ -30,7 +30,6 @@ import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupInformationClass;
-import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -59,7 +58,7 @@ public class Test_SamrQueryInformationGroupResponse {
     public Object[][] data_unmarshal() {
         return new Object[][] {
                 // Reference: 1, GROUP_INFORMATION_CLASS: 1
-                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "01000000 0100 01000000"}
+                {new SamrQueryInformationGroupResponse.GroupGeneralInformation(), "01000000 0100 FFFF 01000000"}
         };
     }
 

@@ -44,6 +44,7 @@ import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedSID;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTrustInformation;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
+import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -73,7 +74,7 @@ public class LocalSecurityAuthorityService extends Service {
      * returns an unsuccessful response.
      */
     public PolicyHandle openPolicyHandle() throws IOException {
-        final LsarOpenPolicy2Request request = new LsarOpenPolicy2Request("", MAXIMUM_ALLOWED);
+        final LsarOpenPolicy2Request request = new LsarOpenPolicy2Request(WChar.NullTerminated.of(""), MAXIMUM_ALLOWED);
         return parsePolicyHandle(callExpectSuccess(request, "LsarOpenPolicy2").getHandle());
     }
 

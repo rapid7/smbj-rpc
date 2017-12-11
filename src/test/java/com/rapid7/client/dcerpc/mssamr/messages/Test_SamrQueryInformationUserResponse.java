@@ -58,7 +58,7 @@ public class Test_SamrQueryInformationUserResponse {
     public Object[][] data_unmarshal() {
         return new Object[][] {
                 // Reference: 1, USER_INFORMATION_CLASS: 21
-                {new SamrQueryInformationUserResponse.UserAllInformation(), "01000000 1500 01000000"}
+                {new SamrQueryInformationUserResponse.UserAllInformation(), "01000000 1500 FFFF 01000000"}
         };
     }
 
