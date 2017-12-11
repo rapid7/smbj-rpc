@@ -18,12 +18,15 @@
  */
 package com.rapid7.client.dcerpc.messages;
 
+import java.io.EOFException;
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import com.rapid7.client.dcerpc.io.Hexify;
 import com.rapid7.client.dcerpc.io.HexifyImpl;
 import com.rapid7.client.dcerpc.io.Packet;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 
 public abstract class RequestResponse extends HexifyImpl implements Packet, Hexify {
@@ -82,7 +85,16 @@ public abstract class RequestResponse extends HexifyImpl implements Packet, Hexi
     @Override
     public void unmarshal(PacketInput packetIn) throws IOException {
         unmarshalResponse(packetIn);
+        // <NDR: unsigned long> NTSTATUS
+        packetIn.align(Alignment.FOUR);
         this.returnValue = packetIn.readInt();
+        // Ensure EOF
+        try {
+            packetIn.readByte();
+        } catch (final EOFException e) {
+            return;
+        }
+        throw new UnmarshalException("At least one byte remained after reading the return code. Is this response aligned properly?");
     }
 
     public abstract void unmarshalResponse(PacketInput packetIn) throws IOException;
