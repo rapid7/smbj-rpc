@@ -22,7 +22,6 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssrvs.NetrOpCode;
 import com.rapid7.client.dcerpc.objects.WChar;
 
 /**

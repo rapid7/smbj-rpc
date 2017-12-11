@@ -24,7 +24,6 @@ package com.rapid7.client.dcerpc.mssrvs.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssrvs.NetrOpCode;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumLevel;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct;
 

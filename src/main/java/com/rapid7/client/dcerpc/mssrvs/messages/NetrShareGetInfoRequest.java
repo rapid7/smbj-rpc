@@ -66,7 +66,7 @@ public abstract class NetrShareGetInfoRequest<T extends ShareInfo> extends Reque
     // <NDR: struct> [in, string] WCHAR* NetName
     private final WChar.NullTerminated shareName;
     // <NDR: unsigned long> [in] DWORD Level
-    // This is dervied from getShareInfoLevel()
+    // This is derived from getShareInfoLevel()
 
     public NetrShareGetInfoRequest(final WChar.NullTerminated shareName) {
         super(OP_NUM);

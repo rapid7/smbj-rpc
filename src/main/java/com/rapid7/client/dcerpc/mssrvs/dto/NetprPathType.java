@@ -1,26 +1,28 @@
-/**
+/*
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright notice,
+ *   Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
  *
- * * Redistributions in binary form must reproduce the above copyright
+ *  Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  *
- * * Neither the name of the copyright holder nor the names of its contributors
+ *  Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
+ *
+ *
  */
 
 /*
   Path types provided by Microsoft MSDN: https://msdn.microsoft.com/en-us/library/cc213230.aspx
  */
-package com.rapid7.client.dcerpc.mssrvs;
+package com.rapid7.client.dcerpc.mssrvs.dto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +72,7 @@ public enum NetprPathType {
         this.id = id;
     }
 
-    public int getid() {
+    public int getId() {
         return id;
     }
 
@@ -84,7 +86,7 @@ public enum NetprPathType {
 
     static {
         for (final NetprPathType id : NetprPathType.values()) {
-            ids.put(id.getid(), id);
+            ids.put(id.getId(), id);
         }
     }
 }

@@ -23,6 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
+import com.rapid7.client.dcerpc.mssrvs.dto.NetprPathType;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetprPathCanonicalizeRequest;
 import com.rapid7.client.dcerpc.mssrvs.messages.NetprPathCanonicalizeResponse;
 import com.rapid7.client.dcerpc.objects.WChar;
@@ -42,7 +43,7 @@ public class Test_NetPrPathCanonicalize {
 
         assertEquals("C:\\Something", response.getOutBuf());
         assertEquals(SystemErrorCode.ERROR_SUCCESS.getValue(), response.getReturnValue());
-        assertEquals(NetprPathType.ITYPE_PATH_ABSD.getid(), response.getPathType());
+        assertEquals(NetprPathType.ITYPE_PATH_ABSD.getId(), response.getPathType());
     }
 
     @SuppressWarnings("unchecked")
