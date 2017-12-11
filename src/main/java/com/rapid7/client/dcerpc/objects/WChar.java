@@ -85,7 +85,7 @@ public abstract class WChar implements Unmarshallable, Marshallable {
     private String value = "";
     // Stored for unmarshalling purposes only
     private int offset;
-    private int length;
+    private int actualCount;
 
     public abstract boolean isNullTerminated();
 
@@ -150,9 +150,7 @@ public abstract class WChar implements Unmarshallable, Marshallable {
         this.offset = readIndex("Offset", in);
         // ActualCount for varying array
         // Alignment 4 - Already aligned
-        final int actualCount = readIndex("ActualCount", in);
-        // If we expect a null terminator, then skip it when reading the string
-        this.length = (isNullTerminated() ? (actualCount - 1) : actualCount);
+        this.actualCount = readIndex("ActualCount", in);
     }
 
     @Override
@@ -161,9 +159,19 @@ public abstract class WChar implements Unmarshallable, Marshallable {
         in.align(Alignment.TWO);
         in.fullySkipBytes(2 * offset);
         // Entities for conformant array
-        // Read subset
-        final StringBuilder sb = new StringBuilder(this.length);
-        for (int i = 0; i < this.length; i++) {
+        // If we expect a null terminator, then skip it when reading the string
+        final int length;
+        final boolean nullTerminated;
+        if (isNullTerminated() && this.actualCount > 0) {
+            length = this.actualCount - 1;
+            nullTerminated = true;
+        }
+        else {
+            length = this.actualCount;
+            nullTerminated = false;
+        }
+        final StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
             // <NDR: unsigned short>
             // Alignment: 2 - Already aligned
             sb.append(in.readChar());
@@ -171,7 +179,7 @@ public abstract class WChar implements Unmarshallable, Marshallable {
         this.value = sb.toString();
         // Skip null terminator (if any)
         // Alignment: 2 - Already aligned
-        if (isNullTerminated())
+        if (nullTerminated)
             in.fullySkipBytes(2);
     }
 
