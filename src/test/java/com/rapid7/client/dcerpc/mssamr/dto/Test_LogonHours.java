@@ -24,8 +24,6 @@ package com.rapid7.client.dcerpc.mssamr.dto;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import sun.rmi.runtime.Log;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;

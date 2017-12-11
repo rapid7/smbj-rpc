@@ -88,6 +88,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
+import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -126,7 +127,7 @@ public class SecurityAccountManagerService extends Service {
      */
     public ServerHandle openServer(String serverName) throws IOException {
         final SamrConnect2Request request =
-                new SamrConnect2Request(Strings.nullToEmpty(serverName), MAXIMUM_ALLOWED);
+                new SamrConnect2Request(WChar.NullTerminated.of(Strings.nullToEmpty(serverName)), MAXIMUM_ALLOWED);
         return parseServerHandle(callExpectSuccess(request, "SamrConnect2"));
     }
 
