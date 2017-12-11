@@ -99,6 +99,8 @@ public class Test_RPCUnicodeString {
         return new Object[][] {
                 {false, null, "", ""},
                 {true, null, "", ""},
+                {false, "", "", "000000000000000000000000"},
+                {true, "", "", "0100000000000000010000000000"},
                 // MaximumCount=8, Offset=0, ActualCount=8
                 {false, "testƟ123", "", "08000000000000000800000074006500730074009f01310032003300"},
                 // MaximumCount=9, Offset=0, ActualCount=9
@@ -166,6 +168,9 @@ public class Test_RPCUnicodeString {
     @DataProvider
     public Object[][] data_unmarshalDeferrals() {
         return new Object[][] {
+                // null terminated, empty
+                {true, "000000000000000000000000", 0, ""},
+                {false, "000000000000000000000000", 0, ""},
                 // not null terminated, no subset, MaximumCount=8, Offset=8, ActualCount=8
                 {false, "08000000000000000800000074006500730074009f01310032003300", 0, "testƟ123"},
                 // null terminated, no subset, MaximumCount=9, Offset=0, ActualCount=9
