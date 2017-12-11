@@ -167,7 +167,7 @@ public class LocalSecurityAuthorityService extends Service {
     public String[] getAccountRights(final PolicyHandle policyHandle, final SID sid) throws IOException {
         final LsarEnumerateAccountRightsRequest request =
                 new LsarEnumerateAccountRightsRequest(parseHandle(policyHandle), parseSID(sid));
-        return callExpectSuccess(request, "LsarEnumerateAccountRights").getPrivNames();
+        return parseRPCUnicodeStrings(callExpectSuccess(request, "LsarEnumerateAccountRights").getPrivNames());
     }
 
     /**

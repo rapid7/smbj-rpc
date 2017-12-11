@@ -74,6 +74,16 @@ public abstract class Service {
         return ret;
     }
 
+    protected String[] parseRPCUnicodeStrings(final RPCUnicodeString ... rpcUnicodeStrings) {
+        if (rpcUnicodeStrings == null)
+            return null;
+        final String[] ret = new String[rpcUnicodeStrings.length];
+        for (int i = 0; i < rpcUnicodeStrings.length; i++) {
+            ret[i] = (rpcUnicodeStrings[i] == null) ? null : rpcUnicodeStrings[i].getValue();
+        }
+        return ret;
+    }
+
     protected byte[] parseHandle(final ContextHandle handle) {
         return handle.getBytes();
     }

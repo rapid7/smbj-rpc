@@ -29,6 +29,7 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountRightsRequest;
 import com.rapid7.client.dcerpc.mslsad.messages.LsarEnumerateAccountRightsResponse;
 import com.rapid7.client.dcerpc.objects.RPCSID;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -41,8 +42,8 @@ public class Test_LsarEnumerateAccountRights {
         String hexString = "01000000000002000100000036003800040002001C000000000000001B00000053006500440075006D006D0079003100440075006D006D0079003200440075006D006D00790033003400350052006900670068007400000000000000";
         response.unmarshal(getPacketInput(hexString));
         //dummy Privilege
-        String[] expectedPrivs = {"SeDummy1Dummy2Dummy345Right"};
-        String[] privs = response.getPrivNames();
+        RPCUnicodeString.NonNullTerminated[] expectedPrivs = {RPCUnicodeString.NonNullTerminated.of("SeDummy1Dummy2Dummy345Right")};
+        RPCUnicodeString.NonNullTerminated[] privs = response.getPrivNames();
 
         assertTrue(Arrays.equals(expectedPrivs, privs));
     }
@@ -53,8 +54,12 @@ public class Test_LsarEnumerateAccountRights {
         String hexString = "0300000000000200030000002E0030000400020036003800080002002E0030000C00020018000000000000001700000053006500440075006D006D007900440075006D006D007900440075006D006D00790031005200690067006800740000001C000000000000001B00000053006500440075006D006D0079003100440075006D006D0079003200440075006D006D00790033003400350052006900670068007400000018000000000000001700000053006500440075006D006D007900440075006D006D0079003100440075006D006D00790052006900670068007400000000000000";
         response.unmarshal(getPacketInput(hexString));
         //dummy Privileges
-        String[] expectedPrivs = {"SeDummyDummyDummy1Right", "SeDummy1Dummy2Dummy345Right", "SeDummyDummy1DummyRight"};
-        String[] privs = response.getPrivNames();
+        RPCUnicodeString.NonNullTerminated[] expectedPrivs = {
+                RPCUnicodeString.NonNullTerminated.of("SeDummyDummyDummy1Right"),
+                RPCUnicodeString.NonNullTerminated.of("SeDummy1Dummy2Dummy345Right"),
+                RPCUnicodeString.NonNullTerminated.of("SeDummyDummy1DummyRight")
+        };
+        RPCUnicodeString.NonNullTerminated[] privs = response.getPrivNames();
 
         assertTrue(Arrays.equals(expectedPrivs, privs));
     }
