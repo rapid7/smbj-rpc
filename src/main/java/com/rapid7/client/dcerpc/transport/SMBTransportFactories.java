@@ -86,11 +86,13 @@ public enum SMBTransportFactories {
                         }
                         break;
                     default:
-                        throw new SMBException(exceptions.poll());
+                        throw exceptions.poll();
                 }
             }
         }
-        throw new SMBException(exceptions.poll());
+        if (!exceptions.isEmpty())
+            throw exceptions.poll();
+        throw new SMBException("Unknown error when opening pipe: " + pipeShare.getSmbPath().toString());
     }
 
     private NamedPipe openPipe(final Session session, final PipeShare pipeShare) throws IOException {
