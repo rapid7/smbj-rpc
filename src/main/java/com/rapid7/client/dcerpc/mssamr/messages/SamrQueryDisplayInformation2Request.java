@@ -77,9 +77,8 @@ public abstract class SamrQueryDisplayInformation2Request<T extends Unmarshallab
         // <NDR: short> [in] DOMAIN_DISPLAY_INFORMATION DisplayInformationClass
         // Alignment: 2 - Already aligned, wrote 20 bytes above
         packetOut.writeShort(getDisplayInformationClass().getInfoLevel());
-        packetOut.pad(2);
         // <NDR: unsigned long> [in] unsigned long Index
-        // Alignment: 4 - Already aligned
+        packetOut.pad(2);
         packetOut.writeInt(this.index);
         // <NDR: unsigned long> [in] unsigned long EntryCount
         // Alignment: 4 - Already aligned

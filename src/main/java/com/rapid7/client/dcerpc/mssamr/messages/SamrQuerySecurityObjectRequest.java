@@ -76,7 +76,6 @@ public class SamrQuerySecurityObjectRequest extends RequestCall<SamrQuerySecurit
         return securityInformation;
     }
 
-
     @Override
     public SamrQuerySecurityObjectResponse getResponseObject() {
         return new SamrQuerySecurityObjectResponse();

@@ -30,8 +30,7 @@ public class SamrGetMembersInGroupResponse extends RequestResponse {
 
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
-        int referenceId = packetIn.readInt();
-        if (referenceId == 0) {
+        if (packetIn.readInt() == 0) {
             buffer = null;
             return;
         }
