@@ -41,9 +41,6 @@ public class RPCConformantIntegerArray extends RPCConformantArray<Integer> {
 
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
-        if (array == null)
-            return;
-
         for (Integer value : array) {
             out.writeInt(value);
         }

@@ -69,8 +69,13 @@ public class ServerService extends Service {
     public String getCanonicalizedName(String serverName, String pathName, String prefix,
             int outBufLength, int pathType, int flags) throws IOException {
         final NetprPathCanonicalizeRequest request =
-                new NetprPathCanonicalizeRequest(serverName, pathName, outBufLength, prefix, pathType, flags);
-        return callExpectSuccess(request, "NetprPathCanonicalize").getCanonicalizedPath();
+                new NetprPathCanonicalizeRequest(
+                        WChar.NullTerminated.of(serverName),
+                        WChar.NullTerminated.of(pathName),
+                        outBufLength,
+                        WChar.NullTerminated.of(prefix),
+                        pathType, flags);
+        return callExpectSuccess(request, "NetprPathCanonicalize").getOutBuf();
     }
 
     public NetShareInfo0 getShare0(String shareName) throws IOException {
