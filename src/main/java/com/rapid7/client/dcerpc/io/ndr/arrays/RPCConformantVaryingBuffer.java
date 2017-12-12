@@ -25,23 +25,22 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 
-public abstract class RPCConformantVaryingArray<T> extends RPCConformantArray<T> {
-
+public class RPCConformantVaryingBuffer extends RPCConformantBuffer {
     private int offset;
     private int actualCount;
 
-    RPCConformantVaryingArray(final T[] array) {
-        super(array);
-        this.actualCount = array.length;
+    public RPCConformantVaryingBuffer(final int maximumCount) {
+        this(maximumCount, 0, 0);
     }
 
-    RPCConformantVaryingArray(final int maximumCount) {
+    public RPCConformantVaryingBuffer(final int maximumCount, final int offset, final int actualCount) {
         super(maximumCount);
-        this.actualCount = 0;
+        this.offset = offset;
+        this.actualCount = actualCount;
     }
 
-    RPCConformantVaryingArray() {
-        this(0);
+    public int getOffset() {
+        return offset;
     }
 
     public int getActualCount() {
@@ -50,16 +49,17 @@ public abstract class RPCConformantVaryingArray<T> extends RPCConformantArray<T>
 
     @Override
     public void marshalEntity(PacketOutput out) throws IOException {
+        super.marshalEntity(out);
         out.align(Alignment.FOUR);
-        out.writeInt(0); // offset
+        out.writeInt(getOffset());
         out.writeInt(getActualCount());
     }
 
     @Override
     public void unmarshalEntity(PacketInput in) throws IOException {
+        super.unmarshalEntity(in);
         in.align(Alignment.FOUR);
         this.offset = in.readIndex("Offset");
         this.actualCount = in.readIndex("ActualCount");
-        allocate(this.actualCount);
     }
 }

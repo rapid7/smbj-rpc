@@ -152,7 +152,7 @@ public class RegistryService extends Service {
             throws IOException {
         final String canonicalizedValueName = Strings.nullToEmpty(valueName);
         final byte[] handle = openKey(hiveName, keyPath);
-        final BaseRegQueryValueRequest request = new BaseRegQueryValueRequest(handle, canonicalizedValueName, MAX_REGISTRY_VALUE_DATA_SIZE);
+        final BaseRegQueryValueRequest request = new BaseRegQueryValueRequest(handle, RPCUnicodeString.NullTerminated.of(canonicalizedValueName), MAX_REGISTRY_VALUE_DATA_SIZE);
         final BaseRegQueryValueResponse response = callExpectSuccess(request, "BaseRegQueryValue");
         return new RegistryValue(canonicalizedValueName, response.getType(), response.getData());
     }

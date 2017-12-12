@@ -27,23 +27,21 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
-public abstract class RPCConformantArray<T> extends RPCConformantBuffer {
-    private T[] array;
+public class RPCConformantBuffer implements Unmarshallable, Marshallable {
 
-    public RPCConformantArray(final T[] array) {
-        super(array.length);
-        this.array = array;
+    private int maximumCount;
+
+    public RPCConformantBuffer(final int maximumCount) {
+        this.maximumCount = maximumCount;
     }
 
-    protected abstract void unmarshalEntryPreamble(final PacketInput in, final int index) throws IOException;
-    protected abstract void unmarshalEntryEntity(final PacketInput in, final int index) throws IOException;
-    protected abstract void unmarshalEntryDeferrals(final PacketInput in, final int index) throws IOException;
-    protected abstract void marshalEntryPreamble(final PacketOutput out, final int index) throws IOException;
-    protected abstract void marshalEntryEntity(final PacketOutput out, final int index) throws IOException;
-    protected abstract void marshalEntryDeferrals(final PacketOutput out, final int index) throws IOException;
+    public int getMaximumCount() {
+        return this.maximumCount;
+    }
 
-    public T[] getArray() {
-        return this.array;
+    @Override
+    public void unmarshalPreamble(final PacketInput in) throws IOException {
+        this.maximumCount = in.readIndex("MaximumCount");
     }
 
     @Override
@@ -53,12 +51,7 @@ public abstract class RPCConformantArray<T> extends RPCConformantBuffer {
 
     @Override
     public void unmarshalDeferrals(final PacketInput in) throws IOException {
-        for (int i = 0; i < this.array.length; i++)
-            unmarshalEntryPreamble(in, i);
-        for (int i = 0; i < this.array.length; i++)
-            unmarshalEntryEntity(in, i);
-        for (int i = 0; i < this.array.length; i++)
-            unmarshalEntryDeferrals(in, i);
+        // No deferrals
     }
 
     @Override
@@ -74,13 +67,6 @@ public abstract class RPCConformantArray<T> extends RPCConformantBuffer {
 
     @Override
     public void marshalDeferrals(final PacketOutput out) throws IOException {
-        if (this.array == null)
-            return;
-        for (int i = 0; i < this.array.length; i++)
-            marshalEntryPreamble(out, i);
-        for (int i = 0; i < this.array.length; i++)
-            marshalEntryEntity(out, i);
-        for (int i = 0; i < this.array.length; i++)
-            marshalEntryDeferrals(out, i);
+        // No deferrals
     }
 }

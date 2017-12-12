@@ -30,10 +30,6 @@ public abstract class RPCConformantPrimitiveArray<T> extends RPCConformantArray<
         super(array);
     }
 
-    public RPCConformantPrimitiveArray(final int allocate) {
-        super(allocate);
-    }
-
     protected abstract T unmarshalPrimitive(final PacketInput in) throws IOException;
     protected abstract void marshalPrimitive(final PacketOutput out, final T entry) throws IOException;
 

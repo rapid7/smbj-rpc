@@ -24,7 +24,7 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
-import com.rapid7.client.dcerpc.io.ndr.arrays.RPCReferentConformantArray;
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantReferentArray;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 
 /**
@@ -77,7 +77,7 @@ public class SAMPRPSIDArray implements Marshallable {
             out.writeMarshallable(this.sids);
     }
 
-    private static class RPCSIDReferentConformantArray extends RPCReferentConformantArray<RPCSID> {
+    private static class RPCSIDReferentConformantArray extends RPCConformantReferentArray<RPCSID> {
 
         private RPCSIDReferentConformantArray(RPCSID[] array) {
             super(array);
