@@ -113,7 +113,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 1 \\(ERROR_INVALID_FUNCTION\\)")
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000001 \\(ERROR_INVALID_FUNCTION\\)")
     public void doesHiveExistUnknown() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -166,7 +166,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 1 \\(ERROR_INVALID_FUNCTION\\)")
+            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 0x00000001 \\(ERROR_INVALID_FUNCTION\\)")
     public void doesKeyExistUnknown() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -248,7 +248,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "BaseRegQueryValue returned error code: 1 \\(ERROR_INVALID_FUNCTION\\)")
+            expectedExceptionsMessageRegExp = "BaseRegQueryValue returned error code: 0x00000001 \\(ERROR_INVALID_FUNCTION\\)")
     public void doesValueExistUnknown() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -452,7 +452,7 @@ public class Test_RegistryService {
         registryService.getKeyInfo(null, "key");
     }
 
-    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getKeyInfoWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -463,7 +463,7 @@ public class Test_RegistryService {
         registryService.getKeyInfo("HKLM", "");
     }
 
-    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getKeyInfoWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -474,7 +474,7 @@ public class Test_RegistryService {
         registryService.getKeyInfo("HKLM", null);
     }
 
-    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getKeyInfoWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -575,7 +575,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getSubKeysWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -587,7 +587,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getSubKeysWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -599,7 +599,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getSubKeysWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -703,7 +703,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValuesWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -715,7 +715,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValuesWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -726,7 +726,7 @@ public class Test_RegistryService {
         registryService.getValues("HKLM", null);
     }
 
-    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValuesWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -836,7 +836,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "BaseRegQueryValue returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "BaseRegQueryValue returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValueWhenDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -865,7 +865,7 @@ public class Test_RegistryService {
         registryService.getValue(null, "key", "value");
     }
 
-    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+    @Test(expectedExceptions = {RPCException.class}, expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValueWhenHiveDoesNotExistWithEmptyKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -877,7 +877,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValueWhenHiveDoesNotExistWithNullKey() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -889,7 +889,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void getValueWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -936,7 +936,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void openHiveWhenHiveDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -1038,7 +1038,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "OpenLocalMachine returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void openKeyWhenHiveDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);
@@ -1050,7 +1050,7 @@ public class Test_RegistryService {
     }
 
     @Test(expectedExceptions = {RPCException.class},
-            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 2 \\(ERROR_FILE_NOT_FOUND\\)")
+            expectedExceptionsMessageRegExp = "BaseRegOpenKey returned error code: 0x00000002 \\(ERROR_FILE_NOT_FOUND\\)")
     public void openKeyWhenKeyDoesNotExist() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final HandleResponse hiveResponse = mock(HandleResponse.class);

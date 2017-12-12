@@ -784,16 +784,15 @@ public class SecurityAccountManagerService extends Service {
             enumContext = response.getResumeHandle();
             //noinspection unchecked
             final List<T> responseList = response.getList();
-            if (ERROR_MORE_ENTRIES.is(returnCode)) {
+            if (ERROR_MORE_ENTRIES.is(returnCode) || ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
                 if (responseList != null)
                     list.addAll(responseList);
-            } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
-                if (responseList != null)
-                    list.addAll(responseList);
-                return;
+                if (ERROR_MORE_ENTRIES.is(returnCode))
+                    continue;
             } else {
                 throw new RPCException(response.getClass().getName(), returnCode);
             }
+            return;
         }
     }
 
