@@ -20,8 +20,10 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
  * <b>3.1.5.15 BaseRegOpenKey (Opnum 15)</b><br>
@@ -177,7 +179,7 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
     /**
      * The name of a key to open.
      */
-    private final String subKey;
+    private final RPCUnicodeString.NullTerminated subKey;
     /**
      * Registry key options. The user rights are represented as a bit field. In addition to the standard user rights, as
      * specified in [MS-DTYP] section 2.4.3, the Windows Remote Registry Protocol SHOULD support the following user
@@ -324,7 +326,7 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
      * @see <a href="https://msdn.microsoft.com/en-us/cc230294">2.4.3 ACCESS_MASK</a>
      * @see <a href="https://msdn.microsoft.com/en-us/cc244886">3.1.1.2 Key Types</a>
      */
-    public BaseRegOpenKey(final byte[] hKey, final String subKey, final int options, final int accessMask) {
+    public BaseRegOpenKey(final byte[] hKey, final RPCUnicodeString.NullTerminated subKey, final int options, final int accessMask) {
         super((short) 15);
         this.hKey = hKey;
         this.subKey = subKey;
@@ -363,9 +365,15 @@ public class BaseRegOpenKey extends RequestCall<HandleResponse> {
         //          .... .... 0... .... .... .... .... .... = Access SACL: Not set
         //          Standard rights: 0x00000000
         //          WINREG specific rights: 0x00000000
+        // <NDR: fixed array> [in] RPC_HKEY hKey
         packetOut.write(hKey);
-        packetOut.writeStringBuffer(subKey, true);
+        // <NDR: struct> [in] PRRP_UNICODE_STRING lpSubKey
+        packetOut.writeMarshallable(this.subKey);
+        // <NDR: unsigned long> [in] DWORD dwOptions
+        packetOut.align(Alignment.FOUR);
         packetOut.writeInt(options);
+        // <NDR: unsigned long> [in] REGSAM samDesired
+        // Alignment: 4 - Already aligned
         packetOut.writeInt(accessMask);
     }
 }

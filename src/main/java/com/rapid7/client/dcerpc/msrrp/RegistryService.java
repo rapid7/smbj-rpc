@@ -47,6 +47,8 @@ import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
 import com.rapid7.client.dcerpc.objects.FileTime;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
+import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -216,7 +218,7 @@ public class RegistryService extends Service {
                 return keyPathCache.get(cachingKey);
             }
             final byte[] hiveHandle = openHive(hiveName);
-            final BaseRegOpenKey request = new BaseRegOpenKey(hiveHandle, canonicalizedKeyPath, 0, desiredAccess);
+            final BaseRegOpenKey request = new BaseRegOpenKey(hiveHandle, RPCUnicodeString.NullTerminated.of(canonicalizedKeyPath), 0, desiredAccess);
             final HandleResponse response = callExpectSuccess(request, "BaseRegOpenKey");
             final byte[] keyHandle = response.getHandle();
             keyPathCache.put(cachingKey, keyHandle);

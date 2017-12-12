@@ -29,11 +29,13 @@ import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
+import com.rapid7.client.dcerpc.objects.WChar;
 
 public class Test_BaseRegOpenKey {
     private final byte[] contextHandle = Hex.decode("0000000032daf234b77c86409d29efe60d326683");
     private final BaseRegOpenKey request = new BaseRegOpenKey(contextHandle,
-            "Software\\Microsoft\\Windows NT\\CurrentVersion", 0,
+            RPCUnicodeString.NullTerminated.of("Software\\Microsoft\\Windows NT\\CurrentVersion"), 0,
             (int) EnumUtils.toLong(EnumSet.of(AccessMask.MAXIMUM_ALLOWED)));
 
     @Test
