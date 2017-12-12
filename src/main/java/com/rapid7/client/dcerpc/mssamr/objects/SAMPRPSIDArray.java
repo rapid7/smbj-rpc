@@ -24,7 +24,8 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
-import com.rapid7.client.dcerpc.objects.RPCSIDReferentConformantArray;
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCReferentConformantArray;
+import com.rapid7.client.dcerpc.objects.RPCSID;
 
 /**
  * <b>Alignment: 4</b>
@@ -44,16 +45,12 @@ public class SAMPRPSIDArray implements Marshallable {
 
     private RPCSIDReferentConformantArray sids;
 
-    public SAMPRPSIDArray(RPCSIDReferentConformantArray sids) {
-        this.sids = sids;
+    public SAMPRPSIDArray(RPCSID ... sids) {
+        this.sids = new RPCSIDReferentConformantArray(sids);
     }
 
-    public RPCSIDReferentConformantArray getSids() {
-        return sids;
-    }
-
-    public void setSids(final RPCSIDReferentConformantArray sids) {
-        this.sids = sids;
+    public RPCSID[] getSids() {
+        return (this.sids == null ? null : this.sids.getArray());
     }
 
     @Override
@@ -78,5 +75,22 @@ public class SAMPRPSIDArray implements Marshallable {
     public void marshalDeferrals(PacketOutput out) throws IOException {
         if (this.sids != null)
             out.writeMarshallable(this.sids);
+    }
+
+    private static class RPCSIDReferentConformantArray extends RPCReferentConformantArray<RPCSID> {
+
+        private RPCSIDReferentConformantArray(RPCSID[] array) {
+            super(array);
+        }
+
+        @Override
+        protected RPCSID[] createArray(int length) {
+            return new RPCSID[length];
+        }
+
+        @Override
+        protected RPCSID createEntry() {
+            return new RPCSID();
+        }
     }
 }

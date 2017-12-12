@@ -28,7 +28,6 @@ import org.junit.Test;
 import com.rapid7.client.dcerpc.dto.SID;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRPSIDArray;
 import com.rapid7.client.dcerpc.objects.RPCSID;
-import com.rapid7.client.dcerpc.objects.RPCSIDReferentConformantArray;
 
 public class Test_SamrGetAliasMembershipRequest {
 
@@ -44,7 +43,7 @@ public class Test_SamrGetAliasMembershipRequest {
         rpcSid2.setRevision((char) sid2.getRevision());
         rpcSid2.setIdentifierAuthority(sid2.getIdentifierAuthority());
         rpcSid2.setSubAuthority(sid2.getSubAuthorities());
-        SAMPRPSIDArray samprpsidArray = new SAMPRPSIDArray(new RPCSIDReferentConformantArray(new RPCSID[]{rpcSid1, rpcSid2}));
+        SAMPRPSIDArray samprpsidArray = new SAMPRPSIDArray(rpcSid1, rpcSid2);
         byte[] handle = Hex.decode("000000005f32a420f68b2645b4e0e8467cc2e111");
         SamrGetAliasMembershipRequest request1 = new SamrGetAliasMembershipRequest(handle, samprpsidArray);
         assertEquals(
@@ -55,7 +54,7 @@ public class Test_SamrGetAliasMembershipRequest {
     @Test
     public void getStubEmptyArray() throws IOException {
         byte[] handle = Hex.decode("000000005f32a420f68b2645b4e0e8467cc2e111");
-        SamrGetAliasMembershipRequest request1 = new SamrGetAliasMembershipRequest(handle, new SAMPRPSIDArray(new RPCSIDReferentConformantArray(new RPCSID[0])));
+        SamrGetAliasMembershipRequest request1 = new SamrGetAliasMembershipRequest(handle, new SAMPRPSIDArray());
         assertEquals("000000005f32a420f68b2645b4e0e8467cc2e111000000000000020000000000",
             toHexString(request1.getStub()));
     }

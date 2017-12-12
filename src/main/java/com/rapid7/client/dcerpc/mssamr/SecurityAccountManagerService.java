@@ -89,7 +89,6 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRRIDEnumeration;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.RPCSID;
-import com.rapid7.client.dcerpc.objects.RPCSIDReferentConformantArray;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.service.Service;
@@ -760,7 +759,7 @@ public class SecurityAccountManagerService extends Service {
      */
     public Membership[] getAliasMembership(final DomainHandle domainHandle, SID... sids) throws IOException {
         final RPCSID[] rpcSids = parseSIDs(sids);
-        final SAMPRPSIDArray sidArray = new SAMPRPSIDArray(new RPCSIDReferentConformantArray(rpcSids));
+        final SAMPRPSIDArray sidArray = new SAMPRPSIDArray(rpcSids);
         final SamrGetAliasMembershipRequest request =
                 new SamrGetAliasMembershipRequest(parseHandle(domainHandle), sidArray);
         final SamrGetAliasMembershipResponse response = callExpectSuccess(request, "GetAliasMembership");
