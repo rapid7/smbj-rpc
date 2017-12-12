@@ -30,13 +30,12 @@ public class SamrGetMembersInGroupResponse extends RequestResponse {
 
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
-        int referenceId = packetIn.readInt();
-        if (referenceId == 0) {
-            buffer = null;
-            return;
+        if (packetIn.readReferentID() != 0) {
+            this.buffer = new SAMPRGetMembersBuffer();
+            packetIn.readUnmarshallable(this.buffer);
+        } else {
+            this.buffer = null;
         }
-        buffer = new SAMPRGetMembersBuffer();
-        packetIn.readUnmarshallable(buffer);
     }
 
     public List<GroupMembership> getList() {
