@@ -49,10 +49,6 @@ public class SAMPRGetMembersBuffer implements Unmarshallable {
 
     private List<GroupMembership> array;
 
-    public int getMemberCount() {
-        return memberCount;
-    }
-
     public List<GroupMembership> getGroupMembership() {
         return array;
     }
@@ -79,8 +75,10 @@ public class SAMPRGetMembersBuffer implements Unmarshallable {
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
         in.align(Alignment.FOUR);
-        in.readUnmarshallable(members);
-        in.readUnmarshallable(attributes);
+        if (members != null)
+            in.readUnmarshallable(members);
+        if (attributes != null)
+            in.readUnmarshallable(attributes);
         array = new ArrayList<>(memberCount);
         for (int i = 0; i < memberCount; i++) {
             GroupMembership member = new GroupMembership();

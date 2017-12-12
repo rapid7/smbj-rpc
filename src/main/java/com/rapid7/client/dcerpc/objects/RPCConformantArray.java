@@ -21,6 +21,7 @@ package com.rapid7.client.dcerpc.objects;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
@@ -44,6 +45,7 @@ public abstract class RPCConformantArray<T> implements Unmarshallable, Marshalla
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
+        in.align(Alignment.FOUR);
         maxCount = in.readInt();
     }
 
@@ -55,6 +57,7 @@ public abstract class RPCConformantArray<T> implements Unmarshallable, Marshalla
 
     @Override
     public void marshalPreamble(PacketOutput out) throws IOException {
+        out.align(Alignment.FOUR);
         out.writeInt(maxCount);
     }
 
