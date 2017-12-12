@@ -18,23 +18,30 @@
  *
  *
  */
-package com.rapid7.client.dcerpc.objects;
+package com.rapid7.client.dcerpc.io.ndr.arrays;
 
 import java.io.IOException;
+import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 
 public abstract class RPCConformantVaryingArray<T> extends RPCConformantArray<T> {
 
+    private int offset;
     private int actualCount;
 
-    RPCConformantVaryingArray(T[] array) {
-        this(array, -1);
+    RPCConformantVaryingArray(final T[] array) {
+        super(array);
+        this.actualCount = array.length;
     }
 
-    RPCConformantVaryingArray(T[] array, int maximumCount) {
-        super(array, maximumCount);
-        this.actualCount = (array != null) ? array.length : 0;
+    RPCConformantVaryingArray(final int maximumCount) {
+        super(maximumCount);
+        this.actualCount = 0;
+    }
+
+    RPCConformantVaryingArray() {
+        this(0);
     }
 
     public int getActualCount() {
@@ -46,5 +53,13 @@ public abstract class RPCConformantVaryingArray<T> extends RPCConformantArray<T>
         out.align(Alignment.FOUR);
         out.writeInt(0); // offset
         out.writeInt(getActualCount());
+    }
+
+    @Override
+    public void unmarshalEntity(PacketInput in) throws IOException {
+        in.align(Alignment.FOUR);
+        this.offset = in.readIndex("Offset");
+        this.actualCount = in.readIndex("ActualCount");
+        allocate(this.actualCount);
     }
 }

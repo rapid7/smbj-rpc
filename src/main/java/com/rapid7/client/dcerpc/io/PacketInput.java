@@ -20,6 +20,7 @@ package com.rapid7.client.dcerpc.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.rmi.UnmarshalException;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 public class PacketInput extends PrimitiveInput {
@@ -141,5 +142,14 @@ public class PacketInput extends PrimitiveInput {
         }
 
         return result;
+    }
+
+    public int readIndex(String name) throws IOException {
+        final long ret = readUnsignedInt();
+        // Don't allow array length or index values bigger than signed int
+        if (ret > Integer.MAX_VALUE) {
+            throw new UnmarshalException(String.format("%s %d > %d", name, ret, Integer.MAX_VALUE));
+        }
+        return (int) ret;
     }
 }

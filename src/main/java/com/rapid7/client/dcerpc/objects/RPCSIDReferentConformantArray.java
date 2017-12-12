@@ -20,6 +20,8 @@
  */
 package com.rapid7.client.dcerpc.objects;
 
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCReferentConformantArray;
+
 public class RPCSIDReferentConformantArray extends RPCReferentConformantArray<RPCSID> {
 
     public RPCSIDReferentConformantArray(RPCSID[] array) {
@@ -27,7 +29,12 @@ public class RPCSIDReferentConformantArray extends RPCReferentConformantArray<RP
     }
 
     @Override
-    protected RPCSID createEntity() {
+    protected RPCSID[] createArray(int length) {
+        return new RPCSID[length];
+    }
+
+    @Override
+    protected RPCSID createEntry() {
         return new RPCSID();
     }
 }
