@@ -833,12 +833,17 @@ public class SecurityAccountManagerService extends Service {
         return memberships;
     }
 
-    private MembershipWithAttributes[] parseGroupMemberships(final List<GroupMembership> list) {
-        final MembershipWithAttributes[] memberships = new MembershipWithAttributes[list.size()];
-        int i = 0;
-        for (GroupMembership groupMembership : list) {
-            memberships[i++] = new MembershipWithAttributes(groupMembership.getRelativeID(), groupMembership.getAttributes());
+    private MembershipWithAttributes[] parseGroupMemberships(final List<GroupMembership> groupMemberships) {
+        if (groupMemberships == null)
+            return new MembershipWithAttributes[0];
+        final MembershipWithAttributes[] ret = new MembershipWithAttributes[groupMemberships.size()];
+        for (int i = 0; i < ret.length; i++) {
+            final GroupMembership groupMembership = groupMemberships.get(i);
+            if (groupMembership == null)
+                ret[i] = null;
+            else
+                ret[i] = new MembershipWithAttributes(groupMembership.getRelativeID(), groupMembership.getAttributes());
         }
-        return memberships;
+        return ret;
     }
 }
