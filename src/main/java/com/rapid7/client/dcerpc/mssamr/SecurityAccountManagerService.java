@@ -348,6 +348,19 @@ public class SecurityAccountManagerService extends Service {
     /**
      * Gets the user RID and name pairs for the provided domain.
      * Max buffer size will be used.
+     * All users will be returned.
+     *
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
+     * @return The enumerated users.
+     * @throws IOException On issue with communication or marshalling.
+     */
+    public MembershipWithName[] getUsersForDomain(final DomainHandle domainHandle) throws IOException {
+        return getUsersForDomain(domainHandle, 0);
+    }
+
+    /**
+     * Gets the user RID and name pairs for the provided domain.
+     * Max buffer size will be used.
      *
      * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
      * @param userAccountControl The UserAccountControl flags that filters the returned users.
@@ -757,14 +770,17 @@ public class SecurityAccountManagerService extends Service {
             final SamrEnumerateResponse response = callback.request(enumContext);
             final int returnCode = response.getReturnValue();
             enumContext = response.getResumeHandle();
-            if (ERROR_MORE_ENTRIES.is(returnCode)) {
-                list.addAll(response.getList());
-            } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
-                list.addAll(response.getList());
-                return;
+            //noinspection unchecked
+            final List<T> responseList = response.getList();
+            if (ERROR_MORE_ENTRIES.is(returnCode) || ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
+                if (responseList != null)
+                    list.addAll(responseList);
+                if (ERROR_MORE_ENTRIES.is(returnCode))
+                    continue;
             } else {
                 throw new RPCException(response.getClass().getName(), returnCode);
             }
+            return;
         }
     }
 
