@@ -84,11 +84,6 @@ public class SAMPRPSIDArray implements Marshallable {
         }
 
         @Override
-        protected RPCSID[] createArray(int length) {
-            return new RPCSID[length];
-        }
-
-        @Override
         protected RPCSID createEntry() {
             return new RPCSID();
         }

@@ -31,11 +31,6 @@ public class RPCConformantIntegerArray extends RPCConformantPrimitiveArray<Integ
     }
 
     @Override
-    protected Integer[] createArray(int length) {
-        return new Integer[length];
-    }
-
-    @Override
     protected Integer unmarshalPrimitive(final PacketInput in) throws IOException {
         return in.readInt();
     }

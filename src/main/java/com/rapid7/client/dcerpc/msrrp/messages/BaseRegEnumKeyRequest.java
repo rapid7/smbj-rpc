@@ -188,11 +188,11 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
     /**
      * The maximum length of the subkey name to retrieve.
      */
-    private final int nameLen;
+    private final RPCUnicodeString.Empty lpNameIn;
     /**
      * The maximum length of the subkey class to retrieve.
      */
-    private final int classLen;
+    private final RPCUnicodeString.Empty lpClassIn;
 
     /**
      * The BaseRegEnumKey method is called by the client in order to enumerate a subkey. In response, the server returns
@@ -203,15 +203,15 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
      *                 {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
      *                 {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      * @param index    The index of the subkey to retrieve.
-     * @param nameLen  The maximum length of the subkey name to retrieve.
-     * @param classLen The maximum length of the subkey class to retrieve.
+     * @param lpNameIn  An allocated RPCUnicodeBuffer
+     * @param lpClassIn The maximum length of the subkey class to retrieve.
      */
-    public BaseRegEnumKeyRequest(final byte[] hKey, final int index, final int nameLen, final int classLen) {
+    public BaseRegEnumKeyRequest(final byte[] hKey, final int index, final RPCUnicodeString.Empty lpNameIn, final RPCUnicodeString.Empty lpClassIn) {
         super((short) 9);
         this.hKey = hKey;
         this.index = index;
-        this.nameLen = nameLen;
-        this.classLen = classLen;
+        this.lpNameIn = lpNameIn;
+        this.lpClassIn = lpClassIn;
     }
 
     @Override
@@ -259,11 +259,12 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
         packetOut.writeInt(index);
         // <NDR: struct> [in] PRRP_UNICODE_STRING lpNameIn
         // Alignment: 2 - Already aligned
-        writeAllocatedBuffer(packetOut, nameLen);
+        packetOut.writeMarshallable(lpNameIn);
+        //writeAllocatedBuffer(packetOut, lpNameIn.getMaximumLength());
         // <NDR: pointer[struct]> [in, unique] PRRP_UNICODE_STRING lpClassIn,
         // Alignment: 4 - Already aligned
         packetOut.writeReferentID();
-        writeAllocatedBuffer(packetOut, classLen);
+        packetOut.writeMarshallable(lpClassIn);
         // <NDR: hyper> [in, out, unique] PFILETIME lpftLastWriteTime
         // Alignment: 4 - Already aligned
         packetOut.writeReferentID();

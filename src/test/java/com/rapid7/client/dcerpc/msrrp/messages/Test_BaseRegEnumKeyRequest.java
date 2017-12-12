@@ -22,6 +22,8 @@ import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
+
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
@@ -29,7 +31,8 @@ import static org.junit.Assert.assertThat;
 
 public class Test_BaseRegEnumKeyRequest {
     private final byte[] contextHandle = Hex.decode("0000000032daf234b77c86409d29efe60d326683");
-    private final BaseRegEnumKeyRequest request = new BaseRegEnumKeyRequest(contextHandle, 0, 256, 32767);
+    private final BaseRegEnumKeyRequest request = new BaseRegEnumKeyRequest(contextHandle, 0,
+            RPCUnicodeString.Empty.allocate(256), RPCUnicodeString.Empty.allocate(32767));
 
     @Test
     public void getOpNum() {

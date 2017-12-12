@@ -116,7 +116,9 @@ public class RegistryService extends Service {
         final List<RegistryKey> keyNames = new LinkedList<>();
         final byte[] handle = openKey(hiveName, keyPath);
         for (int index = 0; ; index++) {
-            final BaseRegEnumKeyRequest request = new BaseRegEnumKeyRequest(handle, index, MAX_REGISTRY_KEY_NAME_SIZE, MAX_REGISTRY_KEY_CLASS_SIZE);
+            final BaseRegEnumKeyRequest request = new BaseRegEnumKeyRequest(handle, index,
+                    RPCUnicodeString.Empty.allocate(MAX_REGISTRY_KEY_NAME_SIZE),
+                    RPCUnicodeString.Empty.allocate(MAX_REGISTRY_KEY_CLASS_SIZE));
             final BaseRegEnumKeyResponse response = call(request);
             final int returnCode = response.getReturnValue();
 
