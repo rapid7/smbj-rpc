@@ -27,9 +27,9 @@ public class RPCException extends IOException {
     private final SystemErrorCode errorCode;
 
     public RPCException(final String opName, final int returnValue) {
-        super(String.format("%s returned error code: %d (%s)", opName, returnValue, SystemErrorCode.getErrorCode(returnValue)));
+        super(formatMessage(opName, returnValue));
         this.returnValue = returnValue;
-        errorCode = SystemErrorCode.getErrorCode(returnValue);
+        this.errorCode = SystemErrorCode.getErrorCode(returnValue);
     }
 
     public int getReturnValue() {
@@ -42,5 +42,11 @@ public class RPCException extends IOException {
 
     public boolean hasErrorCode() {
         return errorCode != null;
+    }
+
+    private static String formatMessage(final String opName, final int returnValue) {
+        final SystemErrorCode errorCode = SystemErrorCode.getErrorCode(returnValue);
+        final String errorCodeStr = (errorCode == null) ? "" : String.format("(%s)", errorCode);
+        return String.format("%s returned error code: 0x%08X %s", opName, returnValue, errorCodeStr);
     }
 }
