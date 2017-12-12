@@ -29,24 +29,16 @@ public class RPCConformantIntegerArray extends RPCConformantArray<Integer> {
     }
 
     @Override
-    public void unmarshalEntity(PacketInput in) throws IOException {
+    public void unmarshalDeferrals(PacketInput in) throws IOException {
         for (int i = 0; i < array.length; i++) {
             array[i] = in.readInt();
         }
     }
 
     @Override
-    public void unmarshalDeferrals(PacketInput in) throws IOException {
-    }
-
-    @Override
-    public void marshalEntity(PacketOutput out) throws IOException {
+    public void marshalDeferrals(PacketOutput out) throws IOException {
         for (Integer value : array) {
             out.writeInt(value);
         }
-    }
-
-    @Override
-    public void marshalDeferrals(PacketOutput out) throws IOException {
     }
 }

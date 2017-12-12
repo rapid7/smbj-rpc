@@ -36,6 +36,7 @@ import com.rapid7.client.dcerpc.mssamr.dto.DomainPasswordInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.LogonHours;
+import com.rapid7.client.dcerpc.mssamr.dto.Membership;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithName;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithUse;
@@ -83,10 +84,12 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRPSIDArray;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRRIDEnumeration;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.RPCSID;
+import com.rapid7.client.dcerpc.objects.RPCSIDReferentConformantArray;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.service.Service;
@@ -344,6 +347,20 @@ public class SecurityAccountManagerService extends Service {
             }
         });
         return parseSAMPRRIDEnumerations(groupInfos);
+    }
+
+    /**
+     * Gets the user RID and name pairs for the provided domain.
+     * Max buffer size will be used.
+     * All users will be returned (UserAccountControl=0)
+     *
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
+     * @return The enumerated users.
+     * @throws IOException On issue with communication or marshalling.
+     */
+    public MembershipWithName[] getUsersForDomain(final DomainHandle domainHandle)
+            throws IOException {
+        return getUsersForDomain(domainHandle, 0);
     }
 
     /**
@@ -741,11 +758,18 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public Integer[] getAliasMembership(final DomainHandle domainHandle, SID... sids) throws IOException {
+    public Membership[] getAliasMembership(final DomainHandle domainHandle, SID... sids) throws IOException {
+        final RPCSID[] rpcSids = parseSIDs(sids);
+        final SAMPRPSIDArray sidArray = new SAMPRPSIDArray(new RPCSIDReferentConformantArray(rpcSids));
         final SamrGetAliasMembershipRequest request =
-                new SamrGetAliasMembershipRequest(parseHandle(domainHandle), parseSIDs(sids));
+                new SamrGetAliasMembershipRequest(parseHandle(domainHandle), sidArray);
         final SamrGetAliasMembershipResponse response = callExpectSuccess(request, "GetAliasMembership");
-        return response.getList();
+        final long[] rids = response.getMembership().getArray();
+        final Membership[] ret = new Membership[rids.length];
+        for (int i = 0; i < ret.length; i++) {
+            ret[i] = new Membership(rids[i]);
+        }
+        return ret;
     }
 
     /**
@@ -758,10 +782,14 @@ public class SecurityAccountManagerService extends Service {
             final SamrEnumerateResponse response = callback.request(enumContext);
             final int returnCode = response.getReturnValue();
             enumContext = response.getResumeHandle();
+            //noinspection unchecked
+            final List<T> responseList = response.getList();
             if (ERROR_MORE_ENTRIES.is(returnCode)) {
-                list.addAll(response.getList());
+                if (responseList != null)
+                    list.addAll(responseList);
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode) || ERROR_SUCCESS.is(returnCode)) {
-                list.addAll(response.getList());
+                if (responseList != null)
+                    list.addAll(responseList);
                 return;
             } else {
                 throw new RPCException(response.getClass().getName(), returnCode);

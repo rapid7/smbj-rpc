@@ -21,45 +21,59 @@ package com.rapid7.client.dcerpc.objects;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 public abstract class RPCConformantArray<T> implements Unmarshallable, Marshallable {
 
+    private int maximumCount;
+    protected final T[] array;
+
     protected RPCConformantArray(T[] array) {
-        this.maxCount = array.length;
+        this(array, -1);
+    }
+
+    protected RPCConformantArray(T[] array, int maximumCount) {
+        if (array == null) {
+            this.maximumCount = Math.min(0, maximumCount);
+        } else {
+            this.maximumCount = (maximumCount < array.length) ? array.length : maximumCount;
+        }
         this.array = array;
     }
 
-    private int maxCount;
-    protected final T[] array;
-
-    public int getMaxCount() {
-        return maxCount;
+    public int getMaximumCount() {
+        return this.maximumCount;
     }
 
     public T[] getArray() {
-        return array;
+        return this.array;
     }
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
-        maxCount = in.readInt();
+        this.maximumCount = in.readInt();
     }
 
     @Override
-    public abstract void unmarshalEntity(PacketInput in) throws IOException;
+    public void unmarshalEntity(PacketInput in) throws IOException {
+        // No entity
+    }
 
     @Override
     public abstract void unmarshalDeferrals(PacketInput in) throws IOException;
 
     @Override
     public void marshalPreamble(PacketOutput out) throws IOException {
-        out.writeInt(maxCount);
+        out.align(Alignment.FOUR);
+        out.writeInt(this.maximumCount);
     }
 
     @Override
-    public abstract void marshalEntity(PacketOutput out) throws IOException;
+    public void marshalEntity(PacketOutput out) throws IOException {
+        // No entity
+    }
 
     @Override
     public abstract void marshalDeferrals(PacketOutput out) throws IOException;

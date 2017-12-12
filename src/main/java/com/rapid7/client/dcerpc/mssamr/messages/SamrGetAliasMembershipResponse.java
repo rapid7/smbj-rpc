@@ -21,26 +21,19 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.objects.RPCConformantIntegerArray;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRULongArray;
 
 public class SamrGetAliasMembershipResponse extends RequestResponse {
-    private RPCConformantIntegerArray array;
+    // <NDR: conformant array> [out] PSAMPR_ULONG_ARRAY Membership
+    private SAMPRULongArray membership;
 
-    public Integer[] getList() {
-        if (array == null)
-            return null;
-        return array.getArray();
+    public SAMPRULongArray getMembership() {
+        return this.membership;
     }
 
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
-        // unused count;
-        int count = packetIn.readInt();
-        if (packetIn.readReferentID() == 0) {
-            array = null;
-            return;
-        }
-        array = new RPCConformantIntegerArray(new Integer[count]);
-        packetIn.readUnmarshallable(array);
+        this.membership = new SAMPRULongArray();
+        packetIn.readUnmarshallable(this.membership);
     }
 }

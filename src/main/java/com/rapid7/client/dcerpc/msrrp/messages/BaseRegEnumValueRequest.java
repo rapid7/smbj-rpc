@@ -245,8 +245,23 @@ public class BaseRegEnumValueRequest extends RequestCall<BaseRegEnumValueRespons
         //          .... .... 0... .... .... .... .... .... = Access SACL: Not set
         //          Standard rights: 0x00000000
         //          WINREG specific rights: 0x00000000
+        /**
+         *  ,
+         *    ,
+         *    ,
+         *    [out] PRPC_UNICODE_STRING lpValueNameOut,
+         *    [in, out, unique] LPDWORD lpType,
+         *    [in, out, unique, size_is(lpcbData?*lpcbData:0), length_is(lpcbLen?*lpcbLen:0), range(0, 0x4000000)]
+         *      LPBYTE lpData,
+         *    [in, out, unique] LPDWORD lpcbData,
+         *    [in, out, unique] LPDWORD lpcbLen
+         */
+        // <NDR: fixed array> [in] RPC_HKEY hKey
         packetOut.write(hKey);
+        // <NDR: unsigned long> [in] DWORD dwIndex
+        // Alignment: 4 - Already aligned
         packetOut.writeInt(index);
+        // <NDR: conformant varying array> [in] PRRP_UNICODE_STRING lpValueNameIn
         packetOut.writeStringBuffer(valueNameLen);
         packetOut.writeIntRef(0);
         packetOut.writeEmptyArrayRef(dataLen);
