@@ -22,9 +22,6 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
-
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 
 /**
  * <b>Example:</b>
@@ -59,13 +56,13 @@ import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
  * </pre>
  */
 public class BaseRegQueryValueResponse extends RequestResponse {
-    private RegistryValueType type;
+    private Integer type;
     private RPCConformantVaryingByteArray data;
 
     /**
-     * @return The {@link RegistryValueType} of the value.
+     * @return The type of the value.
      */
-    public RegistryValueType getType() {
+    public Integer getType() {
         return type;
     }
 
@@ -105,7 +102,11 @@ public class BaseRegQueryValueResponse extends RequestResponse {
         //          Data Length: 8
         //      Windows Error: WERR_OK (0x00000000)
         // <NDR: unsigned long>
-        this.type = RegistryValueType.getRegistryValueType(packetIn.readIntRef());
+
+        if (packetIn.readReferentID() != 0)
+            this.type = packetIn.readInt();
+        else
+            this.type = null;
         // <NDR: pointer[conformant varying array]>
         // Alignment: 4 - Already aligned
         if (packetIn.readReferentID() != 0) {

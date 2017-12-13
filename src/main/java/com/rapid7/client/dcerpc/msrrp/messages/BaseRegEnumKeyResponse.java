@@ -22,11 +22,7 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
-import com.rapid7.client.dcerpc.objects.WChar;
-
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 
 /**
  * <b>Example:</b>

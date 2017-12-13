@@ -20,7 +20,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 import static org.junit.Assert.assertEquals;

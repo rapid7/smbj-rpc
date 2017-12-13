@@ -33,6 +33,11 @@ import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.msrrp.dto.RegistryHive;
+import com.rapid7.client.dcerpc.msrrp.dto.RegistryKey;
+import com.rapid7.client.dcerpc.msrrp.dto.RegistryKeyInfo;
+import com.rapid7.client.dcerpc.msrrp.dto.RegistryValue;
+import com.rapid7.client.dcerpc.msrrp.dto.RegistryValueType;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumValueRequest;
@@ -45,7 +50,7 @@ import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
-import com.rapid7.client.dcerpc.objects.FileTime;
+import com.rapid7.client.dcerpc.msrrp.dto.FileTime;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -138,9 +143,12 @@ public class RegistryService extends Service {
             final BaseRegEnumValueRequest request = new BaseRegEnumValueRequest(handle, index, MAX_REGISTRY_VALUE_NAME_SIZE, MAX_REGISTRY_VALUE_DATA_SIZE);
             final BaseRegEnumValueResponse response = call(request);
             final int returnCode = response.getReturnValue();
-
             if (ERROR_SUCCESS.is(returnCode)) {
-                values.add(new RegistryValue(response.getName().getValue(), response.getType(), response.getData().getArray()));
+                final RPCConformantVaryingByteArray data = response.getData();
+                values.add(new RegistryValue(
+                        response.getName().getValue(),
+                        RegistryValueType.getRegistryValueType(response.getType()),
+                        (data == null ? null : data.getArray())));
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
                 return Collections.unmodifiableList(new ArrayList<>(values));
             } else {
@@ -156,7 +164,9 @@ public class RegistryService extends Service {
         final BaseRegQueryValueRequest request = new BaseRegQueryValueRequest(handle, RPCUnicodeString.NullTerminated.of(canonicalizedValueName), MAX_REGISTRY_VALUE_DATA_SIZE);
         final BaseRegQueryValueResponse response = callExpectSuccess(request, "BaseRegQueryValue");
         final RPCConformantVaryingByteArray data = response.getData();
-        return new RegistryValue(canonicalizedValueName, response.getType(), (data == null) ? null : data.getArray());
+        return new RegistryValue(canonicalizedValueName,
+                RegistryValueType.getRegistryValueType(response.getType()),
+                (data == null) ? null : data.getArray());
     }
 
     public byte[] getKeySecurity(final String hiveName, final String keyPath, final int securityDescriptorType)

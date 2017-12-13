@@ -1,20 +1,22 @@
-/**
+/*
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright notice,
+ *   Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
  *
- * * Redistributions in binary form must reproduce the above copyright
+ *  Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  *
- * * Neither the name of the copyright holder nor the names of its contributors
+ *  Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
+ *
+ *
  */
 package com.rapid7.client.dcerpc.msrrp;
 
@@ -26,18 +28,32 @@ import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.msrrp.dto.FileTime;
+import com.rapid7.client.dcerpc.msrrp.dto.RegistryKey;
+import com.rapid7.client.dcerpc.msrrp.dto.RegistryKeyInfo;
+import com.rapid7.client.dcerpc.msrrp.dto.RegistryValue;
+import com.rapid7.client.dcerpc.msrrp.dto.RegistryValueType;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumValueResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
-import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.*;
-import static org.junit.Assert.*;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_FILE_NOT_FOUND;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_INVALID_FUNCTION;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class Test_RegistryService {
 
@@ -210,7 +226,7 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
+        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY.getTypeID());
         when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
@@ -295,7 +311,7 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
+        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY.getTypeID());
         when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
@@ -326,7 +342,7 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
+        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY.getTypeID());
         when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
@@ -357,7 +373,7 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
+        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY.getTypeID());
         when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
@@ -388,7 +404,7 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
+        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY.getTypeID());
         when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
@@ -645,11 +661,11 @@ public class Test_RegistryService {
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(enumResponse1.getName()).thenReturn(RPCUnicodeString.NullTerminated.of("value1"));
-        when(enumResponse1.getType()).thenReturn(RegistryValueType.REG_BINARY);
+        when(enumResponse1.getType()).thenReturn(RegistryValueType.REG_BINARY.getTypeID());
         when(enumResponse1.getData()).thenReturn(byteArray);
         when(enumResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(enumResponse2.getName()).thenReturn(RPCUnicodeString.NullTerminated.of("value2"));
-        when(enumResponse2.getType()).thenReturn(RegistryValueType.REG_BINARY);
+        when(enumResponse2.getType()).thenReturn(RegistryValueType.REG_BINARY.getTypeID());
         when(enumResponse2.getData()).thenReturn(byteArray);
         when(enumResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(enumResponse3.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getValue());
@@ -772,7 +788,7 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
+        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY.getTypeID());
         when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
@@ -807,7 +823,7 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
+        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY.getTypeID());
         when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
@@ -842,7 +858,7 @@ public class Test_RegistryService {
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
+        when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY.getTypeID());
         when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 

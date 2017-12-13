@@ -23,10 +23,7 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
-
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 
 /**
  * <b>Example:</b>
@@ -78,7 +75,7 @@ import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
  */
 public class BaseRegEnumValueResponse extends RequestResponse {
     private RPCUnicodeString.NullTerminated name;
-    private RegistryValueType type;
+    private Integer type;
     private RPCConformantVaryingByteArray data;
 
     /**
@@ -89,9 +86,9 @@ public class BaseRegEnumValueResponse extends RequestResponse {
     }
 
     /**
-     * @return The {@link RegistryValueType} of the value.
+     * @return The type of the value.
      */
-    public RegistryValueType getType() {
+    public Integer getType() {
         return type;
     }
 
@@ -169,9 +166,11 @@ public class BaseRegEnumValueResponse extends RequestResponse {
         packetIn.readUnmarshallable(this.name);
         // <NDR: pointer[unsigned long]> [in, out, unique] LPDWORD lpType
         packetIn.align(Alignment.FOUR);
-        packetIn.readReferentID();
         // Alignment: 4 - Already aligned
-        this.type = RegistryValueType.getRegistryValueType(packetIn.readInt());
+        if (packetIn.readReferentID() != 0)
+            this.type = packetIn.readInt();
+        else
+            this.type = null;
         // <NDR: pointer[conformant varying array]> [in, out, unique, size_is(lpcbData?*lpcbData:0), length_is(lpcbLen?*lpcbLen:0), range(0, 0x4000000)] LPBYTE lpData,
         // Alignment: 4 - Already aligned
         packetIn.readReferentID();
