@@ -58,7 +58,7 @@ public class Test_BaseRegQueryValueResponse {
 
         response.fromHexString("00000200010000000400020008000000000000000800000036002e003300000008000200080000000c0002000800000000000000");
 
-        assertArrayEquals("6.3\0".getBytes("UTF-16LE"), response.getData());
+        assertArrayEquals("6.3\0".getBytes("UTF-16LE"), response.getData().getArray());
         assertEquals(RegistryValueType.REG_SZ, response.getType());
         assertEquals(0, response.getReturnValue());
     }

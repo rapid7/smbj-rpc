@@ -20,6 +20,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
 
@@ -59,7 +60,7 @@ import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
  */
 public class BaseRegQueryValueResponse extends RequestResponse {
     private RegistryValueType type;
-    private byte[] data;
+    private RPCConformantVaryingByteArray data;
 
     /**
      * @return The {@link RegistryValueType} of the value.
@@ -71,7 +72,7 @@ public class BaseRegQueryValueResponse extends RequestResponse {
     /**
      * @return The data of the value entry.
      */
-    public byte[] getData() {
+    public RPCConformantVaryingByteArray getData() {
         return data;
     }
 
@@ -103,9 +104,23 @@ public class BaseRegQueryValueResponse extends RequestResponse {
         //          Referent ID: 0x0002000c
         //          Data Length: 8
         //      Windows Error: WERR_OK (0x00000000)
+        // <NDR: unsigned long>
         this.type = RegistryValueType.getRegistryValueType(packetIn.readIntRef());
-        this.data = packetIn.readByteArrayRef();
-        packetIn.readIntRef();
-        packetIn.readIntRef();
+        // <NDR: pointer[conformant varying array]>
+        // Alignment: 4 - Already aligned
+        if (packetIn.readReferentID() != 0) {
+            this.data = new RPCConformantVaryingByteArray();
+            packetIn.readUnmarshallable(this.data);
+        } else {
+            this.data = null;
+        }
+        // <NDR pointer[unsigned long]
+        // Alignment: 4 - Already aligned
+        if (packetIn.readReferentID() != 0)
+            packetIn.fullySkipBytes(4);
+        // <NDR pointer[unsigned long]
+        // Alignment: 4 - Already aligned
+        if (packetIn.readReferentID() != 0)
+            packetIn.fullySkipBytes(4);
     }
 }

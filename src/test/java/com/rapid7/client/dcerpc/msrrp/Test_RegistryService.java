@@ -204,11 +204,14 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
+        final RPCConformantVaryingByteArray byteArray = mock(RPCConformantVaryingByteArray.class);
+        when(byteArray.getArray()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+        when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
@@ -286,11 +289,14 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
+        final RPCConformantVaryingByteArray byteArray = mock(RPCConformantVaryingByteArray.class);
+        when(byteArray.getArray()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+        when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
@@ -314,11 +320,14 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
+        final RPCConformantVaryingByteArray byteArray = mock(RPCConformantVaryingByteArray.class);
+        when(byteArray.getArray()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+        when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
@@ -342,11 +351,14 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
+        final RPCConformantVaryingByteArray byteArray = mock(RPCConformantVaryingByteArray.class);
+        when(byteArray.getArray()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+        when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
@@ -370,11 +382,14 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
+        final RPCConformantVaryingByteArray byteArray = mock(RPCConformantVaryingByteArray.class);
+        when(byteArray.getArray()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+        when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         assertTrue(registryService.doesValueExist("HKLM", "key", "value"));
@@ -751,11 +766,14 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
+        final RPCConformantVaryingByteArray byteArray = mock(RPCConformantVaryingByteArray.class);
+        when(byteArray.getArray()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+        when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final RegistryValue value = registryService.getValue("HKLM", "key", "value");
@@ -783,11 +801,14 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
+        final RPCConformantVaryingByteArray byteArray = mock(RPCConformantVaryingByteArray.class);
+        when(byteArray.getArray()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+        when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final RegistryValue value = registryService.getValue("HKLM", "key", "");
@@ -815,11 +836,14 @@ public class Test_RegistryService {
         final BaseRegQueryValueResponse valueResponse = mock(BaseRegQueryValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
+        final RPCConformantVaryingByteArray byteArray = mock(RPCConformantVaryingByteArray.class);
+        when(byteArray.getArray()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(valueResponse);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(valueResponse.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(valueResponse.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+        when(valueResponse.getData()).thenReturn(byteArray);
         when(valueResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
 
         final RegistryValue value = registryService.getValue("HKLM", "key", null);

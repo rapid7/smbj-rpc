@@ -156,7 +156,8 @@ public class RegistryService extends Service {
         final byte[] handle = openKey(hiveName, keyPath);
         final BaseRegQueryValueRequest request = new BaseRegQueryValueRequest(handle, RPCUnicodeString.NullTerminated.of(canonicalizedValueName), MAX_REGISTRY_VALUE_DATA_SIZE);
         final BaseRegQueryValueResponse response = callExpectSuccess(request, "BaseRegQueryValue");
-        return new RegistryValue(canonicalizedValueName, response.getType(), response.getData());
+        final RPCConformantVaryingByteArray data = response.getData();
+        return new RegistryValue(canonicalizedValueName, response.getType(), (data == null) ? null : data.getArray());
     }
 
     public byte[] getKeySecurity(final String hiveName, final String keyPath, final int securityDescriptorType)
