@@ -23,6 +23,7 @@ import java.util.List;
 import org.bouncycastle.util.encoders.Hex;
 import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyResponse;
@@ -622,16 +623,19 @@ public class Test_RegistryService {
         final BaseRegEnumValueResponse enumResponse3 = mock(BaseRegEnumValueResponse.class);
         final RegistryService registryService = new RegistryService(transport);
 
+        final RPCConformantVaryingByteArray byteArray = mock(RPCConformantVaryingByteArray.class);
+        when(byteArray.getArray()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+
         when(transport.call(any(RequestCall.class))).thenReturn(hiveResponse).thenReturn(keyResponse).thenReturn(enumResponse1).thenReturn(enumResponse2).thenReturn(enumResponse3);
         when(hiveResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(keyResponse.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(enumResponse1.getName()).thenReturn("value1");
+        when(enumResponse1.getName()).thenReturn(RPCUnicodeString.NullTerminated.of("value1"));
         when(enumResponse1.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(enumResponse1.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+        when(enumResponse1.getData()).thenReturn(byteArray);
         when(enumResponse1.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
-        when(enumResponse2.getName()).thenReturn("value2");
+        when(enumResponse2.getName()).thenReturn(RPCUnicodeString.NullTerminated.of("value2"));
         when(enumResponse2.getType()).thenReturn(RegistryValueType.REG_BINARY);
-        when(enumResponse2.getData()).thenReturn(new byte[]{0x01, 0x23, 0x45, 0x67});
+        when(enumResponse2.getData()).thenReturn(byteArray);
         when(enumResponse2.getReturnValue()).thenReturn(ERROR_SUCCESS.getValue());
         when(enumResponse3.getReturnValue()).thenReturn(ERROR_NO_MORE_ITEMS.getValue());
 

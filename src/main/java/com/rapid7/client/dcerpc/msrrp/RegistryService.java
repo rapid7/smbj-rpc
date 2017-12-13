@@ -139,7 +139,7 @@ public class RegistryService extends Service {
             final int returnCode = response.getReturnValue();
 
             if (ERROR_SUCCESS.is(returnCode)) {
-                values.add(new RegistryValue(response.getName(), response.getType(), response.getData()));
+                values.add(new RegistryValue(response.getName().getValue(), response.getType(), response.getData().getArray()));
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
                 return Collections.unmodifiableList(new ArrayList<>(values));
             } else {

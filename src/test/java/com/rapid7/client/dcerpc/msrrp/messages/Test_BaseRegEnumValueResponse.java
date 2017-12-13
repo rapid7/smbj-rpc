@@ -94,7 +94,7 @@ public class Test_BaseRegEnumValueResponse {
 
         assertEquals("SystemRoot", response.getName());
         assertEquals(RegistryValueType.REG_SZ, response.getType());
-        assertArrayEquals("C:\\Windows\0".getBytes("UTF-16LE"), response.getData());
+        assertArrayEquals("C:\\Windows\0".getBytes("UTF-16LE"), response.getData().getArray());
         assertEquals(0, response.getReturnValue());
     }
 }

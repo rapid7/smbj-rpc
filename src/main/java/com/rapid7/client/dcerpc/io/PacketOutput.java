@@ -73,7 +73,7 @@ public class PacketOutput extends PrimitiveOutput {
      *      ActualCount=0
      *
      * Required Alignment: 4
-     * Resulting Alignment: 4
+     * Resulting Alignment: N+12
      *
      * NOTE: This is written as a top level object, and must not be used within an embedding structure.
      * NOTE: Like all actions in this class, existing stream alignment is assumed.
@@ -103,7 +103,7 @@ public class PacketOutput extends PrimitiveOutput {
      *      ActualCount=0
      *
      * Required Alignment: 2
-     * Resulting Alignment: 4
+     * Resulting Alignment: N+20
      *
      * NOTE: This is written as a top level object, and must not be used within an embedding structure.
      * NOTE: Like all actions in this class, existing stream alignment is assumed.
