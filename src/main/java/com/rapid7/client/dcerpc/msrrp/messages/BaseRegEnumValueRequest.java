@@ -251,7 +251,7 @@ public class BaseRegEnumValueRequest extends RequestCall<BaseRegEnumValueRespons
         // Alignment: 4 - Already aligned
         packetOut.writeInt(this.index);
         // <NDR: conformant varying array> [in] PRRP_UNICODE_STRING lpValueNameIn
-        // Alignment: 2 - Already aligned
+        // Alignment: 4 - Already aligned
         packetOut.writeEmptyRPCUnicodeString(this.valueNameLen);
         // <NDR: pointer[unsigned long]> [in, out, unique] LPDWORD lpType
         // Alignment: 4 - Already aligned

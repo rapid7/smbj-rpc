@@ -258,12 +258,12 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
         // Alignment: 4 - Already aligned, wrote 20 bytes above
         packetOut.writeInt(this.index);
         // <NDR: struct> [in] PRRP_UNICODE_STRING lpNameIn
-        // Alignment: 2 - Already aligned
+        // Alignment: 4 - Already aligned
         packetOut.writeEmptyRPCUnicodeString(this.nameLen);
         // <NDR: pointer[struct]> [in, unique] PRRP_UNICODE_STRING lpClassIn,
         // Alignment: 4 - Already aligned
         packetOut.writeReferentID();
-        // Alignment: 2 - Already aligned
+        // Alignment: 4 - Already aligned
         packetOut.writeEmptyRPCUnicodeString(this.classLen);
         // <NDR: hyper> [in, out, unique] PFILETIME lpftLastWriteTime
         // Alignment: 4 - Already aligned

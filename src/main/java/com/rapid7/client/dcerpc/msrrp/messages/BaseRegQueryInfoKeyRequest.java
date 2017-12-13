@@ -226,7 +226,10 @@ public class BaseRegQueryInfoKeyRequest extends RequestCall<BaseRegQueryInfoKeyR
         //                  Max Count: 0
         //                  Offset: 0
         //                  Actual Count: 0
+        // <NDR: fixed array> [in] RPC_HKEY hKey
         packetOut.write(hKey);
-        packetOut.writeStringBuffer(0);
+        // <NDR: struct> [in] PRRP_UNICODE_STRING lpClassIn
+        // Alignment: 4 - Already aligned, wrote 20 bytes above
+        packetOut.writeEmptyRPCUnicodeString(0);
     }
 }

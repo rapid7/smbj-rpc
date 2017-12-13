@@ -102,7 +102,7 @@ public class PacketOutput extends PrimitiveOutput {
      *      Offset=0
      *      ActualCount=0
      *
-     * Required Alignment: 2
+     * Required Alignment: 4
      * Resulting Alignment: N+20
      *
      * NOTE: This is written as a top level object, and must not be used within an embedding structure.
