@@ -20,19 +20,21 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.msrrp.objects.RPCSecurityDescriptor;
 
 public class BaseRegGetKeySecurityResponse extends RequestResponse {
-    private RPCSecurityDescriptor securityDescriptorOut;
+    private RPCSecurityDescriptor pRpcSecurityDescriptorOut;
 
-    public byte[] getRawSecurityDescriptor() {
-        return securityDescriptorOut.getRawSecurityDescriptor();
+    public RPCSecurityDescriptor getpRpcSecurityDescriptorOut() {
+        return this.pRpcSecurityDescriptorOut;
     }
 
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
-        securityDescriptorOut = new RPCSecurityDescriptor();
-        packetIn.readUnmarshallable(securityDescriptorOut);
+        // <NDR: struct> [out] PRPC_SECURITY_DESCRIPTOR pRpcSecurityDescriptorOut
+        this.pRpcSecurityDescriptorOut = new RPCSecurityDescriptor();
+        packetIn.readUnmarshallable(this.pRpcSecurityDescriptorOut);
     }
 }

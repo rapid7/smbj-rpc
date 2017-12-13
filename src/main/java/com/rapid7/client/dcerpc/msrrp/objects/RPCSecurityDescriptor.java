@@ -19,90 +19,130 @@
 package com.rapid7.client.dcerpc.msrrp.objects;
 
 import java.io.IOException;
+import java.rmi.UnmarshalException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 
 /**
-<p>The RPC_SECURITY_DESCRIPTOR structure represents the <a href="https://msdn.microsoft.com/en-us/library/cc244893.aspx#gt_8a7f6700-8311-45bc-af10-82e10accd331">RPC</a> security descriptors.</p>
-<pre> typedef struct _RPC_SECURITY_DESCRIPTOR {
-   [size_is(cbInSecurityDescriptor), length_is(cbOutSecurityDescriptor)]
-     PBYTE lpSecurityDescriptor;
-   DWORD cbInSecurityDescriptor;
-   DWORD cbOutSecurityDescriptor;
- } RPC_SECURITY_DESCRIPTOR,
- *  *PRPC_SECURITY_DESCRIPTOR;
-</pre>
-<p><strong>lpSecurityDescriptor:</strong>  A buffer that
-contains a <a href="https://msdn.microsoft.com/en-us/library/cc230366.aspx">SECURITY_DESCRIPTOR</a>,
-as specified in <a href="https://msdn.microsoft.com/en-us/library/cc230273.aspx">[MS-DTYP]</a>
-section 2.4.6.</p>
-<p><strong>cbInSecurityDescriptor:</strong>  The size in
-bytes of the security descriptor.</p>
-<p><strong>cbOutSecurityDescriptor:</strong>  The size
-in bytes of the security descriptor.</p>
-@see <a href="https://msdn.microsoft.com/en-us/library/cc244924.aspx">https://msdn.microsoft.com/en-us/library/cc244924.aspx</a>
+ * <b>Alignment: 4</b>
+ * <blockquote><pre>The RPC_SECURITY_DESCRIPTOR structure represents the RPC security descriptors.
+ *
+ *      typedef struct _RPC_SECURITY_DESCRIPTOR {
+ *          [size_is(cbInSecurityDescriptor), length_is(cbOutSecurityDescriptor)] PBYTE lpSecurityDescriptor;
+ *          DWORD cbInSecurityDescriptor;
+ *          DWORD cbOutSecurityDescriptor;
+ *      } RPC_SECURITY_DESCRIPTOR,
+ *      *PRPC_SECURITY_DESCRIPTOR;
+ *
+ *  lpSecurityDescriptor: A buffer that contains a SECURITY_DESCRIPTOR, as specified in [MS-DTYP] section 2.4.6.
+ *  cbInSecurityDescriptor: The size in bytes of the security descriptor.
+ *  cbOutSecurityDescriptor: The size in bytes of the security descriptor.</pre></blockquote>
+
  */
 public class RPCSecurityDescriptor implements Unmarshallable, Marshallable {
     private int cbInSecurityDescriptor;
-    private int cbOutSecurityDescriptor;
-    private byte[] rawSecurityDescriptor = new byte[0];
+    private byte[] lpSecurityDescriptor;
+
+    public byte[] getLpSecurityDescriptor() {
+        return this.lpSecurityDescriptor;
+    }
+
+    public void setLpSecurityDescriptor(final byte[] lpSecurityDescriptor) {
+        this.lpSecurityDescriptor = lpSecurityDescriptor;
+    }
 
     public void setCbInSecurityDescriptor(final int cbInSecurityDescriptor) {
         this.cbInSecurityDescriptor = cbInSecurityDescriptor;
     }
 
     @Override
-    public void unmarshalPreamble(final PacketInput in) throws IOException {
+    public void unmarshalPreamble(final PacketInput in) {
+        // No preamble
     }
 
     @Override
     public void unmarshalEntity(final PacketInput in) throws IOException {
+        // Strucutre Alignment: 4
         in.align(Alignment.FOUR);
-        final int refID = in.readReferentID();
-        if (refID != 0) {
-            cbInSecurityDescriptor = in.readInt();
-            cbOutSecurityDescriptor = in.readInt();
-            rawSecurityDescriptor = new byte[cbOutSecurityDescriptor];
-        }
+        // <NDR: pointer[conformant varying array]> [size_is(cbInSecurityDescriptor), length_is(cbOutSecurityDescriptor)] PBYTE lpSecurityDescriptor;
+        // Alignment: 4 - Already aligned
+        final boolean lpSecurityDescriptorPresent = in.readReferentID() != 0;
+        // <NDR: unsigned long> DWORD cbInSecurityDescriptor;
+        // Alignment: 4 - Already aligned
+        in.fullySkipBytes(4);
+        // <NDR: unsigned long> DWORD cbOutSecurityDescriptor;
+        // Alignment: 4 - Already aligned
+        final int cbOutSecurityDescriptor = in.readIndex("cbOutSecurityDescriptor");
+        if (lpSecurityDescriptorPresent)
+            this.lpSecurityDescriptor = new byte[cbOutSecurityDescriptor];
+        else
+            this.lpSecurityDescriptor = null;
     }
 
     @Override
     public void unmarshalDeferrals(final PacketInput in) throws IOException {
-        if (rawSecurityDescriptor == null)
-            return;
-        in.align(Alignment.FOUR);
-        in.readInt();
-        in.readInt(); // offset
-        final int actualSize = in.readInt();
-        if (cbOutSecurityDescriptor != actualSize)
-            throw new java.rmi.UnmarshalException("The actual size of the array does not match the expected.");
-        // TODO: Return parsed object.
-        in.readRawBytes(rawSecurityDescriptor);
+        if (this.lpSecurityDescriptor != null) {
+            // MaximumCount
+            in.align(Alignment.FOUR);
+            in.fullySkipBytes(4);
+            // Offset
+            // Alignment: 4 - Already aligned
+            final int offset = in.readIndex("Offset");
+            in.fullySkipBytes(offset);
+            final int actualCount = in.readIndex("ActualCount");
+            if (actualCount != this.lpSecurityDescriptor.length) {
+                throw new UnmarshalException(String.format(
+                        "AcutalCount of the conformant varying array does not match cbOutSecurityDescriptor: %d != %d",
+                        actualCount, this.lpSecurityDescriptor.length));
+            }
+            // Entries
+            // Alignment: 1 - Already aligned
+            in.readRawBytes(this.lpSecurityDescriptor);
+        }
     }
 
     @Override
-    public void marshalPreamble(final PacketOutput out) throws IOException {
+    public void marshalPreamble(final PacketOutput out) {
+        // No preamble
     }
 
     @Override
     public void marshalEntity(final PacketOutput out) throws IOException {
-        out.writeReferentID();
+        // Structure alignment: 4
+        out.align(Alignment.FOUR);
+        // <NDR: pointer[conformant varying array]> [size_is(cbInSecurityDescriptor), length_is(cbOutSecurityDescriptor)] PBYTE lpSecurityDescriptor;
+        // Alignment: 4 - Already aligned
+        if (this.lpSecurityDescriptor != null)
+            out.writeReferentID();
+        else
+            out.writeNull();
+        // <NDR: unsigned long> DWORD cbInSecurityDescriptor;
+        // Alignment: 4 - Already aligned
         out.writeInt(cbInSecurityDescriptor);
-        out.writeInt(cbOutSecurityDescriptor);
+        // <NDR: unsigned long> DWORD cbOutSecurityDescriptor;
+        // Alignment: 4 - Already aligned
+        out.writeInt(0);
     }
 
     @Override
     public void marshalDeferrals(final PacketOutput out) throws IOException {
-        out.writeInt(cbInSecurityDescriptor);
-        out.writeInt(0);
-        out.writeInt(cbOutSecurityDescriptor);
-        out.write(rawSecurityDescriptor);
-    }
-
-    public byte[] getRawSecurityDescriptor() {
-        return rawSecurityDescriptor;
+        if (this.lpSecurityDescriptor != null) {
+            // MaximumCount
+            out.align(Alignment.FOUR);
+            out.writeInt(this.cbInSecurityDescriptor);
+            // Offset
+            // Alignment: 4 - Already aligned
+            out.writeInt(0);
+            // ActualCount
+            // Alignment: 4 - Already aligned
+            out.writeInt(this.lpSecurityDescriptor.length);
+            // Entries
+            // Alignment: 1 - Already aligned
+            out.write(this.lpSecurityDescriptor);
+        }
     }
 }

@@ -20,6 +20,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msrrp.objects.RPCSecurityDescriptor;
 
@@ -79,10 +80,15 @@ public class BaseRegGetKeySecurityRequest extends RequestCall<BaseRegGetKeySecur
 
     @Override
     public void marshal(final PacketOutput out) throws IOException {
-        out.write(hKey);
-        out.writeInt(securityDescriptorInfo);
+        // <NDR: fixed array> [in] RPC_HKEY hKey
+        out.write(this.hKey);
+        // <NDR: unsigned long> [in] SECURITY_INFORMATION SecurityInformation
+        // Alignment: 4 - Already aligned, wrote 20 bytes above
+        out.writeInt(this.securityDescriptorInfo);
+        // <NDR: struct> [in] PRPC_SECURITY_DESCRIPTOR pRpcSecurityDescriptorIn
         final RPCSecurityDescriptor sd = new RPCSecurityDescriptor();
-        sd.setCbInSecurityDescriptor(securityDescriptorSize);
+        sd.setCbInSecurityDescriptor(this.securityDescriptorSize);
+        sd.setLpSecurityDescriptor(new byte[0]);
         out.writeMarshallable(sd);
     }
 

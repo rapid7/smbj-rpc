@@ -92,7 +92,7 @@ public class Test_BaseRegEnumValueResponse {
 
         response.fromHexString("1600feff00000200ff7f0000000000000b000000530079007300740065006d0052006f006f0074000000000004000200010000000800020016000000000000001600000043003a005c00570069006e0064006f0077007300000000000c00020016000000100002001600000000000000");
 
-        assertEquals("SystemRoot", response.getName());
+        assertEquals("SystemRoot", response.getName().getValue());
         assertEquals(RegistryValueType.REG_SZ, response.getType());
         assertArrayEquals("C:\\Windows\0".getBytes("UTF-16LE"), response.getData().getArray());
         assertEquals(0, response.getReturnValue());

@@ -33,6 +33,7 @@ import com.google.common.base.Strings;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegEnumKeyResponse;
@@ -46,6 +47,7 @@ import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
+import com.rapid7.client.dcerpc.msrrp.objects.RPCSecurityDescriptor;
 import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import com.rapid7.client.dcerpc.objects.WChar;
@@ -165,7 +167,7 @@ public class RegistryService extends Service {
         final BaseRegGetKeySecurityRequest request = new BaseRegGetKeySecurityRequest(handle, securityDescriptorType,
             size);
         final BaseRegGetKeySecurityResponse response = callExpectSuccess(request, "BaseRegGetKeySecurity");
-        return response.getRawSecurityDescriptor();
+        return response.getpRpcSecurityDescriptorOut().getLpSecurityDescriptor();
     }
 
     protected String canonicalize(String keyPath) {
