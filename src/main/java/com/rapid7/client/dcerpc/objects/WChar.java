@@ -82,40 +82,12 @@ public abstract class WChar implements Unmarshallable, Marshallable {
         }
     }
 
-    public static class Empty extends WChar {
-        public static Empty allocate(final int maximumCount) {
-            final Empty empty = new Empty();
-            empty.setMaximumCount(maximumCount);
-            return empty;
-        }
-
-        private int maximumCount;
-
-        @Override
-        public boolean isNullTerminated() {
-            return false;
-        }
-
-        @Override
-        public int getMaximumCount() {
-            return this.maximumCount;
-        }
-
-        void setMaximumCount(final int maximumCount) {
-            this.maximumCount = maximumCount;
-        }
-    }
-
     private String value = "";
     // Stored for unmarshalling purposes only
     private int offset;
     private int actualCount;
 
     public abstract boolean isNullTerminated();
-
-    int getMaximumCount() {
-        return getCodePoints();
-    }
 
     /**
      * @return The non-null String representation of this {@link WChar}.
@@ -138,7 +110,7 @@ public abstract class WChar implements Unmarshallable, Marshallable {
     public void marshalPreamble(PacketOutput out) throws IOException {
         // MaximumCount for conformant array
         out.align(Alignment.FOUR);
-        out.writeInt(getMaximumCount());
+        out.writeInt(getCodePoints());
     }
 
     @Override
@@ -175,10 +147,10 @@ public abstract class WChar implements Unmarshallable, Marshallable {
         in.align(Alignment.FOUR);
         // Offset for varying array
         // Alignment 4 - Already aligned
-        this.offset = in.readIndex("Offset");
+        this.offset = readIndex("Offset", in);
         // ActualCount for varying array
         // Alignment 4 - Already aligned
-        this.actualCount = in.readIndex("ActualCount");
+        this.actualCount = readIndex("ActualCount", in);
     }
 
     @Override
@@ -235,5 +207,14 @@ public abstract class WChar implements Unmarshallable, Marshallable {
 
     private int getCodePoints() {
         return getValue().length() + (isNullTerminated() ? 1 : 0);
+    }
+
+    private int readIndex(String name, PacketInput in) throws IOException {
+        final long ret = in.readUnsignedInt();
+        // Don't allow array length or index values bigger than signed int
+        if (ret > Integer.MAX_VALUE) {
+            throw new UnmarshalException(String.format("%s %d > %d", name, ret, Integer.MAX_VALUE));
+        }
+        return (int) ret;
     }
 }

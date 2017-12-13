@@ -40,8 +40,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *      typedef struct _RPC_UNICODE_STRING {
  *          unsigned short Length;
  *          unsigned short MaximumLength;
- *          [size_is(MaximumLength/2), length_is(Length/2)]
- *          WCHAR* Buffer;
+ *          [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
  *      } RPC_UNICODE_STRING,
  *      *PRPC_UNICODE_STRING;
  *  Length: The length, in bytes, of the string pointed to by the Buffer member, not including the terminating null character if any. The length MUST be a multiple of 2. The length SHOULD equal the entire size of the Buffer, in which case there is no terminating null character. Any method that accesses this structure MUST use the Length specified instead of relying on the presence or absence of a null character.
@@ -108,38 +107,8 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
         }
     }
 
-    public static class Empty extends RPCUnicodeString {
-
-        public static Empty allocate(final int maximumLength) {
-            final Empty empty = new Empty();
-            empty.setMaximumLength(maximumLength * 2);
-            empty.setValue("");
-            return empty;
-        }
-
-        private int maximumLength;
-
-        @Override
-        public int getMaximumLength() {
-            return maximumLength;
-        }
-
-        void setMaximumLength(final int maximumLength) {
-            this.maximumLength = maximumLength;
-        }
-
-        @Override
-        WChar createWChar() {
-            return WChar.Empty.allocate(getMaximumLength() / 2);
-        }
-    }
-
     private WChar wChar;
     abstract WChar createWChar();
-
-    int getMaximumLength() {
-        return this.getByteCount();
-    }
 
     /**
      * @return The {@link String} representation of this {@link RPCUnicodeString}.
@@ -165,7 +134,7 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
     }
 
     @Override
-    public void marshalPreamble(PacketOutput out) {
+    public void marshalPreamble(PacketOutput out) throws IOException {
         // No preamble. Conformant array of `WCHAR*` is a reference, and so preamble is not required.
     }
 
@@ -173,24 +142,37 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
     public void marshalEntity(PacketOutput out) throws IOException {
         // Structure Alignment
         out.align(Alignment.FOUR);
-        // <NDR: unsigned short> unsigned short Length;
-        // Alignment 2 - Already aligned
-        out.writeShort(getByteCount());
-        // <NDR: unsigned short> unsigned short MaximumLength;
-        // Alignment 2 - Already aligned
-        out.writeShort(getMaximumLength());
-        // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
-        // Alignment 4 - Already aligned
-        if (this.wChar == null)
+        if (this.wChar == null) {
+            // <NDR: unsigned short> unsigned short Length;
+            // Alignment 2 - Already aligned
+            out.writeShort(0);
+            // <NDR: unsigned short> unsigned short MaximumLength;
+            // Alignment 2 - Already aligned
+            out.writeShort(0);
+            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+            // Alignment 4 - Already aligned
             out.writeNull();
-        else
+        } else {
+            // UTF-16 encoded string is 2 bytes per count point
+            // Null terminator must also be considered
+            final int byteLength = 2 * this.wChar.getValue().length() + (this.wChar.isNullTerminated() ? 2 : 0);
+            // <NDR: unsigned short> unsigned short Length;
+            // Alignment 2 - Already aligned
+            out.writeShort(byteLength);
+            // <NDR: unsigned short> unsigned short MaximumLength;
+            // Alignment 2 - Already aligned
+            out.writeShort(byteLength);
+            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+            // Alignment 4 - Already aligned
             out.writeReferentID();
+        }
     }
 
     @Override
     public void marshalDeferrals(PacketOutput out) throws IOException {
-        if (this.wChar != null)
+        if (this.wChar != null) {
             out.writeMarshallable(this.wChar);
+        }
     }
 
     @Override
@@ -218,8 +200,9 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        if (this.wChar != null)
+        if (this.wChar != null) {
             in.readUnmarshallable(this.wChar);
+        }
     }
 
     @Override
@@ -240,11 +223,5 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
     @Override
     public String toString() {
         return getValue() == null ? "null" : String.format("\"%s\"", getValue());
-    }
-
-    private int getByteCount() {
-        if (this.wChar == null)
-            return 0;
-        return (2 * this.wChar.getValue().length()) + (this.wChar.isNullTerminated() ? 2 : 0);
     }
 }

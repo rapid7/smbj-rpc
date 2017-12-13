@@ -66,15 +66,75 @@ public class PacketOutput extends PrimitiveOutput {
         writeInt(0);
     }
 
-    public void writeEmptyArray(final int maximumCount) throws IOException {
+    /**
+     * Writes an empty conformant varying array with the given MaximumCount
+     *      MaximumCount=maximumCount
+     *      Offset=0
+     *      ActualCount=0
+     *
+     * Required Alignment: 4
+     * Resulting Alignment: 4
+     *
+     * NOTE: This is written as a top level object, and must not be used within an embedding structure.
+     * NOTE: Like all actions in this class, existing stream alignment is assumed.
+     *
+     * @param maximumCount The MaximumCount
+     * @throws IOException On write failure.
+     */
+    public void writeEmptyCVArray(final int maximumCount) throws IOException {
+        // <NDR: unsigned long> MaximumCount
         writeInt(maximumCount);
+        // <NDR: unsigned long> Offset
+        // Alignment: 4 - Already aligned
         writeInt(0);
+        // <NDR: unsigned long> ActualCount
+        // Alignment: 4 - Already aligned
         writeInt(0);
+    }
+
+    /**
+     * Writes an empty {@link com.rapid7.client.dcerpc.objects.RPCUnicodeString} with the
+     * given number of UTF-16 characters (maximumChars).
+     * This serves to allocate a buffer for the request call, without actually writing the buffer to the stream.
+     *      Length=0
+     *      MaximumLength=(maximumChars/2)
+     *      MaximumCount=maximumChars
+     *      Offset=0
+     *      ActualCount=0
+     *
+     * Required Alignment: 2
+     * Resulting Alignment: 4
+     *
+     * NOTE: This is written as a top level object, and must not be used within an embedding structure.
+     * NOTE: Like all actions in this class, existing stream alignment is assumed.
+     *
+     * @param maximumChars The number of UTF-16 characters to allocate.
+     * @throws IOException On write failure.
+     */
+    public void writeEmptyRPCUnicodeString(final int maximumChars) throws IOException {
+        // <NDR: unsigned short> unsigned short Length;
+        writeShort((short) 0); // Length
+        // <NDR: unsigned short> unsigned short MaximumLength;
+        // Alignment: 2 - Already aligned
+        writeShort((short) maximumChars << 1); // MaximumLength
+        // <NDR: pointer[conformant varying array]> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+        // Alignment: 4 - Already aligned
+        writeReferentID();
+        // <NDR: unsigned long> MaximumCount: [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+        // Alignment: 4 - Already aligned
+        writeInt(maximumChars);
+        // <NDR: unsigned long> Offset: [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+        // Alignment: 4 - Already aligned
+        writeInt(0);
+        // <NDR: unsigned long> ActualCount: [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+        // Alignment: 4 - Already aligned
+        writeInt(0);
+        // No entries
     }
 
     public void writeEmptyArrayRef(final int maximumCount) throws IOException {
         writeReferentID();
-        writeEmptyArray(maximumCount);
+        writeEmptyCVArray(maximumCount);
         align();
     }
 

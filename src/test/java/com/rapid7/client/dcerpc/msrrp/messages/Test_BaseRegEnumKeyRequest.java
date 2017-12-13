@@ -31,8 +31,7 @@ import static org.junit.Assert.assertThat;
 
 public class Test_BaseRegEnumKeyRequest {
     private final byte[] contextHandle = Hex.decode("0000000032daf234b77c86409d29efe60d326683");
-    private final BaseRegEnumKeyRequest request = new BaseRegEnumKeyRequest(contextHandle, 0,
-            RPCUnicodeString.Empty.allocate(256), RPCUnicodeString.Empty.allocate(32767));
+    private final BaseRegEnumKeyRequest request = new BaseRegEnumKeyRequest(contextHandle, 0, 256, 32767);
 
     @Test
     public void getOpNum() {

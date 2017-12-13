@@ -270,7 +270,7 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
         packetOut.writeInt(0);
         // Alignment: 4 - Already aligned
         packetOut.writeReferentID();
-        packetOut.writeMarshallable(new RPCConformantVaryingBuffer(this.dataLen));
+        packetOut.writeEmptyCVArray(this.dataLen);
         // Alignment: 4 - Already aligned
         packetOut.writeReferentID();
         // Alignment: 4 - Already aligned

@@ -188,11 +188,11 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
     /**
      * The maximum length of the subkey name to retrieve.
      */
-    private final RPCUnicodeString.Empty lpNameIn;
+    private final int nameLen;
     /**
      * The maximum length of the subkey class to retrieve.
      */
-    private final RPCUnicodeString.Empty lpClassIn;
+    private final int classLen;
 
     /**
      * The BaseRegEnumKey method is called by the client in order to enumerate a subkey. In response, the server returns
@@ -203,15 +203,15 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
      *                 {@link OpenUsers}, BaseRegCreateKey, {@link BaseRegOpenKey}, {@link OpenCurrentConfig},
      *                 {@link OpenPerformanceText}, {@link OpenPerformanceNlsText}.
      * @param index    The index of the subkey to retrieve.
-     * @param lpNameIn  An allocated RPCUnicodeBuffer
-     * @param lpClassIn The maximum length of the subkey class to retrieve.
+     * @param nameLen  The maximum length of the subkey name to retrieve.
+     * @param classLen The maximum length of the subkey class to retrieve.
      */
-    public BaseRegEnumKeyRequest(final byte[] hKey, final int index, final RPCUnicodeString.Empty lpNameIn, final RPCUnicodeString.Empty lpClassIn) {
+    public BaseRegEnumKeyRequest(final byte[] hKey, final int index, final int nameLen, final int classLen) {
         super((short) 9);
         this.hKey = hKey;
         this.index = index;
-        this.lpNameIn = lpNameIn;
-        this.lpClassIn = lpClassIn;
+        this.nameLen = nameLen;
+        this.classLen = classLen;
     }
 
     @Override
@@ -253,32 +253,22 @@ public class BaseRegEnumKeyRequest extends RequestCall<BaseRegEnumKeyResponse> {
         //          Referent ID: 0x0002000c
         //          Last Changed Time: No time specified (0)
         // <NDR: fixed array> [in] RPC_HKEY hKey
-        packetOut.write(hKey);
+        packetOut.write(this.hKey);
         // <NDR: unsigned long> [in] DWORD dwIndex
         // Alignment: 4 - Already aligned, wrote 20 bytes above
-        packetOut.writeInt(index);
+        packetOut.writeInt(this.index);
         // <NDR: struct> [in] PRRP_UNICODE_STRING lpNameIn
         // Alignment: 2 - Already aligned
-        packetOut.writeMarshallable(lpNameIn);
-        //writeAllocatedBuffer(packetOut, lpNameIn.getMaximumLength());
+        packetOut.writeEmptyRPCUnicodeString(this.nameLen);
         // <NDR: pointer[struct]> [in, unique] PRRP_UNICODE_STRING lpClassIn,
         // Alignment: 4 - Already aligned
         packetOut.writeReferentID();
-        packetOut.writeMarshallable(lpClassIn);
+        // Alignment: 2 - Already aligned
+        packetOut.writeEmptyRPCUnicodeString(this.classLen);
         // <NDR: hyper> [in, out, unique] PFILETIME lpftLastWriteTime
         // Alignment: 4 - Already aligned
         packetOut.writeReferentID();
-        // Alignment: 8 - Already aligned, written 72 bytes at this point
-        packetOut.align(Alignment.EIGHT);
+        // Alignment: 4 - Already aligned - This is a struct of 2x 4bytes. Wrote 72 bytes so far
         packetOut.writeLong(0L);
-    }
-
-    private void writeAllocatedBuffer(PacketOutput out, int length) throws IOException {
-        out.writeShort((short) 0);
-        out.writeShort((short) length << 1);
-        out.writeReferentID();
-        out.writeInt(length);
-        out.writeInt(0);
-        out.writeInt(0);
     }
 }

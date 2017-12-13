@@ -61,10 +61,10 @@ public class Test_PacketOutput {
     }
 
     @Test
-    public void writeEmptyArray() throws IOException {
+    public void writeEmptyCVArray() throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
-        packetOut.writeEmptyArray(50462976);
+        packetOut.writeEmptyCVArray(50462976);
         assertEquals("000102030000000000000000", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
 
