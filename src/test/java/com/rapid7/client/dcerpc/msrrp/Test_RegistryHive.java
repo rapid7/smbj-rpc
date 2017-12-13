@@ -18,9 +18,7 @@
  */
 package com.rapid7.client.dcerpc.msrrp;
 
-import java.util.EnumSet;
 import org.junit.Test;
-import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
 
 import static com.rapid7.client.dcerpc.msrrp.RegistryHive.*;
@@ -50,9 +48,9 @@ public class Test_RegistryHive {
 
     @Test
     public void HKEY_CLASSES_ROOT_getRequest() {
-        final HandleRequest request = HKEY_CLASSES_ROOT.getRequest(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final HandleRequest request = HKEY_CLASSES_ROOT.getRequest(33554432);
         assertEquals(0, request.getOpNum());
-        assertEquals(EnumSet.of(AccessMask.MAXIMUM_ALLOWED), request.getAccessMask());
+        assertEquals(33554432, request.getAccessMask());
     }
 
     @Test
@@ -87,9 +85,9 @@ public class Test_RegistryHive {
 
     @Test
     public void HKEY_CURRENT_CONFIG_getRequest() {
-        final HandleRequest request = HKEY_CURRENT_CONFIG.getRequest(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final HandleRequest request = HKEY_CURRENT_CONFIG.getRequest(33554432);
         assertEquals(27, request.getOpNum());
-        assertEquals(EnumSet.of(AccessMask.MAXIMUM_ALLOWED), request.getAccessMask());
+        assertEquals(33554432, request.getAccessMask());
     }
 
     @Test
@@ -124,9 +122,9 @@ public class Test_RegistryHive {
 
     @Test
     public void HKEY_CURRENT_USER_getRequest() {
-        final HandleRequest request = HKEY_CURRENT_USER.getRequest(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final HandleRequest request = HKEY_CURRENT_USER.getRequest(33554432);
         assertEquals(1, request.getOpNum());
-        assertEquals(EnumSet.of(AccessMask.MAXIMUM_ALLOWED), request.getAccessMask());
+        assertEquals(33554432, request.getAccessMask());
     }
 
     @Test
@@ -161,9 +159,9 @@ public class Test_RegistryHive {
 
     @Test
     public void HKEY_LOCAL_MACHINE_getRequest() {
-        final HandleRequest request = HKEY_LOCAL_MACHINE.getRequest(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final HandleRequest request = HKEY_LOCAL_MACHINE.getRequest(33554432);
         assertEquals(2, request.getOpNum());
-        assertEquals(EnumSet.of(AccessMask.MAXIMUM_ALLOWED), request.getAccessMask());
+        assertEquals(33554432, request.getAccessMask());
     }
 
     @Test
@@ -198,9 +196,9 @@ public class Test_RegistryHive {
 
     @Test
     public void HKEY_PERFORMANCE_DATA_getRequest() {
-        final HandleRequest request = HKEY_PERFORMANCE_DATA.getRequest(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final HandleRequest request = HKEY_PERFORMANCE_DATA.getRequest(33554432);
         assertEquals(3, request.getOpNum());
-        assertEquals(EnumSet.of(AccessMask.MAXIMUM_ALLOWED), request.getAccessMask());
+        assertEquals(33554432, request.getAccessMask());
     }
 
     @Test
@@ -235,9 +233,9 @@ public class Test_RegistryHive {
 
     @Test
     public void HKEY_PERFORMANCE_NLSTEXT_getRequest() {
-        final HandleRequest request = HKEY_PERFORMANCE_NLSTEXT.getRequest(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final HandleRequest request = HKEY_PERFORMANCE_NLSTEXT.getRequest(33554432);
         assertEquals(33, request.getOpNum());
-        assertEquals(EnumSet.of(AccessMask.MAXIMUM_ALLOWED), request.getAccessMask());
+        assertEquals(33554432, request.getAccessMask());
     }
 
     @Test
@@ -272,9 +270,9 @@ public class Test_RegistryHive {
 
     @Test
     public void HKEY_PERFORMANCE_TEXT_getRequest() {
-        final HandleRequest request = HKEY_PERFORMANCE_TEXT.getRequest(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final HandleRequest request = HKEY_PERFORMANCE_TEXT.getRequest(33554432);
         assertEquals(32, request.getOpNum());
-        assertEquals(EnumSet.of(AccessMask.MAXIMUM_ALLOWED), request.getAccessMask());
+        assertEquals(33554432, request.getAccessMask());
     }
 
     @Test
@@ -309,9 +307,9 @@ public class Test_RegistryHive {
 
     @Test
     public void HKEY_USERS_getRequest() {
-        final HandleRequest request = HKEY_USERS.getRequest(EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+        final HandleRequest request = HKEY_USERS.getRequest(33554432);
         assertEquals(4, request.getOpNum());
-        assertEquals(EnumSet.of(AccessMask.MAXIMUM_ALLOWED), request.getAccessMask());
+        assertEquals(33554432, request.getAccessMask());
     }
 
     @Test

@@ -18,8 +18,6 @@
  */
 package com.rapid7.client.dcerpc.msrrp;
 
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,12 +45,13 @@ import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryInfoKeyResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueRequest;
 import com.rapid7.client.dcerpc.msrrp.messages.BaseRegQueryValueResponse;
 import com.rapid7.client.dcerpc.msrrp.messages.HandleRequest;
-import com.rapid7.client.dcerpc.msrrp.objects.RPCSecurityDescriptor;
 import com.rapid7.client.dcerpc.objects.FileTime;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
-import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
+
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
+import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 
 /**
  * This class implements a partial registry service in accordance with [MS-RRP]: Windows Remote Registry Protocol which
@@ -66,7 +65,7 @@ public class RegistryService extends Service {
     private final static int MAX_REGISTRY_KEY_CLASS_SIZE = 32767;
     private final static int MAX_REGISTRY_VALUE_NAME_SIZE = 32767;
     private final static int MAX_REGISTRY_VALUE_DATA_SIZE = 1048576;
-    private final static EnumSet<AccessMask> ACCESS_MASK = EnumSet.of(AccessMask.MAXIMUM_ALLOWED);
+    private final static int MAXIMUM_ALLOWED = 33554432;
     private final Map<RegistryHive, byte[]> hiveCache = new HashMap<>();
     private final Map<RegistryHandleKey, byte[]> keyPathCache = new HashMap<>();
 
@@ -196,7 +195,7 @@ public class RegistryService extends Service {
                 return hiveCache.get(hive);
             } else {
                 final short opNum = hive.getOpNum();
-                final HandleRequest request = new HandleRequest(opNum, ACCESS_MASK);
+                final HandleRequest request = new HandleRequest(opNum, MAXIMUM_ALLOWED);
                 final HandleResponse response = callExpectSuccess(request, hive.getOpName());
                 final byte[] handle = response.getHandle();
                 hiveCache.put(hive, handle);

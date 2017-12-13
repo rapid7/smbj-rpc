@@ -18,10 +18,8 @@
  */
 package com.rapid7.client.dcerpc.msrrp;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.msrrp.messages.*;
 
 /**
@@ -131,7 +129,7 @@ public enum RegistryHive {
         return opNum;
     }
 
-    public HandleRequest getRequest(final EnumSet<AccessMask> accessMask) {
+    public HandleRequest getRequest(int accessMask) {
         return new HandleRequest(opNum, accessMask);
     }
 

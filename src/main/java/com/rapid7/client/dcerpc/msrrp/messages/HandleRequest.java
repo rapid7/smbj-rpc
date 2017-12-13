@@ -20,7 +20,6 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import java.util.EnumSet;
-import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
@@ -69,7 +68,7 @@ public class HandleRequest extends RequestCall<HandleResponse> {
     /**
      * A bit field that describes the requested security access for the key.
      */
-    private final EnumSet<AccessMask> accessMask;
+    private final int accessMask;
 
     /**
      * One of the following method(s) {@link OpenClassesRoot}, {@link OpenCurrentUser}, {@link OpenLocalMachine},
@@ -83,7 +82,7 @@ public class HandleRequest extends RequestCall<HandleResponse> {
      *                   {@link OpenPerformanceNlsText}.
      * @param accessMask A bit field that describes the requested security access for the key.
      */
-    public HandleRequest(final short op, final EnumSet<AccessMask> accessMask) {
+    public HandleRequest(final short op, int accessMask) {
         super(op);
         this.accessMask = accessMask;
     }
@@ -91,7 +90,7 @@ public class HandleRequest extends RequestCall<HandleResponse> {
     /**
      * @return A bit field that describes the requested security access for the key.
      */
-    public EnumSet<AccessMask> getAccessMask() {
+    public int getAccessMask() {
         return accessMask;
     }
 
@@ -112,7 +111,10 @@ public class HandleRequest extends RequestCall<HandleResponse> {
         //          .... .... 0... .... .... .... .... .... = Access SACL: Not set
         //          Standard rights: 0x00000000
         //          WINREG specific rights: 0x00000000
+        // <NDR: pointer>
         packetOut.writeNull();
-        packetOut.writeInt((int) EnumUtils.toLong(accessMask));
+        // <NDR: unsigned long>
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(this.accessMask);
     }
 }
