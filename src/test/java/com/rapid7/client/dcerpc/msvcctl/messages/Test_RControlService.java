@@ -27,8 +27,8 @@ import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
-import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
-import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.dto.IServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.dto.ServiceStatusInfo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -45,7 +45,7 @@ public class Test_RControlService {
 
         IServiceStatusInfo expectedResponse = new ServiceStatusInfo(ServiceType.WIN32_SHARE_PROCESS, ServiceStatusType.SERVICE_STOPPED, ServicesAcceptedControls.SERVICE_ACCEPT_NONE, 0, 0, 0, 0);
         assertTrue(SystemErrorCode.ERROR_SERVICE_NOT_ACTIVE.is(response.getReturnValue()));
-        assertEquals(expectedResponse, response.getServiceStatusInfo());
+        assertEquals(expectedResponse, response.getLpServiceStatus());
     }
 
     @SuppressWarnings("unchecked")

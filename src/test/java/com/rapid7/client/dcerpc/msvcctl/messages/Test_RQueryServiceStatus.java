@@ -27,8 +27,8 @@ import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
-import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
-import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.dto.IServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.dto.ServiceStatusInfo;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -43,7 +43,7 @@ public class Test_RQueryServiceStatus {
         IServiceStatusInfo expectedResponse = new ServiceStatusInfo(ServiceType.WIN32_SHARE_PROCESS, ServiceStatusType.SERVICE_STOPPED, ServicesAcceptedControls.SERVICE_ACCEPT_NONE, 0, 0, 0, 2000);
         RQueryServiceStatusResponse response = new RQueryServiceStatusResponse();
         response.fromHexString("200000000100000000000000000000000000000000000000d007000000000000");
-        assertEquals(expectedResponse, response.getServiceStatusInfo());
+        assertEquals(expectedResponse, response.getLpServiceStatus());
         assertTrue(SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue()));
     }
 

@@ -1,24 +1,26 @@
-/**
+/*
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright notice,
+ *   Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
  *
- * * Redistributions in binary form must reproduce the above copyright
+ *  Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  *
- * * Neither the name of the copyright holder nor the names of its contributors
+ *  Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
+ *
+ *
  */
-package com.rapid7.client.dcerpc.msvcctl.objects;
+package com.rapid7.client.dcerpc.msvcctl.dto;
 
-
+import java.util.Objects;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
@@ -30,13 +32,13 @@ import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
 
 public class ServiceStatusInfo implements IServiceStatusInfo {
 
-    final private ServiceType serviceType;
-    final private ServiceStatusType currentState;
-    final private ServicesAcceptedControls controlsAccepted;
-    final private int win32ExitCode;
-    final private int serviceSpecificExitCode;
-    final private int checkPoint;
-    final private int waitHint;
+    private final ServiceType serviceType;
+    private final ServiceStatusType currentState;
+    private final ServicesAcceptedControls controlsAccepted;
+    private final int win32ExitCode;
+    private final int serviceSpecificExitCode;
+    private final int checkPoint;
+    private final int waitHint;
 
     public ServiceStatusInfo(ServiceType serviceType, ServiceStatusType currentState, ServicesAcceptedControls controlsAccepted, int win32ExitCode, int serviceSpecificExitCode, int checkPoint, int waitHint) {
         this.serviceType = serviceType;
@@ -84,30 +86,34 @@ public class ServiceStatusInfo implements IServiceStatusInfo {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ServiceStatusInfo that = (ServiceStatusInfo) o;
-
-        if (win32ExitCode != that.win32ExitCode) return false;
-        if (serviceSpecificExitCode != that.serviceSpecificExitCode) return false;
-        if (checkPoint != that.checkPoint) return false;
-        if (waitHint != that.waitHint) return false;
-        if (serviceType != that.serviceType) return false;
-        if (currentState != that.currentState) return false;
-        return controlsAccepted == that.controlsAccepted;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof ServiceStatusInfo)) {
+            return false;
+        }
+        final ServiceStatusInfo other = (ServiceStatusInfo) obj;
+        return getServiceType() == other.getServiceType()
+                && getCurrentState() == other.getCurrentState()
+                && getControlsAccepted() == other.getControlsAccepted()
+                && getWin32ExitCode() == other.getWin32ExitCode()
+                && getServiceSpecificExitCode() == other.getServiceSpecificExitCode()
+                && getCheckPoint() == other.getCheckPoint()
+                && getWaitHint() == other.getWaitHint();
     }
 
     @Override
     public int hashCode() {
-        int result = serviceType.hashCode();
-        result = 31 * result + currentState.hashCode();
-        result = 31 * result + controlsAccepted.hashCode();
-        result = 31 * result + win32ExitCode;
-        result = 31 * result + serviceSpecificExitCode;
-        result = 31 * result + checkPoint;
-        result = 31 * result + waitHint;
-        return result;
+        return Objects.hash(getServiceType(), getCurrentState(), getControlsAccepted(),
+                getWin32ExitCode(), getServiceSpecificExitCode(), getCheckPoint(), getWaitHint());
+    }
+
+
+    @Override
+    public String toString() {
+        return String.format("ServiceStatusInfo{serviceType: %s, currentState: %s, controlsAccepted: %s, " +
+                "win32ExitCode: %d, serviceSpecificExitCode: %d, checkPoint: %d, waitHint: %d}",
+                getServiceType(), getCurrentState(), getControlsAccepted(), getWin32ExitCode(),
+                getServiceSpecificExitCode(), getCheckPoint(), getWaitHint());
     }
 }

@@ -18,20 +18,21 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.messages;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.msvcctl.objects.IServiceConfigInfo;
+import com.rapid7.client.dcerpc.msvcctl.dto.IServiceConfigInfo;
 
-public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConfigWResponse>
-{
+public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConfigWResponse> {
     private final static short OP_NUM = 11;
     private byte[] serviceHandle;
     private IServiceConfigInfo serviceConfigInfo;
 
     public RChangeServiceConfigWRequest(
         final byte[] handle,
-        final IServiceConfigInfo serviceConfigInfo){
+        final IServiceConfigInfo serviceConfigInfo) {
         super(OP_NUM);
         this.serviceHandle = handle;
         this.serviceConfigInfo = serviceConfigInfo;
@@ -61,11 +62,33 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
 
         if (serviceConfigInfo.getDependencies() != null) {
             packetOut.writeReferentID();
-            packetOut.writeInt(serviceConfigInfo.getDependencies().length()); //conformat array, count
-            packetOut.write(serviceConfigInfo.getDependencies().getBytes());
-            packetOut.align();
-            //dependency size
-            packetOut.writeInt(serviceConfigInfo.getDependencies().length());
+            // Count the number of bytes required for the array of dependencies
+            // This is better than allocated a new byte[] to hold everything.
+            // At the very least we have a null terminator at the end
+            int byteCount = 2;
+            //final String[] dependencies = serviceConfigInfo.getDependencies();
+            final String[] dependencies = serviceConfigInfo.getDependencies();
+            for (final String dependency : dependencies) {
+                // Number of UTF-16 bytes including null terminator
+                byteCount += ((dependency == null) ? 0 : dependency.length() * 2) + 2;
+            }
+            // MaximumCount for Conformant Array
+            packetOut.writeInt(byteCount);
+            // Entries
+            for (final String dependency : dependencies) {
+                // This is better than allocating a new char[]
+                for (int i = 0; i < dependency.length(); i++) {
+                    // UTF-16 little endian
+                    packetOut.writeChar(dependency.charAt(i));
+                }
+                // Each entry is null terminated
+                packetOut.writeChar(0);
+            }
+            // Array is doubly null terminated
+            packetOut.writeChar(0);
+            // Alignment: 4
+            packetOut.align(Alignment.FOUR);
+            packetOut.writeInt(byteCount);
         } else {
             packetOut.writeNull();
             //dependency size
@@ -78,11 +101,18 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
 
         if (serviceConfigInfo.getPassword() != null) {
             packetOut.writeReferentID();
-            packetOut.writeInt(serviceConfigInfo.getPassword().length());
-            packetOut.write(serviceConfigInfo.getPassword().getBytes());
-            packetOut.align();
+            final String password = serviceConfigInfo.getPassword();
+            final int byteCount = (password.length() * 2) + 2;
+            packetOut.writeInt(byteCount);
+            for (int i = 0; i < password.length(); i++) {
+                // UTF-16 little endian
+                packetOut.writeChar(password.charAt(i));
+            }
+            // Null terminated
+            packetOut.writeChar(0);
             //password size
-            packetOut.writeInt(serviceConfigInfo.getPassword().length());
+            packetOut.align(Alignment.FOUR);
+            packetOut.writeInt(byteCount);
         } else {
             packetOut.writeNull();
             //password size
@@ -92,5 +122,21 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
         if (serviceConfigInfo.getDisplayName() != null)
             packetOut.writeStringRef(serviceConfigInfo.getDisplayName(), true);
         else packetOut.writeNull();
+    }
+
+    byte[] convertDependencies(final String[] dependencies) {
+        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        for (final String dependency : serviceConfigInfo.getDependencies()) {
+            for (final char c : dependency.toCharArray()) {
+                // UTF-16 little endian
+                bout.write(c & 0x00FF);
+                bout.write(c & 0xFF00);
+            }
+            bout.write(0);
+            bout.write(0);
+        }
+        bout.write(0);
+        bout.write(0);
+        return bout.toByteArray();
     }
 }

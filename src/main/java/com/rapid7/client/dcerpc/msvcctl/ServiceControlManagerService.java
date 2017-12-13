@@ -20,18 +20,28 @@ package com.rapid7.client.dcerpc.msvcctl;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.msvcctl.dto.ServiceConfigInfo;
 import com.rapid7.client.dcerpc.msvcctl.dto.ServiceHandle;
 import com.rapid7.client.dcerpc.msvcctl.dto.ServiceManagerHandle;
+import com.rapid7.client.dcerpc.msvcctl.dto.ServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
 import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RControlServiceRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenSCManagerWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenServiceWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusResponse;
 import com.rapid7.client.dcerpc.msvcctl.messages.RStartServiceWRequest;
-import com.rapid7.client.dcerpc.msvcctl.objects.IServiceConfigInfo;
-import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
-import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
+import com.rapid7.client.dcerpc.msvcctl.dto.IServiceConfigInfo;
+import com.rapid7.client.dcerpc.msvcctl.dto.IServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.LPQueryServiceConfigW;
+import com.rapid7.client.dcerpc.msvcctl.objects.LPServiceStatus;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -60,7 +70,8 @@ public class ServiceControlManagerService extends Service {
             throws IOException {
         final byte[] serviceHandle = getServiceHandle(serviceManagerHandle, service);
         final RQueryServiceStatusRequest request = new RQueryServiceStatusRequest(serviceHandle);
-        return callExpectSuccess(request, "RQueryServiceStatus").getServiceStatusInfo();
+        final RQueryServiceStatusResponse response = callExpectSuccess(request, "RQueryServiceStatus");
+        return parseLPServiceStatus(response.getLpServiceStatus());
     }
 
     public IServiceStatusInfo stopService(ServiceManagerHandle serviceManagerHandle, String service)
@@ -68,23 +79,24 @@ public class ServiceControlManagerService extends Service {
         final byte[] serviceHandle = getServiceHandle(serviceManagerHandle, service);
         final RControlServiceRequest request =
                 new RControlServiceRequest(serviceHandle, RControlServiceRequest.SERVICE_CONTROL_STOP);
-        return callExpectSuccess(request, "RControlServiceRequest").getServiceStatusInfo();
+        final RQueryServiceStatusResponse response = callExpectSuccess(request, "RControlServiceRequest");
+        return parseLPServiceStatus(response.getLpServiceStatus());
     }
 
-    public boolean changeServiceConfig(ServiceManagerHandle serviceManagerHandle, String service,
+    public void changeServiceConfig(ServiceManagerHandle serviceManagerHandle, String service,
             IServiceConfigInfo serviceConfigInfo) throws IOException {
         final byte[] serviceHandle = getServiceHandle(serviceManagerHandle, service);
         final RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(serviceHandle, serviceConfigInfo);
         callExpectSuccess(request, "RChangeServiceConfigW");
-        return true;
     }
 
-    public ServiceConfigInfo queryServiceConfig(ServiceManagerHandle serviceManagerHandle, String service)
+    public IServiceConfigInfo queryServiceConfig(ServiceManagerHandle serviceManagerHandle, String service)
             throws IOException {
         final byte[] serviceHandle = getServiceHandle(serviceManagerHandle, service);
         final RQueryServiceConfigWRequest request =
                 new RQueryServiceConfigWRequest(serviceHandle, RQueryServiceConfigWRequest.MAX_BUFFER_SIZE);
-        return callExpectSuccess(request, "RQueryServiceConfigW").getServiceConfigInfo();
+        final RQueryServiceConfigWResponse response = callExpectSuccess(request, "RQueryServiceConfigW");
+        return parseLPQueryServiceConfigW(response.getLpServiceConfig());
     }
 
     private byte[] getServiceHandle(ServiceManagerHandle serviceManagerHandle, String serviceName) throws IOException {
@@ -99,5 +111,27 @@ public class ServiceControlManagerService extends Service {
 
     private ServiceHandle parseServiceHandle(final HandleResponse response) {
         return new ServiceHandle(response.getHandle());
+    }
+
+    private ServiceStatusInfo parseLPServiceStatus(final LPServiceStatus response) {
+        final ServiceType serviceType = ServiceType.fromInt(response.getDwServiceType());
+        final ServiceStatusType currentState = ServiceStatusType.fromInt(response.getDwCurrentState());
+        final ServicesAcceptedControls controlsAccepted = ServicesAcceptedControls.fromInt(response.getDwControlsAccepted());
+        return new ServiceStatusInfo(serviceType, currentState, controlsAccepted, response.getDwWin32ExitCode(),
+                response.getDwServiceSpecificExitCode(), response.getDwCheckPoint(), response.getDwWaitHint());
+    }
+
+    private ServiceConfigInfo parseLPQueryServiceConfigW(final LPQueryServiceConfigW response) {
+        final ServiceType serviceType = ServiceType.fromInt(response.getDwServiceType());
+        final ServiceStartType serviceStartType = ServiceStartType.fromInt(response.getDwStartType());
+        final ServiceError serviceError = ServiceError.fromInt(response.getDwErrorControl());
+        final String binaryPathName = (response.getLpBinaryPathName() == null) ? null : response.getLpBinaryPathName().getValue();
+        final String loadOrderGroup = (response.getLpLoadOrderGroup() == null) ? null : response.getLpLoadOrderGroup().getValue();
+        final int tagId = response.getDwTagId();
+        final String[] dependencies = response.getLpDependencies();
+        final String serviceStartName = (response.getLpServiceStartName() == null) ? null : response.getLpServiceStartName().getValue();
+        final String displayName = (response.getLpDisplayName() == null) ? null : response.getLpDisplayName().getValue();
+        return new ServiceConfigInfo(serviceType, serviceStartType, serviceError,
+                binaryPathName, loadOrderGroup, tagId, dependencies, serviceStartName, displayName, null);
     }
 }
