@@ -63,10 +63,9 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
         if (serviceConfigInfo.getDependencies() != null) {
             packetOut.writeReferentID();
             // Count the number of bytes required for the array of dependencies
-            // This is better than allocated a new byte[] to hold everything.
+            // This is better than allocating a new byte[] to hold everything.
             // At the very least we have a null terminator at the end
             int byteCount = 2;
-            //final String[] dependencies = serviceConfigInfo.getDependencies();
             final String[] dependencies = serviceConfigInfo.getDependencies();
             for (final String dependency : dependencies) {
                 // Number of UTF-16 bytes including null terminator
@@ -76,10 +75,12 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
             packetOut.writeInt(byteCount);
             // Entries
             for (final String dependency : dependencies) {
-                // This is better than allocating a new char[]
-                for (int i = 0; i < dependency.length(); i++) {
-                    // UTF-16 little endian
-                    packetOut.writeChar(dependency.charAt(i));
+                if (dependency != null) {
+                    // This is better than allocating a new char[]
+                    for (int i = 0; i < dependency.length(); i++) {
+                        // UTF-16 little endian
+                        packetOut.writeChar(dependency.charAt(i));
+                    }
                 }
                 // Each entry is null terminated
                 packetOut.writeChar(0);
