@@ -21,6 +21,7 @@ package com.rapid7.client.dcerpc.mssamr;
 import java.io.IOException;
 import java.rmi.UnmarshalException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import com.google.common.base.Strings;
 import com.rapid7.client.dcerpc.RPCException;
@@ -38,6 +39,7 @@ import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.LogonHours;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithName;
+import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithNameUse;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithUse;
 import com.rapid7.client.dcerpc.mssamr.dto.SecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
@@ -58,6 +60,8 @@ import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInAliasRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrGetMembersInGroupResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupDomainInSamServerRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupIdsInDomainRequest;
+import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupIdsInDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainRequest;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrLookupNamesInDomainResponse;
 import com.rapid7.client.dcerpc.mssamr.messages.SamrOpenAliasRequest;
@@ -88,9 +92,9 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString.NonNullTerminated;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
-
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_MORE_ENTRIES;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITEMS;
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
@@ -758,6 +762,24 @@ public class SecurityAccountManagerService extends Service {
                 new SamrGetAliasMembershipRequest(parseHandle(domainHandle), parseSIDs(sids));
         final SamrGetAliasMembershipResponse response = callExpectSuccess(request, "GetAliasMembership");
         return response.getList();
+    }
+
+    public MembershipWithNameUse[] getIDsForDomain(final DomainHandle domainHandle, int... rids) throws IOException {
+        final SamrLookupIdsInDomainRequest request = new SamrLookupIdsInDomainRequest(parseHandle(domainHandle), rids);
+        final SamrLookupIdsInDomainResponse response = callExpect(request, "SamrLookupIdsInDomain",
+            SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED, SystemErrorCode.STATUS_NONE_MAPPED);
+        if (SystemErrorCode.STATUS_NONE_MAPPED.getValue() == response.getReturnValue())
+            return new MembershipWithNameUse[0];
+
+        List<NonNullTerminated> names = response.getNames();
+        long[] array = response.getUses().getArray();
+        List<MembershipWithNameUse> members = new LinkedList<>();
+        for (int i = 0; i < names.size(); i++) {
+            if (names.get(i) != null) {
+                members.add(new MembershipWithNameUse(rids[i], names.get(i).getValue(), array[i]));
+            }
+        }
+        return members.toArray(new MembershipWithNameUse[0]);
     }
 
     /**
