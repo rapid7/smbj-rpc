@@ -35,8 +35,7 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
  * lpServiceStatus: Pointer to a SERVICE_STATUS (section 2.2.47) structure that contains the status information for the service.</pre></blockquote>
  */
 public class RQueryServiceStatusRequest extends RequestCall<RQueryServiceStatusResponse> {
-
-    private final static short OP_NUM = 6;
+    public static final short OP_NUM = 6;
     // <NDR: fixed array> [in] SC_RPC_HANDLE hService
     private final byte[] hService;
 

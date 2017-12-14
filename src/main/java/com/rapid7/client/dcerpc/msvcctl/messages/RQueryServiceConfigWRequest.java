@@ -39,8 +39,8 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
  * pcbBytesNeeded: An LPBOUNDED_DWORD_8K (section 2.2.8) data type that defines the pointer to a variable that contains the number of bytes needed to return all the configuration information if the method fails.</pre></blockquote>
  */
 public class RQueryServiceConfigWRequest extends RequestCall<RQueryServiceConfigWResponse> {
-    public final static int MAX_BUFFER_SIZE = 8192;
-    public final static short OP_NUM = 17;
+    public static final int MAX_BUFFER_SIZE = 8192;
+    public static final short OP_NUM = 17;
     // <NDR: fixed array> [in] SC_RPC_HANDLE hService
     private final byte[] hService;
     // <NDR: unsigned long> [in, range(0, 1024*8)] DWORD cbBufSize
