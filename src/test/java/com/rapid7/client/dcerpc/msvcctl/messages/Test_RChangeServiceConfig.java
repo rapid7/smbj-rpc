@@ -72,7 +72,6 @@ public class Test_RChangeServiceConfig {
     @Test
     public void encodeRChangeServiceConfigRequest() throws IOException {
         byte[] testHandle = Hex.decode("00000000f3fdced6b714df4ba7c770d115f24601");
-        ServiceConfigInfo serviceConfigInfo = new ServiceConfigInfo(ServiceType.NO_CHANGE, ServiceStartType.DEMAND_START, ServiceError.NORMAL, "Some binary path", "TestLOG", 1, new String[]{"abc"}, null, "Password", "TestDisplayName");
         RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(testHandle,
                 ServiceType.NO_CHANGE.getValue(), ServiceStartType.DEMAND_START.getValue(),
                 ServiceError.NORMAL.getValue(), WChar.NullTerminated.of("Some binary path"),

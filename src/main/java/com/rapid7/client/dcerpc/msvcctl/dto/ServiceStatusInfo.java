@@ -25,11 +25,6 @@ import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStatusType;
 import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServicesAcceptedControls;
 
-/**
- * Service Status responses from:
- * https://msdn.microsoft.com/en-us/library/cc245911.aspx
- */
-
 public class ServiceStatusInfo implements IServiceStatusInfo {
 
     private final ServiceType serviceType;

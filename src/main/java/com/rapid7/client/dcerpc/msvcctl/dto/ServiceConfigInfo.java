@@ -26,11 +26,6 @@ import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceError;
 import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStartType;
 import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceType;
 
-/**
- *  Query Service Config responses from:
- * https://msdn.microsoft.com/en-us/library/cc245948.aspx
- */
-
 public class ServiceConfigInfo implements IServiceConfigInfo {
     private final ServiceType serviceType;
     private final ServiceStartType startType;
@@ -127,6 +122,7 @@ public class ServiceConfigInfo implements IServiceConfigInfo {
                 && Objects.equals(getErrorControl(), other.getErrorControl())
                 && Objects.equals(getBinaryPathName(), other.getBinaryPathName())
                 && Objects.equals(getLoadOrderGroup(), other.getLoadOrderGroup())
+                && getTagId() == other.getTagId()
                 && Arrays.equals(getDependencies(), other.getDependencies())
                 && Objects.equals(getServiceStartName(), other.getServiceStartName())
                 && Objects.equals(getPassword(), other.getPassword())
@@ -135,8 +131,8 @@ public class ServiceConfigInfo implements IServiceConfigInfo {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getServiceType(), getStartType(), getErrorControl(),
-                getBinaryPathName(), getLoadOrderGroup(), getServiceStartName(), getPassword(), getDisplayName());
+        int result = Objects.hash(getServiceType(), getStartType(), getErrorControl(), getBinaryPathName(),
+                getLoadOrderGroup(), getTagId(), getServiceStartName(), getPassword(), getDisplayName());
         return (31 * result) + Arrays.hashCode(getDependencies());
     }
 
