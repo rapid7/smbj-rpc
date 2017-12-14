@@ -166,15 +166,15 @@ public class RegistryService extends Service {
         final RPCConformantVaryingByteArray data = response.getData();
         return new RegistryValue(canonicalizedValueName,
                 RegistryValueType.getRegistryValueType(response.getType()),
-                (data == null) ? null : data.getArray());
+                (data == null ? null : data.getArray()));
     }
 
     public byte[] getKeySecurity(final String hiveName, final String keyPath, final int securityDescriptorType)
             throws IOException {
         final byte[] handle = openKey(hiveName, keyPath, MAXIMUM_ALLOWED | ACCESS_SYSTEM_SECURITY);
         final int size = getKeyInfo(hiveName, keyPath).getSecurityDescriptor();
-        final BaseRegGetKeySecurityRequest request = new BaseRegGetKeySecurityRequest(handle, securityDescriptorType,
-            size);
+        final BaseRegGetKeySecurityRequest request =
+                new BaseRegGetKeySecurityRequest(handle, securityDescriptorType, size);
         final BaseRegGetKeySecurityResponse response = callExpectSuccess(request, "BaseRegGetKeySecurity");
         return response.getpRpcSecurityDescriptorOut().getLpSecurityDescriptor();
     }
