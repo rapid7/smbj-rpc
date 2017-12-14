@@ -36,30 +36,27 @@ public class PacketOutput extends PrimitiveOutput {
         return marshallable;
     }
 
-    public void writeIntRef(final Integer value) throws IOException {
-        if (value != null) {
-            writeReferentID();
-            writeInt(value);
-            align();
-        } else {
-            writeNull();
-        }
-    }
-
-    public void writeLongRef(final Long value) throws IOException {
-        if (value != null) {
-            writeReferentID();
-            writeLong(value);
-            align();
-        } else {
-            writeNull();
-        }
-    }
-
     public void writeReferentID() throws IOException {
         final int referentID = this.referentID;
         this.referentID += 4;
         writeInt(referentID);
+    }
+
+    /**
+     * Write a referent ID for the given object.
+     * If the object is null, a null reference (0) will be written.
+     *
+     * @param obj The object, which may be null.
+     * @return True iff the object was not null.
+     * @throws IOException On write failure.
+     */
+    public boolean writeReferentID(final Object obj) throws IOException {
+        if (obj == null) {
+            writeNull();
+            return false;
+        }
+        writeReferentID();
+        return true;
     }
 
     public void writeNull() throws IOException {
@@ -130,85 +127,5 @@ public class PacketOutput extends PrimitiveOutput {
         // Alignment: 4 - Already aligned
         writeInt(0);
         // No entries
-    }
-
-    public void writeEmptyArrayRef(final int maximumCount) throws IOException {
-        writeReferentID();
-        writeEmptyCVArray(maximumCount);
-        align();
-    }
-
-    public void writeStringBufferRef(final String string, final boolean nullTerminate) throws IOException {
-        if (string != null) {
-            writeReferentID();
-            writeStringBuffer(string, nullTerminate);
-        } else {
-            writeNull();
-        }
-    }
-
-    public void writeStringBuffer(final String string, final boolean nullTerminate) throws IOException {
-        final int maximumBytes;
-        final int currentBytes;
-
-        if (string == null) {
-            maximumBytes = 0;
-            currentBytes = 0;
-        } else {
-            maximumBytes = 2 * string.length() + (nullTerminate ? 2 : 0);
-            currentBytes = 2 * string.length() + (nullTerminate ? 2 : 0);
-        }
-
-        writeShort((short) currentBytes);
-        writeShort((short) maximumBytes);
-
-        if (string != null) {
-            writeReferentID();
-            writeString(string, nullTerminate);
-        } else {
-            writeNull();
-        }
-    }
-
-    public void writeStringRef(final String string, final boolean nullTerminate) throws IOException {
-        writeReferentID();
-        writeString(string, nullTerminate);
-    }
-
-    public void writeString(final String string, final boolean nullTerminate) throws IOException {
-        final int maximumChars;
-        final int currentChars;
-
-        maximumChars = string.length() + (nullTerminate ? 1 : 0);
-        currentChars = string.length() + (nullTerminate ? 1 : 0);
-
-        writeInt(maximumChars); //max_is (max size)
-        writeInt(0); //min_is (offset)
-        writeInt(currentChars); //size_is (actual size)
-
-        writeChars(string);
-        if (nullTerminate) {
-            writeShort((short) 0);
-        }
-        align();
-    }
-
-    public void writeStringBuffer(final int maximumChars) throws IOException {
-        final int maximumBytes = maximumChars << 1;
-        final int currentBytes = 0;
-        final int currentChars = 0;
-
-        writeShort((short) currentBytes);
-        writeShort((short) maximumBytes);
-        writeReferentID();
-        writeInt(maximumChars);
-        writeInt(0);
-        writeInt(currentChars);
-    }
-
-    public void writeStringBufferRef(final int maximumChars) throws IOException {
-        writeReferentID();
-        writeStringBuffer(maximumChars);
-        align();
     }
 }

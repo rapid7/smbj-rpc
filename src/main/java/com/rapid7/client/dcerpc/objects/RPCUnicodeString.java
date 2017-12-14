@@ -149,9 +149,6 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
             out.writeShort(0);
-            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
-            // Alignment 4 - Already aligned
-            out.writeNull();
         } else {
             // UTF-16 encoded string is 2 bytes per count point
             // Null terminator must also be considered
@@ -162,10 +159,10 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
             out.writeShort(byteLength);
-            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
-            // Alignment 4 - Already aligned
-            out.writeReferentID();
         }
+        // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+        // Alignment 4 - Already aligned
+        out.writeReferentID(this.wChar);
     }
 
     @Override

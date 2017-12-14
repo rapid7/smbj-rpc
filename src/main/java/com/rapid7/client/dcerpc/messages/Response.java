@@ -23,6 +23,7 @@ import com.rapid7.client.dcerpc.Header;
 import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 
 /**
  * The IDL declaration of the response PDU is as follows:<br>
@@ -88,7 +89,7 @@ public final class Response extends Header {
         packetOut.writeInt(0);
         packetOut.writeShort(0);
         packetOut.writeByte(0);
-        packetOut.align();
+        packetOut.align(Alignment.FOUR);
         packetOut.write(getStub());
         packetOut.write(new byte[getAuthLength()]);
     }
