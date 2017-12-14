@@ -19,11 +19,17 @@
 package com.rapid7.client.dcerpc.msvcctl;
 
 import java.io.IOException;
+
+import com.rapid7.client.dcerpc.dto.ContextHandle;
+import com.rapid7.client.dcerpc.msvcctl.enums.ServiceManagerAccessLevel;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.msvcctl.dto.ServiceHandle;
 import com.rapid7.client.dcerpc.msvcctl.dto.ServiceManagerHandle;
 import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RControlServiceRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RCloseServiceHandleRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RCreateServiceWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RDeleteServiceRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenSCManagerWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenServiceWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWRequest;
@@ -85,6 +91,28 @@ public class ServiceControlManagerService extends Service {
         final RQueryServiceConfigWRequest request =
                 new RQueryServiceConfigWRequest(serviceHandle, RQueryServiceConfigWRequest.MAX_BUFFER_SIZE);
         return callExpectSuccess(request, "RQueryServiceConfigW").getServiceConfigInfo();
+    }
+
+    public ServiceHandle createService(ServiceManagerHandle serviceManagerHandle,
+                                       IServiceConfigInfo serviceConfigInfo,
+                                       ServiceManagerAccessLevel accessLevel,
+                                       String service) throws IOException {
+        RCreateServiceWRequest request =
+                new RCreateServiceWRequest(serviceManagerHandle, serviceConfigInfo, accessLevel, service);
+        byte[] handle = callExpectSuccess(request, "RCreateServiceW").getHandle();
+        return new ServiceHandle(handle);
+    }
+
+    public boolean deleteService(ServiceHandle serviceHandle) throws IOException {
+        RDeleteServiceRequest request = new RDeleteServiceRequest(serviceHandle);
+        callExpectSuccess(request, "RDeleteService");
+        return true;
+    }
+
+    public ContextHandle closeHandle(ContextHandle serviceHandle) throws IOException {
+        RCloseServiceHandleRequest request = new RCloseServiceHandleRequest(serviceHandle);
+        byte[] handle = callExpectSuccess(request, "RCloseServiceHandle").getHandle();
+        return new ContextHandle(handle);
     }
 
     private byte[] getServiceHandle(ServiceManagerHandle serviceManagerHandle, String serviceName) throws IOException {
