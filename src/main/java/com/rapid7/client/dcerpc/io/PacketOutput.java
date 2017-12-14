@@ -29,13 +29,27 @@ public class PacketOutput extends PrimitiveOutput {
         super(outputStream);
     }
 
-    public <T extends Marshallable> T writeMarshallable(T marshallable) throws IOException {
+    /**
+     * Write a non-null object which implements {@link Marshallable}.
+     * This object *must* be considered a top level object; if it is not, consider calling
+     * {@link Marshallable#marshalPreamble(PacketOutput)}, {@link Marshallable#marshalEntity(PacketOutput)},
+     * and {@link Marshallable#marshalDeferrals(PacketOutput)} separately at the appropriate locations.
+     * @param marshallable A non-null {@link Marshallable} object.
+     * @param <T> The class of the provided marshallable object.
+     * @return The same input parameter. Useful for chaining.
+     * @throws IOException On write failure.
+     */
+    public <T extends Marshallable> T writeMarshallable(final T marshallable) throws IOException {
         marshallable.marshalPreamble(this);
         marshallable.marshalEntity(this);
         marshallable.marshalDeferrals(this);
         return marshallable;
     }
 
+    /**
+     * Write a referent ID unique to this instance of {@link PacketOutput}.
+     * @throws IOException On write failure.
+     */
     public void writeReferentID() throws IOException {
         final int referentID = this.referentID;
         this.referentID += 4;
@@ -43,9 +57,8 @@ public class PacketOutput extends PrimitiveOutput {
     }
 
     /**
-     * Write a referent ID for the given object.
+     * If the object is not null, write a referent ID unique to this instance of {@link PacketOutput}.
      * If the object is null, a null reference (0) will be written.
-     *
      * @param obj The object, which may be null.
      * @return True iff the object was not null.
      * @throws IOException On write failure.
@@ -59,6 +72,10 @@ public class PacketOutput extends PrimitiveOutput {
         return true;
     }
 
+    /**
+     * Write a null referent ID
+     * @throws IOException On write failure.
+     */
     public void writeNull() throws IOException {
         writeInt(0);
     }
