@@ -91,13 +91,10 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         packetOut.writeInt(this.preferredMaximumLength);
         // <NDR: pointer[unsigned long]> [in, out, unique] DWORD* ResumeHandle
         // Alignment: 4 - Already aligned
-        if (resumeHandle != null) {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.resumeHandle)) {
             // <NDR: unsigned long> [in, out, unique] DWORD* ResumeHandle
             // Alignment: 4 - Already aligned
             packetOut.writeInt(this.resumeHandle);
-        } else {
-            packetOut.writeNull();
         }
     }
 

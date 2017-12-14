@@ -166,11 +166,7 @@ public class NetprPathCanonicalizeRequest extends RequestCall<NetprPathCanonical
     }
 
     public void marshal(final PacketOutput packetOut) throws IOException {
-        if (this.serverName == null) {
-            packetOut.writeNull();
-            // Alignment for pathName
-        } else {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.serverName)) {
             packetOut.writeMarshallable(serverName);
             // Alignment for pathName
             packetOut.align(Alignment.FOUR);

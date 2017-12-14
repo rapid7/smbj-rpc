@@ -55,11 +55,7 @@ public class SamrConnect2Request extends RequestCall<HandleResponse> {
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: pointer[conformant varying array]> [in, unique, string] PSAMPR_SERVER_NAME ServerName
-        if (this.serverName == null) {
-            packetOut.writeNull();
-            // Alignment for DesiredAccess no necessary
-        } else {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.serverName)) {
             packetOut.writeMarshallable(this.serverName);
             // Alignment for DesiredAccess
             packetOut.align(Alignment.FOUR);

@@ -116,10 +116,7 @@ public class RPCSecurityDescriptor implements Unmarshallable, Marshallable {
         out.align(Alignment.FOUR);
         // <NDR: pointer[conformant varying array]> [size_is(cbInSecurityDescriptor), length_is(cbOutSecurityDescriptor)] PBYTE lpSecurityDescriptor;
         // Alignment: 4 - Already aligned
-        if (this.lpSecurityDescriptor != null)
-            out.writeReferentID();
-        else
-            out.writeNull();
+        out.writeReferentID(this.lpSecurityDescriptor);
         // <NDR: unsigned long> DWORD cbInSecurityDescriptor;
         // Alignment: 4 - Already aligned
         out.writeInt(cbInSecurityDescriptor);

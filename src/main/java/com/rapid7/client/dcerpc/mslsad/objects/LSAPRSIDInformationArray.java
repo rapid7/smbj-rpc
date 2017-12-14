@@ -42,17 +42,20 @@ public class LSAPRSIDInformationArray implements Marshallable {
         lsaprsidInformations.add(sidInfo);
     }
 
-    @Override public void marshalPreamble(PacketOutput out) throws IOException {
+    @Override
+    public void marshalPreamble(PacketOutput out) throws IOException {
         out.writeInt(lsaprsidInformations.size());
     }
 
-    @Override public void marshalEntity(PacketOutput out) throws IOException {
+    @Override
+    public void marshalEntity(PacketOutput out) throws IOException {
         for (final LSAPRSIDInformation lsaprsidInformation: lsaprsidInformations) {
             out.writeReferentID(lsaprsidInformation);
         }
     }
 
-    @Override public void marshalDeferrals(PacketOutput out) throws IOException {
+    @Override
+    public void marshalDeferrals(PacketOutput out) throws IOException {
         for (final LSAPRSIDInformation lsaprsidInformation: lsaprsidInformations) {
             if (lsaprsidInformation != null)
                 out.writeMarshallable(lsaprsidInformation);
