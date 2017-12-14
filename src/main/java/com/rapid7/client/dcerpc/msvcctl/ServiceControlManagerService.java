@@ -113,17 +113,25 @@ public class ServiceControlManagerService extends Service {
     }
 
     public void changeServiceConfig(final ServiceHandle serviceHandle, final IServiceConfigInfo serviceConfigInfo) throws IOException {
+        final WChar.NullTerminated binaryPathName = (serviceConfigInfo.getBinaryPathName() == null) ? null :
+                WChar.NullTerminated.of(serviceConfigInfo.getBinaryPathName());
+        final WChar.NullTerminated loadOrderGroup = (serviceConfigInfo.getLoadOrderGroup() == null) ? null :
+                WChar.NullTerminated.of(serviceConfigInfo.getLoadOrderGroup());
+        final WChar.NullTerminated serviceStartName = (serviceConfigInfo.getServiceStartName() == null) ? null :
+                WChar.NullTerminated.of(serviceConfigInfo.getServiceStartName());
+        final WChar.NullTerminated displayName = (serviceConfigInfo.getDisplayName() == null) ? null :
+                WChar.NullTerminated.of(serviceConfigInfo.getDisplayName());
         final RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(serviceHandle.getBytes(),
                 serviceConfigInfo.getServiceType().getValue(),
                 serviceConfigInfo.getStartType().getValue(),
                 serviceConfigInfo.getErrorControl().getValue(),
-                WChar.NullTerminated.of(serviceConfigInfo.getBinaryPathName()),
-                WChar.NullTerminated.of(serviceConfigInfo.getLoadOrderGroup()),
+                binaryPathName,
+                loadOrderGroup,
                 serviceConfigInfo.getTagId(),
                 serviceConfigInfo.getDependencies(),
-                WChar.NullTerminated.of(serviceConfigInfo.getServiceStartName()),
+                serviceStartName,
                 serviceConfigInfo.getPassword(),
-                WChar.NullTerminated.of(serviceConfigInfo.getDisplayName()));
+                displayName);
         callExpectSuccess(request, "RChangeServiceConfigW");
     }
 
