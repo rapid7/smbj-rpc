@@ -20,39 +20,39 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
-import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
-import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceControl;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStatusType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServicesAcceptedControls;
+import com.rapid7.client.dcerpc.msvcctl.objects.LPServiceStatus;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class Test_RControlService {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
-    @SuppressWarnings("unchecked")
     @Test
     public void parseRQueryServiceStatusResponse() throws IOException {
         final RQueryServiceStatusResponse response = new RQueryServiceStatusResponse();
         response.fromHexString("2000000001000000000000000000000000000000000000000000000026040000");
+        final LPServiceStatus responseObj = response.getLpServiceStatus();
 
-        IServiceStatusInfo expectedResponse = new ServiceStatusInfo(ServiceType.WIN32_SHARE_PROCESS, ServiceStatusType.SERVICE_STOPPED, ServicesAcceptedControls.SERVICE_ACCEPT_NONE, 0, 0, 0, 0);
         assertTrue(SystemErrorCode.ERROR_SERVICE_NOT_ACTIVE.is(response.getReturnValue()));
-        assertEquals(expectedResponse, response.getServiceStatusInfo());
+        assertEquals(responseObj.getDwServiceType(), ServiceType.WIN32_SHARE_PROCESS.getValue());
+        assertEquals(responseObj.getDwCurrentState(), ServiceStatusType.SERVICE_STOPPED.getValue());
+        assertEquals(responseObj.getDwControlsAccepted(), ServicesAcceptedControls.SERVICE_ACCEPT_NONE.getValue());
+        assertEquals(responseObj.getDwCheckPoint(), 0);
+        assertEquals(responseObj.getDwWin32ExitCode(), 0);
+        assertEquals(responseObj.getDwServiceSpecificExitCode(), 0);
+        assertEquals(responseObj.getDwWaitHint(), 0);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void encodeRControlServiceRequest() throws IOException {
         final byte[] testServiceHandle = Hex.decode("00000000c631745ab255a2409443ae2da3216e40");
-        final RControlServiceRequest request = new RControlServiceRequest(testServiceHandle, RControlServiceRequest.SERVICE_CONTROL_STOP);
+        final RControlServiceRequest request = new RControlServiceRequest(testServiceHandle, ServiceControl.STOP.getValue());
 
         assertEquals(request.toHexString(), "00000000c631745ab255a2409443ae2da3216e4001000000");
     }

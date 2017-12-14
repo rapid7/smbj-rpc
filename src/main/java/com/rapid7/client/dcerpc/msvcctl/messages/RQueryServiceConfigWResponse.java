@@ -22,47 +22,40 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
-import com.rapid7.client.dcerpc.msvcctl.objects.ServiceConfigInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.LPQueryServiceConfigW;
 
+/**
+ * <a href="https://msdn.microsoft.com/en-us/library/cc245948.aspx">RQueryServiceConfigW</a>
+ * <blockquote><pre>The RQueryServiceConfigW method returns the configuration parameters of the specified service.
+ *
+ *      DWORD RQueryServiceConfigW(
+ *          [in] SC_RPC_HANDLE hService,
+ *          [out] LPQUERY_SERVICE_CONFIGW lpServiceConfig,
+ *          [in, range(0, 1024*8)] DWORD cbBufSize,
+ *          [out] LPBOUNDED_DWORD_8K pcbBytesNeeded
+ *      );</pre></blockquote>
+ */
 public class RQueryServiceConfigWResponse extends RequestResponse {
-    private ServiceConfigInfo serviceConfigInfo;
-    private int bytesNeeded;
+    // <NDR: struct> [out] LPQUERY_SERVICE_CONFIGW lpServiceConfig
+    private LPQueryServiceConfigW lpServiceConfig;
+    // <NDR: unsigned long> [out] LPBOUNDED_DWORD_8K pcbBytesNeeded
+    private int pcbBytesNeeded;
 
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
-        readQueryServiceConfg(packetIn);
-        bytesNeeded = packetIn.readInt();
+        // <NDR: struct> [out] LPQUERY_SERVICE_CONFIGW lpServiceConfig
+        this.lpServiceConfig = new LPQueryServiceConfigW();
+        packetIn.readUnmarshallable(this.lpServiceConfig);
+        // <NDR: unsigned long> [out] LPBOUNDED_DWORD_8K pcbBytesNeeded
+        packetIn.align(Alignment.FOUR);
+        this.pcbBytesNeeded = packetIn.readInt();
     }
 
-    private void readQueryServiceConfg(PacketInput packetIn) throws IOException {
-        ServiceType serviceType = ServiceType.fromInt(packetIn.readInt());
-        ServiceStartType startType = ServiceStartType.fromInt(packetIn.readInt());
-        ServiceError errorControl = ServiceError.fromInt(packetIn.readInt());
-        int binaryPathRef = packetIn.readReferentID();
-        int loadOrderRef = packetIn.readReferentID();
-        int tagId = packetIn.readInt();
-        int dependencyRef = packetIn.readReferentID();
-        int serviceStartNameRef = packetIn.readReferentID();
-        int displayNameRef = packetIn.readReferentID();
-
-
-        String binaryPath = (binaryPathRef != 0) ? packetIn.readString(true) : null;
-        String loadOrderGroup = (loadOrderRef != 0) ? packetIn.readString(true) : null;
-        String dependencies = (dependencyRef != 0) ? packetIn.readString(true) : null;
-        String serviceStartName = (serviceStartNameRef != 0) ? packetIn.readString(true) : null;
-        String displayName = (displayNameRef != 0) ? packetIn.readString(true) : null;
-
-        serviceConfigInfo = new ServiceConfigInfo(serviceType, startType, errorControl, binaryPath, loadOrderGroup, tagId, dependencies, serviceStartName, displayName);
+    public LPQueryServiceConfigW getLpServiceConfig() {
+        return lpServiceConfig;
     }
 
-    public int getBytesNeeded() {
-        return bytesNeeded;
-    }
-
-    public ServiceConfigInfo getServiceConfigInfo() {
-        return serviceConfigInfo;
+    public int getPcbBytesNeeded() {
+        return pcbBytesNeeded;
     }
 }

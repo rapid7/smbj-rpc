@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msvcctl.ServiceControlManagerService;
+import com.rapid7.client.dcerpc.objects.WChar;
 
 import static org.testng.Assert.assertEquals;
 
@@ -41,14 +42,14 @@ public class Test_ROpenSCManager {
     @SuppressWarnings("unchecked")
     @Test
     public void encodeROpenSCManagerRequest_nullDatabase() throws IOException {
-        final ROpenSCManagerWRequest request = new ROpenSCManagerWRequest("test", null, ServiceControlManagerService.FULL_ACCESS);
+        final ROpenSCManagerWRequest request = new ROpenSCManagerWRequest(WChar.NullTerminated.of("test"), null, ServiceControlManagerService.FULL_ACCESS);
         assertEquals(request.toHexString(), "00000200050000000000000005000000740065007300740000000000000000003f000f00");
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void encodeROpenSCManagerRequest() throws IOException {
-        final ROpenSCManagerWRequest request = new ROpenSCManagerWRequest("test", "testdb", ServiceControlManagerService.FULL_ACCESS);
+        final ROpenSCManagerWRequest request = new ROpenSCManagerWRequest(WChar.NullTerminated.of("test"), WChar.NullTerminated.of("testdb"), ServiceControlManagerService.FULL_ACCESS);
         assertEquals(request.toHexString(), "0000020005000000000000000500000074006500730074000000000004000200070000000000000007000000740065007300740064006200000000003f000f00");
     }
 
