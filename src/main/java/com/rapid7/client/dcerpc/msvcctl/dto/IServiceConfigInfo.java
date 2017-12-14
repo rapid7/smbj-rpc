@@ -20,9 +20,9 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.dto;
 
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceError;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStartType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceType;
 
 public interface IServiceConfigInfo {
     ServiceType getServiceType();

@@ -20,9 +20,9 @@
  */
 package com.rapid7.client.dcerpc.msvcctl.dto;
 
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStatusType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServicesAcceptedControls;
 
 public interface IServiceStatusInfo {
     ServiceType getServiceType();

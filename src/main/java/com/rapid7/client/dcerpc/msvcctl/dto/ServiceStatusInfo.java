@@ -21,9 +21,9 @@
 package com.rapid7.client.dcerpc.msvcctl.dto;
 
 import java.util.Objects;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStatusType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServicesAcceptedControls;
 
 /**
  * Service Status responses from:
@@ -89,10 +89,10 @@ public class ServiceStatusInfo implements IServiceStatusInfo {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof ServiceStatusInfo)) {
+        } else if (! (obj instanceof IServiceStatusInfo)) {
             return false;
         }
-        final ServiceStatusInfo other = (ServiceStatusInfo) obj;
+        final IServiceStatusInfo other = (IServiceStatusInfo) obj;
         return getServiceType() == other.getServiceType()
                 && getCurrentState() == other.getCurrentState()
                 && getControlsAccepted() == other.getControlsAccepted()

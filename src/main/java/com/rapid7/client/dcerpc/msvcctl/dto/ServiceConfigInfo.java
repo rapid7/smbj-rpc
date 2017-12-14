@@ -22,9 +22,9 @@ package com.rapid7.client.dcerpc.msvcctl.dto;
 
 import java.util.Arrays;
 import java.util.Objects;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceError;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStartType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceType;
 
 /**
  *  Query Service Config responses from:
@@ -118,10 +118,10 @@ public class ServiceConfigInfo implements IServiceConfigInfo {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof ServiceConfigInfo)) {
+        } else if (! (obj instanceof IServiceConfigInfo)) {
             return false;
         }
-        final ServiceConfigInfo other = (ServiceConfigInfo) obj;
+        final IServiceConfigInfo other = (IServiceConfigInfo) obj;
         return Objects.equals(getServiceType(), other.getServiceType())
                 && Objects.equals(getStartType(), other.getStartType())
                 && Objects.equals(getErrorControl(), other.getErrorControl())

@@ -24,7 +24,7 @@ import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.msvcctl.objects.LPServiceStatus;
 
 /**
- * <a href="">RQueryServiceStatus</a>
+ * <a href="https://msdn.microsoft.com/en-us/library/cc245952.aspx">RQueryServiceStatus</a>
  * <blockquote><pre>The RQueryServiceStatus method returns the current status of the specified service.
  *
  *      DWORD RQueryServiceStatus(

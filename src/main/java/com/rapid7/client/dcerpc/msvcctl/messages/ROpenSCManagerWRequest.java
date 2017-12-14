@@ -20,35 +20,73 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.msvcctl.ServiceControlManagerService;
+import com.rapid7.client.dcerpc.objects.WChar;
 
+/**
+ * <a href="https://msdn.microsoft.com/en-us/library/cc245942.aspx">ROpenSCManagerW</a>
+ * <blockquote><pre>The ROpenSCManagerW method establishes a connection to server and opens the SCM database on the specified server.
+ *
+ *      DWORD ROpenSCManagerW(
+ *          [in, string, unique, range(0, SC_MAX_COMPUTER_NAME_LENGTH)] SVCCTL_HANDLEW lpMachineName,
+ *          [in, string, unique, range(0, SC_MAX_NAME_LENGTH)] wchar_t* lpDatabaseName,
+ *          [in] DWORD dwDesiredAccess,
+ *          [out] LPSC_RPC_HANDLE lpScHandle
+ *      );
+ *
+ * lpMachineName: An SVCCTL_HANDLEW (section 2.2.3) data type that defines the pointer to a null-terminated UNICODE string that specifies the server's machine name.
+ * lpDatabaseName: A pointer to a null-terminated UNICODE string that specifies the name of the SCM database to open. The parameter MUST be set to NULL, "ServicesActive", or "ServicesFailed".
+ * dwDesiredAccess: A value that specifies the access to the database. This MUST be one of the values as specified in section 3.1.4.
+ *      The client MUST also have the SC_MANAGER_CONNECT access right.
+ * lpScHandle: An LPSC_RPC_HANDLE data type that defines the handle to the newly opened SCM database.</pre></blockquote>
+ */
 public class ROpenSCManagerWRequest extends RequestCall<HandleResponse> {
-    private final static short OP_NUM = 15;
-    private final String name;
-    private final String databaseName;
-    private final int desiredAccess;
+    public static final short OP_NUM = 15;
+    private static final WChar.NullTerminated EMPTY = WChar.NullTerminated.of("");
+    // <NDR: pointer[struct]> [in, string, unique, range(0, SC_MAX_COMPUTER_NAME_LENGTH)] SVCCTL_HANDLEW lpMachineName
+    private final WChar.NullTerminated lpMachineName;
+    // <NDR: pointer[struct]> [in, string, unique, range(0, SC_MAX_NAME_LENGTH)] wchar_t* lpDatabaseName
+    private final WChar.NullTerminated lpDatabaseName;
+    // <NDR: unsigned long> [in] DWORD dwDesiredAccess
+    private final int dwDesiredAccess;
 
     public ROpenSCManagerWRequest() {
-        this("test", null, ServiceControlManagerService.FULL_ACCESS);
+        this(EMPTY, null, ServiceControlManagerService.FULL_ACCESS);
     }
 
-    public ROpenSCManagerWRequest(String name, String databaseName, int desiredAccess) {
+    public ROpenSCManagerWRequest(final WChar.NullTerminated lpMachineName,
+            final WChar.NullTerminated lpDatabaseName, final int dwDesiredAccess) {
         super(OP_NUM);
-        this.name = name;
-        this.databaseName = databaseName;
-        this.desiredAccess = desiredAccess;
+        this.lpMachineName = lpMachineName;
+        this.lpDatabaseName = lpDatabaseName;
+        this.dwDesiredAccess = dwDesiredAccess;
 
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        if (name != null) packetOut.writeStringRef(name, true);
-        else packetOut.writeNull();
-        if (databaseName != null) packetOut.writeStringRef(databaseName, true);
-        else packetOut.writeNull();
-        packetOut.writeInt(desiredAccess);
+        // <NDR: pointer[struct]> [in, string, unique, range(0, SC_MAX_COMPUTER_NAME_LENGTH)] SVCCTL_HANDLEW lpMachineName
+        if (this.lpMachineName != null) {
+            packetOut.writeReferentID();
+            packetOut.writeMarshallable(this.lpMachineName);
+            // Alignment for lpDatabaseName
+            packetOut.align(Alignment.FOUR);
+        } else {
+            packetOut.writeNull();
+        }
+        // <NDR: pointer[struct]> [in, string, unique, range(0, SC_MAX_NAME_LENGTH)] wchar_t* lpDatabaseName
+        if (this.lpDatabaseName != null) {
+            packetOut.writeReferentID();
+            packetOut.writeMarshallable(this.lpDatabaseName);
+            // Alignment for dwDesiredAccess
+            packetOut.align(Alignment.FOUR);
+        } else {
+            packetOut.writeNull();
+        }
+        packetOut.writeInt(this.dwDesiredAccess);
     }
 
     @Override

@@ -24,11 +24,12 @@ import com.rapid7.client.dcerpc.msvcctl.dto.ServiceConfigInfo;
 import com.rapid7.client.dcerpc.msvcctl.dto.ServiceHandle;
 import com.rapid7.client.dcerpc.msvcctl.dto.ServiceManagerHandle;
 import com.rapid7.client.dcerpc.msvcctl.dto.ServiceStatusInfo;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceError;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStartType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceControl;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceError;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStartType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStatusType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceType;
+import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServicesAcceptedControls;
 import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RControlServiceRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenSCManagerWRequest;
@@ -42,75 +43,71 @@ import com.rapid7.client.dcerpc.msvcctl.dto.IServiceConfigInfo;
 import com.rapid7.client.dcerpc.msvcctl.dto.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.LPQueryServiceConfigW;
 import com.rapid7.client.dcerpc.msvcctl.objects.LPServiceStatus;
+import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
 public class ServiceControlManagerService extends Service {
-
-    public final static String REMOTE_REGISTRY = "Remoteregistry";
     public final static int FULL_ACCESS = 0x000F003F;
 
     public ServiceControlManagerService(final RPCTransport transport) {
         super(transport);
     }
 
-    public ServiceManagerHandle getServiceManagerHandle() throws IOException {
+    public ServiceManagerHandle openServiceManagerHandle() throws IOException {
         final ROpenSCManagerWRequest request = new ROpenSCManagerWRequest(null, null, FULL_ACCESS);
-        return parseServiceManagerHandle(callExpectSuccess(request, "ROpenSCManagerW"));
+        return new ServiceManagerHandle(callExpectSuccess(request, "ROpenSCManagerW").getHandle());
     }
 
-    public boolean startService(ServiceManagerHandle serviceManagerHandle, String service) throws IOException {
-        final byte[] serviceHandle = getServiceHandle(serviceManagerHandle, service);
-        final RStartServiceWRequest request = new RStartServiceWRequest(serviceHandle);
-        callExpectSuccess(request, "RStartServiceW");
-        return true;
+    public ServiceHandle openServiceHandle(final ServiceManagerHandle serviceManagerHandle, final String serviceName) throws IOException {
+        final ROpenServiceWRequest request =
+                new ROpenServiceWRequest(parseHandle(serviceManagerHandle), WChar.NullTerminated.of(serviceName), FULL_ACCESS);
+        return new ServiceHandle(callExpectSuccess(request, "ROpenServiceWRequest").getHandle());
     }
 
-    public IServiceStatusInfo queryService(ServiceManagerHandle serviceManagerHandle, String service)
-            throws IOException {
-        final byte[] serviceHandle = getServiceHandle(serviceManagerHandle, service);
-        final RQueryServiceStatusRequest request = new RQueryServiceStatusRequest(serviceHandle);
-        final RQueryServiceStatusResponse response = callExpectSuccess(request, "RQueryServiceStatus");
-        return parseLPServiceStatus(response.getLpServiceStatus());
-    }
-
-    public IServiceStatusInfo stopService(ServiceManagerHandle serviceManagerHandle, String service)
-            throws IOException {
-        final byte[] serviceHandle = getServiceHandle(serviceManagerHandle, service);
+    public IServiceStatusInfo controlService(final ServiceHandle serviceHandle, final ServiceControl action) throws IOException {
         final RControlServiceRequest request =
-                new RControlServiceRequest(serviceHandle, RControlServiceRequest.SERVICE_CONTROL_STOP);
+                new RControlServiceRequest(serviceHandle.getBytes(), action.getValue());
         final RQueryServiceStatusResponse response = callExpectSuccess(request, "RControlServiceRequest");
         return parseLPServiceStatus(response.getLpServiceStatus());
     }
 
-    public void changeServiceConfig(ServiceManagerHandle serviceManagerHandle, String service,
-            IServiceConfigInfo serviceConfigInfo) throws IOException {
-        final byte[] serviceHandle = getServiceHandle(serviceManagerHandle, service);
-        final RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(serviceHandle, serviceConfigInfo);
+    public void startService(final ServiceHandle serviceHandle) throws IOException {
+        final RStartServiceWRequest request = new RStartServiceWRequest(serviceHandle.getBytes());
+        callExpectSuccess(request, "RStartServiceW");
+    }
+
+    public IServiceStatusInfo stopService(final ServiceHandle serviceHandle) throws IOException {
+        return controlService(serviceHandle, ServiceControl.STOP);
+    }
+
+    public IServiceStatusInfo queryService(final ServiceHandle serviceHandle) throws IOException {
+        final RQueryServiceStatusRequest request = new RQueryServiceStatusRequest(serviceHandle.getBytes());
+        final RQueryServiceStatusResponse response = callExpectSuccess(request, "RQueryServiceStatus");
+        return parseLPServiceStatus(response.getLpServiceStatus());
+    }
+
+    public void changeServiceConfig(final ServiceHandle serviceHandle, final IServiceConfigInfo serviceConfigInfo) throws IOException {
+        final RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(serviceHandle.getBytes(),
+                serviceConfigInfo.getServiceType().getValue(),
+                serviceConfigInfo.getStartType().getValue(),
+                serviceConfigInfo.getErrorControl().getValue(),
+                WChar.NullTerminated.of(serviceConfigInfo.getBinaryPathName()),
+                WChar.NullTerminated.of(serviceConfigInfo.getLoadOrderGroup()),
+                serviceConfigInfo.getTagId(),
+                serviceConfigInfo.getDependencies(),
+                WChar.NullTerminated.of(serviceConfigInfo.getServiceStartName()),
+                serviceConfigInfo.getPassword(),
+                WChar.NullTerminated.of(serviceConfigInfo.getDisplayName()));
         callExpectSuccess(request, "RChangeServiceConfigW");
     }
 
-    public IServiceConfigInfo queryServiceConfig(ServiceManagerHandle serviceManagerHandle, String service)
+    public IServiceConfigInfo queryServiceConfig(final ServiceHandle serviceHandle)
             throws IOException {
-        final byte[] serviceHandle = getServiceHandle(serviceManagerHandle, service);
         final RQueryServiceConfigWRequest request =
-                new RQueryServiceConfigWRequest(serviceHandle, RQueryServiceConfigWRequest.MAX_BUFFER_SIZE);
+                new RQueryServiceConfigWRequest(serviceHandle.getBytes(), RQueryServiceConfigWRequest.MAX_BUFFER_SIZE);
         final RQueryServiceConfigWResponse response = callExpectSuccess(request, "RQueryServiceConfigW");
         return parseLPQueryServiceConfigW(response.getLpServiceConfig());
-    }
-
-    private byte[] getServiceHandle(ServiceManagerHandle serviceManagerHandle, String serviceName) throws IOException {
-        final ROpenServiceWRequest request =
-                new ROpenServiceWRequest(parseHandle(serviceManagerHandle), serviceName, FULL_ACCESS);
-        return callExpectSuccess(request, "ROpenServiceWRequest").getHandle();
-    }
-
-    private ServiceManagerHandle parseServiceManagerHandle(final HandleResponse response) {
-        return new ServiceManagerHandle(response.getHandle());
-    }
-
-    private ServiceHandle parseServiceHandle(final HandleResponse response) {
-        return new ServiceHandle(response.getHandle());
     }
 
     private ServiceStatusInfo parseLPServiceStatus(final LPServiceStatus response) {
