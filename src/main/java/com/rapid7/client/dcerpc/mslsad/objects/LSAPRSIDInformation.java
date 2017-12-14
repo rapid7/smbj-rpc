@@ -52,28 +52,23 @@ import java.io.IOException;
 
 public class LSAPRSIDInformation implements Marshallable
 {
-    private RPCSID SID;
+    private RPCSID sid;
 
-    public LSAPRSIDInformation(RPCSID SID){
-        this.SID = SID;
+    public LSAPRSIDInformation(RPCSID sid) {
+        if (sid == null)
+            throw new IllegalArgumentException("sid must not be null");
+        this.sid = sid;
     }
 
-    @Override public void marshalPreamble(PacketOutput out)
-        throws IOException
-    {
+    @Override public void marshalPreamble(PacketOutput out) throws IOException {
 
     }
 
-    @Override public void marshalEntity(PacketOutput out)
-        throws IOException
-    {
-        out.align(Alignment.FOUR);
-        out.writeMarshallable(SID);
+    @Override public void marshalEntity(PacketOutput out) throws IOException {
+        out.writeMarshallable(sid);
     }
 
-    @Override public void marshalDeferrals(PacketOutput out)
-        throws IOException
-    {
-
+    @Override public void marshalDeferrals(PacketOutput out) throws IOException {
+        // No deferrals
     }
 }

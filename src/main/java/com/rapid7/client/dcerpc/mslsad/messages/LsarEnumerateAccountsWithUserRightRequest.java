@@ -53,12 +53,8 @@ public class LsarEnumerateAccountsWithUserRightRequest extends RequestCall<LsarE
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] LSAPR_HANDLE PolicyHandle
         packetOut.write(this.policyHandle);
-        if (this.userRight == null) {
-            // Alignment: 4 - Already aligned, wrote 20 bytes above
-            packetOut.writeNull();
-        } else {
-            // Alignment: 4 - Already aligned, wrote 20 bytes above
-            packetOut.writeReferentID();
+        // Alignment: 4 - Already aligned, wrote 20 bytes above
+        if (packetOut.writeReferentID(this.userRight)) {
             packetOut.writeMarshallable(this.userRight);
         }
     }

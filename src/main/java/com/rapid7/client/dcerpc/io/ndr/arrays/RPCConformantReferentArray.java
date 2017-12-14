@@ -62,10 +62,7 @@ public abstract class RPCConformantReferentArray<T extends Unmarshallable & Mars
 
     @Override
     protected void marshalEntryEntity(PacketOutput out, int index) throws IOException {
-        if (getArray()[index] == null)
-            out.writeNull();
-        else
-            out.writeReferentID();
+        out.writeReferentID(getArray()[index]);
     }
 
     @Override

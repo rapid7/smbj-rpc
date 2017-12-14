@@ -58,11 +58,7 @@ public class LsarOpenPolicy2Request extends RequestCall<HandleResponse> {
 
     @Override
     public void marshal(final PacketOutput packetOut) throws IOException {
-        if (this.systemName == null) {
-            packetOut.writeNull();
-            // Already aligned for LSAPR_OBJECT_ATTRIBUTES
-        } else {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.systemName)) {
             packetOut.writeMarshallable(this.systemName);
             // Align for LSAPR_OBJECT_ATTRIBUTES
             packetOut.align(Alignment.FOUR);
