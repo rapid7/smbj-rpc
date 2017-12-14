@@ -19,7 +19,10 @@
 package com.rapid7.client.dcerpc.msvcctl;
 
 import java.io.IOException;
+import com.rapid7.client.dcerpc.RPCException;
+import com.rapid7.client.dcerpc.dto.ContextHandle;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msvcctl.dto.ServiceConfigInfo;
 import com.rapid7.client.dcerpc.msvcctl.dto.ServiceHandle;
 import com.rapid7.client.dcerpc.msvcctl.dto.ServiceManagerHandle;
@@ -31,6 +34,7 @@ import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStatusType;
 import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServicesAcceptedControls;
 import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.RCloseServiceHandleRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.RControlServiceRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenSCManagerWRequest;
 import com.rapid7.client.dcerpc.msvcctl.messages.ROpenServiceWRequest;
@@ -59,10 +63,31 @@ public class ServiceControlManagerService extends Service {
         return new ServiceManagerHandle(callExpectSuccess(request, "ROpenSCManagerW").getHandle());
     }
 
+    public boolean closeServiceManagerHandle(final ServiceManagerHandle serviceManagerHandle) throws IOException {
+        return closeHandle(serviceManagerHandle);
+    }
+
     public ServiceHandle openServiceHandle(final ServiceManagerHandle serviceManagerHandle, final String serviceName) throws IOException {
         final ROpenServiceWRequest request =
                 new ROpenServiceWRequest(parseHandle(serviceManagerHandle), WChar.NullTerminated.of(serviceName), FULL_ACCESS);
         return new ServiceHandle(callExpectSuccess(request, "ROpenServiceWRequest").getHandle());
+    }
+
+    public boolean closeServiceHandle(final ServiceHandle serviceHandle) throws IOException {
+        return closeHandle(serviceHandle);
+    }
+
+    private boolean closeHandle(final ContextHandle handle) throws IOException {
+        if (handle == null)
+            return false;
+        final RCloseServiceHandleRequest request =
+                new RCloseServiceHandleRequest(parseHandle(handle));
+        final HandleResponse response = call(request);
+        if (SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue()))
+            return true;
+        else if (SystemErrorCode.STATUS_INVALID_HANDLE.is(response.getReturnValue()))
+            return false;
+        throw new RPCException("SamrCloseHandle", response.getReturnValue());
     }
 
     public IServiceStatusInfo controlService(final ServiceHandle serviceHandle, final ServiceControl action) throws IOException {
