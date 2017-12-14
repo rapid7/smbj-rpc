@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.mssamr;
 import java.io.IOException;
 import java.rmi.UnmarshalException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import com.google.common.base.Strings;
 import com.rapid7.client.dcerpc.RPCException;
@@ -39,7 +38,7 @@ import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.LogonHours;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithAttributes;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithName;
-import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithNameUse;
+import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithNameAndUse;
 import com.rapid7.client.dcerpc.mssamr.dto.MembershipWithUse;
 import com.rapid7.client.dcerpc.mssamr.dto.SecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.dto.ServerHandle;
@@ -695,12 +694,12 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public MembershipWithUse[] getNamesInDomain(final DomainHandle domainHandle, String ... names) throws IOException {
+    public MembershipWithUse[] lookupNamesInDomain(final DomainHandle domainHandle, String ... names) throws IOException {
         final SamrLookupNamesInDomainRequest request =
                 new SamrLookupNamesInDomainRequest(parseHandle(domainHandle), parseNonNullTerminatedStrings(names));
         final SamrLookupNamesInDomainResponse response =
                 callExpect(request, "SamrLookupNamesInDomain",
-                        SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED);
+                        SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED, SystemErrorCode.STATUS_NONE_MAPPED);
         long[] relativeIds = response.getRelativeIds().getArray();
         // This is a pointer, it can be null
         if (relativeIds == null)
@@ -715,7 +714,10 @@ public class SecurityAccountManagerService extends Service {
         }
         final MembershipWithUse[] memberships = new MembershipWithUse[relativeIds.length];
         for (int i = 0; i < memberships.length; i++) {
-            memberships[i] = new MembershipWithUse(relativeIds[i], (int) uses[i]);
+            if (relativeIds[i] == 0)
+                memberships[i] = null;
+            else
+                memberships[i] = new MembershipWithUse(relativeIds[i], (int) uses[i]);
         }
         return memberships;
     }
@@ -764,22 +766,21 @@ public class SecurityAccountManagerService extends Service {
         return response.getList();
     }
 
-    public MembershipWithNameUse[] getIDsForDomain(final DomainHandle domainHandle, int... rids) throws IOException {
+    public MembershipWithNameAndUse[] lookUpIDsForDomain(final DomainHandle domainHandle, int... rids) throws IOException {
         final SamrLookupIdsInDomainRequest request = new SamrLookupIdsInDomainRequest(parseHandle(domainHandle), rids);
         final SamrLookupIdsInDomainResponse response = callExpect(request, "SamrLookupIdsInDomain",
             SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED, SystemErrorCode.STATUS_NONE_MAPPED);
-        if (SystemErrorCode.STATUS_NONE_MAPPED.getValue() == response.getReturnValue())
-            return new MembershipWithNameUse[0];
 
         List<NonNullTerminated> names = response.getNames();
         long[] array = response.getUses().getArray();
-        List<MembershipWithNameUse> members = new LinkedList<>();
+        MembershipWithNameAndUse[] members = new MembershipWithNameAndUse[names.size()];
         for (int i = 0; i < names.size(); i++) {
-            if (names.get(i) != null) {
-                members.add(new MembershipWithNameUse(rids[i], names.get(i).getValue(), array[i]));
-            }
+            if (names.get(i).getValue() == null)
+                members[i] = null;
+            else
+                members[i] = new MembershipWithNameAndUse(rids[i], names.get(i).getValue(), array[i]);
         }
-        return members.toArray(new MembershipWithNameUse[0]);
+        return members;
     }
 
     /**
@@ -838,7 +839,10 @@ public class SecurityAccountManagerService extends Service {
         final MembershipWithName[] memberships = new MembershipWithName[list.size()];
         int i = 0;
         for (final SAMPRRIDEnumeration info : list) {
-            memberships[i++] = new MembershipWithName(info.getRelativeId(), info.getName().getValue());
+            if (info == null)
+                memberships[i++] = null;
+            else
+                memberships[i++] = new MembershipWithName(info.getRelativeId(), info.getName().getValue());
         }
         return memberships;
     }

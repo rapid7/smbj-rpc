@@ -19,15 +19,55 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
-import org.apache.commons.lang3.ArrayUtils;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 
+/**
+ * The SamrLookupIdsInDomain method translates a set of RIDs into account names.
+ *
+ * <pre>
+ * long SamrLookupIdsInDomain(
+ *   [in] SAMPR_HANDLE DomainHandle,
+ *   [in, range(0,1000)] unsigned long Count,
+ *   [in, size_is(1000), length_is(Count)]
+ *     unsigned long* RelativeIds,
+ *   [out] PSAMPR_RETURNED_USTRING_ARRAY Names,
+ *   [out] PSAMPR_ULONG_ARRAY Use
+ * );
+ * </pre>
+ * <p>
+ * DomainHandle: An RPC context handle, as specified in section 2.2.3.2,
+ * representing a domain object.
+ * </p>
+ *
+ * <p>
+ * Count: The number of elements in RelativeIds. The maximum value of 1,000 is
+ * chosen to limit the amount of memory that the client can force the server to
+ * allocate.
+ * </p>
+ *
+ * <p>
+ * RelativeIds: An array of RIDs that are to be mapped to account names.
+ * </p>
+ *
+ * <p>
+ * Names: A structure containing an array of account names that correspond to
+ * the elements in RelativeIds.
+ * </p>
+ *
+ * <p>
+ * Use: A structure containing an array of SID_NAME_USE enumeration values that
+ * describe the type of account for each entry in RelativeIds.
+ * </p>
+ *
+ * @see <a href=
+ *      "https://msdn.microsoft.com/en-us/library/cc245713.aspx">https://msdn.microsoft.com/en-us/library/cc245713.aspx</a>
+ */
 public class SamrLookupIdsInDomainRequest extends RequestCall<SamrLookupIdsInDomainResponse> {
     public static short OP_NUM = 18;
     private final byte[] handle;
     private final int count;
-    private final Integer[] relativeIDs;
+    private final int[] relativeIDs;
 
     public SamrLookupIdsInDomainRequest(final byte[] domainHandle, int... rids) {
         super(OP_NUM);
@@ -37,7 +77,7 @@ public class SamrLookupIdsInDomainRequest extends RequestCall<SamrLookupIdsInDom
             throw new IllegalArgumentException(
                 "Count cannot exceed 1000 to limit the amount of memory client can force the server to allocate: "
                     + count);
-        this.relativeIDs = ArrayUtils.toObject(rids);
+        this.relativeIDs = rids;
     }
 
     @Override
@@ -56,5 +96,4 @@ public class SamrLookupIdsInDomainRequest extends RequestCall<SamrLookupIdsInDom
     public SamrLookupIdsInDomainResponse getResponseObject() {
         return new SamrLookupIdsInDomainResponse();
     }
-
 }

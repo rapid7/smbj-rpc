@@ -18,9 +18,11 @@
  */
 package com.rapid7.client.dcerpc.mssamr.dto;
 
-public class MembershipWithNameUse extends MembershipWithName {
+import java.util.Objects;
+
+public class MembershipWithNameAndUse extends MembershipWithName {
     private final long use;
-    public MembershipWithNameUse(long relativeID, String name, long use) {
+    public MembershipWithNameAndUse(long relativeID, String name, long use) {
         super(relativeID, name);
         this.use = use;
     }
@@ -29,4 +31,24 @@ public class MembershipWithNameUse extends MembershipWithName {
         return use;
     }
 
+    @Override
+    public int hashCode() {
+        return (super.hashCode() * 31) + Objects.hashCode(use);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof MembershipWithNameAndUse)) {
+            return false;
+        }
+        return super.equals(obj) && Objects.equals(this.use, ((MembershipWithNameAndUse) obj).use);
+    }
+
+    @Override
+    public String toString() {
+        final String nameStr = (getName() != null) ? String.format("\"%s\"", getName()) : "null";
+        return String.format("MembershipWithName{relativeID: %d, name: %s, use: %s}", getRelativeID(), nameStr, use);
+    }
 }

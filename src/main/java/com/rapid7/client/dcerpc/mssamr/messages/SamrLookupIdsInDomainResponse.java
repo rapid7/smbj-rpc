@@ -26,16 +26,15 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRReturnedUStringArray;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRULongArray;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString.NonNullTerminated;
 
-/**
- *
- */
 public class SamrLookupIdsInDomainResponse extends RequestResponse {
-    private SAMPRReturnedUStringArray names = new SAMPRReturnedUStringArray();
-    private SAMPRULongArray uses = new SAMPRULongArray();
+    private SAMPRReturnedUStringArray names;
+    private SAMPRULongArray uses;
 
     @Override
     public void unmarshalResponse(PacketInput in) throws IOException {
+        names = new SAMPRReturnedUStringArray();
         in.readUnmarshallable(names);
+        uses = new SAMPRULongArray();
         in.readUnmarshallable(uses);
     }
 
