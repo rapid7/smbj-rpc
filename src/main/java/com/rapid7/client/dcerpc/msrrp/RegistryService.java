@@ -125,7 +125,6 @@ public class RegistryService extends Service {
             final int returnCode = response.getReturnValue();
 
             if (ERROR_SUCCESS.is(returnCode)) {
-
                 keyNames.add(new RegistryKey(
                         (response.getLpNameOut() == null) ? null : response.getLpNameOut().getValue(),
                         new FileTime(response.getLastWriteTime())));
