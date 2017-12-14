@@ -20,6 +20,8 @@
  */
 package com.rapid7.client.dcerpc.msrrp.dto;
 
+import java.util.Objects;
+
 public class RegistryKeyInfo {
     private final int subKeys;
     private final int maxSubKeyLen;
@@ -95,5 +97,37 @@ public class RegistryKeyInfo {
      */
     public long getLastWriteTime() {
         return lastWriteTime;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSubKeys(), getMaxSubKeyLen(), getMaxClassLen(), getValues(),
+                getMaxValueNameLen(), getMaxValueLen(), getSecurityDescriptor(), getLastWriteTime());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof RegistryKeyInfo)) {
+            return false;
+        }
+        final RegistryKeyInfo other = (RegistryKeyInfo) obj;
+        return getSubKeys() == other.getSubKeys()
+                && getMaxSubKeyLen() == other.getMaxSubKeyLen()
+                && getMaxClassLen() == other.getMaxClassLen()
+                && getValues() == other.getValues()
+                && getMaxValueNameLen() == other.getMaxValueNameLen()
+                && getMaxValueLen() == other.getMaxValueLen()
+                && getSecurityDescriptor() == other.getSecurityDescriptor()
+                && getLastWriteTime() == other.getLastWriteTime();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("RegistryKeyInfo{subKeys: %d, maxSubKeyLen: %d, maxClassLen: %d, " +
+                "values: %d, maxValueNameLen: %d, maxValueLen: %d, securityDescriptor: %d," +
+                "lastWriteTime: %d}", getSubKeys(), getMaxSubKeyLen(), getMaxClassLen(),
+                getValues(), getMaxValueNameLen(), getMaxValueLen(), getSecurityDescriptor(), getLastWriteTime());
     }
 }
