@@ -22,6 +22,7 @@
 package com.rapid7.client.dcerpc.msvcctl.objects;
 
 import java.io.IOException;
+import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
@@ -61,28 +62,56 @@ public class LPServiceStatus implements Unmarshallable {
         return dwServiceType;
     }
 
+    public void setDwServiceType(int dwServiceType) {
+        this.dwServiceType = dwServiceType;
+    }
+
     public int getDwCurrentState() {
         return dwCurrentState;
+    }
+
+    public void setDwCurrentState(int dwCurrentState) {
+        this.dwCurrentState = dwCurrentState;
     }
 
     public int getDwControlsAccepted() {
         return dwControlsAccepted;
     }
 
+    public void setDwControlsAccepted(int dwControlsAccepted) {
+        this.dwControlsAccepted = dwControlsAccepted;
+    }
+
     public int getDwWin32ExitCode() {
         return dwWin32ExitCode;
+    }
+
+    public void setDwWin32ExitCode(int dwWin32ExitCode) {
+        this.dwWin32ExitCode = dwWin32ExitCode;
     }
 
     public int getDwServiceSpecificExitCode() {
         return dwServiceSpecificExitCode;
     }
 
+    public void setDwServiceSpecificExitCode(int dwServiceSpecificExitCode) {
+        this.dwServiceSpecificExitCode = dwServiceSpecificExitCode;
+    }
+
     public int getDwCheckPoint() {
         return dwCheckPoint;
     }
 
+    public void setDwCheckPoint(int dwCheckPoint) {
+        this.dwCheckPoint = dwCheckPoint;
+    }
+
     public int getDwWaitHint() {
         return dwWaitHint;
+    }
+
+    public void setDwWaitHint(int dwWaitHint) {
+        this.dwWaitHint = dwWaitHint;
     }
 
     @Override
@@ -122,5 +151,34 @@ public class LPServiceStatus implements Unmarshallable {
         // No deferrals
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDwServiceType(), getDwCurrentState(), getDwControlsAccepted(),
+                getDwWin32ExitCode(), getDwServiceSpecificExitCode(), getDwCheckPoint(), getDwWaitHint());
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (! (obj instanceof LPServiceStatus)) {
+            return false;
+        }
+        final LPServiceStatus other = (LPServiceStatus) obj;
+        return getDwServiceType() == other.getDwServiceType()
+                && getDwCurrentState() == other.getDwCurrentState()
+                && getDwControlsAccepted() == other.getDwControlsAccepted()
+                && getDwWin32ExitCode() == other.getDwWin32ExitCode()
+                && getDwServiceSpecificExitCode() == other.getDwServiceSpecificExitCode()
+                && getDwCheckPoint() == other.getDwCheckPoint()
+                && getDwWaitHint() == other.getDwWaitHint();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("LPSERVICE_STATUS{dwServiceType: %d, dwCurrentState: %d, dwControlsAccepted: %d, " +
+                "dwWin32ExitCode: %d, dwServiceSpecificExitCode: %d, dwCheckPoint: %d, dwWaitHint: %d}",
+                getDwServiceType(), getDwCurrentState(), getDwControlsAccepted(), getDwWin32ExitCode(),
+                getDwServiceSpecificExitCode(), getDwCheckPoint(), getDwWaitHint());
+    }
 }

@@ -71,36 +71,72 @@ public class LPQueryServiceConfigW implements Unmarshallable {
         return dwServiceType;
     }
 
+    public void setDwServiceType(int dwServiceType) {
+        this.dwServiceType = dwServiceType;
+    }
+
     public int getDwStartType() {
         return dwStartType;
+    }
+
+    public void setDwStartType(int dwStartType) {
+        this.dwStartType = dwStartType;
     }
 
     public int getDwErrorControl() {
         return dwErrorControl;
     }
 
+    public void setDwErrorControl(int dwErrorControl) {
+        this.dwErrorControl = dwErrorControl;
+    }
+
     public WChar.NullTerminated getLpBinaryPathName() {
         return lpBinaryPathName;
+    }
+
+    public void setLpBinaryPathName(WChar.NullTerminated lpBinaryPathName) {
+        this.lpBinaryPathName = lpBinaryPathName;
     }
 
     public WChar.NullTerminated getLpLoadOrderGroup() {
         return lpLoadOrderGroup;
     }
 
+    public void setLpLoadOrderGroup(WChar.NullTerminated lpLoadOrderGroup) {
+        this.lpLoadOrderGroup = lpLoadOrderGroup;
+    }
+
     public int getDwTagId() {
         return dwTagId;
+    }
+
+    public void setDwTagId(int dwTagId) {
+        this.dwTagId = dwTagId;
     }
 
     public String[] getLpDependencies() {
         return lpDependencies;
     }
 
+    public void setLpDependencies(String[] lpDependencies) {
+        this.lpDependencies = lpDependencies;
+    }
+
     public WChar.NullTerminated getLpServiceStartName() {
         return lpServiceStartName;
     }
 
+    public void setLpServiceStartName(WChar.NullTerminated lpServiceStartName) {
+        this.lpServiceStartName = lpServiceStartName;
+    }
+
     public WChar.NullTerminated getLpDisplayName() {
         return lpDisplayName;
+    }
+
+    public void setLpDisplayName(WChar.NullTerminated lpDisplayName) {
+        this.lpDisplayName = lpDisplayName;
     }
 
     @Override
