@@ -21,7 +21,6 @@ package com.rapid7.client.dcerpc.msrrp;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import com.google.common.base.Strings;
 import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
@@ -71,6 +69,7 @@ public class RegistryService extends Service {
     private final static int MAX_REGISTRY_VALUE_NAME_SIZE = 32767;
     private final static int MAX_REGISTRY_VALUE_DATA_SIZE = 1048576;
     private final static int MAXIMUM_ALLOWED = 33554432;
+    private final static int ACCESS_SYSTEM_SECURITY = 16777216;
     private final Map<RegistryHive, byte[]> hiveCache = new HashMap<>();
     private final Map<RegistryHandleKey, byte[]> keyPathCache = new HashMap<>();
 
@@ -171,8 +170,7 @@ public class RegistryService extends Service {
 
     public byte[] getKeySecurity(final String hiveName, final String keyPath, final int securityDescriptorType)
             throws IOException {
-        final byte[] handle = openKey(hiveName, keyPath,
-            (int) EnumUtils.toLong(EnumSet.of(AccessMask.MAXIMUM_ALLOWED, AccessMask.ACCESS_SYSTEM_SECURITY)));
+        final byte[] handle = openKey(hiveName, keyPath, MAXIMUM_ALLOWED | ACCESS_SYSTEM_SECURITY);
         final int size = getKeyInfo(hiveName, keyPath).getSecurityDescriptor();
         final BaseRegGetKeySecurityRequest request = new BaseRegGetKeySecurityRequest(handle, securityDescriptorType,
             size);
@@ -193,13 +191,11 @@ public class RegistryService extends Service {
     }
 
     protected byte[] openHive(final String hiveName) throws IOException {
-        if (hiveName == null) {
-            throw new IllegalArgumentException("Invalid hive: " + hiveName);
-        }
+        if (hiveName == null)
+            throw new IllegalArgumentException("Invalid hive: null");
         final RegistryHive hive = RegistryHive.getRegistryHiveByName(hiveName);
-        if (hive == null) {
+        if (hive == null)
             throw new IllegalArgumentException("Unknown hive: " + hiveName);
-        }
         synchronized (hiveCache) {
             if (hiveCache.containsKey(hive)) {
                 return hiveCache.get(hive);
@@ -218,8 +214,7 @@ public class RegistryService extends Service {
         return openKey(hiveName, keyPath, (int) AccessMask.MAXIMUM_ALLOWED.getValue());
     }
 
-    protected byte[] openKey(final String hiveName, final String keyPath, int desiredAccess)
-            throws IOException {
+    private byte[] openKey(final String hiveName, final String keyPath, int desiredAccess) throws IOException {
         final String canonicalizedKeyPath = canonicalize(keyPath);
         if (canonicalizedKeyPath.isEmpty()) {
             return openHive(hiveName);

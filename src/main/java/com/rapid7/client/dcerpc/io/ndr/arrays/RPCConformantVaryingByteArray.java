@@ -29,7 +29,7 @@ import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 public class RPCConformantVaryingByteArray implements Unmarshallable, Marshallable {
-    private static byte[] EMPTY = new byte[0];
+    private static final byte[] EMPTY = new byte[0];
 
     private int offset;
     private byte[] array = EMPTY;
