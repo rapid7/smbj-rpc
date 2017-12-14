@@ -70,7 +70,7 @@ public class ServerService extends Service {
             int outBufLength, int pathType, int flags) throws IOException {
         final NetprPathCanonicalizeRequest request =
                 new NetprPathCanonicalizeRequest(
-                        WChar.NullTerminated.of(serverName),
+                        (serverName == null ? null : WChar.NullTerminated.of(serverName)),
                         WChar.NullTerminated.of(pathName),
                         outBufLength,
                         WChar.NullTerminated.of(prefix),
