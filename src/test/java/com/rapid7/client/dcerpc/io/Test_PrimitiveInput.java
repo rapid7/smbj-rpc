@@ -18,6 +18,7 @@
  */
 package com.rapid7.client.dcerpc.io;
 
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -35,28 +36,38 @@ public class Test_PrimitiveInput {
         new PacketInput(null);
     }
 
-    @Test
-    public void align() throws IOException {
-        final PacketInput packetIn = getPacketInput("0000000000000000");
-        assertEquals(0, packetIn.getCount());
+    @DataProvider
+    public Object[][] data_align() {
+        return new Object[][] {
+                {Alignment.ONE, 0, 0},
+                {Alignment.ONE, 1, 1},
+                {Alignment.TWO, 0, 0},
+                {Alignment.TWO, 2, 1},
+                {Alignment.TWO, 2, 2},
+                {Alignment.FOUR, 0, 0},
+                {Alignment.FOUR, 4, 1},
+                {Alignment.FOUR, 4, 2},
+                {Alignment.FOUR, 4, 3},
+                {Alignment.FOUR, 4, 4},
+                {Alignment.EIGHT, 0, 0},
+                {Alignment.EIGHT, 8, 1},
+                {Alignment.EIGHT, 8, 2},
+                {Alignment.EIGHT, 8, 3},
+                {Alignment.EIGHT, 8, 4},
+                {Alignment.EIGHT, 8, 5},
+                {Alignment.EIGHT, 8, 6},
+                {Alignment.EIGHT, 8, 7},
+                {Alignment.EIGHT, 8, 8},
+        };
+    }
 
-        packetIn.align();
-        assertEquals(0, packetIn.getCount());
-
-        packetIn.fullySkipBytes(1);
-        assertEquals(1, packetIn.getCount());
-
-        packetIn.align();
-        assertEquals(4, packetIn.getCount());
-
-        packetIn.fullySkipBytes(3);
-        assertEquals(7, packetIn.getCount());
-
-        packetIn.align();
-        assertEquals(8, packetIn.getCount());
-
-        packetIn.align();
-        assertEquals(8, packetIn.getCount());
+    @Test(dataProvider = "data_align")
+    public void test_align(Alignment alignment, int size, int offset) throws IOException {
+        final ByteArrayInputStream bin = new ByteArrayInputStream(new byte[size]);
+        final PacketInput packetIn = new PacketInput(bin);
+        packetIn.fullySkipBytes(offset);
+        packetIn.align(alignment);
+        assertEquals(bin.available(), 0);
     }
 
     @Test

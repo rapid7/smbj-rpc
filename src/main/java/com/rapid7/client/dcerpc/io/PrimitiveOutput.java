@@ -40,7 +40,7 @@ public class PrimitiveOutput {
     public void align(Alignment alignment) throws IOException {
         if (alignment == Alignment.ONE)
             return;
-        final long alignmentOffset = alignment.getOffByOneAlignment() + dataOutStream.getCount() & ~alignment.getOffByOneAlignment();
+        final long alignmentOffset = (alignment.getOffByOneAlignment() + dataOutStream.getCount()) & ~alignment.getOffByOneAlignment();
         pad(alignmentOffset - dataOutStream.getCount());
     }
 

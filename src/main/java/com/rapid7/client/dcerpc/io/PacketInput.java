@@ -35,42 +35,9 @@ public class PacketInput extends PrimitiveInput {
         return unmarshallable;
     }
 
-    public Integer readIntRef() throws IOException {
-        return 0 != readReferentID() ? readInt() : null;
-    }
-
-    public Long readLongRef() throws IOException {
-        return 0 != readReferentID() ? readLong() : null;
-    }
-
     public int readReferentID() throws IOException {
         // Currently only supports NDR20
         return readInt();
-    }
-
-    public byte[] readByteArray() throws IOException {
-        readInt();
-        final int initialOffset = readInt();
-        final int actualCount = readInt();
-        final byte[] result = new byte[initialOffset + actualCount];
-
-        for (int index = initialOffset; index < result.length; index++) {
-            result[index] = readByte();
-        }
-
-        return result;
-    }
-
-    public byte[] readByteArrayRef() throws IOException {
-        final byte[] result;
-        if (0 != readReferentID()) {
-            result = readByteArray();
-            align();
-        } else {
-            result = null;
-        }
-
-        return result;
     }
 
     public byte[] readRawBytes(int length) throws IOException {
@@ -82,66 +49,6 @@ public class PacketInput extends PrimitiveInput {
 
     public void readRawBytes(byte[] buf) throws IOException {
         readFully(buf, 0, buf.length);
-    }
-
-    public String readString(final boolean nullTerminated) throws IOException {
-        final StringBuffer result;
-
-        readInt();
-        final int initialOffset = readInt();
-        final int currentChars = readInt();
-
-        result = new StringBuffer(currentChars);
-        result.setLength(initialOffset);
-
-        int currentOffset = 0;
-        while (currentOffset++ < currentChars) {
-            final char currentChar = (char) readShort();
-            if (nullTerminated && currentChar == 0) {
-                break;
-            }
-            result.append(currentChar);
-        }
-
-        while (currentOffset++ < currentChars) {
-            readShort();
-        }
-
-        align();
-
-        return result.toString();
-    }
-
-    public String readStringRef(final boolean nullTerminated) throws IOException {
-        final String result;
-
-        if (0 != readReferentID()) {
-            result = readString(nullTerminated);
-            align();
-        } else {
-            result = null;
-        }
-
-        return result != null ? result.toString() : null;
-    }
-
-    public String readStringBuf(final boolean nullTerminated) throws IOException {
-        readShort(); // Current byte length
-        readShort(); // Maximum byte length
-
-        return readStringRef(nullTerminated);
-    }
-
-    public String readStringBufRef(final boolean nullTerminated) throws IOException {
-        final String result;
-        if (0 != readReferentID()) {
-            result = readStringBuf(nullTerminated);
-            align();
-        } else {
-            result = null;
-        }
-
-        return result;
     }
 
     public int readIndex(String name) throws IOException {

@@ -24,6 +24,8 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class Test_PacketOutput {
     @Test
@@ -32,6 +34,22 @@ public class Test_PacketOutput {
         final PacketOutput packetOut = new PacketOutput(outputStream);
         packetOut.writeReferentID();
         assertEquals("00000200", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
+    }
+
+    @Test
+    public void test_writeReferentID_obj() throws IOException {
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final PacketOutput packetOut = new PacketOutput(outputStream);
+        assertTrue(packetOut.writeReferentID("Test123"));
+        assertEquals("00000200", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
+    }
+
+    @Test
+    public void test_writeReferentID_null() throws IOException {
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final PacketOutput packetOut = new PacketOutput(outputStream);
+        assertFalse(packetOut.writeReferentID(null));
+        assertEquals("00000000", Hex.toHexString(outputStream.toByteArray()).toUpperCase());
     }
 
     @Test
