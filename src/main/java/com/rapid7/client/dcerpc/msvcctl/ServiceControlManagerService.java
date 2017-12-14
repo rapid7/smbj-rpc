@@ -87,7 +87,7 @@ public class ServiceControlManagerService extends Service {
             return true;
         else if (SystemErrorCode.STATUS_INVALID_HANDLE.is(response.getReturnValue()))
             return false;
-        throw new RPCException("SamrCloseHandle", response.getReturnValue());
+        throw new RPCException("RCloseServiceHandle", response.getReturnValue());
     }
 
     public IServiceStatusInfo controlService(final ServiceHandle serviceHandle, final ServiceControl action) throws IOException {
