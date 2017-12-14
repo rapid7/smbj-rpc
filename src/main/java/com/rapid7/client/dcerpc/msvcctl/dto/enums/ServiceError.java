@@ -1,38 +1,37 @@
-/**
+/*
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright notice,
+ *   Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
  *
- * * Redistributions in binary form must reproduce the above copyright
+ *  Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  *
- * * Neither the name of the copyright holder nor the names of its contributors
+ *  Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
+ *
+ *
  */
-package com.rapid7.client.dcerpc.msvcctl.enums;
+package com.rapid7.client.dcerpc.msvcctl.dto.enums;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This enumeration is a representation of the service status types.
+ * This enumeration is a representation of the service error types.
  */
-public enum ServiceStatusType {
-    SERVICE_PAUSED(0x00000007),
-    SERVICE_RUNNING(0x00000004),
-    SERVICE_STOPPED(0x00000001),
-    SERVICE_CONTINUE_PENDING(0x00000005),
-    SERVICE_PAUSE_PENDING(0x00000006),
-    SERVICE_START_PENDING(0x00000002),
-    SERVICE_STOP_PENDING(0x00000003),
-    ACCESS_MASK(0xF01FF),
+public enum ServiceError {
+    IGNORE(0x00000000),
+    NORMAL(0x00000001),
+    SEVERE(0x00000002),
+    CRITICAL(0x00000003),
+    NO_CHANGE(0xffffffff),
     UNKNOWN(-1);
 
     /////////////////////////////////////////////////////////
@@ -45,7 +44,7 @@ public enum ServiceStatusType {
      *
      * @param value The integer representation for the enum type
      */
-    ServiceStatusType(int value) {
+    ServiceError(int value) {
         m_value = value;
     }
 
@@ -64,8 +63,8 @@ public enum ServiceStatusType {
      * @param value Value to match
      * @return enum found or UNKNOWN
      */
-    public static ServiceStatusType fromInt(int value) {
-        ServiceStatusType type = MS_TYPEDMAP.get(value);
+    public static ServiceError fromInt(int value) {
+        ServiceError type = MS_TYPEDMAP.get(value);
         if (type == null) return UNKNOWN;
         return type;
     }
@@ -75,12 +74,11 @@ public enum ServiceStatusType {
     /////////////////////////////////////////////////////////
 
     private final int m_value;
-    private static final Map<Integer, ServiceStatusType> MS_TYPEDMAP = new HashMap<>();
+    private static final Map<Integer, ServiceError> MS_TYPEDMAP = new HashMap<>();
 
     static {
-        for (ServiceStatusType type : ServiceStatusType.values()) {
+        for (ServiceError type : ServiceError.values()) {
             MS_TYPEDMAP.put(type.getValue(), type);
-
         }
     }
 }

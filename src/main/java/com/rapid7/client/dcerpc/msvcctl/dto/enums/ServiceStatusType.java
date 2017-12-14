@@ -1,42 +1,40 @@
-/**
+/*
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright notice,
+ *   Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
  *
- * * Redistributions in binary form must reproduce the above copyright
+ *  Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  *
- * * Neither the name of the copyright holder nor the names of its contributors
+ *  Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
+ *
+ *
  */
-package com.rapid7.client.dcerpc.msvcctl.enums;
+package com.rapid7.client.dcerpc.msvcctl.dto.enums;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This enumeration is a representation of the services accepted controls.
+ * This enumeration is a representation of the service status types.
  */
-public enum ServicesAcceptedControls {
-    SERVICE_ACCEPT_TRIGGEREVENT(0x00000400),
-    SERVICE_ACCEPT_TIMECHANGE(0x00000200),
-    SERVICE_ACCEPT_PRESHUTDOWN(0x00000100),
-    SERVICE_ACCEPT_SESSIONCHANGE(0x00000080),
-    SERVICE_ACCEPT_POWEREVENT(0x00000040),
-    SERVICE_ACCEPT_HARDWAREPROFILECHANGE(0x00000020),
-    SERVICE_ACCEPT_NETBINDCHANGE(0x00000010),
-    SERVICE_ACCEPT_PARAMCHANGE(0x00000008),
-    SERVICE_ACCEPT_SHUTDOWN(0x00000004),
-    SERVICE_ACCEPT_PAUSE_CONTINUE(0x00000002),
-    SERVICE_ACCEPT_STOP(0x00000001),
-    SERVICE_ACCEPT_NONE(0x00000000),
+public enum ServiceStatusType {
+    SERVICE_PAUSED(0x00000007),
+    SERVICE_RUNNING(0x00000004),
+    SERVICE_STOPPED(0x00000001),
+    SERVICE_CONTINUE_PENDING(0x00000005),
+    SERVICE_PAUSE_PENDING(0x00000006),
+    SERVICE_START_PENDING(0x00000002),
+    SERVICE_STOP_PENDING(0x00000003),
+    ACCESS_MASK(0xF01FF),
     UNKNOWN(-1);
 
     /////////////////////////////////////////////////////////
@@ -49,7 +47,7 @@ public enum ServicesAcceptedControls {
      *
      * @param value The integer representation for the enum type
      */
-    ServicesAcceptedControls(int value) {
+    ServiceStatusType(int value) {
         m_value = value;
     }
 
@@ -68,8 +66,8 @@ public enum ServicesAcceptedControls {
      * @param value Value to match
      * @return enum found or UNKNOWN
      */
-    public static ServicesAcceptedControls fromInt(int value) {
-        ServicesAcceptedControls type = MS_TYPEDMAP.get(value);
+    public static ServiceStatusType fromInt(int value) {
+        ServiceStatusType type = MS_TYPEDMAP.get(value);
         if (type == null) return UNKNOWN;
         return type;
     }
@@ -79,11 +77,12 @@ public enum ServicesAcceptedControls {
     /////////////////////////////////////////////////////////
 
     private final int m_value;
-    private static final Map<Integer, ServicesAcceptedControls> MS_TYPEDMAP = new HashMap<>();
+    private static final Map<Integer, ServiceStatusType> MS_TYPEDMAP = new HashMap<>();
 
     static {
-        for (ServicesAcceptedControls type : ServicesAcceptedControls.values()) {
+        for (ServiceStatusType type : ServiceStatusType.values()) {
             MS_TYPEDMAP.put(type.getValue(), type);
+
         }
     }
 }

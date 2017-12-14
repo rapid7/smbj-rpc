@@ -21,28 +21,32 @@ package com.rapid7.client.dcerpc.msvcctl.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceStatusType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServiceType;
-import com.rapid7.client.dcerpc.msvcctl.enums.ServicesAcceptedControls;
-import com.rapid7.client.dcerpc.msvcctl.objects.IServiceStatusInfo;
-import com.rapid7.client.dcerpc.msvcctl.objects.ServiceStatusInfo;
+import com.rapid7.client.dcerpc.msvcctl.objects.LPServiceStatus;
 
+/**
+ * <a href="https://msdn.microsoft.com/en-us/library/cc245952.aspx">RQueryServiceStatus</a>
+ * <blockquote><pre>The RQueryServiceStatus method returns the current status of the specified service.
+ *
+ *      DWORD RQueryServiceStatus(
+ *          [in] SC_RPC_HANDLE hService,
+ *          [out] LPSERVICE_STATUS lpServiceStatus
+ *      );
+ *
+ * hService: An SC_RPC_HANDLE (section 2.2.4) data type that defines the handle to the service record that MUST have been created previously using one of the open methods specified in section 3.1.4. The SERVICE_QUERY_STATUS access right MUST have been granted to the caller when the RPC context handle was created.
+ * lpServiceStatus: Pointer to a SERVICE_STATUS (section 2.2.47) structure that contains the status information for the service.</pre></blockquote>
+ */
 public class RQueryServiceStatusResponse extends RequestResponse {
-    private IServiceStatusInfo serviceStatusInfo;
+    // <NDR: struct> [out] LPSERVICE_STATUS lpServiceStatus
+    private LPServiceStatus lpServiceStatus;
 
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
-        ServiceType serviceType = ServiceType.fromInt(packetIn.readInt());
-        ServiceStatusType currentState = ServiceStatusType.fromInt(packetIn.readInt());
-        ServicesAcceptedControls controlsAccepted = ServicesAcceptedControls.fromInt(packetIn.readInt());
-        int win32ExitCode = packetIn.readInt();
-        int serviceSpecificExitCode = packetIn.readInt();
-        int checkPoint = packetIn.readInt();
-        int waitHint = packetIn.readInt();
-        serviceStatusInfo = new ServiceStatusInfo(serviceType, currentState, controlsAccepted, win32ExitCode, serviceSpecificExitCode, checkPoint, waitHint);
+        // <NDR: struct> [out] LPSERVICE_STATUS lpServiceStatus
+        this.lpServiceStatus = new LPServiceStatus();
+        packetIn.readUnmarshallable(this.lpServiceStatus);
     }
 
-    public IServiceStatusInfo getServiceStatusInfo() {
-        return serviceStatusInfo;
+    public LPServiceStatus getLpServiceStatus() {
+        return this.lpServiceStatus;
     }
 }

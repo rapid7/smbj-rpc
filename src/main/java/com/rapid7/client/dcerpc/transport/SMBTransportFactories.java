@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.LinkedList;
 import java.util.Queue;
-import com.hierynomus.mssmb2.SMBApiException;
 import com.hierynomus.protocol.transport.TransportException;
 import com.hierynomus.smbj.common.SMBException;
 import com.hierynomus.smbj.session.Session;
@@ -69,11 +68,12 @@ public enum SMBTransportFactories {
 
     private NamedPipe openAndHandleStatusPipeNotAvailable(final Session session, final PipeShare pipeShare)
             throws IOException {
-        final Queue<SMBApiException> exceptions = new LinkedList<>();
+        final Queue<SMB2Exception> exceptions = new LinkedList<>();
         for (int retry = -1; retry < STATUS_PIPE_NOT_AVAILABLE_RETRIES; retry++) {
             try {
                 return openPipe(session, pipeShare);
             } catch (final SMB2Exception exception) {
+                exceptions.offer(exception);
                 switch (exception.getStatus()) {
                     case STATUS_PIPE_NOT_AVAILABLE:
                         // XXX: There has to be a better way to do this...
@@ -86,11 +86,13 @@ public enum SMBTransportFactories {
                         }
                         break;
                     default:
-                        throw new SMBException(exceptions.poll());
+                        throw exceptions.poll();
                 }
             }
         }
-        throw new SMBException(exceptions.poll());
+        if (!exceptions.isEmpty())
+            throw exceptions.poll();
+        throw new SMBException("Unknown error when opening pipe: " + pipeShare.getSmbPath().toString());
     }
 
     private NamedPipe openPipe(final Session session, final PipeShare pipeShare) throws IOException {

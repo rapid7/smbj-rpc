@@ -171,7 +171,7 @@ public class Test_RPCUnicodeString {
                 // null terminated, empty
                 {true, "000000000000000000000000", 0, ""},
                 {false, "000000000000000000000000", 0, ""},
-                // not null terminated, no subset, MaximumCount=8, Offset=8, ActualCount=8
+                // not null terminated, no subset, MaximumCount=8, Offset=0, ActualCount=8
                 {false, "08000000000000000800000074006500730074009f01310032003300", 0, "testƟ123"},
                 // null terminated, no subset, MaximumCount=9, Offset=0, ActualCount=9
                 {true, "09000000000000000900000074006500730074009f013100320033000000", 0, "testƟ123"},
