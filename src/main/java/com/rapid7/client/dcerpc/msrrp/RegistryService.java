@@ -126,7 +126,7 @@ public class RegistryService extends Service {
 
             if (ERROR_SUCCESS.is(returnCode)) {
                 keyNames.add(new RegistryKey(
-                        (response.getLpNameOut() == null) ? null : response.getLpNameOut().getValue(),
+                        (response.getLpNameOut() == null ? null : response.getLpNameOut().getValue()),
                         new FileTime(response.getLastWriteTime())));
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
                 return Collections.unmodifiableList(new ArrayList<>(keyNames));
@@ -146,7 +146,7 @@ public class RegistryService extends Service {
             if (ERROR_SUCCESS.is(returnCode)) {
                 final RPCConformantVaryingByteArray data = response.getData();
                 values.add(new RegistryValue(
-                        response.getName().getValue(),
+                        (response.getName() == null ? null : response.getName().getValue()),
                         RegistryValueType.getRegistryValueType(response.getType()),
                         (data == null ? null : data.getArray())));
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
