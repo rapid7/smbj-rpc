@@ -48,6 +48,7 @@ public class PacketInput extends PrimitiveInput {
 
     /**
      * Read a referent ID unique to this instance of {@link PacketInput}.
+     * @return A referent ID unique to this instance of {@link PacketInput}.
      * @throws IOException On read failure.
      */
     public int readReferentID() throws IOException {
@@ -58,6 +59,7 @@ public class PacketInput extends PrimitiveInput {
     /**
      * Read and return length number of bytes.
      * @param length The number of bytes to read.
+     * @return A byte[] populated with length bytes.
      * @throws EOFException If not enough bytes are available.
      * @throws IOException On read failure.
      */

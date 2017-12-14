@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import com.google.common.base.Strings;
-import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
@@ -211,7 +210,7 @@ public class RegistryService extends Service {
     }
 
     protected byte[] openKey(final String hiveName, final String keyPath) throws IOException {
-        return openKey(hiveName, keyPath, (int) AccessMask.MAXIMUM_ALLOWED.getValue());
+        return openKey(hiveName, keyPath, MAXIMUM_ALLOWED);
     }
 
     private byte[] openKey(final String hiveName, final String keyPath, int desiredAccess) throws IOException {
