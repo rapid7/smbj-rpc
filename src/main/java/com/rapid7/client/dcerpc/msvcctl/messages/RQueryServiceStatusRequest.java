@@ -38,17 +38,17 @@ public class RQueryServiceStatusRequest extends RequestCall<RQueryServiceStatusR
 
     private final static short OP_NUM = 6;
     // <NDR: fixed array> [in] SC_RPC_HANDLE hService
-    private final byte[] handle;
+    private final byte[] hService;
 
-    public RQueryServiceStatusRequest(byte[] handle) {
+    public RQueryServiceStatusRequest(final byte[] hService) {
         super(OP_NUM);
-        this.handle = handle;
+        this.hService = hService;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: fixed array> [in] SC_RPC_HANDLE hService
-        packetOut.write(this.handle);
+        packetOut.write(this.hService);
     }
 
     @Override

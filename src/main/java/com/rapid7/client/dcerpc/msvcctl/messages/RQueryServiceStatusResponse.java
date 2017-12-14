@@ -36,10 +36,12 @@ import com.rapid7.client.dcerpc.msvcctl.objects.LPServiceStatus;
  * lpServiceStatus: Pointer to a SERVICE_STATUS (section 2.2.47) structure that contains the status information for the service.</pre></blockquote>
  */
 public class RQueryServiceStatusResponse extends RequestResponse {
+    // <NDR: struct> [out] LPSERVICE_STATUS lpServiceStatus
     private LPServiceStatus lpServiceStatus;
 
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
+        // <NDR: struct> [out] LPSERVICE_STATUS lpServiceStatus
         this.lpServiceStatus = new LPServiceStatus();
         packetIn.readUnmarshallable(this.lpServiceStatus);
     }

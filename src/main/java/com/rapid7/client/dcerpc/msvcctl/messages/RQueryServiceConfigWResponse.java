@@ -36,13 +36,17 @@ import com.rapid7.client.dcerpc.msvcctl.objects.LPQueryServiceConfigW;
  *      );</pre></blockquote>
  */
 public class RQueryServiceConfigWResponse extends RequestResponse {
+    // <NDR: struct> [out] LPQUERY_SERVICE_CONFIGW lpServiceConfig
     private LPQueryServiceConfigW lpServiceConfig;
+    // <NDR: unsigned long> [out] LPBOUNDED_DWORD_8K pcbBytesNeeded
     private int pcbBytesNeeded;
 
     @Override
     public void unmarshalResponse(PacketInput packetIn) throws IOException {
+        // <NDR: struct> [out] LPQUERY_SERVICE_CONFIGW lpServiceConfig
         this.lpServiceConfig = new LPQueryServiceConfigW();
         packetIn.readUnmarshallable(this.lpServiceConfig);
+        // <NDR: unsigned long> [out] LPBOUNDED_DWORD_8K pcbBytesNeeded
         packetIn.align(Alignment.FOUR);
         this.pcbBytesNeeded = packetIn.readInt();
     }
