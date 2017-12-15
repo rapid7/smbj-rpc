@@ -175,7 +175,7 @@ public abstract class Service {
     }
 
     protected String parseWChar(final WChar wChar, final boolean nullable) {
-        if (wChar == null)
+        if (wChar == null && nullable)
             return null;
         return wChar.getValue();
     }
