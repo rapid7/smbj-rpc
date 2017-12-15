@@ -36,12 +36,12 @@ public class LsarEnumerateAccountRightsResponse extends RequestResponse {
         final int privCnt = packetIn.readInt();
         // <NDR: pointer[conformant array]> [out] PLSAPR_USER_RIGHT_SET UserRights
         // Alignment: 4 - Already aligned
-        if (packetIn.readInt() != 0) {
+        if (packetIn.readReferentID() != 0) {
+            this.privNames = new RPCUnicodeString.NonNullTerminated[privCnt];
             // Maximum Count: <NDR: pointer[conformant array]> [out] PLSAPR_USER_RIGHT_SET UserRights
             // Alignment: 4 - Already aligned
             packetIn.fullySkipBytes(4);
             // Entries: <NDR: pointer[conformant array]> [out] PLSAPR_USER_RIGHT_SET UserRights
-            this.privNames = new RPCUnicodeString.NonNullTerminated[privCnt];
             for (int i = 0; i < this.privNames.length; i++) {
                 this.privNames[i] = new RPCUnicodeString.NonNullTerminated();
                 this.privNames[i].unmarshalPreamble(packetIn);
@@ -52,6 +52,8 @@ public class LsarEnumerateAccountRightsResponse extends RequestResponse {
             for (final RPCUnicodeString.NonNullTerminated privName : this.privNames) {
                 privName.unmarshalDeferrals(packetIn);
             }
+        } else {
+            this.privNames = null;
         }
     }
 }

@@ -79,7 +79,7 @@ public class Test_LookupNames {
 
     //This test is to verify that the Service correctly sets invalid SIDs to null from a valid response
     @Test
-    public void testLookupNamesService() throws IOException {
+    public void test_lookupSIDsForNames() throws IOException {
         final RPCTransport transport = mock(RPCTransport.class);
         final PolicyHandle fakePolicyHandle = new PolicyHandle("000000008e3039708fdd".getBytes());
         final LocalSecurityAuthorityService localSecurityAuthorityService = new LocalSecurityAuthorityService(transport);
@@ -91,7 +91,7 @@ public class Test_LookupNames {
 
         when(transport.call(any(LsarLookupNamesRequest.class))).thenReturn(response);
 
-        SID[] SIDs = localSecurityAuthorityService.lookupNames(fakePolicyHandle, (String[]) null);
+        SID[] SIDs = localSecurityAuthorityService.lookupSIDsForNames(fakePolicyHandle, (String[]) null);
 
         SID expectedDomainSID = new SID(
                 (byte) 1,

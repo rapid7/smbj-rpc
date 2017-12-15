@@ -69,7 +69,7 @@ public class ServiceControlManagerService extends Service {
 
     public ServiceHandle openServiceHandle(final ServiceManagerHandle serviceManagerHandle, final String serviceName) throws IOException {
         final ROpenServiceWRequest request =
-                new ROpenServiceWRequest(parseHandle(serviceManagerHandle), WChar.NullTerminated.of(serviceName), FULL_ACCESS);
+                new ROpenServiceWRequest(parseHandle(serviceManagerHandle), parseWCharNT(serviceName), FULL_ACCESS);
         return new ServiceHandle(callExpectSuccess(request, "ROpenServiceWRequest").getHandle());
     }
 
@@ -113,30 +113,21 @@ public class ServiceControlManagerService extends Service {
     }
 
     public void changeServiceConfig(final ServiceHandle serviceHandle, final IServiceConfigInfo serviceConfigInfo) throws IOException {
-        final WChar.NullTerminated binaryPathName = (serviceConfigInfo.getBinaryPathName() == null) ? null :
-                WChar.NullTerminated.of(serviceConfigInfo.getBinaryPathName());
-        final WChar.NullTerminated loadOrderGroup = (serviceConfigInfo.getLoadOrderGroup() == null) ? null :
-                WChar.NullTerminated.of(serviceConfigInfo.getLoadOrderGroup());
-        final WChar.NullTerminated serviceStartName = (serviceConfigInfo.getServiceStartName() == null) ? null :
-                WChar.NullTerminated.of(serviceConfigInfo.getServiceStartName());
-        final WChar.NullTerminated displayName = (serviceConfigInfo.getDisplayName() == null) ? null :
-                WChar.NullTerminated.of(serviceConfigInfo.getDisplayName());
         final RChangeServiceConfigWRequest request = new RChangeServiceConfigWRequest(serviceHandle.getBytes(),
                 serviceConfigInfo.getServiceType().getValue(),
                 serviceConfigInfo.getStartType().getValue(),
                 serviceConfigInfo.getErrorControl().getValue(),
-                binaryPathName,
-                loadOrderGroup,
+                parseWCharNT(serviceConfigInfo.getBinaryPathName()),
+                parseWCharNT(serviceConfigInfo.getLoadOrderGroup()),
                 serviceConfigInfo.getTagId(),
                 serviceConfigInfo.getDependencies(),
-                serviceStartName,
+                parseWCharNT(serviceConfigInfo.getServiceStartName()),
                 serviceConfigInfo.getPassword(),
-                displayName);
+                parseWCharNT(serviceConfigInfo.getDisplayName()));
         callExpectSuccess(request, "RChangeServiceConfigW");
     }
 
-    public IServiceConfigInfo queryServiceConfig(final ServiceHandle serviceHandle)
-            throws IOException {
+    public IServiceConfigInfo queryServiceConfig(final ServiceHandle serviceHandle) throws IOException {
         final RQueryServiceConfigWRequest request =
                 new RQueryServiceConfigWRequest(serviceHandle.getBytes(), RQueryServiceConfigWRequest.MAX_BUFFER_SIZE);
         final RQueryServiceConfigWResponse response = callExpectSuccess(request, "RQueryServiceConfigW");
@@ -155,12 +146,12 @@ public class ServiceControlManagerService extends Service {
         final ServiceType serviceType = ServiceType.fromInt(response.getDwServiceType());
         final ServiceStartType serviceStartType = ServiceStartType.fromInt(response.getDwStartType());
         final ServiceError serviceError = ServiceError.fromInt(response.getDwErrorControl());
-        final String binaryPathName = (response.getLpBinaryPathName() == null) ? null : response.getLpBinaryPathName().getValue();
-        final String loadOrderGroup = (response.getLpLoadOrderGroup() == null) ? null : response.getLpLoadOrderGroup().getValue();
+        final String binaryPathName = parseWChar(response.getLpBinaryPathName());
+        final String loadOrderGroup = parseWChar(response.getLpLoadOrderGroup());
         final int tagId = response.getDwTagId();
         final String[] dependencies = response.getLpDependencies();
-        final String serviceStartName = (response.getLpServiceStartName() == null) ? null : response.getLpServiceStartName().getValue();
-        final String displayName = (response.getLpDisplayName() == null) ? null : response.getLpDisplayName().getValue();
+        final String serviceStartName = parseWChar(response.getLpServiceStartName());
+        final String displayName = parseWChar(response.getLpDisplayName());
         return new ServiceConfigInfo(serviceType, serviceStartType, serviceError,
                 binaryPathName, loadOrderGroup, tagId, dependencies, serviceStartName, displayName, null);
     }

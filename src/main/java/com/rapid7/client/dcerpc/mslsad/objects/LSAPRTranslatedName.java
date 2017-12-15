@@ -107,7 +107,8 @@ public class LSAPRTranslatedName implements Unmarshallable {
         return use;
     }
 
-    public RPCUnicodeString getName() { return name;
+    public RPCUnicodeString getName() {
+        return name;
     }
 
     public int getDomainIndex() {

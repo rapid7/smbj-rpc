@@ -76,7 +76,7 @@ public abstract class Service {
 
     protected String[] parseRPCUnicodeStrings(final RPCUnicodeString ... rpcUnicodeStrings) {
         if (rpcUnicodeStrings == null)
-            return null;
+            return new String[0];
         final String[] ret = new String[rpcUnicodeStrings.length];
         for (int i = 0; i < rpcUnicodeStrings.length; i++) {
             ret[i] = (rpcUnicodeStrings[i] == null) ? null : rpcUnicodeStrings[i].getValue();
