@@ -67,9 +67,9 @@ public class SamrLookupIdsInDomainRequest extends RequestCall<SamrLookupIdsInDom
     public static short OP_NUM = 18;
     private final byte[] handle;
     private final int count;
-    private final int[] relativeIDs;
+    private final long[] relativeIDs;
 
-    public SamrLookupIdsInDomainRequest(final byte[] domainHandle, int... rids) {
+    public SamrLookupIdsInDomainRequest(final byte[] domainHandle, long ... rids) {
         super(OP_NUM);
         this.handle = domainHandle;
         this.count = rids.length;
@@ -87,7 +87,7 @@ public class SamrLookupIdsInDomainRequest extends RequestCall<SamrLookupIdsInDom
         out.writeInt(1000);
         out.writeInt(0);
         out.writeInt(count);
-        for (Integer rid : relativeIDs) {
+        for (long rid : relativeIDs) {
             out.writeInt(rid);
         }
     }

@@ -747,6 +747,38 @@ public class SecurityAccountManagerService extends Service {
     }
 
     /**
+     * Gets an array of {@link MembershipWithNameAndUse} information for users/groups matching the given relative
+     * IDs in the provided domain.
+     *
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}
+     * @param rids A list of relative ids.
+     * @return An array of RID, name, and their use; each entry corresponds 1-1 with the given RID list.
+     * If an entry is null, no result was found for that RID.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public MembershipWithNameAndUse[] lookupRIDsForDomain(final DomainHandle domainHandle, long ... rids) throws IOException {
+        final SamrLookupIdsInDomainRequest request = new SamrLookupIdsInDomainRequest(parseHandle(domainHandle), rids);
+        final SamrLookupIdsInDomainResponse response = callExpect(request, "SamrLookupIdsInDomain",
+                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED, SystemErrorCode.STATUS_NONE_MAPPED);
+
+        final List<NonNullTerminated> names = response.getNames();
+        long[] uses = response.getUses().getArray();
+        if (uses == null)
+            uses = new long[0];
+        final MembershipWithNameAndUse[] members = new MembershipWithNameAndUse[names.size()];
+        for (int i = 0; i < names.size(); i++) {
+            final String name = parseRPCUnicodeString(names.get(i));
+            if (name == null)
+                members[i] = null;
+            else
+                members[i] = new MembershipWithNameAndUse(rids[i], name, (int) uses[i]);
+        }
+        return members;
+    }
+
+
+    /**
      * Gets a list of {@link MembershipWithAttributes} information for groups containing the provided user handle.
      *
      * @param userHandle A valid user handle obtained from {@link #openUser(DomainHandle, long)}
@@ -797,26 +829,6 @@ public class SecurityAccountManagerService extends Service {
             ret[i] = new Membership(rids[i]);
         }
         return ret;
-    }
-
-    public MembershipWithNameAndUse[] lookUpIDsForDomain(final DomainHandle domainHandle, int... rids) throws IOException {
-        final SamrLookupIdsInDomainRequest request = new SamrLookupIdsInDomainRequest(parseHandle(domainHandle), rids);
-        final SamrLookupIdsInDomainResponse response = callExpect(request, "SamrLookupIdsInDomain",
-            SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED, SystemErrorCode.STATUS_NONE_MAPPED);
-
-        final List<NonNullTerminated> names = response.getNames();
-        long[] uses = response.getUses().getArray();
-        if (uses == null)
-            uses = new long[0];
-        final MembershipWithNameAndUse[] members = new MembershipWithNameAndUse[names.size()];
-        for (int i = 0; i < names.size(); i++) {
-            final String name = parseRPCUnicodeString(names.get(i));
-            if (name == null)
-                members[i] = null;
-            else
-                members[i] = new MembershipWithNameAndUse(rids[i], name, uses[i]);
-        }
-        return members;
     }
 
     /**

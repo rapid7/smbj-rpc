@@ -21,18 +21,29 @@
 
 package com.rapid7.client.dcerpc.mssamr.dto;
 
+import com.rapid7.client.dcerpc.dto.SIDUse;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
 
 public class Test_MembershipWithUse {
 
     @Test
     public void test_getters() {
-        MembershipWithUse obj = new MembershipWithUse(50L, 100);
+        MembershipWithUse obj = new MembershipWithUse(50L, 1);
         assertEquals(obj.getRelativeID(), 50L);
-        assertEquals(obj.getUse(), 100);
+        assertEquals(obj.getUseValue(), 1);
+        assertSame(obj.getUse(), SIDUse.SID_TYPE_USER);
+    }
+
+    @Test
+    public void test_getUse_unknown() {
+        MembershipWithUse obj = new MembershipWithUse(50L, 100);
+        assertEquals(obj.getUseValue(), 100);
+        assertNull(obj.getUse());
     }
 
     @Test
@@ -56,7 +67,12 @@ public class Test_MembershipWithUse {
     }
 
     @Test
-    public void test_toString() {
+    public void test_toString_useUnknown() {
         assertEquals(new MembershipWithUse(50L, 100).toString(), "MembershipWithUse{relativeID: 50, use: 100}");
+    }
+
+    @Test
+    public void test_toString() {
+        assertEquals(new MembershipWithUse(50L, 2).toString(), "MembershipWithUse{relativeID: 50, use: 2 (SID_TYPE_GROUP)}");
     }
 }

@@ -19,7 +19,7 @@
  *
  */
 
-package com.rapid7.client.dcerpc.objects;
+package com.rapid7.client.dcerpc.dto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +51,7 @@ import java.util.Map;
  * SidTypeComputer: This member is not used.
  * SidTypeLabel: This member is not used.</pre></blockquote>
  */
-public enum SIDNameUse {
+public enum SIDUse {
     SID_TYPE_USER((short) 1),
     SID_TYPE_GROUP((short) 2),
     SID_TYPE_DOMAIN((short) 3),
@@ -65,7 +65,7 @@ public enum SIDNameUse {
 
     private final short value;
 
-    SIDNameUse(final short value) {
+    SIDUse(final short value) {
         this.value = value;
     }
 
@@ -73,14 +73,14 @@ public enum SIDNameUse {
         return value;
     }
 
-    private static final Map<Short, SIDNameUse> VALUE_MAP = new HashMap<>();
+    private static final Map<Short, SIDUse> VALUE_MAP = new HashMap<>();
     static {
-        for (SIDNameUse sidNameUse : SIDNameUse.values()) {
+        for (SIDUse sidNameUse : SIDUse.values()) {
             VALUE_MAP.put(sidNameUse.getValue(), sidNameUse);
         }
     }
 
-    public static SIDNameUse fromValue(final short value) {
+    public static SIDUse fromValue(final short value) {
         return VALUE_MAP.get(value);
     }
 }
