@@ -33,7 +33,7 @@ import com.rapid7.client.dcerpc.mssamr.dto.DomainDisplayGroup;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainLockoutInfo;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainLogoffInfo;
-import com.rapid7.client.dcerpc.mssamr.dto.DomainPasswordInformation;
+import com.rapid7.client.dcerpc.mssamr.dto.DomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.LogonHours;
@@ -528,14 +528,14 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public DomainPasswordInformation getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
+    public DomainPasswordInfo getDomainPasswordInfo(final DomainHandle domainHandle) throws IOException {
         final SamrQueryInformationDomainRequest.DomainPasswordInformation request =
                 new SamrQueryInformationDomainRequest.DomainPasswordInformation(parseHandle(domainHandle));
         final SAMPRDomainPasswordInfo passwordInfo =
                 callExpectSuccess(request, "SamrQueryInformationDomain[1]").getDomainInformation();
         if (passwordInfo == null)
             return null;
-        return new DomainPasswordInformation(
+        return new DomainPasswordInfo(
                 passwordInfo.getMinPasswordLength(),
                 passwordInfo.getPasswordHistoryLength(),
                 passwordInfo.getPasswordProperties(),
