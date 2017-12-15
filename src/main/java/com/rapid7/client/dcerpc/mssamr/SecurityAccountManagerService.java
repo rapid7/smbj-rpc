@@ -87,8 +87,10 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRLogonHours;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRPSIDArray;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRRIDEnumeration;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRSRSecurityDescriptor;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.RPCSID;
@@ -132,7 +134,7 @@ public class SecurityAccountManagerService extends Service {
      */
     public ServerHandle openServer(String serverName) throws IOException {
         final SamrConnect2Request request =
-                new SamrConnect2Request(WChar.NullTerminated.of(Strings.nullToEmpty(serverName)), MAXIMUM_ALLOWED);
+                new SamrConnect2Request(parseWCharNT(serverName), MAXIMUM_ALLOWED);
         return parseServerHandle(callExpectSuccess(request, "SamrConnect2"));
     }
 
@@ -213,11 +215,10 @@ public class SecurityAccountManagerService extends Service {
         final SamrCloseHandleRequest request =
                 new SamrCloseHandleRequest(parseHandle(handle));
         final HandleResponse response = call(request);
-        if (SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue())) {
+        if (SystemErrorCode.ERROR_SUCCESS.is(response.getReturnValue()))
             return true;
-        } else if (SystemErrorCode.STATUS_INVALID_HANDLE.is(response.getReturnValue())) {
+        else if (SystemErrorCode.STATUS_INVALID_HANDLE.is(response.getReturnValue()))
             return false;
-        }
         throw new RPCException("SamrCloseHandle", response.getReturnValue());
     }
 
@@ -423,6 +424,8 @@ public class SecurityAccountManagerService extends Service {
                 new SamrQueryInformationUserRequest.UserAllInformation(parseHandle(userHandle));
         final SAMPRUserAllInformation userInformation =
                 callExpectSuccess(request, "SamrQueryInformationUser[21]").getUserInformation();
+        if (userInformation == null)
+            return null;
         try {
             return new UserAllInformation(
                     userInformation.getLastLogon(),
@@ -431,25 +434,25 @@ public class SecurityAccountManagerService extends Service {
                     userInformation.getAccountExpires(),
                     userInformation.getPasswordCanChange(),
                     userInformation.getPasswordMustChange(),
-                    userInformation.getUserName().getValue(),
-                    userInformation.getFullName().getValue(),
-                    userInformation.getHomeDirectory().getValue(),
-                    userInformation.getHomeDirectoryDrive().getValue(),
-                    userInformation.getScriptPath().getValue(),
-                    userInformation.getProfilePath().getValue(),
-                    userInformation.getAdminComment().getValue(),
-                    userInformation.getWorkStations().getValue(),
-                    userInformation.getUserComment().getValue(),
-                    userInformation.getParameters().getValue(),
+                    parseRPCUnicodeString(userInformation.getUserName()),
+                    parseRPCUnicodeString(userInformation.getFullName()),
+                    parseRPCUnicodeString(userInformation.getHomeDirectory()),
+                    parseRPCUnicodeString(userInformation.getHomeDirectoryDrive()),
+                    parseRPCUnicodeString(userInformation.getScriptPath()),
+                    parseRPCUnicodeString(userInformation.getProfilePath()),
+                    parseRPCUnicodeString(userInformation.getAdminComment()),
+                    parseRPCUnicodeString(userInformation.getWorkStations()),
+                    parseRPCUnicodeString(userInformation.getUserComment()),
+                    parseRPCUnicodeString(userInformation.getParameters()),
                     userInformation.getLmOwfPassword().getBuffer(),
                     userInformation.getNtOwfPassword().getBuffer(),
                     userInformation.getPrivateData().getValue(),
-                    userInformation.getSecurityDescriptor().getSecurityDescriptor(),
+                    parseSAMPRSRSecurityDescriptor(userInformation.getSecurityDescriptor()),
                     userInformation.getUserId(),
                     userInformation.getPrimaryGroupId(),
                     userInformation.getUserAccountControl(),
                     userInformation.getWhichFields(),
-                    new LogonHours(userInformation.getLogonHours().getLogonHours()),
+                    parseSAMPRLogonHours(userInformation.getLogonHours()),
                     userInformation.getBadPasswordCount(),
                     userInformation.getLogonCount(),
                     userInformation.getCountryCode(),
@@ -476,11 +479,13 @@ public class SecurityAccountManagerService extends Service {
                 new SamrQueryInformationGroupRequest.GroupGeneralInformation(parseHandle(groupHandle));
         final SAMPRGroupGeneralInformation groupGeneralInformation =
                 callExpectSuccess(request, "SamrQueryInformationGroup[1]").getGroupInformation();
+        if (groupGeneralInformation == null)
+            return null;
         return new GroupGeneralInformation(
-                groupGeneralInformation.getName().getValue(),
+                parseRPCUnicodeString(groupGeneralInformation.getName()),
                 groupGeneralInformation.getAttributes(),
                 groupGeneralInformation.getMemberCount(),
-                groupGeneralInformation.getAdminComment().getValue());
+                parseRPCUnicodeString(groupGeneralInformation.getAdminComment());
     }
 
     /**
@@ -495,10 +500,12 @@ public class SecurityAccountManagerService extends Service {
                 new SamrQueryInformationAliasRequest.AliasGeneralInformation(parseHandle(aliasHandle));
         final SAMPRAliasGeneralInformation aliasGeneralInformation =
                 callExpectSuccess(request, "SamrQueryInformationAlias[1]").getAliasInformation();
+        if (aliasGeneralInformation == null)
+            return null;
         return new AliasGeneralInformation(
-                aliasGeneralInformation.getName().getValue(),
+                parseRPCUnicodeString(aliasGeneralInformation.getName()),
                 aliasGeneralInformation.getMemberCount(),
-                aliasGeneralInformation.getAdminComment().getValue());
+                parseRPCUnicodeString(aliasGeneralInformation.getAdminComment()));
     }
 
     /**
@@ -526,6 +533,8 @@ public class SecurityAccountManagerService extends Service {
                 new SamrQueryInformationDomainRequest.DomainPasswordInformation(parseHandle(domainHandle));
         final SAMPRDomainPasswordInfo passwordInfo =
                 callExpectSuccess(request, "SamrQueryInformationDomain[1]").getDomainInformation();
+        if (passwordInfo == null)
+            return null;
         return new DomainPasswordInformation(
                 passwordInfo.getMinPasswordLength(),
                 passwordInfo.getPasswordHistoryLength(),
@@ -619,8 +628,10 @@ public class SecurityAccountManagerService extends Service {
         final DomainDisplayGroup[] ret = new DomainDisplayGroup[displayGroups.size()];
         int i = 0;
         for (SAMPRDomainDisplayGroup displayGroup : displayGroups) {
-            ret[i++] = new DomainDisplayGroup(displayGroup.getRid(), displayGroup.getAccountName(),
-                    displayGroup.getDescription(), displayGroup.getAttributes());
+            ret[i++] = new DomainDisplayGroup(displayGroup.getRid(),
+                    parseRPCUnicodeString(displayGroup.getAccountName()),
+                    parseRPCUnicodeString(displayGroup.getDescription()),
+                    displayGroup.getAttributes());
         }
         return ret;
     }
@@ -667,7 +678,7 @@ public class SecurityAccountManagerService extends Service {
             securityInformation |= 0x08;
         final SamrQuerySecurityObjectRequest request =
                 new SamrQuerySecurityObjectRequest(parseHandle(objectHandle), securityInformation);
-        return callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor().getSecurityDescriptor();
+        return parseSAMPRSRSecurityDescriptor(callExpectSuccess(request, "SamrQuerySecurityObject").getSecurityDescriptor());
     }
 
     /**
@@ -769,7 +780,9 @@ public class SecurityAccountManagerService extends Service {
         final SamrGetAliasMembershipRequest request =
                 new SamrGetAliasMembershipRequest(parseHandle(domainHandle), sidArray);
         final SamrGetAliasMembershipResponse response = callExpectSuccess(request, "GetAliasMembership");
-        final long[] rids = response.getMembership().getArray();
+        long[] rids = response.getMembership().getArray();
+        if (rids == null)
+            rids = new long[0];
         final Membership[] ret = new Membership[rids.length];
         for (int i = 0; i < ret.length; i++) {
             ret[i] = new Membership(rids[i]);
@@ -782,14 +795,17 @@ public class SecurityAccountManagerService extends Service {
         final SamrLookupIdsInDomainResponse response = callExpect(request, "SamrLookupIdsInDomain",
             SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED, SystemErrorCode.STATUS_NONE_MAPPED);
 
-        List<NonNullTerminated> names = response.getNames();
-        long[] array = response.getUses().getArray();
-        MembershipWithNameAndUse[] members = new MembershipWithNameAndUse[names.size()];
+        final List<NonNullTerminated> names = response.getNames();
+        long[] uses = response.getUses().getArray();
+        if (uses == null)
+            uses = new long[0];
+        final MembershipWithNameAndUse[] members = new MembershipWithNameAndUse[names.size()];
         for (int i = 0; i < names.size(); i++) {
-            if (names.get(i).getValue() == null)
+            final String name = parseRPCUnicodeString(names.get(i));
+            if (name == null)
                 members[i] = null;
             else
-                members[i] = new MembershipWithNameAndUse(rids[i], names.get(i).getValue(), array[i]);
+                members[i] = new MembershipWithNameAndUse(rids[i], name, uses[i]);
         }
         return members;
     }
@@ -798,8 +814,7 @@ public class SecurityAccountManagerService extends Service {
      * Helper method for calling enumeration requests and enumerating through the buffers for
      * {@link SamrEnumerateResponse}.
      */
-    private <T> void enumerate(final List<T> list, final EnumerationCallback callback)
-            throws IOException {
+    private <T> void enumerate(final List<T> list, final EnumerationCallback callback) throws IOException {
         for (int enumContext = 0;;) {
             final SamrEnumerateResponse response = callback.request(enumContext);
             final int returnCode = response.getReturnValue();
@@ -844,6 +859,16 @@ public class SecurityAccountManagerService extends Service {
 
     private AliasHandle parseAliasHandle(final HandleResponse response) {
         return new AliasHandle(response.getHandle());
+    }
+
+    private LogonHours parseSAMPRLogonHours(final SAMPRLogonHours logonHours) {
+        return new LogonHours(logonHours.getLogonHours());
+    }
+
+    private byte[] parseSAMPRSRSecurityDescriptor(final SAMPRSRSecurityDescriptor sd) {
+        if (sd == null)
+            return null;
+        return sd.getSecurityDescriptor();
     }
 
     private MembershipWithName[] parseSAMPRRIDEnumerations(final List<? extends SAMPRRIDEnumeration> list) {

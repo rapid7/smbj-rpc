@@ -128,12 +128,53 @@ public abstract class Service {
     }
 
     protected SID parseRPCSID(final RPCSID rpcsid) {
-        if (rpcsid == null)
+        return parseRPCSID(rpcsid, true);
+    }
+
+    protected SID parseRPCSID(final RPCSID rpcsid, boolean nullable) {
+        if (rpcsid == null && nullable)
             return null;
         return new SID((byte) rpcsid.getRevision(), rpcsid.getIdentifierAuthority(), rpcsid.getSubAuthority());
     }
 
+    protected String parseRPCUnicodeString(final RPCUnicodeString rpcUnicodeString) {
+        return parseRPCUnicodeString(rpcUnicodeString, false);
+    }
+
+    protected String parseRPCUnicodeString(final RPCUnicodeString rpcUnicodeString, final boolean nullable) {
+        if (rpcUnicodeString == null) {
+            if (nullable)
+                return null;
+            throw new NullPointerException("Expecting non-null rpcUnicodeString");
+        }
+        return rpcUnicodeString.getValue();
+    }
+
+    protected WChar.NullTerminated parseWCharNT(final String str) {
+        return parseWCharNT(str, true);
+    }
+
+    protected WChar.NullTerminated parseWCharNT(final String str, final boolean nullable) {
+        if (str == null && nullable)
+            return null;
+        return WChar.NullTerminated.of(str);
+    }
+
+    protected WChar.NonNullTerminated parseWChar(final String str) {
+        return parseWChar(str, true);
+    }
+
+    protected WChar.NonNullTerminated parseWChar(final String str, final boolean nullable) {
+        if (str == null && nullable)
+            return null;
+        return WChar.NonNullTerminated.of(str);
+    }
+
     protected String parseWChar(final WChar wChar) {
+        return parseWChar(wChar, true);
+    }
+
+    protected String parseWChar(final WChar wChar, final boolean nullable) {
         if (wChar == null)
             return null;
         return wChar.getValue();

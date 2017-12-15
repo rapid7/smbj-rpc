@@ -70,10 +70,10 @@ public class ServerService extends Service {
             int outBufLength, int pathType, int flags) throws IOException {
         final NetprPathCanonicalizeRequest request =
                 new NetprPathCanonicalizeRequest(
-                        (serverName == null ? null : WChar.NullTerminated.of(serverName)),
-                        WChar.NullTerminated.of(pathName),
+                        parseWCharNT(serverName),
+                        parseWCharNT(pathName, false),
                         outBufLength,
-                        WChar.NullTerminated.of(prefix),
+                        parseWCharNT(prefix, false),
                         pathType, flags);
         return callExpectSuccess(request, "NetprPathCanonicalize").getOutBuf();
     }
