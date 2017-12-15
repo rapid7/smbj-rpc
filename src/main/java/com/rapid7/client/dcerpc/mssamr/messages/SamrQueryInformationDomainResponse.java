@@ -24,7 +24,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogoffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 
 public abstract class SamrQueryInformationDomainResponse<T extends Unmarshallable> extends RequestResponse {
@@ -66,15 +66,15 @@ public abstract class SamrQueryInformationDomainResponse<T extends Unmarshallabl
         }
     }
 
-    public static class DomainLogOffInformation extends SamrQueryInformationDomainResponse<SAMPRDomainLogOffInfo> {
+    public static class DomainLogOffInformation extends SamrQueryInformationDomainResponse<SAMPRDomainLogoffInfo> {
         @Override
         public DomainInformationClass getDomainInformationClass() {
             return DomainInformationClass.DOMAIN_LOGOFF_INFORMATION;
         }
 
         @Override
-        SAMPRDomainLogOffInfo createDomainInformation() {
-            return new SAMPRDomainLogOffInfo();
+        SAMPRDomainLogoffInfo createDomainInformation() {
+            return new SAMPRDomainLogoffInfo();
         }
     }
 

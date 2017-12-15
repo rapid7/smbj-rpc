@@ -30,6 +30,7 @@ import com.google.common.base.Strings;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingByteArray;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.mserref.SystemErrorCode;
 import com.rapid7.client.dcerpc.msrrp.dto.RegistryHive;
 import com.rapid7.client.dcerpc.msrrp.dto.RegistryKey;
 import com.rapid7.client.dcerpc.msrrp.dto.RegistryKeyInfo;
@@ -80,14 +81,9 @@ public class RegistryService extends Service {
         try {
             openKey(hiveName, keyPath);
         } catch (final RPCException exception) {
-            if (exception.hasErrorCode()) {
-                switch (exception.getErrorCode()) {
-                    case ERROR_FILE_NOT_FOUND:
-                        return false;
-                    default:
-                        throw exception;
-                }
-            }
+            if (isFileNotFound(exception))
+                return false;
+            throw exception;
         }
         return true;
     }
@@ -97,14 +93,9 @@ public class RegistryService extends Service {
         try {
             getValue(hiveName, keyPath, valueName);
         } catch (final RPCException exception) {
-            if (exception.hasErrorCode()) {
-                switch (exception.getErrorCode()) {
-                    case ERROR_FILE_NOT_FOUND:
-                        return false;
-                    default:
-                        throw exception;
-                }
-            }
+            if (isFileNotFound(exception))
+                return false;
+            throw exception;
         }
         return true;
     }
@@ -113,7 +104,9 @@ public class RegistryService extends Service {
         final byte[] handle = openKey(hiveName, keyPath);
         final BaseRegQueryInfoKeyRequest request = new BaseRegQueryInfoKeyRequest(handle);
         final BaseRegQueryInfoKeyResponse response = callExpectSuccess(request, "BaseRegQueryInfoKey");
-        return new RegistryKeyInfo(response.getSubKeys(), response.getMaxSubKeyLen(), response.getMaxClassLen(), response.getValues(), response.getMaxValueNameLen(), response.getMaxValueLen(), response.getSecurityDescriptor(), response.getLastWriteTime());
+        return new RegistryKeyInfo(response.getSubKeys(), response.getMaxSubKeyLen(), response.getMaxClassLen(),
+                response.getValues(), response.getMaxValueNameLen(), response.getMaxValueLen(),
+                response.getSecurityDescriptor(), response.getLastWriteTime());
     }
 
     public List<RegistryKey> getSubKeys(final String hiveName, final String keyPath) throws IOException {
@@ -126,7 +119,7 @@ public class RegistryService extends Service {
 
             if (ERROR_SUCCESS.is(returnCode)) {
                 keyNames.add(new RegistryKey(
-                        (response.getLpNameOut() == null ? null : response.getLpNameOut().getValue()),
+                        parseRPCUnicodeString(response.getLpNameOut()),
                         new FileTime(response.getLastWriteTime())));
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
                 return Collections.unmodifiableList(new ArrayList<>(keyNames));
@@ -144,11 +137,10 @@ public class RegistryService extends Service {
             final BaseRegEnumValueResponse response = call(request);
             final int returnCode = response.getReturnValue();
             if (ERROR_SUCCESS.is(returnCode)) {
-                final RPCConformantVaryingByteArray data = response.getData();
                 values.add(new RegistryValue(
-                        (response.getName() == null ? null : response.getName().getValue()),
+                        parseRPCUnicodeString(response.getName()),
                         RegistryValueType.getRegistryValueType(response.getType()),
-                        (data == null ? null : data.getArray())));
+                        response.getData().getArray()));
             } else if (ERROR_NO_MORE_ITEMS.is(returnCode)) {
                 return Collections.unmodifiableList(new ArrayList<>(values));
             } else {
@@ -232,6 +224,10 @@ public class RegistryService extends Service {
             keyPathCache.put(cachingKey, keyHandle);
             return keyHandle;
         }
+    }
+
+    private boolean isFileNotFound(final RPCException exception) {
+        return exception != null && exception.getErrorCode() == SystemErrorCode.ERROR_FILE_NOT_FOUND;
     }
 
     private static class RegistryHandleKey {

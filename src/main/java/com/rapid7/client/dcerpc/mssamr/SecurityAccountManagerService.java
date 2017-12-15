@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.rmi.UnmarshalException;
 import java.util.ArrayList;
 import java.util.List;
-import com.google.common.base.Strings;
 import com.rapid7.client.dcerpc.RPCException;
 import com.rapid7.client.dcerpc.dto.ContextHandle;
 import com.rapid7.client.dcerpc.dto.SID;
@@ -32,6 +31,8 @@ import com.rapid7.client.dcerpc.mssamr.dto.AliasGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.AliasHandle;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainDisplayGroup;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
+import com.rapid7.client.dcerpc.mssamr.dto.DomainLockoutInfo;
+import com.rapid7.client.dcerpc.mssamr.dto.DomainLogoffInfo;
 import com.rapid7.client.dcerpc.mssamr.dto.DomainPasswordInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
@@ -84,7 +85,7 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRAliasGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroup;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainDisplayGroupBuffer;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogOffInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogoffInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRLogonHours;
@@ -95,7 +96,6 @@ import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
 import com.rapid7.client.dcerpc.mssamr.objects.UserInfo;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
-import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString.NonNullTerminated;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
@@ -485,7 +485,7 @@ public class SecurityAccountManagerService extends Service {
                 parseRPCUnicodeString(groupGeneralInformation.getName()),
                 groupGeneralInformation.getAttributes(),
                 groupGeneralInformation.getMemberCount(),
-                parseRPCUnicodeString(groupGeneralInformation.getAdminComment());
+                parseRPCUnicodeString(groupGeneralInformation.getAdminComment()));
     }
 
     /**
@@ -550,10 +550,14 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public SAMPRDomainLogOffInfo getDomainLogOffInfo(final DomainHandle domainHandle) throws IOException {
+    public DomainLogoffInfo getDomainLogOffInfo(final DomainHandle domainHandle) throws IOException {
         final SamrQueryInformationDomainRequest.DomainLogOffInformation request =
                 new SamrQueryInformationDomainRequest.DomainLogOffInformation(parseHandle(domainHandle));
-        return callExpectSuccess(request, "SamrQueryInformationDomain[3]").getDomainInformation();
+        final SAMPRDomainLogoffInfo samprDomainLogoffInfo =
+                callExpectSuccess(request, "SamrQueryInformationDomain[3]").getDomainInformation();
+        if (samprDomainLogoffInfo == null)
+            return null;
+        return new DomainLogoffInfo(samprDomainLogoffInfo.getForceLogoff());
     }
 
     /**
@@ -563,10 +567,15 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public SAMPRDomainLockoutInfo getDomainLockoutInfo(final DomainHandle domainHandle) throws IOException {
+    public DomainLockoutInfo getDomainLockoutInfo(final DomainHandle domainHandle) throws IOException {
         final SamrQueryInformationDomain2Request.DomainLockoutInformation request =
                 new SamrQueryInformationDomain2Request.DomainLockoutInformation(parseHandle(domainHandle));
-        return callExpectSuccess(request, "SamrQueryInformationDomain2[12]").getDomainInformation();
+        final SAMPRDomainLockoutInfo samprDomainLockoutInfo =
+                callExpectSuccess(request, "SamrQueryInformationDomain2[12]").getDomainInformation();
+        if (samprDomainLockoutInfo == null)
+            return null;
+        return new DomainLockoutInfo(samprDomainLockoutInfo.getLockoutDuration(),
+                samprDomainLockoutInfo.getLockoutObservationWindow(), samprDomainLockoutInfo.getLockoutThreshold());
     }
 
     /**
