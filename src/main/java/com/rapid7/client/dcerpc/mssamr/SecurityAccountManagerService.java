@@ -757,7 +757,7 @@ public class SecurityAccountManagerService extends Service {
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public MembershipWithNameAndUse[] lookupRIDsForDomain(final DomainHandle domainHandle, long ... rids) throws IOException {
+    public MembershipWithNameAndUse[] lookupRIDsInDomain(final DomainHandle domainHandle, long ... rids) throws IOException {
         final SamrLookupIdsInDomainRequest request = new SamrLookupIdsInDomainRequest(parseHandle(domainHandle), rids);
         final SamrLookupIdsInDomainResponse response = callExpect(request, "SamrLookupIdsInDomain",
                 SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED, SystemErrorCode.STATUS_NONE_MAPPED);
