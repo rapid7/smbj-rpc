@@ -24,6 +24,7 @@ import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 public class Test_SAMPRDisplayGroupBuffer {
 
@@ -38,8 +39,8 @@ public class Test_SAMPRDisplayGroupBuffer {
         SAMPRDomainDisplayGroup groupInfo = buffer.getEntries().get(0);
         assertEquals(1, groupInfo.getIndex());
         assertEquals(513, groupInfo.getRid());
-        assertEquals("None", groupInfo.getAccountName());
-        assertEquals("Ordinary users", groupInfo.getDescription());
+        assertEquals(RPCUnicodeString.NonNullTerminated.of("None"), groupInfo.getAccountName());
+        assertEquals(RPCUnicodeString.NonNullTerminated.of("Ordinary users"), groupInfo.getDescription());
         assertEquals(0x00000007, groupInfo.getAttributes());
     }
 

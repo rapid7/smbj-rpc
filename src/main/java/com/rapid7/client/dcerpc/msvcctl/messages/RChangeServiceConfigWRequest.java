@@ -112,22 +112,16 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
         packetOut.writeInt(this.dwErrorControl);
         // <NDR: pointer[struct]> [in, string, unique, range(0, SC_MAX_PATH_LENGTH)] wchar_t* lpBinaryPathName
         // Alignment: 4 - Already aligned
-        if (this.lpBinaryPathName != null) {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.lpBinaryPathName)) {
             packetOut.writeMarshallable(this.lpBinaryPathName);
             // Alignment for lpLoadOrderGroup
             packetOut.align(Alignment.FOUR);
-        } else {
-            packetOut.writeNull();
         }
         // <NDR: pointer[struct]> [in, string, unique, range(0, SC_MAX_NAME_LENGTH)] wchar_t* lpLoadOrderGroup
-        if (this.lpLoadOrderGroup != null) {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.lpLoadOrderGroup)) {
             packetOut.writeMarshallable(this.lpLoadOrderGroup);
             // Alignment for lpdwTagId
             packetOut.align(Alignment.FOUR);
-        } else {
-            packetOut.writeNull();
         }
         // <NDR: pointer[unsigned long]> [in, out, unique] LPDWORD lpdwTagId
         if (this.lpDwTagId != null && this.lpDwTagId != 0) {
@@ -137,8 +131,7 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
             packetOut.writeNull();
         }
         // <NDR: pointer[conformant array]> [in, unique, size_is(dwDependSize)] LPBYTE lpDependencies
-        if (this.lpDependencies != null) {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.lpDependencies)) {
             // Count the number of bytes required for the array of dependencies
             // This is better than allocating a new byte[] to hold everything.
             // At the very least we have a null terminator at the end
@@ -167,22 +160,17 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
             packetOut.align(Alignment.FOUR);
             packetOut.writeInt(byteCount);
         } else {
-            packetOut.writeNull();
             // <NDR: unsigned long> [in, range(0, SC_MAX_DEPEND_SIZE)] DWORD dwDependSize
             packetOut.writeInt(0);
         }
         // <NDR: pointer[struct]> [in, string, unique, range(0, SC_MAX_ACCOUNT_NAME_LENGTH)] wchar_t* lpServiceStartName
-        if (this.lpServiceStartName != null) {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.lpServiceStartName)) {
             packetOut.writeMarshallable(this.lpServiceStartName);
             // Alignment for lpPassword
             packetOut.align(Alignment.FOUR);
-        } else {
-            packetOut.writeNull();
         }
         // <NDR: conformant array> [in, unique, size_is(dwPwSize)] LPBYTE lpPassword
-        if (this.lpPassword != null) {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.lpPassword)) {
             final int byteCount = (this.lpPassword.length() * 2) + 2;
             packetOut.writeInt(byteCount);
             for (int i = 0; i < this.lpPassword.length(); i++) {
@@ -195,16 +183,12 @@ public class RChangeServiceConfigWRequest extends RequestCall<RChangeServiceConf
             packetOut.align(Alignment.FOUR);
             packetOut.writeInt(byteCount);
         } else {
-            packetOut.writeNull();
             // <NDR: unsigned long> [in, range(0, SC_MAX_PWD_SIZE)] DWORD dwPwSize
             packetOut.writeInt(0);
         }
         // <NDR: pointer[struct]> [in, string, unique, range(0, SC_MAX_NAME_LENGTH)] wchar_t* lpDisplayName
-        if (this.lpDisplayName != null) {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.lpDisplayName)) {
             packetOut.writeMarshallable(this.lpDisplayName);
-        } else {
-            packetOut.writeNull();
         }
     }
 }

@@ -20,7 +20,9 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
  * <b>Example:</b>
@@ -146,15 +148,31 @@ public class BaseRegQueryInfoKeyResponse extends RequestResponse {
         //      Pointer to Last Changed Time (NTTIME)
         //          Last Changed Time: Jun 21, 2017 12:50:30.686403000 EDT
         //      Windows Error: WERR_OK (0x00000000)
-        packetIn.readStringBuf(true);
-
-        subKeys = packetIn.readInt();
-        maxSubKeyLen = packetIn.readInt();
-        maxClassLen = packetIn.readInt();
-        values = packetIn.readInt();
-        maxValueNameLen = packetIn.readInt();
-        maxValueLen = packetIn.readInt();
-        securityDescriptor = packetIn.readInt();
-        lastWriteTime = packetIn.readLong();
+        // <NDR: struct>
+        packetIn.readUnmarshallable(new RPCUnicodeString.NullTerminated());
+        // <NDR: unsigned long>
+        packetIn.align(Alignment.FOUR);
+        this.subKeys = packetIn.readInt();
+        // <NDR: unsigned long>
+        // Alignment: 4 - Already aligned
+        this.maxSubKeyLen = packetIn.readInt();
+        // <NDR: unsigned long>
+        // Alignment: 4 - Already aligned
+        this.maxClassLen = packetIn.readInt();
+        // <NDR: unsigned long>
+        // Alignment: 4 - Already aligned
+        this.values = packetIn.readInt();
+        // <NDR: unsigned long>
+        // Alignment: 4 - Already aligned
+        this.maxValueNameLen = packetIn.readInt();
+        // <NDR: unsigned long>
+        // Alignment: 4 - Already aligned
+        this.maxValueLen = packetIn.readInt();
+        // <NDR: unsigned long>
+        // Alignment: 4 - Already aligned
+        this.securityDescriptor = packetIn.readInt();
+        // <NDR: unsigned long>
+        // Alignment: 4 (2x unsigned long) - Already aligned
+        this.lastWriteTime = packetIn.readLong();
     }
 }

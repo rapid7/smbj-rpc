@@ -28,7 +28,7 @@ public class Test_SamrGetAliasMembershipResponse {
     public void unmarshalEmptyResponse() throws IOException {
         SamrGetAliasMembershipResponse response = new SamrGetAliasMembershipResponse();
         response.fromHexString("00000000000002000000000000000000");
-        assertEquals(0, response.getList().length);
+        assertEquals(0, response.getMembership().getArray().length);
         assertEquals(0, response.getReturnValue());
     }
 
@@ -36,8 +36,8 @@ public class Test_SamrGetAliasMembershipResponse {
     public void unmarshalResponse() throws IOException {
         SamrGetAliasMembershipResponse response = new SamrGetAliasMembershipResponse();
         response.fromHexString("0100000000000200010000002102000000000000");
-        assertEquals(1, response.getList().length);
-        assertEquals(545, response.getList()[0].intValue());
+        assertEquals(1, response.getMembership().getArray().length);
+        assertEquals(545L, response.getMembership().getArray()[0]);
         assertEquals(0, response.getReturnValue());
     }
 

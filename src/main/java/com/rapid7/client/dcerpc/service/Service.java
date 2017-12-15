@@ -74,6 +74,16 @@ public abstract class Service {
         return ret;
     }
 
+    protected String[] parseRPCUnicodeStrings(final RPCUnicodeString ... rpcUnicodeStrings) {
+        if (rpcUnicodeStrings == null)
+            return new String[0];
+        final String[] ret = new String[rpcUnicodeStrings.length];
+        for (int i = 0; i < rpcUnicodeStrings.length; i++) {
+            ret[i] = (rpcUnicodeStrings[i] == null) ? null : rpcUnicodeStrings[i].getValue();
+        }
+        return ret;
+    }
+
     protected byte[] parseHandle(final ContextHandle handle) {
         return handle.getBytes();
     }
@@ -118,13 +128,54 @@ public abstract class Service {
     }
 
     protected SID parseRPCSID(final RPCSID rpcsid) {
-        if (rpcsid == null)
+        return parseRPCSID(rpcsid, true);
+    }
+
+    protected SID parseRPCSID(final RPCSID rpcsid, boolean nullable) {
+        if (rpcsid == null && nullable)
             return null;
         return new SID((byte) rpcsid.getRevision(), rpcsid.getIdentifierAuthority(), rpcsid.getSubAuthority());
     }
 
+    protected String parseRPCUnicodeString(final RPCUnicodeString rpcUnicodeString) {
+        return parseRPCUnicodeString(rpcUnicodeString, false);
+    }
+
+    protected String parseRPCUnicodeString(final RPCUnicodeString rpcUnicodeString, final boolean nullable) {
+        if (rpcUnicodeString == null) {
+            if (nullable)
+                return null;
+            throw new NullPointerException("Expecting non-null rpcUnicodeString");
+        }
+        return rpcUnicodeString.getValue();
+    }
+
+    protected WChar.NullTerminated parseWCharNT(final String str) {
+        return parseWCharNT(str, true);
+    }
+
+    protected WChar.NullTerminated parseWCharNT(final String str, final boolean nullable) {
+        if (str == null && nullable)
+            return null;
+        return WChar.NullTerminated.of(str);
+    }
+
+    protected WChar.NonNullTerminated parseWChar(final String str) {
+        return parseWChar(str, true);
+    }
+
+    protected WChar.NonNullTerminated parseWChar(final String str, final boolean nullable) {
+        if (str == null && nullable)
+            return null;
+        return WChar.NonNullTerminated.of(str);
+    }
+
     protected String parseWChar(final WChar wChar) {
-        if (wChar == null)
+        return parseWChar(wChar, true);
+    }
+
+    protected String parseWChar(final WChar wChar, final boolean nullable) {
+        if (wChar == null && nullable)
             return null;
         return wChar.getValue();
     }

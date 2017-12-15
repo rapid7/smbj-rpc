@@ -38,16 +38,12 @@ class PrimitiveInput {
         dataIn = new LittleEndianDataInputStream(dataInStream);
     }
 
-    public void align() throws IOException {
-        align(Alignment.FOUR);
-    }
-
     public void align(Alignment alignment) throws IOException {
-        if (alignment == Alignment.ONE) return;
-        final long alignmentOffset = alignment.getOffByOneAlignment() + dataInStream.getCount() & ~alignment.getOffByOneAlignment();
-        while (alignmentOffset > dataInStream.getCount()) {
+        if (alignment == Alignment.ONE)
+            return;
+        long readBytes = ((alignment.getOffByOneAlignment() + dataInStream.getCount()) & ~alignment.getOffByOneAlignment()) - dataInStream.getCount();
+        while (readBytes-- > 0)
             readByte();
-        }
     }
 
     public long getCount() {

@@ -31,39 +31,34 @@ import java.util.List;
    NDR Conformant Array
  */
 
-public class LSAPRSIDInformationArray implements Marshallable
-{
-
+public class LSAPRSIDInformationArray implements Marshallable {
     private List<LSAPRSIDInformation> lsaprsidInformations;
 
     public LSAPRSIDInformationArray(){
         lsaprsidInformations = new ArrayList<>();
     }
 
-    public void addLSAPRSIDInformation(LSAPRSIDInformation SIDInfo){
-        lsaprsidInformations.add(SIDInfo);
+    public void addLSAPRSIDInformation(LSAPRSIDInformation sidInfo){
+        lsaprsidInformations.add(sidInfo);
     }
 
-    @Override public void marshalPreamble(PacketOutput out)
-        throws IOException
-    {
+    @Override
+    public void marshalPreamble(PacketOutput out) throws IOException {
         out.writeInt(lsaprsidInformations.size());
     }
 
-    @Override public void marshalEntity(PacketOutput out)
-        throws IOException
-    {
-        for (LSAPRSIDInformation lsaprsidInformation: lsaprsidInformations) {
-            if (lsaprsidInformation != null) out.writeReferentID();
-            else out.writeNull();
+    @Override
+    public void marshalEntity(PacketOutput out) throws IOException {
+        for (final LSAPRSIDInformation lsaprsidInformation: lsaprsidInformations) {
+            out.writeReferentID(lsaprsidInformation);
         }
     }
 
-    @Override public void marshalDeferrals(PacketOutput out)
-        throws IOException
-    {
-        for (LSAPRSIDInformation lsaprsidInformation: lsaprsidInformations) {
-            out.writeMarshallable(lsaprsidInformation);
+    @Override
+    public void marshalDeferrals(PacketOutput out) throws IOException {
+        for (final LSAPRSIDInformation lsaprsidInformation: lsaprsidInformations) {
+            if (lsaprsidInformation != null)
+                out.writeMarshallable(lsaprsidInformation);
         }
     }
 }

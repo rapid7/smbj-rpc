@@ -32,7 +32,6 @@ public class SamrLookupNamesInDomainResponse extends RequestResponse {
     // [out] PSAMPR_ULONG_ARRAY Use
     private SAMPRULongArray use;
 
-
     public SAMPRULongArray getRelativeIds() {
         return relativeIds;
     }

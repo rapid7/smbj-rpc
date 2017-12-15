@@ -33,7 +33,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * } DOMAIN_LOGOFF_INFORMATION,
  *  *PDOMAIN_LOGOFF_INFORMATION;
  */
-public class SAMPRDomainLogOffInfo implements Unmarshallable {
+public class SAMPRDomainLogoffInfo implements Unmarshallable {
 
     private long forceLogoff;
 
@@ -71,10 +71,10 @@ public class SAMPRDomainLogOffInfo implements Unmarshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof SAMPRDomainLogOffInfo)) {
+        } else if (!(obj instanceof SAMPRDomainLogoffInfo)) {
             return false;
         }
-        SAMPRDomainLogOffInfo other = (SAMPRDomainLogOffInfo) obj;
+        SAMPRDomainLogoffInfo other = (SAMPRDomainLogoffInfo) obj;
         return Objects.equals(getForceLogoff(), other.getForceLogoff());
     }
 

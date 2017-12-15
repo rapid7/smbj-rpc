@@ -21,25 +21,33 @@
 
 package com.rapid7.client.dcerpc.mssamr.dto;
 
+import com.rapid7.client.dcerpc.dto.SIDUse;
+
 /**
  * This class contains the relative ID and use for a member of a security issuer.
  */
 public class MembershipWithUse extends Membership {
 
-    private final int use;
+    private final SIDUse use;
+    private final int useValue;
 
-    public MembershipWithUse(final long relativeID, final int use) {
+    public MembershipWithUse(final long relativeID, final int useValue) {
         super(relativeID);
-        this.use = use;
+        this.use = SIDUse.fromValue((short) useValue);
+        this.useValue = useValue;
     }
 
-    public int getUse() {
-        return use;
+    public SIDUse getUse() {
+        return this.use;
+    }
+
+    public int getUseValue() {
+        return useValue;
     }
 
     @Override
     public int hashCode() {
-        return (super.hashCode() * 31) + this.use;
+        return (super.hashCode() * 31) + this.useValue;
     }
 
     @Override
@@ -50,11 +58,13 @@ public class MembershipWithUse extends Membership {
             return false;
         }
         return super.equals(obj)
-                && this.use == ((MembershipWithUse) obj).use;
+                && getUseValue() == ((MembershipWithUse) obj).getUseValue();
     }
 
     @Override
     public String toString() {
-        return String.format("MembershipWithUse{relativeID: %d, use: %d}", getRelativeID(), this.use);
+        final String useStr = (getUse() == null) ? "" : String.format(" (%s)", getUse());
+        return String.format("MembershipWithUse{relativeID: %d, use: %d%s}", getRelativeID(),
+                this.useValue, useStr);
     }
 }

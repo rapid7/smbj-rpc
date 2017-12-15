@@ -37,13 +37,10 @@ public class PrimitiveOutput {
         dataOut = new LittleEndianDataOutputStream(dataOutStream);
     }
 
-    public void align() throws IOException {
-        align(Alignment.FOUR);
-    }
-
     public void align(Alignment alignment) throws IOException {
-        if (alignment == Alignment.ONE) return;
-        final long alignmentOffset = alignment.getOffByOneAlignment() + dataOutStream.getCount() & ~alignment.getOffByOneAlignment();
+        if (alignment == Alignment.ONE)
+            return;
+        final long alignmentOffset = (alignment.getOffByOneAlignment() + dataOutStream.getCount()) & ~alignment.getOffByOneAlignment();
         pad(alignmentOffset - dataOutStream.getCount());
     }
 

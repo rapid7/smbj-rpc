@@ -33,7 +33,6 @@ package com.rapid7.client.dcerpc.mssamr.messages;
  *       https://msdn.microsoft.com/en-us/library/cc245757.aspx</a>
  */
 public class SamrEnumerateGroupsInDomainRequest extends SamrEnumerateRequest<SamrEnumerateGroupsInDomainResponse> {
-
     public static final short OP_NUM = 11;
 
     public SamrEnumerateGroupsInDomainRequest(byte[] handle, int enumContext, int maxLength) {

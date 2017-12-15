@@ -20,7 +20,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.msrrp.RegistryValueType;
+import com.rapid7.client.dcerpc.msrrp.dto.RegistryValueType;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -58,8 +58,8 @@ public class Test_BaseRegQueryValueResponse {
 
         response.fromHexString("00000200010000000400020008000000000000000800000036002e003300000008000200080000000c0002000800000000000000");
 
-        assertArrayEquals("6.3\0".getBytes("UTF-16LE"), response.getData());
-        assertEquals(RegistryValueType.REG_SZ, response.getType());
+        assertArrayEquals("6.3\0".getBytes("UTF-16LE"), response.getData().getArray());
+        assertEquals(RegistryValueType.REG_SZ.getTypeID(), (int) response.getType());
         assertEquals(0, response.getReturnValue());
     }
 }

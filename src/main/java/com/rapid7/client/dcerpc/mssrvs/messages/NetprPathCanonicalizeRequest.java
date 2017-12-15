@@ -22,7 +22,7 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssrvs.NetrOpCode;
+import com.rapid7.client.dcerpc.objects.WChar;
 
 /**
  * <h1 class="title">3.1.4.30 NetprPathCanonicalize (Opnum 31)</h1>
@@ -139,16 +139,23 @@ import com.rapid7.client.dcerpc.mssrvs.NetrOpCode;
 
 
 public class NetprPathCanonicalizeRequest extends RequestCall<NetprPathCanonicalizeResponse> {
-    final String serverName;
-    final String pathName;
-    final String prefix;
-    final int outBufLen;
-    final int pathType;
-    final int flags;
+    // <NDR: pointer[conformant varying array]> [in, string, unique] SRVSVC_HANDLE ServerName
+    private final WChar.NullTerminated serverName;
+    // <NDR: pointer[conformant varying array]> [in, string] WCHAR* PathName
+    private final WChar.NullTerminated pathName;
+    // <NDR: unsigned long> [in, range(0,64000)] DWORD OutbufLen
+    private final int outBufLen;
+    // <NDR: pointer[conformant varying array]> [in, string] WCHAR* Prefix
+    private final WChar.NullTerminated prefix;
+    // <NDR: unsigned long> [in, out] DWORD* PathType
+    private final int pathType;
+    // <NDR: long> [in] DWORD Flags
+    private final int flags;
 
     //private final static int MAX_BUFFER_SIZE = 64000;
 
-    public NetprPathCanonicalizeRequest(String serverName, String pathName, int outBufLen, String prefix, int pathType, int flags) {
+    public NetprPathCanonicalizeRequest(WChar.NullTerminated serverName, WChar.NullTerminated
+            pathName, int outBufLen, WChar.NullTerminated prefix, int pathType, int flags) {
         super(NetrOpCode.NetprPathCanonicalize.getOpCode());
         this.serverName = serverName;
         this.pathName = pathName;
@@ -158,17 +165,19 @@ public class NetprPathCanonicalizeRequest extends RequestCall<NetprPathCanonical
         this.flags = flags;
     }
 
-    public void marshal(final PacketOutput stubOut) throws IOException {
-        stubOut.writeStringRef(serverName, true);
-        stubOut.align(Alignment.FOUR);
-        stubOut.writeString(pathName, true);
-        stubOut.align(Alignment.FOUR); // align WCHAR*
-        stubOut.writeInt(outBufLen);
-        stubOut.writeString(prefix, true);
-        stubOut.align(Alignment.FOUR); // align WCHAR*
-        stubOut.writeInt(pathType);
-        stubOut.writeInt(flags);
-
+    public void marshal(final PacketOutput packetOut) throws IOException {
+        if (packetOut.writeReferentID(this.serverName)) {
+            packetOut.writeMarshallable(serverName);
+            // Alignment for pathName
+            packetOut.align(Alignment.FOUR);
+        }
+        packetOut.writeMarshallable(this.pathName);
+        packetOut.align(Alignment.FOUR);
+        packetOut.writeInt(outBufLen);
+        packetOut.writeMarshallable(this.prefix);
+        packetOut.align(Alignment.FOUR);
+        packetOut.writeInt(pathType);
+        packetOut.writeInt(flags);
     }
 
     @Override

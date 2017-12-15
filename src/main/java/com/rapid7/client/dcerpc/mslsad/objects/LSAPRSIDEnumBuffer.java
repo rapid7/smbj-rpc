@@ -50,37 +50,33 @@ import java.io.IOException;
  * field in this structure is not 0, this field MUST be non-NULL. If <strong>Entries</strong>
  * is 0, this field MUST be ignored.</p>
  */
-
 public class LSAPRSIDEnumBuffer implements Marshallable {
     private final int entries;
     private final LSAPRSIDInformationArray lsaprSIDInformationArray;
 
     public LSAPRSIDEnumBuffer(RPCSID ... rpcSIDs) {
-        lsaprSIDInformationArray = new LSAPRSIDInformationArray();
+        this.lsaprSIDInformationArray = new LSAPRSIDInformationArray();
         for (RPCSID rpcsid : rpcSIDs) {
-            LSAPRSIDInformation lsaprSIDInformation = new LSAPRSIDInformation(rpcsid);
-            lsaprSIDInformationArray.addLSAPRSIDInformation(lsaprSIDInformation);
+            final LSAPRSIDInformation lsaprSIDInformation;
+            if (rpcsid != null)
+                lsaprSIDInformation = new LSAPRSIDInformation(rpcsid);
+            else
+                lsaprSIDInformation = null;
+            this.lsaprSIDInformationArray.addLSAPRSIDInformation(lsaprSIDInformation);
         }
-        entries = rpcSIDs.length;
+        this.entries = rpcSIDs.length;
     }
 
-    @Override public void marshalPreamble(PacketOutput out)
-        throws IOException
-    {
+    @Override public void marshalPreamble(PacketOutput out) {
 
     }
 
-    @Override public void marshalEntity(PacketOutput out)
-        throws IOException
-    {
+    @Override public void marshalEntity(PacketOutput out) throws IOException {
         out.writeInt(entries);
-        if (lsaprSIDInformationArray != null) out.writeReferentID();
-        else out.writeNull();
+        out.writeReferentID(this.lsaprSIDInformationArray);
     }
 
-    @Override public void marshalDeferrals(PacketOutput out)
-        throws IOException
-    {
+    @Override public void marshalDeferrals(PacketOutput out) throws IOException {
         out.writeMarshallable(lsaprSIDInformationArray);
     }
 }

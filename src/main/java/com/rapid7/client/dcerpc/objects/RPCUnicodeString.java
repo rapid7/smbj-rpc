@@ -40,8 +40,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *      typedef struct _RPC_UNICODE_STRING {
  *          unsigned short Length;
  *          unsigned short MaximumLength;
- *          [size_is(MaximumLength/2), length_is(Length/2)]
- *          WCHAR* Buffer;
+ *          [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
  *      } RPC_UNICODE_STRING,
  *      *PRPC_UNICODE_STRING;
  *  Length: The length, in bytes, of the string pointed to by the Buffer member, not including the terminating null character if any. The length MUST be a multiple of 2. The length SHOULD equal the entire size of the Buffer, in which case there is no terminating null character. Any method that accesses this structure MUST use the Length specified instead of relying on the presence or absence of a null character.
@@ -150,9 +149,6 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
             out.writeShort(0);
-            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
-            // Alignment 4 - Already aligned
-            out.writeNull();
         } else {
             // UTF-16 encoded string is 2 bytes per count point
             // Null terminator must also be considered
@@ -163,10 +159,10 @@ public abstract class RPCUnicodeString implements Unmarshallable, Marshallable {
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
             out.writeShort(byteLength);
-            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
-            // Alignment 4 - Already aligned
-            out.writeReferentID();
         }
+        // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
+        // Alignment 4 - Already aligned
+        out.writeReferentID(this.wChar);
     }
 
     @Override

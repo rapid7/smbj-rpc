@@ -28,8 +28,6 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
 import com.rapid7.client.dcerpc.mssamr.objects.GroupInformationClass;
 import com.rapid7.client.dcerpc.mssamr.objects.SAMPRGroupGeneralInformation;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRUserAllInformation;
-import com.rapid7.client.dcerpc.mssamr.objects.UserInformationClass;
 
 public abstract class SamrQueryInformationGroupResponse<T extends Unmarshallable> extends RequestResponse {
     private T groupInformation;

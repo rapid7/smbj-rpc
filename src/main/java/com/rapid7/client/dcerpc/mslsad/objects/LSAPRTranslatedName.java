@@ -67,8 +67,7 @@ import java.util.Objects;
  * values MUST NOT be used.</p>
  *
  */
-public class LSAPRTranslatedName implements Unmarshallable
-{
+public class LSAPRTranslatedName implements Unmarshallable {
     // <NDR: short> SID_NAME_USE Use;
     private short use;
     // <NDR: struct> RPC_UNICODE_STRING Name;
@@ -108,7 +107,8 @@ public class LSAPRTranslatedName implements Unmarshallable
         return use;
     }
 
-    public RPCUnicodeString getName() { return name;
+    public RPCUnicodeString getName() {
+        return name;
     }
 
     public int getDomainIndex() {

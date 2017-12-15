@@ -20,8 +20,8 @@ package com.rapid7.client.dcerpc.mssrvs.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.mssrvs.NetprPathType;
 
 /**
  * Server Service, NetPathCanonicalize
@@ -35,41 +35,41 @@ import com.rapid7.client.dcerpc.mssrvs.NetprPathType;
  */
 
 public class NetprPathCanonicalizeResponse extends RequestResponse {
-    private String canonicalizedPath;
+    private String outBuf;
     private int pathType;
 
+    @Override
     public void unmarshalResponse(final PacketInput packetIn) throws IOException {
-        canonicalizedPath = readChars(packetIn);
+        outBuf = readChars(packetIn);
+        packetIn.align(Alignment.FOUR);
         pathType = packetIn.readInt();
     }
 
-    public String getCanonicalizedPath() {
-        return canonicalizedPath;
+    public String getOutBuf() {
+        return outBuf;
     }
 
-    public NetprPathType getPathType() {
-        return NetprPathType.getid(pathType);
+    public int getPathType() {
+        return this.pathType;
     }
 
     private String readChars(final PacketInput packetIn) throws IOException {
-        final StringBuffer result;
-        int currentOffset = 0;
-        int lengthInBytes = packetIn.readInt();
-        int lengthOfChars = lengthInBytes / 2;
-        result = new StringBuffer(lengthOfChars);
-
-        while (currentOffset++ < lengthOfChars) {
+        // Corresponds to [in, range(0,64000)] DWORD OutbufLen
+        final int byteCount = packetIn.readInt();
+        // UTF-16 string
+        final int charCount = byteCount / 2;
+        final StringBuilder result = new StringBuilder(charCount);
+        int offset = 0;
+        while (offset < charCount) {
+            offset++;
             final char currentChar = (char) packetIn.readShort();
-            if (currentChar == 0) {
+            // Null terminator indicates end of response content, but not end of buffer
+            if (currentChar == 0)
                 break;
-            }
             result.append(currentChar);
         }
-        while (currentOffset++ < lengthOfChars) {
-            packetIn.readShort();
-        }
-        packetIn.align();
-
+        // Skip the rest of the buffer
+        packetIn.fullySkipBytes((charCount - offset) * 2);
         return result.toString();
     }
 }

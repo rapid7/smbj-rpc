@@ -69,22 +69,16 @@ public class ROpenSCManagerWRequest extends RequestCall<HandleResponse> {
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         // <NDR: pointer[struct]> [in, string, unique, range(0, SC_MAX_COMPUTER_NAME_LENGTH)] SVCCTL_HANDLEW lpMachineName
-        if (this.lpMachineName != null) {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.lpMachineName)) {
             packetOut.writeMarshallable(this.lpMachineName);
             // Alignment for lpDatabaseName
             packetOut.align(Alignment.FOUR);
-        } else {
-            packetOut.writeNull();
         }
         // <NDR: pointer[struct]> [in, string, unique, range(0, SC_MAX_NAME_LENGTH)] wchar_t* lpDatabaseName
-        if (this.lpDatabaseName != null) {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.lpDatabaseName)) {
             packetOut.writeMarshallable(this.lpDatabaseName);
             // Alignment for dwDesiredAccess
             packetOut.align(Alignment.FOUR);
-        } else {
-            packetOut.writeNull();
         }
         packetOut.writeInt(this.dwDesiredAccess);
     }

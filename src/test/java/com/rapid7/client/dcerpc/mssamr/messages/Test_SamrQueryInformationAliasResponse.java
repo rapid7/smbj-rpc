@@ -58,7 +58,7 @@ public class Test_SamrQueryInformationAliasResponse {
     public Object[][] data_unmarshal() {
         return new Object[][] {
                 // Reference: 1, ALIAS_INFORMATION_CLASS: 1
-                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "01000000 0100 01000000"}
+                {new SamrQueryInformationAliasResponse.AliasGeneralInformation(), "01000000 0100 FFFF 01000000"}
         };
     }
 

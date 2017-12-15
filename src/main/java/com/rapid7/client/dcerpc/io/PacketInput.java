@@ -18,8 +18,10 @@
  */
 package com.rapid7.client.dcerpc.io;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.rmi.UnmarshalException;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 public class PacketInput extends PrimitiveInput {
@@ -27,6 +29,16 @@ public class PacketInput extends PrimitiveInput {
         super(inputStream);
     }
 
+    /**
+     * Read a non-null object which implements {@link Unmarshallable}.
+     * This object *must* be considered a top level object; if it is not, consider calling
+     * {@link Unmarshallable#unmarshalPreamble(PacketInput)}, {@link Unmarshallable#unmarshalEntity(PacketInput)},
+     * and {@link Unmarshallable#unmarshalDeferrals(PacketInput)} separately at the appropriate locations.
+     * @param unmarshallable A non-null {@link Unmarshallable} object.
+     * @param <T> The class of the provided unmarshallable object.
+     * @return The same input parameter. Useful for chaining.
+     * @throws IOException On read failure.
+     */
     public <T extends Unmarshallable> T readUnmarshallable(T unmarshallable) throws IOException {
         unmarshallable.unmarshalPreamble(this);
         unmarshallable.unmarshalEntity(this);
@@ -34,112 +46,58 @@ public class PacketInput extends PrimitiveInput {
         return unmarshallable;
     }
 
-    public Integer readIntRef() throws IOException {
-        return 0 != readReferentID() ? readInt() : null;
-    }
-
-    public Long readLongRef() throws IOException {
-        return 0 != readReferentID() ? readLong() : null;
-    }
-
+    /**
+     * Read a referent ID unique to this instance of {@link PacketInput}.
+     * @return A referent ID unique to this instance of {@link PacketInput}.
+     * @throws IOException On read failure.
+     */
     public int readReferentID() throws IOException {
         // Currently only supports NDR20
         return readInt();
     }
 
-    public byte[] readByteArray() throws IOException {
-        readInt();
-        final int initialOffset = readInt();
-        final int actualCount = readInt();
-        final byte[] result = new byte[initialOffset + actualCount];
-
-        for (int index = initialOffset; index < result.length; index++) {
-            result[index] = readByte();
-        }
-
-        return result;
-    }
-
-    public byte[] readByteArrayRef() throws IOException {
-        final byte[] result;
-        if (0 != readReferentID()) {
-            result = readByteArray();
-            align();
-        } else {
-            result = null;
-        }
-
-        return result;
-    }
-
-    public byte[] readRawBytes(int length) throws IOException {
+    /**
+     * Read and return length number of bytes.
+     * @param length The number of bytes to read.
+     * @return A byte[] populated with length bytes.
+     * @throws EOFException If not enough bytes are available.
+     * @throws IOException On read failure.
+     */
+    public byte[] readRawBytes(final int length) throws IOException {
         byte[] bytes = new byte[length];
         readRawBytes(bytes);
 
         return bytes;
     }
 
-    public void readRawBytes(byte[] buf) throws IOException {
+    /**
+     * Read all bytes into the given buffer.
+     * @param buf The buffer to read into.
+     * @throws EOFException If not enough bytes are available to fill the buffer.
+     * @throws IOException On read failure.
+     */
+    public void readRawBytes(final byte[] buf) throws IOException {
         readFully(buf, 0, buf.length);
     }
 
-    public String readString(final boolean nullTerminated) throws IOException {
-        final StringBuffer result;
-
-        readInt();
-        final int initialOffset = readInt();
-        final int currentChars = readInt();
-
-        result = new StringBuffer(currentChars);
-        result.setLength(initialOffset);
-
-        int currentOffset = 0;
-        while (currentOffset++ < currentChars) {
-            final char currentChar = (char) readShort();
-            if (nullTerminated && currentChar == 0) {
-                break;
-            }
-            result.append(currentChar);
+    /**
+     * Read an unsigned integer which is to be used as an array size or offset.
+     *
+     * Due to the limitations of Java, we must used a signed integer, and array lengths can not
+     * exceed the maximum value of an unsigned integer. Therefore, if the read unsigned integer
+     * is greater than {@link Integer#MAX_VALUE}, this will throw an {@link UnmarshalException}.
+     *
+     * @param name The name of the entity being read. Used in the potential {@link UnmarshalException}.
+     * @return The unsigned integer which is guaranteed to be valid as an array size or offset.
+     * @throws UnmarshalException When the value exceeds {@link Integer#MAX_VALUE}.
+     * @throws IOException On read failure.
+     */
+    public int readIndex(final String name) throws IOException {
+        final long ret = readUnsignedInt();
+        // Don't allow array length or index values bigger than signed int
+        if (ret > Integer.MAX_VALUE) {
+            throw new UnmarshalException(String.format("%s %d > %d", name, ret, Integer.MAX_VALUE));
         }
-
-        while (currentOffset++ < currentChars) {
-            readShort();
-        }
-
-        align();
-
-        return result.toString();
-    }
-
-    public String readStringRef(final boolean nullTerminated) throws IOException {
-        final String result;
-
-        if (0 != readReferentID()) {
-            result = readString(nullTerminated);
-            align();
-        } else {
-            result = null;
-        }
-
-        return result != null ? result.toString() : null;
-    }
-
-    public String readStringBuf(final boolean nullTerminated) throws IOException {
-        readShort(); // Current byte length
-        readShort(); // Maximum byte length
-
-        return readStringRef(nullTerminated);
-    }
-
-    public String readStringBufRef(final boolean nullTerminated) throws IOException {
-        final String result;
-        if (0 != readReferentID()) {
-            result = readStringBuf(nullTerminated);
-            align();
-        } else {
-            result = null;
-        }
-
-        return result;
+        return (int) ret;
     }
 }

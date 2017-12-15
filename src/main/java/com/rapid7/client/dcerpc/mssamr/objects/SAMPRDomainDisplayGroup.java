@@ -22,7 +22,7 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
-import com.rapid7.client.dcerpc.objects.RPCUnicodeString.NonNullTerminated;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
  * The SAMPR_DOMAIN_DISPLAY_GROUP structure contains a subset of group information sufficient to show a summary of the account for an account management application.
@@ -50,9 +50,6 @@ public class SAMPRDomainDisplayGroup implements Unmarshallable {
     private RPCUnicodeString.NonNullTerminated accountName;
     private RPCUnicodeString.NonNullTerminated description;
 
-    public SAMPRDomainDisplayGroup() {
-    }
-
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
     }
@@ -69,12 +66,12 @@ public class SAMPRDomainDisplayGroup implements Unmarshallable {
         return attributes;
     }
 
-    public String getAccountName() {
-        return accountName.getValue();
+    public RPCUnicodeString.NonNullTerminated getAccountName() {
+        return accountName;
     }
 
-    public String getDescription() {
-        return description.getValue();
+    public RPCUnicodeString.NonNullTerminated getDescription() {
+        return description;
     }
 
     @Override
@@ -82,9 +79,9 @@ public class SAMPRDomainDisplayGroup implements Unmarshallable {
         index = in.readInt();
         rid = in.readInt();
         attributes = in.readInt();
-        accountName = new NonNullTerminated();
+        accountName = new RPCUnicodeString.NonNullTerminated();
         accountName.unmarshalEntity(in);
-        description = new NonNullTerminated();
+        description = new RPCUnicodeString.NonNullTerminated();
         description.unmarshalEntity(in);
     }
 

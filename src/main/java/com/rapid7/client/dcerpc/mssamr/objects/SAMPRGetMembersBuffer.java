@@ -24,7 +24,7 @@ import java.util.List;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-import com.rapid7.client.dcerpc.objects.RPCConformantIntegerArray;
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantIntegerArray;
 
 /**
  * The SAMPR_GET_MEMBERS_BUFFER structure represents the membership of a group.

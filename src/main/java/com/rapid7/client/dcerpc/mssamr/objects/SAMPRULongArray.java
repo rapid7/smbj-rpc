@@ -60,21 +60,21 @@ public class SAMPRULongArray implements Unmarshallable {
         // unsigned long Count;
         final int count = readIndex("Count", in);
         if (in.readReferentID() != 0) {
-            array = new long[count];
+            this.array = new long[count];
         } else {
-            array = null;
+            this.array = null;
         }
     }
 
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
-        if (array != null) {
+        if (this.array != null) {
             // MaximumCount: [size_is(Count)] unsigned long * Element;
             in.align(Alignment.FOUR);
             in.fullySkipBytes(4);
             // Elements: [size_is(Count)] unsigned long * Element;
-            for (int i = 0; i < array.length; i++) {
-                array[i] = in.readUnsignedInt();
+            for (int i = 0; i < this.array.length; i++) {
+                this.array[i] = in.readUnsignedInt();
             }
         }
     }

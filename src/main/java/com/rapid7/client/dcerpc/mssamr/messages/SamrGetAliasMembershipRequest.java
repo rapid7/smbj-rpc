@@ -21,8 +21,7 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.objects.RPCSID;
-import com.rapid7.client.dcerpc.objects.RPCSIDArray;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRPSIDArray;
 
 /**
  * The SamrGetAliasMembership method obtains the union of all aliases that a given set of SIDs is a member of.
@@ -43,9 +42,9 @@ public class SamrGetAliasMembershipRequest extends RequestCall<SamrGetAliasMembe
     public static final short OP_NUM = 16;
 
     private final byte[] handle;
-    private final RPCSID[] sids;
+    private final SAMPRPSIDArray sids;
 
-    public SamrGetAliasMembershipRequest(byte[] handle, RPCSID... sids) {
+    public SamrGetAliasMembershipRequest(final byte[] handle, final SAMPRPSIDArray sids) {
         super(OP_NUM);
         this.handle = handle;
         this.sids = sids;
@@ -54,10 +53,7 @@ public class SamrGetAliasMembershipRequest extends RequestCall<SamrGetAliasMembe
     @Override
     public void marshal(PacketOutput out) throws IOException {
         out.write(handle);
-        RPCSIDArray array = new RPCSIDArray(sids);
-        out.writeInt(sids.length);
-        out.writeReferentID();
-        out.writeMarshallable(array);
+        out.writeMarshallable(this.sids);
     }
 
     @Override

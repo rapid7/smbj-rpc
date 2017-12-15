@@ -245,12 +245,33 @@ public class BaseRegEnumValueRequest extends RequestCall<BaseRegEnumValueRespons
         //          .... .... 0... .... .... .... .... .... = Access SACL: Not set
         //          Standard rights: 0x00000000
         //          WINREG specific rights: 0x00000000
-        packetOut.write(hKey);
-        packetOut.writeInt(index);
-        packetOut.writeStringBuffer(valueNameLen);
-        packetOut.writeIntRef(0);
-        packetOut.writeEmptyArrayRef(dataLen);
-        packetOut.writeIntRef(dataLen);
-        packetOut.writeIntRef(0);
+        // <NDR: fixed array> [in] RPC_HKEY hKey
+        packetOut.write(this.hKey);
+        // <NDR: unsigned long> [in] DWORD dwIndex
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(this.index);
+        // <NDR: conformant varying array> [in] PRRP_UNICODE_STRING lpValueNameIn
+        // Alignment: 4 - Already aligned
+        packetOut.writeEmptyRPCUnicodeString(this.valueNameLen);
+        // <NDR: pointer[unsigned long]> [in, out, unique] LPDWORD lpType
+        // Alignment: 4 - Already aligned
+        packetOut.writeReferentID();
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(0);
+        // <NDR: pointer[conformant varying array]> [in, out, unique, size_is(lpcbData?*lpcbData:0), length_is(lpcbLen?*lpcbLen:0), range(0, 0x4000000)] LPBYTE lpData,
+        // Alignment: 4 - Already aligned
+        packetOut.writeReferentID();
+        // Alignment: 4 - Already aligned
+        packetOut.writeEmptyCVArray(this.dataLen);
+        // <NDR: pointer[unsigned long]> [in, out, unique] LPDWORD lpcbData
+        // Alignment: 4 - Already aligned
+        packetOut.writeReferentID();
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(this.dataLen);
+        // <NDR: pointer[unsigned long]> [in, out, unique] LPDWORD lpcbLen
+        // Alignment: 4 - Already aligned
+        packetOut.writeReferentID();
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(0);
     }
 }

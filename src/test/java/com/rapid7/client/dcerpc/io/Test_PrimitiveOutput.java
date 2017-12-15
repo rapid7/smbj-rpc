@@ -18,6 +18,7 @@
  */
 package com.rapid7.client.dcerpc.io;
 
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
@@ -33,29 +34,37 @@ public class Test_PrimitiveOutput {
         new PacketOutput(null);
     }
 
-    @Test
-    public void align() throws IOException {
+    @DataProvider
+    public Object[][] data_align() {
+        return new Object[][] {
+                {Alignment.ONE, "", ""},
+                {Alignment.ONE, "FF", "FF"},
+                {Alignment.TWO, "", ""},
+                {Alignment.TWO, "FF", "FF00"},
+                {Alignment.TWO, "FFFF", "FFFF"},
+                {Alignment.FOUR, "", ""},
+                {Alignment.FOUR, "FF", "FF000000"},
+                {Alignment.FOUR, "FFFF", "FFFF0000"},
+                {Alignment.FOUR, "FFFFFF", "FFFFFF00"},
+                {Alignment.FOUR, "FFFFFFFF", "FFFFFFFF"},
+                {Alignment.EIGHT, "FF", "FF00000000000000"},
+                {Alignment.EIGHT, "FFFF", "FFFF000000000000"},
+                {Alignment.EIGHT, "FFFFFF", "FFFFFF0000000000"},
+                {Alignment.EIGHT, "FFFFFFFF", "FFFFFFFF00000000"},
+                {Alignment.EIGHT, "FFFFFFFFFF", "FFFFFFFFFF000000"},
+                {Alignment.EIGHT, "FFFFFFFFFFFF", "FFFFFFFFFFFF0000"},
+                {Alignment.EIGHT, "FFFFFFFFFFFFFF", "FFFFFFFFFFFFFF00"},
+                {Alignment.EIGHT, "FFFFFFFFFFFFFFFF", "FFFFFFFFFFFFFFFF"},
+        };
+    }
+
+    @Test(dataProvider = "data_align")
+    public void test_align(Alignment alignment, String hex, String expectHex) throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PacketOutput packetOut = new PacketOutput(outputStream);
-        assertEquals(0, packetOut.getCount());
-
-        packetOut.align();
-        assertEquals(0, packetOut.getCount());
-
-        packetOut.write(0);
-        assertEquals(1, packetOut.getCount());
-
-        packetOut.align();
-        assertEquals(4, packetOut.getCount());
-
-        packetOut.write(new byte[3]);
-        assertEquals(7, packetOut.getCount());
-
-        packetOut.align();
-        assertEquals(8, packetOut.getCount());
-
-        packetOut.align();
-        assertEquals(8, packetOut.getCount());
+        packetOut.write(Hex.decode(hex));
+        packetOut.align(alignment);
+        assertEquals(Hex.toHexString(outputStream.toByteArray()).toUpperCase(), expectHex.replace(" ", ""));
     }
 
     @DataProvider

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
@@ -21,55 +21,39 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 public class LsarEnumerateAccountRightsResponse extends RequestResponse {
-    // [out] PLSAPR_USER_RIGHT_SET UserRights
-    private String[] privNames;
+    // <NDR: pointer[conformant array]> [out] PLSAPR_USER_RIGHT_SET UserRights
+    private RPCUnicodeString.NonNullTerminated[] privNames;
 
-    public String[] getPrivNames() {
+    public RPCUnicodeString.NonNullTerminated[] getPrivNames() {
         return privNames;
     }
 
     @Override
     public void unmarshalResponse(final PacketInput packetIn) throws IOException {
-      /*
-       * Rpc Info
-       *
-       * MajorVer: 05
-       * MinorVer: 00
-       * PacketType: 02 (Response)
-       * Flags: 03R
-       * PackType: 10000000
-       * FragLen: EC00
-       * AuthLen: 0000
-       * CallId: 03000000
-       * AllocHint: D4000000
-       * ContextId: 0000
-       * CancelCount: 00
-       * Rsvd: 00
-       *
-       * Count: 11000000
-       * Ptr: 80DC1600
-       * Count: 11000000
-       * UniHdr1: 2600 2800985A1700
-       * UniHdr2: 2200 2400 68F41600 ...
-       * UniStr1: 14000000 00000000 13000000 53006500530065....
-       * SeSecurityPrivilege ...
-       * Status: 00000000
-       */
-
         final int privCnt = packetIn.readInt();
-        int ptr = packetIn.readInt();// 0 if status == 0xc0000034
-        if (privCnt >= 1) {
-            // MaxCnt(4 bytes) + UnitHdr(8 bytes)* privCnt
-            packetIn.fullySkipBytes(4 + 8 * privCnt);
-
-            privNames = new String[privCnt];
-            for (int i = 0; i < privCnt; i++) {
-                privNames[i] = packetIn.readString(true);
+        // <NDR: pointer[conformant array]> [out] PLSAPR_USER_RIGHT_SET UserRights
+        // Alignment: 4 - Already aligned
+        if (packetIn.readReferentID() != 0) {
+            this.privNames = new RPCUnicodeString.NonNullTerminated[privCnt];
+            // Maximum Count: <NDR: pointer[conformant array]> [out] PLSAPR_USER_RIGHT_SET UserRights
+            // Alignment: 4 - Already aligned
+            packetIn.fullySkipBytes(4);
+            // Entries: <NDR: pointer[conformant array]> [out] PLSAPR_USER_RIGHT_SET UserRights
+            for (int i = 0; i < this.privNames.length; i++) {
+                this.privNames[i] = new RPCUnicodeString.NonNullTerminated();
+                this.privNames[i].unmarshalPreamble(packetIn);
             }
+            for (final RPCUnicodeString.NonNullTerminated privName : this.privNames) {
+                privName.unmarshalEntity(packetIn);
+            }
+            for (final RPCUnicodeString.NonNullTerminated privName : this.privNames) {
+                privName.unmarshalDeferrals(packetIn);
+            }
+        } else {
+            this.privNames = null;
         }
     }
 }
-
-

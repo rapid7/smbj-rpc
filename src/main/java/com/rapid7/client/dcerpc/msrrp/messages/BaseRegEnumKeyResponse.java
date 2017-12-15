@@ -20,10 +20,9 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.RequestResponse;
-import com.rapid7.client.dcerpc.objects.FileTime;
-
-import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
  * <b>Example:</b>
@@ -71,14 +70,24 @@ import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
  * </pre>
  */
 public class BaseRegEnumKeyResponse extends RequestResponse {
-    private String name;
+    // <NDR: struct> [out] PRRP_UNICODE_STRING lpNameOut
+    private RPCUnicodeString.NullTerminated lpNameOut;
+    // <NDR: pointer[struct]> [out] PRPC_UNICODE_STRING* lplpClassOut
+    private RPCUnicodeString.NullTerminated lpClassOut;
     private long lastWriteTime;
 
     /**
      * @return The name of the retrieved key.
      */
-    public String getName() {
-        return name;
+    public RPCUnicodeString.NullTerminated getLpNameOut() {
+        return lpNameOut;
+    }
+
+    /**
+     * @return The class of the retrieved key. This parameter can be NULL.
+     */
+    public RPCUnicodeString.NullTerminated getLpClassOut() {
+        return lpClassOut;
     }
 
     /**
@@ -129,8 +138,25 @@ public class BaseRegEnumKeyResponse extends RequestResponse {
         //          Referent ID: 0x0002000c
         //          Last Changed Time: Jun 15, 2017 15:29:36.566813400 EDT
         //      Windows Error: WERR_OK (0x00000000)
-        this.name = packetIn.readStringBuf(true);
-        packetIn.readStringBufRef(true);
-        this.lastWriteTime = packetIn.readLongRef();
+        // <NDR: struct> [out] PRRP_UNICODE_STRING lpNameOut
+        this.lpNameOut = new RPCUnicodeString.NullTerminated();
+        packetIn.readUnmarshallable(this.lpNameOut);
+        // <NDR: pointer[struct]> [out] PRPC_UNICODE_STRING* lplpClassOut
+        packetIn.align(Alignment.FOUR);
+        if (packetIn.readReferentID() != 0) {
+            this.lpClassOut = new RPCUnicodeString.NullTerminated();
+            packetIn.readUnmarshallable(this.lpClassOut);
+            // Alignment for lpftLastWriteTime
+            packetIn.align(Alignment.FOUR);
+        } else {
+            this.lpClassOut = null;
+            // Alignment for lpftLastWriteTime not necessary
+        }
+        if (packetIn.readReferentID() != 0) {
+            // Alignment: 4 - Already aligned - This is a struct of 2x 4bytes
+            this.lastWriteTime = packetIn.readLong();
+        } else {
+            this.lastWriteTime = 0L;
+        }
     }
 }

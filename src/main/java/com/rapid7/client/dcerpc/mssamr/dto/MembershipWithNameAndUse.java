@@ -18,22 +18,29 @@
  */
 package com.rapid7.client.dcerpc.mssamr.dto;
 
-import java.util.Objects;
+import com.rapid7.client.dcerpc.dto.SIDUse;
 
 public class MembershipWithNameAndUse extends MembershipWithName {
-    private final long use;
-    public MembershipWithNameAndUse(long relativeID, String name, long use) {
+    private final SIDUse use;
+    private final int useValue;
+
+    public MembershipWithNameAndUse(long relativeID, String name, int useValue) {
         super(relativeID, name);
-        this.use = use;
+        this.use = SIDUse.fromValue((short) useValue);
+        this.useValue = useValue;
     }
 
-    public long getUse() {
-        return use;
+    public SIDUse getUse() {
+        return this.use;
+    }
+
+    public int getUseValue() {
+        return this.useValue;
     }
 
     @Override
     public int hashCode() {
-        return (super.hashCode() * 31) + Objects.hashCode(use);
+        return (super.hashCode() * 31) + this.useValue;
     }
 
     @Override
@@ -43,12 +50,15 @@ public class MembershipWithNameAndUse extends MembershipWithName {
         } else if (!(obj instanceof MembershipWithNameAndUse)) {
             return false;
         }
-        return super.equals(obj) && Objects.equals(this.use, ((MembershipWithNameAndUse) obj).use);
+        final MembershipWithNameAndUse other = (MembershipWithNameAndUse) obj;
+        return super.equals(obj) && getUseValue() == other.getUseValue();
     }
 
     @Override
     public String toString() {
         final String nameStr = (getName() != null) ? String.format("\"%s\"", getName()) : "null";
-        return String.format("MembershipWithName{relativeID: %d, name: %s, use: %s}", getRelativeID(), nameStr, use);
+        final String useStr = (getUse() == null) ? "" : String.format(" (%s)", getUse());
+        return String.format("MembershipWithNameAndUse{relativeID: %d, name: %s, use: %d%s}",
+                getRelativeID(), nameStr, getUseValue(), useStr);
     }
 }

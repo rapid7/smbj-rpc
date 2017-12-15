@@ -20,7 +20,7 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.objects.FileTime;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 import static org.junit.Assert.assertEquals;
 
@@ -70,7 +70,7 @@ public class Test_BaseRegEnumKeyResponse {
 
         response.fromHexString("180000020000020000010000000000000c000000420043004400300030003000300030003000300030000000040002000200feff08000200ff7f00000000000001000000000000000c00020026cd57b90de6d20100000000");
 
-        assertEquals("BCD00000000", response.getName());
+        assertEquals(RPCUnicodeString.NullTerminated.of("BCD00000000"), response.getLpNameOut());
         assertEquals(131420285765668134L, response.getLastWriteTime());
         assertEquals(0, response.getReturnValue());
     }

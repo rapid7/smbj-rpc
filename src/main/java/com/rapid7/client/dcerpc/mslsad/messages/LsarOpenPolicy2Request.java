@@ -20,8 +20,10 @@ package com.rapid7.client.dcerpc.mslsad.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.objects.WChar;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc234486.aspx">LsarOpenPolicy2</a>
@@ -39,11 +41,11 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
 public class LsarOpenPolicy2Request extends RequestCall<HandleResponse> {
     private final static short OP_NUM = 44;
     // <NDR: pointer[RPC_UNICODE_STRING]> [in, unique, string] wchar_t* SystemName
-    private final String systemName;
+    private final WChar.NullTerminated systemName;
     // <NDR: unsigned long> [in] ACCESS_MASK DesiredAccess
     private final int desiredAccess;
 
-    public LsarOpenPolicy2Request(final String systemName, final int desiredAccess) {
+    public LsarOpenPolicy2Request(final WChar.NullTerminated systemName, final int desiredAccess) {
         super(OP_NUM);
         this.systemName = systemName;
         this.desiredAccess = desiredAccess;
@@ -56,7 +58,11 @@ public class LsarOpenPolicy2Request extends RequestCall<HandleResponse> {
 
     @Override
     public void marshal(final PacketOutput packetOut) throws IOException {
-        packetOut.writeStringRef(systemName, true);
+        if (packetOut.writeReferentID(this.systemName)) {
+            packetOut.writeMarshallable(this.systemName);
+            // Align for LSAPR_OBJECT_ATTRIBUTES
+            packetOut.align(Alignment.FOUR);
+        }
 
         // LSAPR_OBJECT_ATTRIBUTES
         packetOut.writeInt(24);

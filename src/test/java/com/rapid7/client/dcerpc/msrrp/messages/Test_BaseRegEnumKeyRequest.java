@@ -22,6 +22,8 @@ import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
+
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;

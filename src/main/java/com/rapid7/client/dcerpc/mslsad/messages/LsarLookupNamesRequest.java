@@ -99,6 +99,7 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 public class LsarLookupNamesRequest extends RequestCall<LsarLookupNamesResponse> {
     private final static short OP_NUM = 14;
 
+    // [in] LSAPR_HANDLE PolicyHandle,
     private final byte[] policyHandle;
     private final RPCUnicodeString.NonNullTerminated[] names;
     private final short lookupLevel;

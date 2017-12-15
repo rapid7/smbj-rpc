@@ -19,9 +19,7 @@
 package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
-import java.util.EnumSet;
 import org.junit.Test;
-import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
@@ -30,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class Test_HandleRequest {
-    private final HandleRequest request = new HandleRequest(OpenLocalMachine.OP_NUM, EnumSet.of(AccessMask.MAXIMUM_ALLOWED));
+    private final HandleRequest request = new HandleRequest(OpenLocalMachine.OP_NUM, 33554432);
 
     @Test
     public void getOpNum() {

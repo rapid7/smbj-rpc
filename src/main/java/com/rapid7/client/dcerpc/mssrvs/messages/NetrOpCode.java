@@ -20,7 +20,7 @@
 /*
   Path types provided by Microsoft MSDN: https://msdn.microsoft.com/en-us/library/cc247234.aspx
  */
-package com.rapid7.client.dcerpc.mssrvs;
+package com.rapid7.client.dcerpc.mssrvs.messages;
 
 import java.util.HashMap;
 import java.util.Map;

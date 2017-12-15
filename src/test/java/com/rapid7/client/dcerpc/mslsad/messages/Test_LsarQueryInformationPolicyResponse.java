@@ -59,11 +59,11 @@ public class Test_LsarQueryInformationPolicyResponse {
     public Object[][] data_unmarshal() {
         return new Object[][] {
                 // Reference: 1, POLICY_INFORMATION_CLASS: 2
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "01000000 0200 00000000"},
+                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "01000000 0200 FFFF 02000000"},
                 // Reference: 1, POLICY_INFORMATION_CLASS: 3
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "01000000 0300 00000000"},
+                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "01000000 0300 FFFF 02000000"},
                 // Reference: 1, POLICY_INFORMATION_CLASS: 5
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "01000000 0500 00000000"}
+                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "01000000 0500 FFFF 02000000"}
         };
     }
 
@@ -74,14 +74,15 @@ public class Test_LsarQueryInformationPolicyResponse {
         doReturn(null).when(in).readUnmarshallable(any(Unmarshallable.class));
         response.unmarshal(in);
         assertNotNull(response.getPolicyInformation());
+        assertEquals(response.getReturnValue(), 2);
     }
 
     @DataProvider
     public Object[][] data_unmarshall_Null() {
         return new Object[][] {
-                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "00000000 0200 00000000"},
-                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "00000000 0300 00000000"},
-                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "00000000 0500 00000000"}
+                {new LsarQueryInformationPolicyResponse.PolicyAuditEventsInformation(), "00000000 02000000"},
+                {new LsarQueryInformationPolicyResponse.PolicyPrimaryDomainInformation(), "00000000 02000000"},
+                {new LsarQueryInformationPolicyResponse.PolicyAccountDomainInformation(), "00000000 02000000"}
         };
     }
 
@@ -91,6 +92,7 @@ public class Test_LsarQueryInformationPolicyResponse {
         PacketInput in = spy(new PacketInput(bin));
         response.unmarshal(in);
         assertNull(response.getPolicyInformation());
+        assertEquals(response.getReturnValue(), 2);
     }
 
     @DataProvider

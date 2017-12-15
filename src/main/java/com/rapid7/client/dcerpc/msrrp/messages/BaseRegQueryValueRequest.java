@@ -20,7 +20,10 @@ package com.rapid7.client.dcerpc.msrrp.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.io.ndr.arrays.RPCConformantVaryingBuffer;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
  * <b>3.1.5.17 BaseRegQueryValue (Opnum 17)</b> <br>
@@ -194,7 +197,7 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
     /**
      * The name of the value to be queried.
      */
-    private final String valueName;
+    private final RPCUnicodeString.NullTerminated valueName;
     /**
      * The maximum number of bytes to accept for the value data.
      */
@@ -212,7 +215,7 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
      * @param valueName The name of the value to be queried.
      * @param dataLen   The maximum number of bytes to accept for the value data.
      */
-    public BaseRegQueryValueRequest(final byte[] hKey, final String valueName, final int dataLen) {
+    public BaseRegQueryValueRequest(final byte[] hKey, final RPCUnicodeString.NullTerminated valueName, final int dataLen) {
         super((short) 17);
         this.hKey = hKey;
         this.valueName = valueName;
@@ -259,10 +262,22 @@ public class BaseRegQueryValueRequest extends RequestCall<BaseRegQueryValueRespo
         //          Referent ID: 0x00020010
         //          Data Length: 0
         packetOut.write(hKey);
-        packetOut.writeStringBuffer(valueName, true);
-        packetOut.writeIntRef(0);
-        packetOut.writeEmptyArrayRef(dataLen);
-        packetOut.writeIntRef(dataLen);
-        packetOut.writeIntRef(0);
+        packetOut.writeMarshallable(this.valueName);
+        // Alignment: 4
+        packetOut.align(Alignment.FOUR);
+        packetOut.writeReferentID();
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(0);
+        // Alignment: 4 - Already aligned
+        packetOut.writeReferentID();
+        packetOut.writeEmptyCVArray(this.dataLen);
+        // Alignment: 4 - Already aligned
+        packetOut.writeReferentID();
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(this.dataLen);
+        // Alignment: 4 - Already aligned
+        packetOut.writeReferentID();
+        // Alignment: 4 - Already aligned
+        packetOut.writeInt(0);
     }
 }

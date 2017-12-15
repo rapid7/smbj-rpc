@@ -20,8 +20,10 @@ package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
+import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
+import com.rapid7.client.dcerpc.objects.WChar;
 
 /**
  * <blockquote><pre>The SamrConnect2 method returns a handle to a server object.
@@ -40,11 +42,11 @@ public class SamrConnect2Request extends RequestCall<HandleResponse> {
     public final static short OP_NUM = 57;
 
     // <NDR: pointer[struct]> [in, unique, string] PSAMPR_SERVER_NAME ServerName
-    private final String serverName;
+    private final WChar.NullTerminated serverName;
     // <NDR: unsigned long> [in] unsigned long DesiredAccess
     private final int desiredAccess;
 
-    public SamrConnect2Request(String serverName, int desiredAccess) {
+    public SamrConnect2Request(WChar.NullTerminated serverName, int desiredAccess) {
         super(OP_NUM);
         this.serverName = serverName;
         this.desiredAccess = desiredAccess;
@@ -52,8 +54,12 @@ public class SamrConnect2Request extends RequestCall<HandleResponse> {
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
-        // <NDR: conformant varying array> [in, unique, string] PSAMPR_SERVER_NAME ServerName
-        packetOut.writeStringRef(serverName, true);
+        // <NDR: pointer[conformant varying array]> [in, unique, string] PSAMPR_SERVER_NAME ServerName
+        if (packetOut.writeReferentID(this.serverName)) {
+            packetOut.writeMarshallable(this.serverName);
+            // Alignment for DesiredAccess
+            packetOut.align(Alignment.FOUR);
+        }
         // <NDR: unsigned long> [in] unsigned long DesiredAccess
         packetOut.writeInt(this.desiredAccess);
     }

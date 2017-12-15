@@ -24,7 +24,6 @@ package com.rapid7.client.dcerpc.mssrvs.messages;
 import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.RequestCall;
-import com.rapid7.client.dcerpc.mssrvs.NetrOpCode;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumLevel;
 import com.rapid7.client.dcerpc.mssrvs.objects.ShareEnumStruct;
 
@@ -92,13 +91,10 @@ public abstract class NetrShareEnumRequest<T extends ShareEnumStruct> extends Re
         packetOut.writeInt(this.preferredMaximumLength);
         // <NDR: pointer[unsigned long]> [in, out, unique] DWORD* ResumeHandle
         // Alignment: 4 - Already aligned
-        if (resumeHandle != null) {
-            packetOut.writeReferentID();
+        if (packetOut.writeReferentID(this.resumeHandle)) {
             // <NDR: unsigned long> [in, out, unique] DWORD* ResumeHandle
             // Alignment: 4 - Already aligned
             packetOut.writeInt(this.resumeHandle);
-        } else {
-            packetOut.writeNull();
         }
     }
 
