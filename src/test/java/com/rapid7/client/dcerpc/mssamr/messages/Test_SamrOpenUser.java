@@ -30,7 +30,7 @@ import static org.junit.Assert.assertThat;
 
 public class Test_SamrOpenUser {
     // https://msdn.microsoft.com/en-us/library/cc980032.aspx
-    private final SamrOpenUserRequest request = new SamrOpenUserRequest(new byte[20], 500); //ADMINISTRATOR(500)
+    private final SamrOpenUserRequest request = new SamrOpenUserRequest(new byte[20], 0x2011B, 500); //ADMINISTRATOR(500)
 
     @Test
     public void getOpNum() {
