@@ -104,7 +104,7 @@ import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_NO_MORE_ITE
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 
 public class SecurityAccountManagerService extends Service {
-    private final static int MAXIMUM_ALLOWED = 33554432;
+    public final static int MAXIMUM_ALLOWED = 33554432;
 
     /**
      * Create a new {@link SecurityAccountManagerService} backed by the provided {@link RPCTransport}
@@ -127,19 +127,33 @@ public class SecurityAccountManagerService extends Service {
 
     /**
      * Open a new {@link ServerHandle} using the provided NETBIOS name of the server.
+     * Uses {@link SecurityAccountManagerService#MAXIMUM_ALLOWED} as desired access.
      * @param serverName NETBIOS name of the server. Most targets ignore this value so an empty string is suggested.
      * @return A new {@link ServerHandle} for the given server identified by serverName.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
-    public ServerHandle openServer(String serverName) throws IOException {
+    public ServerHandle openServer(final String serverName) throws IOException {
+        return openServer(serverName, MAXIMUM_ALLOWED);
+    }
+
+    /**
+     * Open a new {@link ServerHandle} using the provided NETBIOS name of the server.
+     * @param serverName NETBIOS name of the server. Most targets ignore this value so an empty string is suggested.
+     * @param desiredAccess The desired access represented as a bitmask.
+     * @return A new {@link ServerHandle} for the given server identified by serverName.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public ServerHandle openServer(final String serverName, final int desiredAccess) throws IOException {
         final SamrConnect2Request request =
-                new SamrConnect2Request(parseWCharNT(serverName), MAXIMUM_ALLOWED);
+                new SamrConnect2Request(parseWCharNT(serverName), desiredAccess);
         return parseServerHandle(callExpectSuccess(request, "SamrConnect2"));
     }
 
     /**
      * Open a new {@link DomainHandle} against a valid domain identified by the provided {@link SID}.
+     * Uses {@link SecurityAccountManagerService#MAXIMUM_ALLOWED} as desired access.
      * @param serverHandle A valid server handle obtained from {@link #openServer()}
      * @param domainId A valid {@link SID} which identifies the domain.
      *                 Use {@link #getDomainsForServer(ServerHandle)} if you need to discover them.
@@ -148,14 +162,30 @@ public class SecurityAccountManagerService extends Service {
      * returns an unsuccessful response.
      */
     public DomainHandle openDomain(final ServerHandle serverHandle, final SID domainId) throws IOException {
+        return openDomain(serverHandle, domainId, MAXIMUM_ALLOWED);
+    }
+
+    /**
+     * Open a new {@link DomainHandle} against a valid domain identified by the provided {@link SID}.
+     * @param serverHandle A valid server handle obtained from {@link #openServer()}
+     * @param domainId A valid {@link SID} which identifies the domain.
+     *                 Use {@link #getDomainsForServer(ServerHandle)} if you need to discover them.
+     * @param desiredAccess The desired access represented as a bitmask.
+     * @return A new {@link DomainHandle} for the resolved domain.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public DomainHandle openDomain(final ServerHandle serverHandle, final SID domainId, final int desiredAccess)
+            throws IOException {
         final SamrOpenDomainRequest request =
-                new SamrOpenDomainRequest(parseHandle(serverHandle), MAXIMUM_ALLOWED, parseSID(domainId));
+                new SamrOpenDomainRequest(parseHandle(serverHandle), desiredAccess, parseSID(domainId));
         return parseDomainHandle(callExpectSuccess(request, "SamrOpenDomain"));
     }
 
     /**
      * Open a new {@link GroupHandle} against a valid group identified by both the
      * provided {@link DomainHandle} and groupRID.
+     * Uses {@link SecurityAccountManagerService#MAXIMUM_ALLOWED} as desired access.
      * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
      * @param groupRID A relative identifier for the group.
      * @return A new {@link GroupHandle} for the resolved group.
@@ -163,14 +193,30 @@ public class SecurityAccountManagerService extends Service {
      * returns an unsuccessful response.
      */
     public GroupHandle openGroup(final DomainHandle domainHandle, final long groupRID) throws IOException {
+        return openGroup(domainHandle, groupRID, MAXIMUM_ALLOWED);
+    }
+
+    /**
+     * Open a new {@link GroupHandle} against a valid group identified by both the
+     * provided {@link DomainHandle} and groupRID.
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
+     * @param groupRID A relative identifier for the group.
+     * @param desiredAccess The desired access represented as a bitmask.
+     * @return A new {@link GroupHandle} for the resolved group.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public GroupHandle openGroup(final DomainHandle domainHandle, final long groupRID, final int desiredAccess)
+            throws IOException {
         final SamrOpenGroupRequest request =
-                new SamrOpenGroupRequest(parseHandle(domainHandle), MAXIMUM_ALLOWED, groupRID);
+                new SamrOpenGroupRequest(parseHandle(domainHandle), desiredAccess, groupRID);
         return parseGroupHandle(callExpectSuccess(request, "SamrOpenGroupRequest"));
     }
 
     /**
      * Open a new {@link UserHandle} against a valid user identified by both the
      * provided {@link DomainHandle} and userRID.
+     * Uses 0x2011B as desired access.
      * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
      * @param userRID A relative identifier for the group.
      * @return A new {@link UserHandle} for the resolved user.
@@ -178,14 +224,38 @@ public class SecurityAccountManagerService extends Service {
      * returns an unsuccessful response.
      */
     public UserHandle openUser(final DomainHandle domainHandle, final long userRID) throws IOException {
+        // Generic rights: 0x00000000
+        // Standard rights: 0x00020000
+        // SAMR User specific rights: 0x0000011b
+        // Samr User Access Get
+        // - Groups: SAMR_USER_ACCESS_GET_GROUPS is SET
+        // - Attributes: SAMR_USER_ACCESS_GET_ATTRIBUTES is SET
+        // - Logoninfo: SAMR_USER_ACCESS_GET_LOGONINFO is SET
+        // <NDR: unsigned long> [in] unsigned long DesiredAccess
+        return openUser(domainHandle, userRID, 0x2011B);
+    }
+
+    /**
+     * Open a new {@link UserHandle} against a valid user identified by both the
+     * provided {@link DomainHandle} and userRID.
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
+     * @param userRID A relative identifier for the group.
+     * @param desiredAccess The desired access represented as a bitmask.
+     * @return A new {@link UserHandle} for the resolved user.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public UserHandle openUser(final DomainHandle domainHandle, final long userRID, final int desiredAccess)
+            throws IOException {
         final SamrOpenUserRequest request =
-                new SamrOpenUserRequest(parseHandle(domainHandle), userRID);
+                new SamrOpenUserRequest(parseHandle(domainHandle), desiredAccess, userRID);
         return parseUserHandle(callExpectSuccess(request, "SamrOpenUserRequest"));
     }
 
     /**
      * Open a new {@link AliasHandle} against a valid user identified by both the
      * provided {@link DomainHandle} and aliasRID.
+     * Uses 0x0002000C as desired access.
      * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
      * @param aliasRID A relative identifier for the group.
      * @return A new {@link AliasHandle} for the resolved alias.
@@ -197,8 +267,23 @@ public class SecurityAccountManagerService extends Service {
         // SAMR Alias specific rights: 0x0000000c
         // - SAMR_ALIAS_ACCESS_LOOKUP_INFO is SET(8)
         // - SAMR_ALIAS_ACCESS_GET_MEMBERS is SET(4)
+        return openAlias(domainHandle, aliasRID, 0x0002000C);
+    }
+
+    /**
+     * Open a new {@link AliasHandle} against a valid user identified by both the
+     * provided {@link DomainHandle} and aliasRID.
+     * @param domainHandle A valid domain handle obtained from {@link #openDomain(ServerHandle, SID)}.
+     * @param aliasRID A relative identifier for the group.
+     * @param desiredAccess The desired access represented as a bitmask.
+     * @return A new {@link AliasHandle} for the resolved alias.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public AliasHandle openAlias(final DomainHandle domainHandle, final long aliasRID, int desiredAccess)
+            throws IOException {
         final SamrOpenAliasRequest request =
-                new SamrOpenAliasRequest(parseHandle(domainHandle), 0x0002000C, aliasRID);
+                new SamrOpenAliasRequest(parseHandle(domainHandle), desiredAccess, aliasRID);
         return parseAliasHandle(callExpectSuccess(request, "SamrOpenAlias"));
     }
 

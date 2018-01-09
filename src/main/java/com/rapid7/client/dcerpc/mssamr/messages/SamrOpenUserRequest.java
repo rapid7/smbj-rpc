@@ -47,29 +47,22 @@ public class SamrOpenUserRequest extends RequestCall<HandleResponse> {
     // <NDR: fixed array> [in] SAMPR_HANDLE DomainHandle
     private final byte[] domainHandle;
     // <NDR: unsigned long> [in] unsigned long DesiredAccess
-    // Static
+    private final int desiredAccess;
     // <NDR: unsigned long> [in] unsigned long UserId
     private final long userId;
 
-    public SamrOpenUserRequest(byte[] domainHandle, long userId) {
+    public SamrOpenUserRequest(final byte[] domainHandle, final int desiredAccess, final long userId) {
         super(OP_NUM);
         this.domainHandle = domainHandle;
+        this.desiredAccess = desiredAccess;
         this.userId = userId;
     }
 
     @Override
     public void marshal(PacketOutput packetOut) throws IOException {
         packetOut.write(this.domainHandle);
-        // Generic rights: 0x00000000
-        // Standard rights: 0x00020000
-        // SAMR User specific rights: 0x0000011b
-        // Samr User Access Get
-        // - Groups: SAMR_USER_ACCESS_GET_GROUPS is SET
-        // - Attributes: SAMR_USER_ACCESS_GET_ATTRIBUTES is SET
-        // - Logoninfo: SAMR_USER_ACCESS_GET_LOGONINFO is SET
-        // <NDR: unsigned long> [in] unsigned long DesiredAccess
         // Alignment: 4 - Already aligned, wrote 20 bytes above
-        packetOut.writeInt(0x2011B);
+        packetOut.writeInt(desiredAccess);
         // <NDR: unsigned long> [in] unsigned long UserId
         // Alignment: 4 - Already aligned
         packetOut.writeInt(this.userId);
