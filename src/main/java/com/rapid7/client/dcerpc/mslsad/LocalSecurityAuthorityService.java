@@ -222,7 +222,8 @@ public class LocalSecurityAuthorityService extends Service {
                 parseHandle(policyHandle), parseNonNullTerminatedStrings(names), lookupLevel.getValue());
         final LsarLookupNamesResponse response = callExpect(request, "LsarLookupNames",
                 SystemErrorCode.ERROR_SUCCESS,
-                SystemErrorCode.STATUS_SOME_NOT_MAPPED);
+                SystemErrorCode.STATUS_SOME_NOT_MAPPED,
+                SystemErrorCode.STATUS_NONE_MAPPED);
         LSAPRTranslatedSID[] translatedSIDs = response.getTranslatedSIDs().getSIDs();
         if (translatedSIDs == null)
             translatedSIDs = new LSAPRTranslatedSID[0];
@@ -279,7 +280,9 @@ public class LocalSecurityAuthorityService extends Service {
         final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(parseHandle(policyHandle), parseSIDs(sids),
                 lookupLevel.getValue());
         final LsarLookupSIDsResponse lsarLookupSIDsResponse = callExpect(request, "LsarLookupSIDs",
-                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_SOME_NOT_MAPPED);
+                SystemErrorCode.ERROR_SUCCESS,
+                SystemErrorCode.STATUS_SOME_NOT_MAPPED,
+                SystemErrorCode.STATUS_NONE_MAPPED);
         LSAPRTranslatedName[] nameArray = lsarLookupSIDsResponse.getTranslatedNames().getNames();
         if (nameArray == null)
             nameArray = new LSAPRTranslatedName[0];
