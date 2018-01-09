@@ -55,7 +55,7 @@ import com.rapid7.client.dcerpc.transport.RPCTransport;
  * @see <a href= "https://msdn.microsoft.com/en-us/library/cc234420.aspx">[MS-LSAT]</a>
  */
 public class LocalSecurityAuthorityService extends Service {
-    private final static int MAXIMUM_ALLOWED = 33554432;
+    public final static int MAXIMUM_ALLOWED = 33554432;
 
     /**
      * Create a new {@link LocalSecurityAuthorityService} backed by the provided {@link RPCTransport}
@@ -67,14 +67,43 @@ public class LocalSecurityAuthorityService extends Service {
     }
 
     /**
-     * Open a new {@link PolicyHandle}.
+     * Open a new {@link PolicyHandle} for the local machine.
+     * Uses {@link LocalSecurityAuthorityService#MAXIMUM_ALLOWED} as the desired access.
      *
      * @return A new {@link PolicyHandle}.
      * @throws IOException Thrown if either a communication failure is encountered, or the call
      * returns an unsuccessful response.
      */
     public PolicyHandle openPolicyHandle() throws IOException {
-        final LsarOpenPolicy2Request request = new LsarOpenPolicy2Request(WChar.NullTerminated.of(""), MAXIMUM_ALLOWED);
+        return openPolicyHandle(MAXIMUM_ALLOWED);
+    }
+
+    /**
+     * Open a new {@link PolicyHandle} for the local machine.
+     *
+     * @param desiredAccess The desired access for the handle.
+     * @return A new {@link PolicyHandle}.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public PolicyHandle openPolicyHandle(final int desiredAccess) throws IOException {
+        return openPolicyHandle("", desiredAccess);
+    }
+
+    /**
+     * Open a new {@link PolicyHandle}.
+     *
+     * @param serverName The machine name of the host. Null or empty uses local.
+     * @param desiredAccess The desired access for the handle.
+     * @return A new {@link PolicyHandle}.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+    public PolicyHandle openPolicyHandle(String serverName, final int desiredAccess) throws IOException {
+        if (serverName == null)
+            serverName = "";
+        final LsarOpenPolicy2Request request =
+                new LsarOpenPolicy2Request(WChar.NullTerminated.of(serverName), desiredAccess);
         return parsePolicyHandle(callExpectSuccess(request, "LsarOpenPolicy2").getHandle());
     }
 
