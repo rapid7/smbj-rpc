@@ -49,6 +49,9 @@ public class SamrEnumerateDomainsInSamServerResponse extends SamrEnumerateRespon
 
     @Override
     public List<DomainInfo> getList() {
+        if (domains == null) {
+            return null;
+        }
         return domains.getEntries();
     }
 }

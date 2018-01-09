@@ -38,6 +38,9 @@ public class SamrEnumerateGroupsInDomainResponse extends SamrEnumerateResponse<G
 
     @Override
     public List<GroupInfo> getList() {
+        if (groups == null) {
+            return null;
+        }
         return groups.getEntries();
     }
 }

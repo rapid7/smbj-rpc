@@ -35,6 +35,9 @@ public class SamrEnumerateAliasesInDomainResponse extends SamrEnumerateResponse<
 
     @Override
     public List<AliasInfo> getList() {
+        if (aliases == null) {
+            return null;
+        }
         return aliases.getEntries();
     }
 }
