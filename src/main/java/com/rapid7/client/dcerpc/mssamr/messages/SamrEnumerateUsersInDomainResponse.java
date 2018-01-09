@@ -39,6 +39,9 @@ public class SamrEnumerateUsersInDomainResponse extends SamrEnumerateResponse<Us
 
     @Override
     public List<UserInfo> getList() {
+        if (users == null) {
+            return null;
+        }
         return users.getEntries();
     }
 }
