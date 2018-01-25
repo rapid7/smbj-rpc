@@ -219,7 +219,7 @@ public class LocalSecurityAuthorityService extends Service {
         final LsarEnumerateAccountsWithUserRightRequest request = new LsarEnumerateAccountsWithUserRightRequest(
                 parseHandle(policyHandle), RPCUnicodeString.NonNullTerminated.of(userRight));
         final RPCSID[] rpcsids = callExpect(request, "LsarEnumerateAccountsWithUserRight",
-                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_NO_MORE_ENTRIES).getSids();
+                SystemErrorCode.ERROR_SUCCESS, SystemErrorCode.STATUS_NO_MORE_ENTRIES, SystemErrorCode.STATUS_NO_SUCH_PRIVILEGE).getSids();
         return parseRPCSIDs(rpcsids);
     }
 
