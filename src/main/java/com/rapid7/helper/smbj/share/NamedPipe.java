@@ -52,7 +52,7 @@ public class NamedPipe extends SMB2SessionMessage implements Closeable {
 
         this.share = share;
 
-        final SMB2CreateRequest createRequest = new SMB2CreateRequest(session.getConnection().getNegotiatedProtocol().getDialect(), session.getSessionId(), share.getTreeConnect().getTreeId(), SMB2ImpersonationLevel.Impersonation, EnumSet.of(AccessMask.MAXIMUM_ALLOWED), null, EnumSet.of(SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE), SMB2CreateDisposition.FILE_OPEN_IF, null, SmbPath.parse(name));
+        final SMB2CreateRequest createRequest = new SMB2CreateRequest(session.getConnection().getNegotiatedProtocol().getDialect(), session.getSessionId(), share.getTreeConnect().getTreeId(), SMB2ImpersonationLevel.Impersonation, EnumSet.of(AccessMask.MAXIMUM_ALLOWED), null, EnumSet.of(SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE), SMB2CreateDisposition.FILE_OPEN_IF, null, new SmbPath(share.getSmbPath(), name));
         final SMB2CreateResponse createResponse = sendAndRead(createRequest, EnumSet.of(NtStatus.STATUS_SUCCESS));
 
         fileID = createResponse.getFileId();
