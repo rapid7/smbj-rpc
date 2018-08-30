@@ -94,7 +94,7 @@ public abstract class SMB2SessionMessage {
         final Future<T> future = send(packet);
         final T responsePacket = read(future);
         final SMB2Header responseHeader = responsePacket.getHeader();
-        final NtStatus responseStatus = responseHeader.getStatus();
+        final NtStatus responseStatus = NtStatus.valueOf(responseHeader.getStatusCode());
         if (!ok.contains(responseStatus)) {
             throw new SMB2Exception(responseHeader, "expected=" + ok);
         }

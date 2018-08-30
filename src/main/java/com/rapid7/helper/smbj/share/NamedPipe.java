@@ -70,7 +70,7 @@ public class NamedPipe extends SMB2SessionMessage implements Closeable {
         } catch (final IOException exception) {
             throw new SMBRuntimeException(exception);
         }
-        final NtStatus status = response.getHeader().getStatus();
+        final NtStatus status = NtStatus.valueOf(response.getHeader().getStatusCode());
         if (status.equals(NtStatus.STATUS_BUFFER_OVERFLOW)) {
             outBuffer.write(read());
         }
@@ -87,7 +87,7 @@ public class NamedPipe extends SMB2SessionMessage implements Closeable {
             } catch (final IOException exception) {
                 throw new SMBRuntimeException(exception);
             }
-            final NtStatus status = response.getHeader().getStatus();
+            final NtStatus status = NtStatus.valueOf(response.getHeader().getStatusCode());
             if (!status.equals(NtStatus.STATUS_BUFFER_OVERFLOW)) {
                 break;
             }

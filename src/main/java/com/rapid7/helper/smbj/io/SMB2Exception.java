@@ -30,8 +30,9 @@ public class SMB2Exception extends IOException {
     private final long statusCode;
 
     public SMB2Exception(final SMB2Header header, final String message) {
-        super(String.format("%s returned %s (%d/%d): %s", header.getMessage(), header.getStatus(), header.getStatus().getValue(), header.getStatusCode(), message));
-        status = header.getStatus();
+        super(String.format("%s returned %s (%d/%d): %s", header.getMessage(), header.getStatusCode(), header.getStatusCode(), header.getStatusCode(), message));
+
+        status = NtStatus.valueOf(header.getStatusCode());
         statusCode = header.getStatusCode();
         failedCommand = header.getMessage();
     }
