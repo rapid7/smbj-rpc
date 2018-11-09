@@ -1,4 +1,4 @@
-# SMBJ-RPC [![Build Status](https://api.travis-ci.org/rapid7/smbj-rpc.svg?branch=master)](https://travis-ci.org/rapid7/smbj-rpc)
+# SMBJ-RPC [![Build Status](https://api.travis-ci.org/rapid7/smbj-rpc.svg?branch=master)](https://travis-ci.org/rapid7/smbj-rpc) [![Maven Central](https://img.shields.io/maven-central/v/com.rapid7.client/dcerpc.svg)](https://search.maven.org/artifact/com.rapid7.client/dcerpc)
 
 DCE-RPC implementation capable of using SMBv2 via SMBJ to invoke remote procedure calls (RPC) over the IPC$ named pipe.
 
