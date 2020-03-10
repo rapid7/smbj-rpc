@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import org.bouncycastle.util.encoders.Hex;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -39,8 +40,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class Test_RPCTransport {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void bindACK() throws IOException {
@@ -109,10 +108,11 @@ public class Test_RPCTransport {
             }
         };
 
-        thrown.expect(IOException.class);
-        thrown.expectMessage("BIND winreg interface (338cd001-2244-31f1-aaaa-900038001003:v1.0) failed.");
-
-        transport.bind(Interface.WINREG_V1_0, Interface.NDR_32BIT_V2);
+        try {
+            transport.bind(Interface.WINREG_V1_0, Interface.NDR_32BIT_V2);
+        } catch (IOException ex) {
+            Assert.assertEquals("BIND winreg interface (338cd001-2244-31f1-aaaa-900038001003:v1.0) failed.", ex.getMessage());
+        }
     }
 
     @Test

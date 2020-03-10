@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.EnumSet;
 import org.bouncycastle.util.encoders.Hex;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -33,8 +34,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class Test_Header {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void getMajorVersion() throws IOException {
@@ -187,27 +186,31 @@ public class Test_Header {
 
     @Test
     public void marshalNoPDUType() throws IOException {
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("Invalid PDU type: null");
+        try {
+            final Header header = new Header();
+            final ByteArrayOutputStream packetOutputStream = new ByteArrayOutputStream();
+            final PacketOutput packetOut = new PacketOutput(packetOutputStream);
 
-        final Header header = new Header();
-        final ByteArrayOutputStream packetOutputStream = new ByteArrayOutputStream();
-        final PacketOutput packetOut = new PacketOutput(packetOutputStream);
-
-        header.marshal(packetOut);
+            header.marshal(packetOut);
+            Assert.fail();
+        } catch (IllegalStateException ex) {
+            Assert.assertEquals("Invalid PDU type: null", ex.getMessage());
+        }
     }
 
     @Test
     public void marshalNoPFCFlags() throws IOException {
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("Invalid PFC flag(s): null");
+        try {
+            final Header header = new Header();
+            final ByteArrayOutputStream packetOutputStream = new ByteArrayOutputStream();
+            final PacketOutput packetOut = new PacketOutput(packetOutputStream);
 
-        final Header header = new Header();
-        final ByteArrayOutputStream packetOutputStream = new ByteArrayOutputStream();
-        final PacketOutput packetOut = new PacketOutput(packetOutputStream);
-
-        header.setPDUType(PDUType.ACK);
-        header.marshal(packetOut);
+            header.setPDUType(PDUType.ACK);
+            header.marshal(packetOut);
+            Assert.fail();
+        } catch (IllegalStateException ex) {
+            Assert.assertEquals("Invalid PFC flag(s): null", ex.getMessage());
+        }
     }
 
     private Header unmarshalHeader(final String hexString) throws IOException {

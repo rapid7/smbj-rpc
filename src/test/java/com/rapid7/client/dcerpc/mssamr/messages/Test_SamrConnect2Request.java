@@ -18,16 +18,17 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import java.io.IOException;
-import org.junit.Test;
 import com.hierynomus.msdtyp.AccessMask;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
 import com.rapid7.client.dcerpc.objects.WChar;
+import org.junit.Test;
+
+import java.io.IOException;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class Test_SamrConnect2Request {
     private final SamrConnect2Request request = new SamrConnect2Request(WChar.NullTerminated.of(""), (int) AccessMask.MAXIMUM_ALLOWED.getValue());

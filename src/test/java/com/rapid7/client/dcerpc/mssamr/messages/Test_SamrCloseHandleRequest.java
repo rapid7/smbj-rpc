@@ -18,16 +18,16 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import java.io.IOException;
+import com.rapid7.client.dcerpc.messages.HandleResponse;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 
-import com.rapid7.client.dcerpc.messages.HandleResponse;
+import java.io.IOException;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class Test_SamrCloseHandleRequest {
     SamrCloseHandleRequest request = new SamrCloseHandleRequest(Hex.decode("0000000032daf234b77c86409d29efe60d326683"));

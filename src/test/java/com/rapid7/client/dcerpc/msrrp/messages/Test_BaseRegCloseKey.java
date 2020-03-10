@@ -25,8 +25,8 @@ import com.rapid7.client.dcerpc.messages.HandleResponse;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class Test_BaseRegCloseKey {
     private final byte[] contextHandle = Hex.decode("0000000032daf234b77c86409d29efe60d326683");
