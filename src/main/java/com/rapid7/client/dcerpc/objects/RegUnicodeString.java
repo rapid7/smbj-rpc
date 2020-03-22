@@ -18,14 +18,13 @@
  */
 package com.rapid7.client.dcerpc.objects;
 
+import java.io.IOException;
+import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Represents a counted string of Unicode (UTF-16) characters.
@@ -107,6 +106,7 @@ public abstract class RegUnicodeString implements Unmarshallable, Marshallable {
     }
 
     private ShortChar shortChar;
+
     abstract ShortChar createShortChar();
 
     /**
@@ -114,14 +114,13 @@ public abstract class RegUnicodeString implements Unmarshallable, Marshallable {
      * May be null. Will never include a null terminator.
      */
     public String getValue() {
-        if (this.shortChar == null)
-            return null;
+        if (this.shortChar == null) return null;
         return this.shortChar.getValue();
     }
 
     /**
      * @param value The {@link String} representation for this {@link RPCUnicodeString}.
-     * May be null. Must not include a null terminator.
+     *              May be null. Must not include a null terminator.
      */
     public void setValue(String value) {
         if (value == null) {
@@ -189,10 +188,8 @@ public abstract class RegUnicodeString implements Unmarshallable, Marshallable {
         in.fullySkipBytes(2);
         // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] WCHAR* Buffer;
         // Alignment: 4 - Already aligned
-        if (in.readReferentID() != 0)
-            this.shortChar = createShortChar();
-        else
-            this.shortChar = null;
+        if (in.readReferentID() != 0) this.shortChar = createShortChar();
+        else this.shortChar = null;
     }
 
     @Override
@@ -211,7 +208,7 @@ public abstract class RegUnicodeString implements Unmarshallable, Marshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof RPCUnicodeString)) {
+        } else if (!(obj instanceof RPCUnicodeString)) {
             return false;
         }
         return Objects.equals(shortChar, ((RegUnicodeString) obj).shortChar);

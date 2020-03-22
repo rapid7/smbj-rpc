@@ -19,8 +19,6 @@
 package com.rapid7.client.dcerpc.initshutdown.dto;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 /*
  * @see <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-rsp/d74aa51d-d481-4dc5-b0a2-750871916106">2.3 Shutdown Reasons</a>
@@ -86,8 +84,7 @@ public enum ShutdownReason {
     public static int getReason(final EnumSet<ShutdownReason> reasons) {
         int finalReason = 0;
         if (reasons == null) {
-            return ShutdownReason.getReason(EnumSet.of(ShutdownReason.SHTDN_REASON_MAJOR_OTHER,
-                    ShutdownReason.SHTDN_REASON_MINOR_OTHER));
+            return ShutdownReason.getReason(EnumSet.of(ShutdownReason.SHTDN_REASON_MAJOR_OTHER, ShutdownReason.SHTDN_REASON_MINOR_OTHER));
         }
         for (ShutdownReason shReason : reasons) {
             finalReason |= shReason.getReason();

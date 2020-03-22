@@ -1,38 +1,40 @@
 /**
  * Copyright 2020, Vadim Frolov.
- *
+ * <p>
  * License: BSD-3-clause
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- *
+ * <p>
  * * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- *
+ * <p>
  * * Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.initshutdown;
 
+import java.io.IOException;
+import org.testng.annotations.Test;
 import com.rapid7.client.dcerpc.messages.EmptyResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
-import org.testng.annotations.Test;
-
-import java.io.IOException;
 
 import static com.rapid7.client.dcerpc.mserref.SystemErrorCode.ERROR_SUCCESS;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class Test_ShutdownService {
-    @Test(expectedExceptions = {IllegalArgumentException.class},
-        expectedExceptionsMessageRegExp = "Expecting non-null transport")
+    @Test(expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Expecting non-null transport")
     public void constructorNullTransport() {
         new ShutdownService(null);
     }

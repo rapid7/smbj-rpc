@@ -18,6 +18,8 @@
  */
 package com.rapid7.client.dcerpc.initshutdown.messages;
 
+import java.io.IOException;
+import java.util.EnumSet;
 import com.rapid7.client.dcerpc.initshutdown.dto.ShutdownReason;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
@@ -25,9 +27,6 @@ import com.rapid7.client.dcerpc.messages.EmptyResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.objects.RegUnicodeString;
 import com.rapid7.client.dcerpc.objects.WChar;
-
-import java.io.IOException;
-import java.util.EnumSet;
 
 /**
  * <b>3.2.4.3 BaseInitiateShutdownEx (Opnum 2)</b><br>
@@ -58,11 +57,7 @@ public class BaseInitiateShutdownRequestEx extends RequestCall<EmptyResponse> {
     private final boolean rebootAfterShutdown;
     private final EnumSet<ShutdownReason> reasons;
 
-    public BaseInitiateShutdownRequestEx(final WChar.NullTerminated serverName,
-                                         final RegUnicodeString.NullTerminated messageToUser,
-                                         final int timeout, final boolean forceAppsClosed,
-                                         final  boolean rebootAfterShutdown,
-                                         final EnumSet<ShutdownReason> reasons) {
+    public BaseInitiateShutdownRequestEx(final WChar.NullTerminated serverName, final RegUnicodeString.NullTerminated messageToUser, final int timeout, final boolean forceAppsClosed, final boolean rebootAfterShutdown, final EnumSet<ShutdownReason> reasons) {
         super((short) 2);
         this.serverName = serverName;
         this.messageToUser = messageToUser;

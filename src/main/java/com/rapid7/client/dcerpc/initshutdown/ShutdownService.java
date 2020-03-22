@@ -18,6 +18,8 @@
  */
 package com.rapid7.client.dcerpc.initshutdown;
 
+import java.io.IOException;
+import java.util.EnumSet;
 import com.rapid7.client.dcerpc.initshutdown.dto.ShutdownReason;
 import com.rapid7.client.dcerpc.initshutdown.messages.BaseAbortShutdown;
 import com.rapid7.client.dcerpc.initshutdown.messages.BaseInitiateShutdownRequest;
@@ -27,46 +29,29 @@ import com.rapid7.client.dcerpc.objects.RegUnicodeString;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
-import java.io.IOException;
-import java.util.EnumSet;
-
 public class ShutdownService extends Service {
     public ShutdownService(final RPCTransport transport) {
         super(transport);
     }
 
-    public int shutdown(final String msg,
-                         final int timeout, final boolean forceAppsClosed,
-                         final boolean rebootAfterShutdown) throws IOException {
+    public int shutdown(final String msg, final int timeout, final boolean forceAppsClosed, final boolean rebootAfterShutdown)
+            throws IOException {
 
-        final BaseInitiateShutdownRequest request = new BaseInitiateShutdownRequest(
-                parseWCharNT(null),
-                RegUnicodeString.NullTerminated.of(msg),
-                timeout, forceAppsClosed, rebootAfterShutdown
-        );
+        final BaseInitiateShutdownRequest request = new BaseInitiateShutdownRequest(parseWCharNT(null), RegUnicodeString.NullTerminated.of(msg), timeout, forceAppsClosed, rebootAfterShutdown);
         final EmptyResponse response = callExpectSuccess(request, "BaseInitiateShutdownRequest");
         return response.getReturnValue();
     }
 
     public int abortShutdown() throws IOException {
-        final BaseAbortShutdown request = new BaseAbortShutdown(
-                parseWCharNT(null)
-        );
+        final BaseAbortShutdown request = new BaseAbortShutdown(parseWCharNT(null));
         final EmptyResponse response = callExpectSuccess(request, "BaseAbortShutdown");
         return response.getReturnValue();
     }
 
-    public int shutdownEx(final String msg,
-                           final int timeout,
-                           final boolean forceAppsClosed,
-                           final boolean rebootAfterShutdown,
-                           final EnumSet<ShutdownReason> reasons) throws IOException {
+    public int shutdownEx(final String msg, final int timeout, final boolean forceAppsClosed, final boolean rebootAfterShutdown, final EnumSet<ShutdownReason> reasons)
+            throws IOException {
 
-        final BaseInitiateShutdownRequestEx request = new BaseInitiateShutdownRequestEx(
-                parseWCharNT(null),
-                RegUnicodeString.NullTerminated.of(msg),
-                timeout, forceAppsClosed, rebootAfterShutdown, reasons
-        );
+        final BaseInitiateShutdownRequestEx request = new BaseInitiateShutdownRequestEx(parseWCharNT(null), RegUnicodeString.NullTerminated.of(msg), timeout, forceAppsClosed, rebootAfterShutdown, reasons);
         final EmptyResponse response = callExpectSuccess(request, "BaseInitiateShutdownRequestEx");
         return response.getReturnValue();
     }

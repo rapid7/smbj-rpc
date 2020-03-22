@@ -18,15 +18,14 @@
  */
 package com.rapid7.client.dcerpc.objects;
 
+import java.io.IOException;
+import java.rmi.UnmarshalException;
+import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
-
-import java.io.IOException;
-import java.rmi.UnmarshalException;
-import java.util.Objects;
 
 /**
  * Represents a UTF-16 encoded unicode string as a character array.
@@ -131,8 +130,7 @@ public abstract class ShortChar implements Unmarshallable, Marshallable {
         // Entities for conformant+varying array
         // Alignment 1 - Already aligned
         out.writeCharsAsShort(value);
-        if (isNullTerminated())
-            out.writeShort(0);
+        if (isNullTerminated()) out.writeShort(0);
     }
 
     @Override
@@ -166,8 +164,7 @@ public abstract class ShortChar implements Unmarshallable, Marshallable {
         if (isNullTerminated() && this.actualCount > 0) {
             length = this.actualCount - 1;
             nullTerminated = true;
-        }
-        else {
+        } else {
             length = this.actualCount;
             nullTerminated = false;
         }
@@ -180,8 +177,7 @@ public abstract class ShortChar implements Unmarshallable, Marshallable {
         this.value = sb.toString();
         // Skip null terminator (if any)
         // Alignment: 2 - Already aligned
-        if (nullTerminated)
-            in.fullySkipBytes(2);
+        if (nullTerminated) in.fullySkipBytes(2);
     }
 
     @Override
@@ -193,12 +189,11 @@ public abstract class ShortChar implements Unmarshallable, Marshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof ShortChar)) {
+        } else if (!(obj instanceof ShortChar)) {
             return false;
         }
         final ShortChar other = (ShortChar) obj;
-        return isNullTerminated() == other.isNullTerminated()
-                && Objects.equals(getValue(), other.getValue());
+        return isNullTerminated() == other.isNullTerminated() && Objects.equals(getValue(), other.getValue());
     }
 
     @Override
@@ -209,7 +204,10 @@ public abstract class ShortChar implements Unmarshallable, Marshallable {
     private int getCodePoints() {
         return getValue().length() + (isNullTerminated() ? 1 : 0);
     }
-    private int getContentLength() { return getValue().length(); }
+
+    private int getContentLength() {
+        return getValue().length();
+    }
 
     private int readIndex(String name, PacketInput in) throws IOException {
         final long ret = in.readUnsignedInt();

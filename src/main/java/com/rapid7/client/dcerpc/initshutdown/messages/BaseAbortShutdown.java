@@ -18,12 +18,11 @@
  */
 package com.rapid7.client.dcerpc.initshutdown.messages;
 
+import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.messages.EmptyResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.objects.WChar;
-
-import java.io.IOException;
 
 /**
  * <b>3.2.4.2 BaseAbortShutdown (Opnum 1)</b><br>

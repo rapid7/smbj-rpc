@@ -18,14 +18,13 @@
  */
 package com.rapid7.client.dcerpc.initshutdown.messages;
 
+import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.messages.EmptyResponse;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.objects.RegUnicodeString;
 import com.rapid7.client.dcerpc.objects.WChar;
-
-import java.io.IOException;
 
 /**
  * <b>3.2.4.1 BaseInitiateShutdown (Opnum 0)</b><br>
@@ -54,10 +53,7 @@ public class BaseInitiateShutdownRequest extends RequestCall<EmptyResponse> {
     private final boolean forceAppsClosed;
     private final boolean rebootAfterShutdown;
 
-    public BaseInitiateShutdownRequest(final WChar.NullTerminated serverName,
-                                       final RegUnicodeString.NullTerminated messageToUser,
-                                       final int timeout, final boolean forceAppsClosed,
-                                       final  boolean rebootAfterShutdown) {
+    public BaseInitiateShutdownRequest(final WChar.NullTerminated serverName, final RegUnicodeString.NullTerminated messageToUser, final int timeout, final boolean forceAppsClosed, final boolean rebootAfterShutdown) {
         super((short) 0);
         this.serverName = serverName;
         this.messageToUser = messageToUser;
