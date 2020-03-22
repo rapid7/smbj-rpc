@@ -109,4 +109,10 @@ public class PrimitiveOutput {
     public void writeChars(final String s) throws IOException {
         dataOut.writeChars(s);
     }
+
+    public void writeCharsAsShort(final String s) throws IOException {
+        for (int i = 0; i < s.length(); i++) {
+            dataOut.writeShort(s.charAt(i));
+        }
+    }
 }
