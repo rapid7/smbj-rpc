@@ -2,7 +2,13 @@
 
 DCE-RPC implementation capable of using SMBv2 via SMBJ to invoke remote procedure calls (RPC) over the IPC$ named pipe.
 
-Partial support for the Windows Remote Registry Protocol (MS-RRP) specification (https://msdn.microsoft.com/en-us/library/cc244877.aspx).
+Supports the following protocols (some support is partial):
+* [MS-RSP]: [Remote shutdown protocol](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-rsp/43a7d8d6-307d-445c-8678-d209a19926fe).
+* [MS-LSAD]: [Local Security Authority (Domain Policy) Remote Protocol](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lsad/1b5471ef-4c33-4a91-b079-dfcbb82f05cc).
+* [MS-RRP]: [Windows Remote Registry Protocol](https://msdn.microsoft.com/en-us/library/cc244877.aspx).
+* [MS-SAMR]: [Security Account Manager (SAM) Remote Protocol (Client-to-Server)](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-samr/4df07fab-1bbc-452f-8e92-7853a3c7e380).
+* [MS-SRVS]: [Server Service Remote Protocol](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-srvs/accf23b0-0f57-441c-9185-43041f1b0ee9).
+* [MS-SCMR]: [Service Control Manager Remote Protocol](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-scmr/705b624a-13de-43cc-b8a2-99573da3635f).
 
 Special thank you to Jeroen van Erp for SMBJ (https://github.com/hierynomus/smbj).
 
@@ -77,6 +83,10 @@ try (final Connection smbConnection = smbClient.connect("aaa.bbb.ccc.ddd")) {
     }
 }
 ```
+
+#### [MS-RSP]: Remote Shutdown Protocol
+
+See file `usage/ShutdownExample.java` inside the project.
 
 # NDR Types
 

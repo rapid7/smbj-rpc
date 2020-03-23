@@ -31,8 +31,6 @@ import com.rapid7.client.dcerpc.objects.WChar;
 import static org.junit.Assert.assertEquals;
 
 public class Test_NetPrPathCanonicalize {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
     @SuppressWarnings("unchecked")
     @Test

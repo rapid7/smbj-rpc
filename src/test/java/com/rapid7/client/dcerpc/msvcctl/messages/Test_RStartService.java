@@ -30,8 +30,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class Test_RStartService {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
     @SuppressWarnings("unchecked")
     @Test

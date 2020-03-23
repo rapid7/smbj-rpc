@@ -1,57 +1,51 @@
 /**
- * Copyright 2017, Rapid7, Inc.
- *
+ * Copyright 2020, Vadim Frolov.
+ * <p>
  * License: BSD-3-clause
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- *
+ * <p>
  * * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- *
+ * <p>
  * * Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
  */
-package com.rapid7.client.dcerpc.msrrp.messages;
+package com.rapid7.client.dcerpc.initshutdown.messages;
 
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.messages.HandleResponse;
+import com.rapid7.client.dcerpc.messages.EmptyResponse;
+import com.rapid7.client.dcerpc.objects.RegUnicodeString;
 
-import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-public class Test_BaseRegCloseKey {
-    private final byte[] contextHandle = Hex.decode("0000000032daf234b77c86409d29efe60d326683");
-    private final BaseRegCloseKey request = new BaseRegCloseKey(contextHandle);
+public class Test_BaseInitiateShutdownRequest {
+    // Actual bytes in the request
+    private final byte[] defaultStub = Hex.decode("000000000000020000000000000000001e0000000100");
+    private final BaseInitiateShutdownRequest request = new BaseInitiateShutdownRequest(null, RegUnicodeString.NullTerminated.of(null), 30, true, false);
 
     @Test
     public void getOpNum() {
-        assertEquals(5, request.getOpNum());
+        assertEquals(0, request.getOpNum());
     }
 
     @Test
     public void getStub() throws IOException {
-        // Remote Registry Service, CloseKey
-        //      Operation: CloseKey (5)
-        //      [Response in frame: 11429]
-        //      Pointer to Handle (policy_handle)
-        //          Policy Handle: OpenHKLM(<...>)
-        //              Handle: 0000000032daf234b77c86409d29efe60d326683
-        //              [Frame handle opened: 11176]
-        //              [Frame handle closed: 11424]
-        assertEquals("0000000032daf234b77c86409d29efe60d326683", toHexString(request.getStub()));
+        assertArrayEquals(defaultStub, request.getStub());
     }
 
     @Test
     public void getResponseObject() throws IOException {
-        assertThat(request.getResponseObject(), instanceOf(HandleResponse.class));
+        assertThat(request.getResponseObject(), instanceOf(EmptyResponse.class));
     }
 }

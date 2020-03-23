@@ -18,16 +18,16 @@
  */
 package com.rapid7.client.dcerpc.msrrp.messages;
 
-import java.io.IOException;
+import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 
-import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
+import java.io.IOException;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class Test_BaseRegQueryValueRequest {
     private final byte[] contextHandle = Hex.decode("000000000a665393f4666e49a68cd99f269d020f");

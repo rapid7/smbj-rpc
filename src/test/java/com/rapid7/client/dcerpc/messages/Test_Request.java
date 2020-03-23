@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.Assert;
 import org.junit.rules.ExpectedException;
 import com.rapid7.client.dcerpc.PDUType;
 import com.rapid7.client.dcerpc.PFCFlag;
@@ -29,39 +30,37 @@ import com.rapid7.client.dcerpc.PFCFlag;
 import static org.junit.Assert.*;
 
 public class Test_Request {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void pduType() {
         final Request request = new Request();
-        assertEquals(PDUType.REQUEST, request.getPDUType());
+        Assert.assertEquals(PDUType.REQUEST, request.getPDUType());
     }
 
     @Test
     public void getOpNum() {
         final Request request = new Request();
-        assertEquals(0, request.getOpNum());
+        Assert.assertEquals(0, request.getOpNum());
     }
 
     @Test
     public void getStub() {
         final Request request = new Request();
-        assertNull(request.getStub());
+        Assert.assertNull(request.getStub());
     }
 
     @Test
     public void setOpNum() {
         final Request request = new Request();
         request.setOpNum((short) 1);
-        assertEquals(1, request.getOpNum());
+        Assert.assertEquals(1, request.getOpNum());
     }
 
     @Test
     public void setStub() {
         final Request request = new Request();
         request.setStub(new byte[]{0x00});
-        assertArrayEquals(new byte[]{0x00}, request.getStub());
+        Assert.assertArrayEquals(new byte[]{0x00}, request.getStub());
     }
 
     @Test
@@ -71,25 +70,29 @@ public class Test_Request {
         request.setPFCFlags(EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
         request.setStub(new byte[0]);
 
-        assertEquals("050000031000000018000000000000000000000000000000", request.toHexString());
+        Assert.assertEquals("050000031000000018000000000000000000000000000000", request.toHexString());
     }
 
     @Test
     public void marshalNullStub() throws IOException {
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("Invalid stub: null");
+        try {
+            final Request request = new Request();
 
-        final Request request = new Request();
-
-        request.setPFCFlags(EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
-        request.toHexString();
+            request.setPFCFlags(EnumSet.of(PFCFlag.FIRST_FRAGMENT, PFCFlag.LAST_FRAGMENT));
+            request.toHexString();
+            Assert.fail();
+        } catch (IllegalStateException ex) {
+            Assert.assertEquals("Invalid stub: null", ex.getMessage());
+        }
     }
 
     @Test
     public void unmarshal() throws IOException {
-        thrown.expect(UnsupportedOperationException.class);
-        thrown.expectMessage("Unmarshal Not Implemented.");
-
-        new Request().unmarshal(null);
+        try {
+            new Request().unmarshal(null);
+            Assert.fail();
+        } catch (UnsupportedOperationException ex) {
+            Assert.assertEquals("Unmarshal Not Implemented.", ex.getMessage());
+        }
     }
 }

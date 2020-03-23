@@ -32,10 +32,7 @@ import com.rapid7.client.dcerpc.mslsad.objects.LSAPRReferencedDomainList;
 import com.rapid7.client.dcerpc.mslsad.objects.LSAPRTranslatedName;
 import com.rapid7.client.dcerpc.objects.RPCSID;
 
-public class Test_LookupSIDs
-{
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
+public class Test_LookupSIDs {
 
     @Test
     public void parseLookupSIDsResponse() throws IOException {

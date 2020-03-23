@@ -18,14 +18,16 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import static org.bouncycastle.util.encoders.Hex.toHexString;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import com.rapid7.client.dcerpc.mssamr.dto.GroupHandle;
+
+import java.io.IOException;
+
+import static org.bouncycastle.util.encoders.Hex.toHexString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+
 
 public class Test_SamrGetMembersForGroupRequest {
     @Test

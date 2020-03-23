@@ -29,8 +29,6 @@ import com.rapid7.client.dcerpc.PFCFlag;
 import static org.junit.Assert.*;
 
 public class Test_Response {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void getStub() {

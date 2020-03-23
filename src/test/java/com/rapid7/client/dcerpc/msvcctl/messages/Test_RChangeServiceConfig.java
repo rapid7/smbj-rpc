@@ -35,8 +35,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class Test_RChangeServiceConfig {
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
     @SuppressWarnings("unchecked")
     @Test

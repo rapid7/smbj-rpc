@@ -18,15 +18,15 @@
  */
 package com.rapid7.client.dcerpc.mssamr.messages;
 
-import java.io.IOException;
-import org.junit.Test;
 import com.rapid7.client.dcerpc.messages.HandleResponse;
-import com.rapid7.client.dcerpc.mssamr.dto.DomainHandle;
+import org.junit.Test;
+
+import java.io.IOException;
 
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class Test_SamrOpenUser {
     // https://msdn.microsoft.com/en-us/library/cc980032.aspx
