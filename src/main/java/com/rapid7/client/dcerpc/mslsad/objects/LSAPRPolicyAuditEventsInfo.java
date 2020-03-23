@@ -26,11 +26,13 @@ import com.rapid7.client.dcerpc.io.ndr.Alignment;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
- * <b>Alignment: 4</b> (Max[1,4,4])<pre>
+ * <b>Alignment: 4</b> (Max[1,4,4])
+ * <pre>
  *      unsigned char AuditingMode;: 1
  *      [size_is(MaximumAuditEventCount)] unsigned long* EventAuditingOptions;: 4
- *      [range(0,1000)] unsigned long MaximumAuditEventCount;: 4</pre>
- * <a href="https://msdn.microsoft.com/en-us/library/cc234264.aspx?f=255&MSPPError=-2147217396">LSAPR_POLICY_AUDIT_EVENTS_INFO</a>
+ *      [range(0,1000)] unsigned long MaximumAuditEventCount;: 4
+ * </pre>
+ * <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lsad/d00fc364-577d-4ed0-b3a5-952d78b67695">LSAPR_POLICY_AUDIT_EVENTS_INFO</a>
  * <blockquote><pre>
  * The LSAPR_POLICY_AUDIT_EVENTS_INFO structure contains auditing options on the server.
  *      typedef struct _LSAPR_POLICY_AUDIT_EVENTS_INFO {
