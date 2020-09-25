@@ -1,0 +1,15 @@
+# Contributing to smbj-rpc
+
+The users and maintainers of smbj-rpc would greatly appreciate any contributions
+you can make to the project. These contributions typically come in the form of
+filed bugs/issues or pull requests (PRs). These contributions routinely result
+in [new versions of the smbj-rpc library to be released](https://github.com/rapid7/smbj-rpc/releases).
+The process for each is outlined below.
+
+## Contributing Issues / Bug Reports
+
+If you encounter any bugs or problems with smbj-rpc, please file them
+[here](https://github.com/rapid7/smbj-rpc/issues/new/choose), providing as much detail as
+possible. If the bug is straight-forward enough and you understand the fix for
+the bug well enough, you may take the simpler, less-paperwork route and simply
+file a pull request with the fix and the necessary details.
