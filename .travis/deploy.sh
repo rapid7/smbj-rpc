@@ -6,4 +6,4 @@ else
     echo "not on a tag -> keep snapshot version in pom.xml"
 fi
 
-mvn clean deploy --settings .travis/settings.xml -DskipTests=true -B -U
+mvn clean deploy --settings .travis/settings.xml -DskipTests=true -Prelease -B -V -U -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
