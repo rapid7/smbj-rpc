@@ -322,6 +322,16 @@ public class LocalSecurityAuthorityService extends Service {
         return mappedNames;
     }
 	
+	/**
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
+     * @param lookupLevel Look up level as defined in {@link LSAPLookupLevel}.
+     * @param sids Array of {@link SID}s to lookup
+     * @return An array of domain names. Each entry index in this list corresponds to the same entry index in
+     *         the provided sids array. The original SID would be returned as a string if the given
+     *         {@link SID} was not mapped.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
 	public String[] lookupDomainNamesForSIDs(final PolicyHandle policyHandle, final LSAPLookupLevel lookupLevel, SID ... sids)
             throws IOException {
         final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(parseHandle(policyHandle), parseSIDs(sids),
