@@ -321,6 +321,24 @@ public class LocalSecurityAuthorityService extends Service {
         }
         return mappedNames;
     }
+	
+	public String[] lookupDomainNamesForSIDs(final PolicyHandle policyHandle, final LSAPLookupLevel lookupLevel, SID ... sids)
+            throws IOException {
+        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(parseHandle(policyHandle), parseSIDs(sids),
+                lookupLevel.getValue());
+        final LsarLookupSIDsResponse lsarLookupSIDsResponse = callExpect(request, "LsarLookupSIDs",
+                SystemErrorCode.ERROR_SUCCESS,
+                SystemErrorCode.STATUS_SOME_NOT_MAPPED,
+                SystemErrorCode.STATUS_NONE_MAPPED);
+        LSAPRTrustInformation[] domainNameArray = lsarLookupSIDsResponse.getReferencedDomains().getDomains();
+        if (domainNameArray == null)
+            domainNameArray = new LSAPRTrustInformation[0];
+        final String[] mappedDomainNames = new String[domainNameArray.length];
+        for (int i = 0; i < domainNameArray.length; i++) {
+            mappedDomainNames[i] = domainNameArray[i].getName().getValue();
+        }
+        return mappedDomainNames;
+    }
 
     private PolicyHandle parsePolicyHandle(final byte[] handle) {
         return new PolicyHandle(handle);
