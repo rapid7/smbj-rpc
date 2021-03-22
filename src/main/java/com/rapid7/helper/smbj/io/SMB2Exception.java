@@ -20,7 +20,7 @@ package com.rapid7.helper.smbj.io;
 
 import java.io.IOException;
 import com.hierynomus.mserref.NtStatus;
-import com.hierynomus.mssmb2.SMB2Header;
+import com.hierynomus.mssmb2.SMB2PacketHeader;
 import com.hierynomus.mssmb2.SMB2MessageCommandCode;
 
 @SuppressWarnings("serial")
@@ -29,7 +29,7 @@ public class SMB2Exception extends IOException {
     private final SMB2MessageCommandCode failedCommand;
     private final long statusCode;
 
-    public SMB2Exception(final SMB2Header header, final String message) {
+    public SMB2Exception(final SMB2PacketHeader header, final String message) {
         super(String.format("%s returned %s (%d/%d): %s", header.getMessage(), header.getStatusCode(), header.getStatusCode(), header.getStatusCode(), message));
 
         status = NtStatus.valueOf(header.getStatusCode());
