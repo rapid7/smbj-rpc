@@ -48,7 +48,7 @@ public class NamedPipe extends SMB2SessionMessage implements Closeable {
     private final int writeBufferSize;
 
     public NamedPipe(final Session session, final PipeShare share, final String name) throws IOException {
-        super(session);
+        super(session, share.getTreeConnect().getConfig());
 
         this.share = share;
 
@@ -56,9 +56,9 @@ public class NamedPipe extends SMB2SessionMessage implements Closeable {
         final SMB2CreateResponse createResponse = sendAndRead(createRequest, EnumSet.of(NtStatus.STATUS_SUCCESS));
 
         fileID = createResponse.getFileId();
-        transactBufferSize = Math.min(session.getConnection().getConfig().getTransactBufferSize(), session.getConnection().getNegotiatedProtocol().getMaxTransactSize());
-        readBufferSize = Math.min(session.getConnection().getConfig().getReadBufferSize(), session.getConnection().getNegotiatedProtocol().getMaxReadSize());
-        writeBufferSize = Math.min(session.getConnection().getConfig().getWriteBufferSize(), session.getConnection().getNegotiatedProtocol().getMaxWriteSize());
+        transactBufferSize = Math.min(share.getTreeConnect().getConfig().getTransactBufferSize(), session.getConnection().getNegotiatedProtocol().getMaxTransactSize());
+        readBufferSize = Math.min(share.getTreeConnect().getConfig().getReadBufferSize(), session.getConnection().getNegotiatedProtocol().getMaxReadSize());
+        writeBufferSize = Math.min(share.getTreeConnect().getConfig().getWriteBufferSize(), session.getConnection().getNegotiatedProtocol().getMaxWriteSize());
     }
 
     public byte[] transact(final byte[] inBuffer) throws IOException {
