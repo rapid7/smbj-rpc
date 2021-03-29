@@ -49,7 +49,7 @@
       <thirdparty.hamcrest.version>1.3</thirdparty.hamcrest.version>
       <thirdparty.junit.version>4.12</thirdparty.junit.version>
       <thirdparty.mockito.version>1.10.19</thirdparty.mockito.version>
-      <thirdparty.smbj.version>0.8.0</thirdparty.smbj.version>
+      <thirdparty.smbj.version>0.10.0</thirdparty.smbj.version>
       <thirdparty.testng.version>6.11</thirdparty.testng.version>
       <maven.compiler.target>1.7</maven.compiler.target>
       <maven.compiler.source>1.7</maven.compiler.source>
