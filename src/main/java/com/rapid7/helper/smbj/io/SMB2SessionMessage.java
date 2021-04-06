@@ -28,8 +28,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import com.hierynomus.mserref.NtStatus;
 import com.hierynomus.mssmb2.SMB2Dialect;
-import com.hierynomus.mssmb2.SMB2Header;
+import com.hierynomus.mssmb2.SMB2PacketHeader;
 import com.hierynomus.mssmb2.SMB2Packet;
+import com.hierynomus.smbj.SmbConfig;
 import com.hierynomus.smbj.session.Session;
 
 public abstract class SMB2SessionMessage {
@@ -38,11 +39,11 @@ public abstract class SMB2SessionMessage {
     private final long sessionID;
     private final long timeout;
 
-    public SMB2SessionMessage(final Session session) {
+    public SMB2SessionMessage(final Session session, final SmbConfig config) {
         dialect = session.getConnection().getNegotiatedProtocol().getDialect();
         this.session = session;
         sessionID = session.getSessionId();
-        timeout = session.getConnection().getConfig().getTransactTimeout();
+        timeout = config.getTransactTimeout();
     }
 
     public SMB2Dialect getDialect() {
@@ -93,7 +94,7 @@ public abstract class SMB2SessionMessage {
             throws IOException {
         final Future<T> future = send(packet);
         final T responsePacket = read(future);
-        final SMB2Header responseHeader = responsePacket.getHeader();
+        final SMB2PacketHeader responseHeader = responsePacket.getHeader();
         final NtStatus responseStatus = NtStatus.valueOf(responseHeader.getStatusCode());
         if (!ok.contains(responseStatus)) {
             throw new SMB2Exception(responseHeader, "expected=" + ok);
