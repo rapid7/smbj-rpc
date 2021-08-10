@@ -1,4 +1,4 @@
-Copyright 2017, Rapid7, Inc.
+Copyright 2017-2021, Rapid7, Inc.
 
 License: BSD-3-clause
 
