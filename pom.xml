@@ -80,6 +80,11 @@
          <artifactId>smbj</artifactId>
          <version>${thirdparty.smbj.version}</version>
       </dependency>
+       <dependency>
+           <groupId>org.bouncycastle</groupId>
+           <artifactId>bcprov-jdk15on</artifactId>
+           <version>${thirdparty.bouncycastle.version}</version>
+       </dependency>
 
       <!-- Test dependencies. -->
       <!-- 3rdparty dependencies. -->
