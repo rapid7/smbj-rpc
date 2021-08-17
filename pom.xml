@@ -144,6 +144,12 @@
            <version>${thirdparty.junit.version}</version>
            <scope>test</scope>
        </dependency>
+       <dependency>
+           <groupId>org.junit.jupiter</groupId>
+           <artifactId>junit-jupiter-params</artifactId>
+           <version>${thirdparty.junit.version}</version>
+           <scope>test</scope>
+       </dependency>
    </dependencies>
 
    <build>
@@ -153,8 +159,8 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.7.0</version>
             <configuration>
-               <source>${maven.compiler.source}</source>
-               <target>${maven.compiler.target}</target>
+               <source>8</source>
+               <target>8</target>
             </configuration>
          </plugin>
          <plugin>
