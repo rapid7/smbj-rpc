@@ -29,4 +29,4 @@ jobs:
           key: ${{ runner.os }}-java${{ matrix.java }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-java${{ matrix.java }}-m2
       - name: Run Tests
-        run: mvn test -Dgpg.skip -Dmaven.javadoc.skip=true -B -V -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        run: mvn verify -Dgpg.skip -Dmaven.javadoc.skip=true -B -V -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
