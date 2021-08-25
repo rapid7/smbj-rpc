@@ -52,7 +52,7 @@
       <thirdparty.mockito.version>1.10.19</thirdparty.mockito.version>
       <thirdparty.smbj.version>0.11.1</thirdparty.smbj.version>
       <thirdparty.testng.version>6.11</thirdparty.testng.version>
-      <thirdparty.bouncycastle.version>1.60</thirdparty.bouncycastle.version>
+      <thirdparty.bouncycastle.version>1.67</thirdparty.bouncycastle.version>
       <thirdparty.testcontainers.version>1.16.0</thirdparty.testcontainers.version>
       <maven.compiler.target>1.8</maven.compiler.target>
       <maven.compiler.source>1.8</maven.compiler.source>
