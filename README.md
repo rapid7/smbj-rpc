@@ -33,7 +33,7 @@ Add to your pom.xml:
 <dependency>
   <groupId>com.rapid7.client</groupId>
   <artifactId>dcerpc</artifactId>
-  <version>0.10.0</version>
+  <version>0.11.0</version>
 </dependency>
 ```
 
@@ -83,7 +83,8 @@ try (final Connection smbConnection = smbClient.connect("aaa.bbb.ccc.ddd")) {
 
     final RPCTransport transport = SMBTransportFactories.SRVSVC.getTransport(session);
     final ServerService serverService = new ServerService(transport);
-    final List<NetShareInfo0> shares = serverService.getShares();
+    // Get shares at information level 0
+    final List<NetShareInfo0> shares = serverService.getShares0();
     for (final NetShareInfo0 share : shares) {
         System.out.println(share);
     }
