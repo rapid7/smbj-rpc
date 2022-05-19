@@ -41,7 +41,11 @@ package com.rapid7.client.dcerpc.mssamr.objects;
  *  GroupReplicationInformation:  Indicates the Buffer parameter is to be interpreted as a SAMPR_GROUP_GENERAL_INFORMATION structure (see section 2.2.5.3).</pre></blockquote>
  */
 public enum GroupInformationClass {
-    GROUP_GENERAL_INFORMATION(1);
+    GROUP_GENERAL_INFORMATION(1),
+    GROUP_NAME_INFORMATION(2),
+    GROUP_ATTRIBUTE_INFORMATION(3),
+    GROUP_ADMINCOMMENT_INFORMATION(4),
+    GROUP_REPLICATION_INFORMATION(5);
 
     private final int infoLevel;
 

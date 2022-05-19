@@ -24,7 +24,9 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 import java.io.IOException;
 import java.util.Arrays;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
@@ -42,7 +44,14 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *  LogonHours: A pointer to a bit field containing at least UnitsPerWeek number of bits. The leftmost bit represents the first unit, starting at Sunday, 12 A.M. If a bit is set, authentication is allowed to occur; otherwise, authentication is not allowed to occur.
  *  For example, if the UnitsPerWeek value is 168 (that is, the units per week is hours, resulting in a 21-byte bit field), and if the leftmost bit is set and the rightmost bit is set, the user is able to log on for two consecutive hours between Saturday, 11 P.M. and Sunday, 1 A.M.</pre></blockquote>
  */
-public class SAMPRLogonHours implements Unmarshallable {
+public class SAMPRLogonHours implements Unmarshallable, Marshallable {
+	public SAMPRLogonHours() {
+		
+	}
+	public SAMPRLogonHours(short unitsPerWeek, byte[] logonHours) {
+		this.unitsPerWeek = unitsPerWeek;
+		this.logonHours = logonHours;
+	}
     // <NDR: unsigned short> unsigned short UnitsPerWeek;
     private short unitsPerWeek;
     // <NDR: pointer> [size_is(1260), length_is((UnitsPerWeek+7)/8)] unsigned char* LogonHours;
@@ -130,4 +139,45 @@ public class SAMPRLogonHours implements Unmarshallable {
         return String.format("SAMPR_LOGON_HOURS{UnitsPerWeek:%d,size(LogonHours):%s}",
                 this.unitsPerWeek, (this.logonHours == null ? "null" : this.logonHours.length));
     }
+
+	@Override
+	public void marshalPreamble(PacketOutput out) throws IOException { 
+		//No preamble
+	 }
+
+	@Override
+	public void marshalEntity(PacketOutput out) throws IOException { 
+        // Structure Alignment: 4
+        out.align(Alignment.FOUR);
+        // <NDR: unsigned short> unsigned short UnitsPerWeek;
+        // Alignment: 2 - Already aligned
+        out.writeShort(unitsPerWeek);
+        // <NDR: pointer> [size_is(1260), length_is((UnitsPerWeek+7)/8)] unsigned char* LogonHours;
+        out.writeByte(0);
+        out.writeByte(0);
+        out.writeReferentID(this);
+	 }
+
+	@Override
+	public void marshalDeferrals(PacketOutput out) throws IOException { 
+        if (logonHours != null) {
+            // <NDR conformant varying array> [size_is(1260), length_is((UnitsPerWeek+7)/8)] unsigned char* LogonHours;
+            // Array alignment: 4
+            out.align(Alignment.FOUR);
+            // <NDR: unsigned long> MaximumCount
+            // Alignment: 4 - Already aligned
+            out.writeInt(1260);
+            // <NDR: unsigned long> Offset
+            // Alignment: 4 - Already aligned
+            out.writeInt(0);
+            // <NDR: unsigned long> ActualCount
+            // Alignment: 4 - Already aligned
+            out.writeInt(logonHours.length);
+            // <NDR: unsigned char> unsigned char
+            // Alignment: 1 - Already aligned
+            for (int i = 0; i < logonHours.length; i++) {
+            	out.writeByte(logonHours[i]);
+            }
+        }
+	 }
 }

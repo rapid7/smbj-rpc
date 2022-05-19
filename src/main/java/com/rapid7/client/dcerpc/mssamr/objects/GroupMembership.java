@@ -3,18 +3,11 @@
  *
  * License: BSD-3-clause
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
  *
- * * Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the distribution.
+ * * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
  *
- * * Neither the name of the copyright holder nor the names of its contributors
- * may be used to endorse or promote products derived from this software
- * without specific prior written permission.
+ * * Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.mssamr.objects;
 
@@ -42,38 +35,53 @@ import com.rapid7.client.dcerpc.mssamr.dto.GroupAttributes;
  * </p>
  */
 public class GroupMembership implements Unmarshallable {
+	private int rid;
+	private int attributes;
 
-    private int rid;
-    private int attributes;
-
-    public int getRelativeID() {
-        return rid;
-    }
-
-    public int getAttributes() {
-        return attributes;
-    }
-
-    public void setRelativeID(final int rid) {
-        this.rid = rid;
-    }
-
-    public void setAttributes(final int attributes) {
-        this.attributes = attributes;
-    }
-
-    @Override
-    public void unmarshalPreamble(PacketInput in) throws IOException {
-    }
-
-    @Override
-    public void unmarshalEntity(PacketInput in) throws IOException {
-        in.align(Alignment.FOUR);
-        rid = in.readInt();
-        attributes = in.readInt();
-    }
-
-    @Override
-    public void unmarshalDeferrals(PacketInput in) throws IOException {
-    }
+	public int getRelativeID() { return rid; }
+	public int getAttributes() { return attributes; }
+	public void setRelativeID(final int rid) { this.rid = rid; }
+	public void setAttributes(final int attributes) { this.attributes = attributes; }
+	@Override
+	public void unmarshalPreamble(PacketInput in) throws IOException {
+	}
+	@Override
+	public void unmarshalEntity(PacketInput in) throws IOException {
+		in.align(Alignment.FOUR);
+		rid = in.readInt();
+		attributes = in.readInt();
+	}
+	@Override
+	public void unmarshalDeferrals(PacketInput in) throws IOException {
+	}
+	@Override
+	public String toString() {
+		return String.format(
+				"GroupMemberShip {rid:%d, attributes:%d}",
+				getRelativeID(), getAttributes()
+		);
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + attributes;
+		result = prime * result + rid;
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GroupMembership other = (GroupMembership) obj;
+		if (attributes != other.attributes)
+			return false;
+		if (rid != other.rid)
+			return false;
+		return true;
+	}
 }

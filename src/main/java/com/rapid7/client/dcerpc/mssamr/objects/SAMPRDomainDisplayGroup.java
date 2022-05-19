@@ -22,7 +22,6 @@ import java.io.IOException;
 import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
-import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
 /**
  * The SAMPR_DOMAIN_DISPLAY_GROUP structure contains a subset of group information sufficient to show a summary of the account for an account management application.
