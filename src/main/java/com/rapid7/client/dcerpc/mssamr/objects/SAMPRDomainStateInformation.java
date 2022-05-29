@@ -104,7 +104,6 @@ public class SAMPRDomainStateInformation implements Unmarshallable, Marshallable
 	public void marshalEntity(PacketOutput out) throws IOException { 
 
         // Structure Alignment: 4
-//        out.align(Alignment.EIGHT);
         // <NDR: hyper> OLD_LARGE_INTEGER DomainModifiedCount;
         // Alignment: 8 - Already aligned
         out.writeInt((int)domainState);
