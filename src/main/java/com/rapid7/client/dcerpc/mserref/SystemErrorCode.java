@@ -1063,9 +1063,7 @@ public enum SystemErrorCode {
     STATUS_DFS_UNAVAILABLE(0xC000026D),
     STATUS_VOLUME_DISMOUNTED(0xC000026E),
     STATUS_FILE_ENCRYPTED(0xC0000293),
-    STATUS_NETWORK_SESSION_EXPIRED(0xC000035C),
-    STATUS_OTHER(0xFFFFFFFF);
-    ;
+    STATUS_NETWORK_SESSION_EXPIRED(0xC000035C);
 
     private final int value;
     private static final Map<Integer, SystemErrorCode> VALUE_MAP = new HashMap<>();
