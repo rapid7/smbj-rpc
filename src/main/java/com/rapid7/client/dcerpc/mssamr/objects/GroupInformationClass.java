@@ -1,4 +1,5 @@
 /*
+
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
@@ -21,11 +22,14 @@
 
 package com.rapid7.client.dcerpc.mssamr.objects;
 
-/** *
- * <b>Alignment: 2</b>
- * <br>
- * <a href="https://msdn.microsoft.com/en-us/library/cc245586.aspx">GROUP_INFORMATION_CLASS</a>
- * <blockquote><pre>The GROUP_INFORMATION_CLASS enumeration indicates how to interpret the Buffer parameter for SamrSetInformationGroup and SamrQueryInformationGroup. For a list of associated structures, see section 2.2.5.7.
+/**
+ * * <b>Alignment: 2</b> <br>
+ * <a href=
+ * "https://msdn.microsoft.com/en-us/library/cc245586.aspx">GROUP_INFORMATION_CLASS</a>
+ * <blockquote>
+ * 
+ * <pre>
+ * The GROUP_INFORMATION_CLASS enumeration indicates how to interpret the Buffer parameter for SamrSetInformationGroup and SamrQueryInformationGroup. For a list of associated structures, see section 2.2.5.7.
  *      typedef  enum _GROUP_INFORMATION_CLASS
  *      {
  *          GroupGeneralInformation = 1,
@@ -38,7 +42,10 @@ package com.rapid7.client.dcerpc.mssamr.objects;
  *  GroupNameInformation:  Indicates the Buffer parameter is to be interpreted as a SAMPR_GROUP_NAME_INFORMATION structure (see section 2.2.5.4).
  *  GroupAttributeInformation:  Indicates the Buffer parameter is to be interpreted as a SAMPR_GROUP_ATTRIBUTE_INFORMATION structure (see section 2.2.5.2).
  *  GroupAdminCommentInformation:  Indicates the Buffer parameter is to be interpreted as a SAMPR_GROUP_ADM_COMMENT_INFORMATION structure (see section 2.2.5.5).
- *  GroupReplicationInformation:  Indicates the Buffer parameter is to be interpreted as a SAMPR_GROUP_GENERAL_INFORMATION structure (see section 2.2.5.3).</pre></blockquote>
+ *  GroupReplicationInformation:  Indicates the Buffer parameter is to be interpreted as a SAMPR_GROUP_GENERAL_INFORMATION structure (see section 2.2.5.3).
+ * </pre>
+ * 
+ * </blockquote>
  */
 public enum GroupInformationClass {
     GROUP_GENERAL_INFORMATION(1),

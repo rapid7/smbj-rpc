@@ -3,11 +3,18 @@
  *
  * License: BSD-3-clause
  *
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *   Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
- * * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+ *  Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
- * * Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+ *  Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  */
 package com.rapid7.client.dcerpc.objects;
 
@@ -24,7 +31,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
  * <b>Alignment: 4</b> (Max[4, 4])
- * 
+ *
  * <pre>
  *      unsigned char Revision;: 1
  *      unsigned char SubAuthorityCount;: 1
@@ -34,7 +41,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *
  * <a href="https://msdn.microsoft.com/en-us/library/cc230364.aspx">RPC_SID</a>:
  * <blockquote>
- * 
+ *
  * <pre>
  * The RPC_SID structure is an IDL representation of the SID type (as specified in  section 2.4.2) for use by RPC-based protocols.
  *      typedef struct _RPC_SID {
@@ -50,7 +57,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *  IdentifierAuthority: An RPC_SID_IDENTIFIER_AUTHORITY structure that indicates the authority under which the SID was created. It describes the entity that created the SID. The Identifier Authority value {0,0,0,0,0,5} denotes SIDs created by the NT SID authority.
  *  SubAuthority: A variable length array of unsigned 32-bit integers that uniquely identifies a principal relative to the IdentifierAuthority. Its length is determined by SubAuthorityCount.
  * </pre>
- * 
+ *
  * </blockquote>
  */
 public class RPCSID implements Unmarshallable, Marshallable {
@@ -79,8 +86,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
      * RPC_SID_IDENTIFIER_AUTHORITY;
      */
     private byte[] identifierAuthority;
-    // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long
-    // SubAuthority[];
+    // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
     private long[] subAuthority;
 
     public char getRevision() {
@@ -114,8 +120,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
 
     @Override
     public void marshalPreamble(PacketOutput out) throws IOException {
-        // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long
-        // SubAuthority[];
+        // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
         out.align(Alignment.FOUR);
         out.writeInt(this.subAuthority.length);
     }
@@ -137,8 +142,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
         // <NDR: fixed array> RPC_SID_IDENTIFIER_AUTHORITY IdentifierAuthority;
         // Alignment: 1 - Already aligned
         out.write(this.identifierAuthority, 0, 6);
-        // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long
-        // SubAuthority[];
+        // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
         // Alignment: 4 - Already aligned, we wrote 8 bytes above
         for (long subAuthority : this.subAuthority) {
             // <NDR: unsigned long>
@@ -154,8 +158,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
-        // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long
-        // SubAuthority[];
+        // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
         in.align(Alignment.FOUR);
         in.fullySkipBytes(4); // We don't care about MaximumCount
     }
@@ -174,8 +177,7 @@ public class RPCSID implements Unmarshallable, Marshallable {
         // Alignment: 1 - Already aligned
         this.identifierAuthority = new byte[6];
         in.readRawBytes(this.identifierAuthority);
-        // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long
-        // SubAuthority[];
+        // <NDR: conformant array> [size_is(SubAuthorityCount)] unsigned long SubAuthority[];
         // Alignment: 4 - Already aligned, we read 8 bytes above
         this.subAuthority = new long[this.subAuthorityCount];
         for (int i = 0; i < this.subAuthority.length; i++) {

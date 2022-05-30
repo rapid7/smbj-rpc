@@ -1,12 +1,21 @@
-/* Copyright 2017, Rapid7, Inc.
+/**
+ * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
  *
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *   Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
- * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+ *  Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
- * Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. */
+ *  Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
+ */
 package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
@@ -20,7 +29,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
  * <b>Alignment: 4</b>
- * 
+ *
  * <pre>
  *     unsigned short Length;: 2
  *     unsigned short MaximumLength;: 2
@@ -30,7 +39,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * <a href=
  * "https://msdn.microsoft.com/en-us/library/dd304035.aspx">RPC_SHORT_BLOB</a>
  * <blockquote>
- * 
+ *
  * <pre>
  * The RPC_SHORT_BLOB structure holds a counted array of unsigned short values.
  *      typedef struct _RPC_SHORT_BLOB {
@@ -43,7 +52,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *  MaximumLength: The length, in bytes, of the Buffer member.
  *  Buffer: A buffer containing Length/2 unsigned short values.
  * </pre>
- * 
+ *
  * </blockquote>
  */
 public class RPCShortBlob implements Marshallable, Unmarshallable {
@@ -83,10 +92,7 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
         } else {
             // <NDR: unsigned short> unsigned short Length;
             // Alignment 2 - Already aligned
-            out.writeShort(buffer.length * 2); // should be buffer.length in
-                                               // bytes, but buffer consists of
-                                               // shorts (2bytes) which leads to
-                                               // buffer.length*2
+            out.writeShort(buffer.length * 2); // should be buffer.length IN BYTES. Since buffer consists of shorts, we need buffer.length*2
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
             out.writeShort(buffer.length * 2);
@@ -102,10 +108,7 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
         if (buffer != null) {
             // MaximumCount for conformant array
             out.align(Alignment.FOUR);
-            out.writeInt(buffer.length); // should be buffer.length in bytes,
-                                         // but buffer consists of shorts
-                                         // (2bytes) which results in
-                                         // buffer.length*2/2 = buffer.length
+            out.writeInt(buffer.length); // should be buffer.length IN BYTES. Since buffer consists of shorts, we need buffer.length*2
             // Offset for varying array
             // Alignment 4 - Already aligned
             out.writeInt(0);
