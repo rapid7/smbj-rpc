@@ -1,0 +1,17 @@
+---
+info:
+  title: Smbj Rpc
+  description: Created by Paul Miseiko via the GitHub Connector
+  x-cortex-git:
+    github:
+      alias: r7org
+      repository: rapid7/smbj-rpc
+  x-cortex-tag: smbj-rpc
+  x-cortex-type: service
+  x-cortex-groups: []
+  x-cortex-domain-parents:
+  - tag: vm-assessment
+  - tag: vm-platform-shared
+openapi: 3.0.1
+servers:
+- url: "/"
