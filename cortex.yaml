@@ -11,7 +11,6 @@ info:
   x-cortex-groups: []
   x-cortex-domain-parents:
   - tag: vm-assessment
-  - tag: vm-platform-shared
 openapi: 3.0.1
 servers:
 - url: "/"
