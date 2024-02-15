@@ -62,7 +62,7 @@ public class SamrLookupNamesInDomainRequest extends RequestCall<SamrLookupNamesI
     // <NDR: conformant varying array> [in, size_is(1000), length_is(Count)] RPC_UNICODE_STRING Names[*]
     private final RPCUnicodeString.NonNullTerminated[] names;
 
-    public SamrLookupNamesInDomainRequest(final byte[] domainHandle, final RPCUnicodeString.NonNullTerminated[] names) {
+    public SamrLookupNamesInDomainRequest(final byte[] domainHandle, final RPCUnicodeString.NonNullTerminated... names) {
         super(OP_NUM);
         if (domainHandle == null) {
             throw new IllegalArgumentException("domainHandle must not be null");
