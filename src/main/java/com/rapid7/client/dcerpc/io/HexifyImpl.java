@@ -18,10 +18,10 @@
  */
 package com.rapid7.client.dcerpc.io;
 
+import com.google.common.io.BaseEncoding;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.bouncycastle.util.encoders.Hex;
 
 public abstract class HexifyImpl implements Hexify {
     @Override
@@ -30,12 +30,12 @@ public abstract class HexifyImpl implements Hexify {
         final PacketOutput packetOut = new PacketOutput(packetOutputStream);
         marshal(packetOut);
         final byte[] packetOutBytes = packetOutputStream.toByteArray();
-        return Hex.toHexString(packetOutBytes);
+        return BaseEncoding.base16().lowerCase().encode(packetOutBytes);
     }
 
     @Override
     public void fromHexString(final String hexIn) throws IOException {
-        final byte[] packetInBytes = Hex.decode(hexIn);
+        final byte[] packetInBytes = BaseEncoding.base16().decode(hexIn.replaceAll("\\s", "").toUpperCase());
         final ByteArrayInputStream packetInputStream = new ByteArrayInputStream(packetInBytes);
         final PacketInput packetIn = new PacketInput(packetInputStream);
         unmarshal(packetIn);

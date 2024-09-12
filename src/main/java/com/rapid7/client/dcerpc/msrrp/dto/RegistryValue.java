@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
@@ -20,6 +20,7 @@
  */
 package com.rapid7.client.dcerpc.msrrp.dto;
 
+import com.google.common.io.BaseEncoding;
 import javax.activation.UnsupportedDataTypeException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -31,7 +32,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.lang3.ArrayUtils;
-import org.bouncycastle.util.encoders.Hex;
 
 public class RegistryValue {
     private final String name;
@@ -58,12 +58,14 @@ public class RegistryValue {
             case REG_DWORD:
             case REG_DWORD_BIG_ENDIAN:
                 if (data.length != 4) {
-                    throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length, Hex.toHexString(data).toUpperCase()));
+                    throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length,
+                        BaseEncoding.base16().encode(data)));
                 }
                 break;
             case REG_QWORD:
                 if (data.length != 8) {
-                    throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length, Hex.toHexString(data).toUpperCase()));
+                    throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length,
+                        BaseEncoding.base16().encode(data)));
                 }
                 break;
             case REG_EXPAND_SZ:
@@ -71,7 +73,8 @@ public class RegistryValue {
             case REG_SZ:
             case REG_MULTI_SZ:
                 if ((data.length & 1) != 0) {
-                    throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length, Hex.toHexString(data).toUpperCase()));
+                    throw new IOException(String.format("Data type %s is invalid with length %d: 0x%s,", type, data.length,
+                        BaseEncoding.base16().encode(data)));
                 }
             default:
         }
@@ -132,7 +135,7 @@ public class RegistryValue {
     }
 
     public String getDataAsHexStr() {
-        return Hex.toHexString(data).toUpperCase();
+        return BaseEncoding.base16().encode(data); //Hex.toHexString(data).toUpperCase();
     }
 
     public String[] getDataAsMultiStr() throws UnsupportedEncodingException {

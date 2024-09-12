@@ -21,9 +21,9 @@
 
 package com.rapid7.client.dcerpc.dto;
 
+import com.google.common.io.BaseEncoding;
 import java.util.Arrays;
 import java.util.Objects;
-import org.bouncycastle.util.encoders.Hex;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc230371.aspx">SID</a>
@@ -126,7 +126,7 @@ public class SID {
         b.append(revision & 0xFF).append("-");
         if (identifierAuthority[0] != (byte) 0 || identifierAuthority[1] != (byte) 0) {
             b.append("0x");
-            b.append(Hex.toHexString(identifierAuthority));
+            b.append(BaseEncoding.base16().encode(identifierAuthority));
         } else {
             long shift = 0;
             long id = 0;
@@ -169,7 +169,7 @@ public class SID {
             final byte[] identifierAuthority;
             if (identifierAuthorityString.toUpperCase().startsWith("0X")) {
                 final String bytes = identifierAuthorityString.substring(2, identifierAuthorityString.length());
-                identifierAuthority = Hex.decode(bytes);
+                identifierAuthority = BaseEncoding.base16().decode(bytes);
             } else {
                 final long identifierAuthorityValue = Long.parseLong(identifierAuthorityString);
                 identifierAuthority = new byte[] {
