@@ -21,9 +21,9 @@
 
 package com.rapid7.client.dcerpc.dto;
 
+import com.google.common.io.BaseEncoding;
 import java.util.Arrays;
 import java.util.Objects;
-import org.bouncycastle.util.encoders.Hex;
 
 /**
  * Represents a Windows <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa373605(v=vs.85).aspx">Context Handle</a>
@@ -76,7 +76,7 @@ public class ContextHandle {
         if (hString == null || hString.length() > (bytes.length * 2)) {
             throw new IllegalArgumentException("hString is invalid: " + hString);
         }
-        final byte[] handle = Hex.decode(hString);
+        final byte[] handle = BaseEncoding.base16().decode(hString.toUpperCase());
         int srcPos = 0;
         int index = 0;
         while (index < handle.length) {
