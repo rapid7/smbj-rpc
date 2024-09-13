@@ -135,7 +135,7 @@ public class RegistryValue {
     }
 
     public String getDataAsHexStr() {
-        return BaseEncoding.base16().encode(data); //Hex.toHexString(data).toUpperCase();
+        return BaseEncoding.base16().encode(data);
     }
 
     public String[] getDataAsMultiStr() throws UnsupportedEncodingException {
