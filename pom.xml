@@ -44,6 +44,7 @@
    </distributionManagement>
 
    <properties>
+      <thirdparty.bouncycastle.version>1.78.1</thirdparty.bouncycastle.version>
       <thirdparty.commons-io.version>2.7</thirdparty.commons-io.version>
       <thirdparty.commons-lang3.version>3.4</thirdparty.commons-lang3.version>
       <thirdparty.guava.version>33.0.0-jre</thirdparty.guava.version>
@@ -59,6 +60,13 @@
    </properties>
 
    <dependencies>
+     <!-- the version of bouncycastle in smbj is vulnerable     -->
+     <dependency>
+       <groupId>org.bouncycastle</groupId>
+       <artifactId>bcprov-jdk18on</artifactId>
+       <version>${thirdparty.bouncycastle.version}</version>
+       <scope>runtime</scope>
+     </dependency>
       <!-- 3rdparty dependencies. -->
       <dependency>
          <groupId>commons-io</groupId>
