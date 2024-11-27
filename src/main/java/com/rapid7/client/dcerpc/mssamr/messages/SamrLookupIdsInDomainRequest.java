@@ -61,7 +61,7 @@ import com.rapid7.client.dcerpc.messages.RequestCall;
  * </p>
  *
  * @see <a href=
- *      "https://msdn.microsoft.com/en-us/library/cc245713.aspx">https://msdn.microsoft.com/en-us/library/cc245713.aspx</a>
+ *      "https://msdn.microsoft.com/en-us/library/cc245713.aspx">SamrLookupIdsInDomain (Opnum 18)</a>
  */
 public class SamrLookupIdsInDomainRequest extends RequestCall<SamrLookupIdsInDomainResponse> {
     public static short OP_NUM = 18;
