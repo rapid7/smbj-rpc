@@ -8,11 +8,10 @@ info:
       repository: rapid7/smbj-rpc
   x-cortex-tag: smbj-rpc
   x-cortex-type: service
-  x-cortex-groups: []
-  x-cortex-domain-parents:
-  - tag: vm-scan-engine
   x-cortex-groups:
   - exposure:opensource
+  x-cortex-domain-parents:
+  - tag: vm-scan-engine
 openapi: 3.0.1
 servers:
 - url: "/"
