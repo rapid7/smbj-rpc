@@ -1,7 +1,7 @@
 ---
 info:
   title: Smbj Rpc
-  description: Created by Paul Miseiko via the GitHub Connector
+  description: DCE-RPC implementation capable of using SMBv2 via SMBJ to invoke remote procedure calls (RPC) over the IPC$ named pipe.
   x-cortex-git:
     github:
       alias: r7org
@@ -11,6 +11,8 @@ info:
   x-cortex-groups: []
   x-cortex-domain-parents:
   - tag: vm-scan-engine
+  x-cortex-groups:
+  - exposure:opensource
 openapi: 3.0.1
 servers:
 - url: "/"
