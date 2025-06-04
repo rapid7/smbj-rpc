@@ -21,7 +21,6 @@
 package com.rapid7.client.dcerpc.msrrp.dto;
 
 import com.google.common.io.BaseEncoding;
-import javax.activation.UnsupportedDataTypeException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -170,7 +169,7 @@ public class RegistryValue {
         }
     }
 
-    public String getDataAsStr() throws UnsupportedEncodingException, UnsupportedDataTypeException {
+    public String getDataAsStr() throws UnsupportedEncodingException {
         final StringBuilder repr = new StringBuilder();
         switch (type) {
             case REG_BINARY:
@@ -217,7 +216,7 @@ public class RegistryValue {
             case REG_RESOURCE_LIST:
             case REG_RESOURCE_REQUIREMENTS_LIST:
             default:
-                throw new UnsupportedDataTypeException();
+                throw new UnsupportedEncodingException();
         }
         return repr.toString();
     }
@@ -240,7 +239,7 @@ public class RegistryValue {
                 result.append(getDataAsHexStr());
                 result.append(")");
             }
-        } catch (final UnsupportedEncodingException | UnsupportedDataTypeException exception) {
+        } catch (final UnsupportedEncodingException exception) {
             result.append(" ! ");
             result.append(exception.getClass().getName());
             result.append("::");
