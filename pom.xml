@@ -44,14 +44,14 @@
    </distributionManagement>
 
    <properties>
-      <thirdparty.bouncycastle.version>1.78.1</thirdparty.bouncycastle.version>
-      <thirdparty.commons-io.version>2.7</thirdparty.commons-io.version>
-      <thirdparty.commons-lang3.version>3.4</thirdparty.commons-lang3.version>
+      <thirdparty.bouncycastle.version>1.81</thirdparty.bouncycastle.version>
+      <thirdparty.commons-io.version>2.20.0</thirdparty.commons-io.version>
+      <thirdparty.commons-lang3.version>3.18.0</thirdparty.commons-lang3.version>
       <thirdparty.guava.version>33.4.0-jre</thirdparty.guava.version>
       <thirdparty.hamcrest.version>1.3</thirdparty.hamcrest.version>
       <thirdparty.junit.version>5.7.2</thirdparty.junit.version>
       <thirdparty.mockito.version>1.10.19</thirdparty.mockito.version>
-      <thirdparty.smbj.version>0.12.2</thirdparty.smbj.version>
+      <thirdparty.smbj.version>0.14.0</thirdparty.smbj.version>
       <thirdparty.testng.version>6.11</thirdparty.testng.version>
       <thirdparty.testcontainers.version>1.16.0</thirdparty.testcontainers.version>
       <maven.compiler.target>1.8</maven.compiler.target>
