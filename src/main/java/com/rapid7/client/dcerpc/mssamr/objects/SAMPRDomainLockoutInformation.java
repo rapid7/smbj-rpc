@@ -24,7 +24,9 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 import java.io.IOException;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
@@ -50,7 +52,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * </pre>
  * </blockquote>
  */
-public class SAMPRDomainLockoutInfo implements Unmarshallable {
+public class SAMPRDomainLockoutInformation implements Marshallable, Unmarshallable {
     private long lockoutDuration;
     private long lockoutObservationWindow;
     private int lockoutThreshold;
@@ -65,6 +67,18 @@ public class SAMPRDomainLockoutInfo implements Unmarshallable {
 
     public int getLockoutThreshold() {
         return lockoutThreshold;
+    }
+
+    public void setLockoutDuration(long lockoutDuration) {
+        this.lockoutDuration = lockoutDuration;
+    }
+
+    public void setLockoutObservationWindow(long lockoutObservationWindow) {
+        this.lockoutObservationWindow = lockoutObservationWindow;
+    }
+
+    public void setLockoutThreshold(int lockoutThreshold) {
+        this.lockoutThreshold = lockoutThreshold;
     }
 
     @Override
@@ -99,10 +113,10 @@ public class SAMPRDomainLockoutInfo implements Unmarshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof SAMPRDomainLockoutInfo)) {
+        } else if (!(obj instanceof SAMPRDomainLockoutInformation)) {
             return false;
         }
-        SAMPRDomainLockoutInfo other = (SAMPRDomainLockoutInfo) obj;
+        SAMPRDomainLockoutInformation other = (SAMPRDomainLockoutInformation) obj;
         return Objects.equals(getLockoutDuration(), other.getLockoutDuration())
             && Objects.equals(getLockoutObservationWindow(), other.getLockoutObservationWindow())
             && Objects.equals(getLockoutThreshold(), other.getLockoutThreshold());
@@ -114,4 +128,29 @@ public class SAMPRDomainLockoutInfo implements Unmarshallable {
             "SAMPRDomainLockoutInfo{lockoutDuration:%s, lockoutObservationWindow:%s,lockoutThreshold:%s}",
             getLockoutDuration(), getLockoutObservationWindow(), getLockoutThreshold());
     }
+
+	@Override
+	public void marshalPreamble(PacketOutput out) throws IOException {
+		//NONE
+	}
+
+	@Override
+	public void marshalEntity(PacketOutput out) throws IOException {
+        // Structure Alignment: 8
+        out.align(Alignment.EIGHT);
+        // <NDR: hyper> OLD_LARGE_INTEGER LockoutDuration;
+        // Alignment: 8 - Already aligned
+        out.writeLong(lockoutDuration);
+        // <NDR: hyper> OLD_LARGE_INTEGER LockoutObservationWindow;
+        // Alignment: 8 - Already aligned
+        out.writeLong(lockoutObservationWindow);
+        // <NDR: unsigned short> unsigned short LockoutThreshold;
+        // Alignment: 2 - Already aligned
+        out.writeShort(lockoutThreshold);
+	}
+
+	@Override
+	public void marshalDeferrals(PacketOutput out) throws IOException {
+		//NONE
+	}
 }

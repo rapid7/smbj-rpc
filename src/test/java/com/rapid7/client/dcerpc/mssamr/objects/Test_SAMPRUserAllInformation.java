@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
@@ -15,12 +15,14 @@
  *  Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *
- *
  */
-
 package com.rapid7.client.dcerpc.mssamr.objects;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
@@ -29,14 +31,7 @@ import com.rapid7.client.dcerpc.io.PacketInput;
 import com.rapid7.client.dcerpc.objects.RPCShortBlob;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertSame;
-
 public class Test_SAMPRUserAllInformation {
-
     @Test
     public void test_getters_default() {
         SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
@@ -59,7 +54,7 @@ public class Test_SAMPRUserAllInformation {
         assertNull(obj.getLmOwfPassword());
         assertNull(obj.getNtOwfPassword());
         assertNull(obj.getPrivateData());
-        assertEquals(obj.getUserId(), 0L);
+        assertEquals(obj.getRid(), 0L);
         assertEquals(obj.getPrimaryGroupId(), 0L);
         assertEquals(obj.getUserAccountControl(), 0L);
         assertEquals(obj.getWhichFields(), 0L);
@@ -98,7 +93,8 @@ public class Test_SAMPRUserAllInformation {
         RPCUnicodeString.NonNullTerminated homeDirectory = RPCUnicodeString.NonNullTerminated.of("HomeDirectory");
         obj.setHomeDirectory(homeDirectory);
         assertSame(obj.getHomeDirectory(), homeDirectory);
-        RPCUnicodeString.NonNullTerminated homeDirectoryDrive = RPCUnicodeString.NonNullTerminated.of("HomeDirectoryDrive");
+        RPCUnicodeString.NonNullTerminated homeDirectoryDrive = RPCUnicodeString.NonNullTerminated
+            .of("HomeDirectoryDrive");
         obj.setHomeDirectoryDrive(homeDirectoryDrive);
         assertSame(obj.getHomeDirectoryDrive(), homeDirectoryDrive);
         RPCUnicodeString.NonNullTerminated scriptPath = RPCUnicodeString.NonNullTerminated.of("ScriptPath");
@@ -120,22 +116,22 @@ public class Test_SAMPRUserAllInformation {
         obj.setParameters(parameters);
         assertSame(obj.getParameters(), parameters);
         RPCShortBlob lmOwfPassword = new RPCShortBlob();
-        lmOwfPassword.setBuffer(new int[]{1, 2});
+        lmOwfPassword.setBuffer(new int[] { 1, 2 });
         obj.setLmOwfPassword(lmOwfPassword);
         assertSame(obj.getLmOwfPassword(), lmOwfPassword);
         RPCShortBlob ntOwfPassword = new RPCShortBlob();
-        ntOwfPassword.setBuffer(new int[]{3, 4});
+        ntOwfPassword.setBuffer(new int[] { 3, 4 });
         obj.setNtOwfPassword(ntOwfPassword);
         assertSame(obj.getNtOwfPassword(), ntOwfPassword);
         RPCUnicodeString.NonNullTerminated privateData = RPCUnicodeString.NonNullTerminated.of("PrivateData");
         obj.setPrivateData(privateData);
         assertSame(obj.getPrivateData(), privateData);
         SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
-        securityDescriptor.setSecurityDescriptor(new byte[]{5, 6, 7});
+        securityDescriptor.setSecurityDescriptor(new byte[] { 5, 6, 7 });
         obj.setSecurityDescriptor(securityDescriptor);
         assertSame(obj.getSecurityDescriptor(), securityDescriptor);
-        obj.setUserId(7L);
-        assertEquals(obj.getUserId(), 7L);
+        obj.setRid(7L);
+        assertEquals(obj.getRid(), 7L);
         obj.setPrimaryGroupId(8L);
         assertEquals(obj.getPrimaryGroupId(), 8L);
         obj.setUserAccountControl(9L);
@@ -191,7 +187,7 @@ public class Test_SAMPRUserAllInformation {
         assertNotNull(obj.getLmOwfPassword());
         assertNotNull(obj.getNtOwfPassword());
         assertNotNull(obj.getPrivateData());
-        assertEquals(obj.getUserId(), 0L);
+        assertEquals(obj.getRid(), 0L);
         assertEquals(obj.getPrimaryGroupId(), 0L);
         assertEquals(obj.getUserAccountControl(), 0L);
         assertEquals(obj.getWhichFields(), 0L);
@@ -211,53 +207,56 @@ public class Test_SAMPRUserAllInformation {
         String hex =
                 // LastLogon: 1, LastLogoff: 2, PasswordLastSet: 3
                 "0100000000000000 0200000000000000 0300000000000000 " +
-                // AccountExpires: 4, PasswordCanChange: 5, PasswordMustChange: 6
-                "0400000000000000 0500000000000000 0600000000000000 " +
-                // UserName: testƟ121
-                "1000100000000200 " +
-                // FullName: testƟ122
-                "1000100000000200 " +
-                // HomeDirectory: testƟ123
-                "1000100000000200 " +
-                // HomeDirectoryDrive: testƟ124
-                "1000100000000200 " +
-                // ScriptPath: testƟ125
-                "1000100000000200 " +
-                // ProfilePath: testƟ126
-                "1000100000000200 " +
-                // AdminComment: testƟ127
-                "1000100000000200 " +
-                // WorkStations: testƟ128
-                "1000100000000200 " +
-                // UserComment: testƟ129
-                "1000100000000200 " +
-                // Parameters: testƟ130
-                "1000100000000200 " +
-                // LmOwfPassword: Length: 3, MaximumLength: 3, Reference: 2
-                "0300 0300 00000200" +
-                // NtOwfPassword: Length: 4, MaximumLength: 4, Reference: 2
-                "0400 0400 00000200" +
-                // PrivateData: testƟ131
-                "1000100000000200 " +
-                // SecurityDescriptor: Length: 2 Reference: 2
-                "02000000 00000200" +
-                // UserId: 7, PrimaryGroupId: 8, UserAccountControl: 9, WhichFields: 10
-                "07000000 08000000 09000000 0A000000" +
-                // LogonHours: UnitsPerWeek: 7, Alignment: 2b, LogonHoursRef: 1
-                "0700 FFFF 01000000" +
-                // BadPasswordCount: 11, LogonCount: 12, CountryCode: 13, CodePage: 14
-                "0B00 0C00 0D00 0E00" +
-                // LmPasswordPresent: 15, NtPasswordPresent: 16, PasswordExpired: 17, PrivateDataSensitive: 18
-                "0F 10 11 12";
+                // AccountExpires: 4, PasswordCanChange: 5, PasswordMustChange:
+                // 6
+                    "0400000000000000 0500000000000000 0600000000000000 " +
+                    // UserName: testƟ121
+                    "1000100000000200 " +
+                    // FullName: testƟ122
+                    "1000100000000200 " +
+                    // HomeDirectory: testƟ123
+                    "1000100000000200 " +
+                    // HomeDirectoryDrive: testƟ124
+                    "1000100000000200 " +
+                    // ScriptPath: testƟ125
+                    "1000100000000200 " +
+                    // ProfilePath: testƟ126
+                    "1000100000000200 " +
+                    // AdminComment: testƟ127
+                    "1000100000000200 " +
+                    // WorkStations: testƟ128
+                    "1000100000000200 " +
+                    // UserComment: testƟ129
+                    "1000100000000200 " +
+                    // Parameters: testƟ130
+                    "1000100000000200 " +
+                    // LmOwfPassword: Length: 3, MaximumLength: 3, Reference: 2
+                    "0300 0300 00000200" +
+                    // NtOwfPassword: Length: 4, MaximumLength: 4, Reference: 2
+                    "0400 0400 00000200" +
+                    // PrivateData: testƟ131
+                    "1000100000000200 " +
+                    // SecurityDescriptor: Length: 2 Reference: 2
+                    "02000000 00000200" +
+                    // UserId: 7, PrimaryGroupId: 8, UserAccountControl: 9,
+                    // WhichFields: 10
+                    "07000000 08000000 09000000 0A000000" +
+                    // LogonHours: UnitsPerWeek: 7, Alignment: 2b,
+                    // LogonHoursRef: 1
+                    "0700 FFFF 01000000" +
+                    // BadPasswordCount: 11, LogonCount: 12, CountryCode: 13,
+                    // CodePage: 14
+                    "0B00 0C00 0D00 0E00" +
+                    // LmPasswordPresent: 15, NtPasswordPresent: 16,
+                    // PasswordExpired: 17, PrivateDataSensitive: 18
+                    "0F 10 11 12";
         SAMPRUserAllInformation expectedObj = createEntity();
-
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
         // Convenience, instead of initializing everything up front
         obj.unmarshalPreamble(new PacketInput(new ByteArrayInputStream(new byte[0])));
         obj.unmarshalEntity(in);
-
         assertEquals(obj, expectedObj);
     }
 
@@ -275,48 +274,50 @@ public class Test_SAMPRUserAllInformation {
         expectedObj.getWorkStations().setValue("testƟ128");
         expectedObj.getUserComment().setValue("testƟ129");
         expectedObj.getParameters().setValue("testƟ130");
-        expectedObj.getLmOwfPassword().setBuffer(new int[]{1, 2, 65535});
-        expectedObj.getNtOwfPassword().setBuffer(new int[]{1, 2, 3, 5});
+        expectedObj.getLmOwfPassword().setBuffer(new int[] { 1, 2, 65535 });
+        expectedObj.getNtOwfPassword().setBuffer(new int[] { 1, 2, 3, 5 });
         expectedObj.getPrivateData().setValue("testƟ131");
-        expectedObj.getSecurityDescriptor().setSecurityDescriptor(new byte[]{1, 2});
-        expectedObj.getLogonHours().setLogonHours(new byte[]{3});
-
+        expectedObj.getSecurityDescriptor().setSecurityDescriptor(new byte[] { 1, 2 });
+        expectedObj.getLogonHours().setLogonHours(new byte[] { 3 });
         String hex =
                 // UserName: testƟ121
                 "08000000000000000800000074006500730074009f01310032003100 " +
                 // FullName: testƟ122
-                "08000000000000000800000074006500730074009f01310032003200 " +
-                // HomeDirectory: testƟ123
-                "08000000000000000800000074006500730074009f01310032003300 " +
-                // HomeDirectoryDrive: testƟ124
-                "08000000000000000800000074006500730074009f01310032003400 " +
-                // ScriptPath: testƟ125
-                "08000000000000000800000074006500730074009f01310032003500 " +
-                // ProfilePath: testƟ126
-                "08000000000000000800000074006500730074009f01310032003600 " +
-                // AdminComment: testƟ127
-                "08000000000000000800000074006500730074009f01310032003700 " +
-                // WorkStations: testƟ128
-                "08000000000000000800000074006500730074009f01310032003800 " +
-                // UserComment: testƟ129
-                "08000000000000000800000074006500730074009f01310032003900 " +
-                // Parameters: testƟ130
-                "08000000000000000800000074006500730074009f01310033003000 " +
-                // LmOwfPassword: MaximumCount: 3, Offset: 0, ActualCount: 3, Buffer:{1, 2, 65535}
-                "03000000 00000000 03000000 0100 0200 ffff" +
-                // Alignment: 2b
-                "0000" +
-                // NtOwfPassword: MaximumCount: 4, Offset: 0, ActualCount: 4, Buffer:{1, 2, 3, 5}
-                "04000000 00000000 04000000 0100 0200 0300 0500" +
-                // PrivateData: testƟ131
-                "08000000000000000800000074006500730074009f01310033003100 " +
-                // SecurityDescriptor: MaximumCount: 3 SecurityDescriptor: {1, 2}
-                "02000000 01 02" +
-                // Alignment: 2b
-                "0000" +
-                // LogonHours: MaximumCount: 0, Offset: 0, ActualCount: 0, LogonHours: {3}
-                "00000000 00000000 00000000 03";
-
+                    "08000000000000000800000074006500730074009f01310032003200 " +
+                    // HomeDirectory: testƟ123
+                    "08000000000000000800000074006500730074009f01310032003300 " +
+                    // HomeDirectoryDrive: testƟ124
+                    "08000000000000000800000074006500730074009f01310032003400 " +
+                    // ScriptPath: testƟ125
+                    "08000000000000000800000074006500730074009f01310032003500 " +
+                    // ProfilePath: testƟ126
+                    "08000000000000000800000074006500730074009f01310032003600 " +
+                    // AdminComment: testƟ127
+                    "08000000000000000800000074006500730074009f01310032003700 " +
+                    // WorkStations: testƟ128
+                    "08000000000000000800000074006500730074009f01310032003800 " +
+                    // UserComment: testƟ129
+                    "08000000000000000800000074006500730074009f01310032003900 " +
+                    // Parameters: testƟ130
+                    "08000000000000000800000074006500730074009f01310033003000 " +
+                    // LmOwfPassword: MaximumCount: 3, Offset: 0, ActualCount:
+                    // 3, Buffer:{1, 2, 65535}
+                    "03000000 00000000 03000000 0100 0200 ffff" +
+                    // Alignment: 2b
+                    "0000" +
+                    // NtOwfPassword: MaximumCount: 4, Offset: 0, ActualCount:
+                    // 4, Buffer:{1, 2, 3, 5}
+                    "04000000 00000000 04000000 0100 0200 0300 0500" +
+                    // PrivateData: testƟ131
+                    "08000000000000000800000074006500730074009f01310033003100 " +
+                    // SecurityDescriptor: MaximumCount: 3 SecurityDescriptor:
+                    // {1, 2}
+                    "02000000 01 02" +
+                    // Alignment: 2b
+                    "0000" +
+                    // LogonHours: MaximumCount: 0, Offset: 0, ActualCount: 0,
+                    // LogonHours: {3}
+                    "00000000 00000000 00000000 03";
         ByteArrayInputStream bin = new ByteArrayInputStream(Hex.decode(hex));
         PacketInput in = new PacketInput(bin);
         // Initial entity to populate
@@ -369,7 +370,8 @@ public class Test_SAMPRUserAllInformation {
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
         obj2.setHomeDirectory(homeDirectory);
         assertEquals(obj1.hashCode(), obj2.hashCode());
-        RPCUnicodeString.NonNullTerminated homeDirectoryDrive = RPCUnicodeString.NonNullTerminated.of("HomeDirectoryDrive");
+        RPCUnicodeString.NonNullTerminated homeDirectoryDrive = RPCUnicodeString.NonNullTerminated
+            .of("HomeDirectoryDrive");
         obj1.setHomeDirectoryDrive(homeDirectoryDrive);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
         obj2.setHomeDirectoryDrive(homeDirectoryDrive);
@@ -405,13 +407,13 @@ public class Test_SAMPRUserAllInformation {
         obj2.setParameters(parameters);
         assertEquals(obj1.hashCode(), obj2.hashCode());
         RPCShortBlob lmOwfPassword = new RPCShortBlob();
-        lmOwfPassword.setBuffer(new int[]{1, 2});
+        lmOwfPassword.setBuffer(new int[] { 1, 2 });
         obj1.setLmOwfPassword(lmOwfPassword);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
         obj2.setLmOwfPassword(lmOwfPassword);
         assertEquals(obj1.hashCode(), obj2.hashCode());
         RPCShortBlob ntOwfPassword = new RPCShortBlob();
-        ntOwfPassword.setBuffer(new int[]{3, 4});
+        ntOwfPassword.setBuffer(new int[] { 3, 4 });
         obj1.setNtOwfPassword(ntOwfPassword);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
         obj2.setNtOwfPassword(ntOwfPassword);
@@ -422,14 +424,14 @@ public class Test_SAMPRUserAllInformation {
         obj2.setPrivateData(privateData);
         assertEquals(obj1.hashCode(), obj2.hashCode());
         SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
-        securityDescriptor.setSecurityDescriptor(new byte[]{5, 6, 7});
+        securityDescriptor.setSecurityDescriptor(new byte[] { 5, 6, 7 });
         obj1.setSecurityDescriptor(securityDescriptor);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
         obj2.setSecurityDescriptor(securityDescriptor);
         assertEquals(obj1.hashCode(), obj2.hashCode());
-        obj1.setUserId(7L);
+        obj1.setRid(7L);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
-        obj2.setUserId(7L);
+        obj2.setRid(7L);
         assertEquals(obj1.hashCode(), obj2.hashCode());
         obj1.setPrimaryGroupId(8L);
         assertNotEquals(obj1.hashCode(), obj2.hashCode());
@@ -528,7 +530,8 @@ public class Test_SAMPRUserAllInformation {
         assertNotEquals(obj1, obj2);
         obj2.setHomeDirectory(homeDirectory);
         assertEquals(obj1, obj2);
-        RPCUnicodeString.NonNullTerminated homeDirectoryDrive = RPCUnicodeString.NonNullTerminated.of("HomeDirectoryDrive");
+        RPCUnicodeString.NonNullTerminated homeDirectoryDrive = RPCUnicodeString.NonNullTerminated
+            .of("HomeDirectoryDrive");
         obj1.setHomeDirectoryDrive(homeDirectoryDrive);
         assertNotEquals(obj1, obj2);
         obj2.setHomeDirectoryDrive(homeDirectoryDrive);
@@ -564,13 +567,13 @@ public class Test_SAMPRUserAllInformation {
         obj2.setParameters(parameters);
         assertEquals(obj1, obj2);
         RPCShortBlob lmOwfPassword = new RPCShortBlob();
-        lmOwfPassword.setBuffer(new int[]{1, 2});
+        lmOwfPassword.setBuffer(new int[] { 1, 2 });
         obj1.setLmOwfPassword(lmOwfPassword);
         assertNotEquals(obj1, obj2);
         obj2.setLmOwfPassword(lmOwfPassword);
         assertEquals(obj1, obj2);
         RPCShortBlob ntOwfPassword = new RPCShortBlob();
-        ntOwfPassword.setBuffer(new int[]{3, 4});
+        ntOwfPassword.setBuffer(new int[] { 3, 4 });
         obj1.setNtOwfPassword(ntOwfPassword);
         assertNotEquals(obj1, obj2);
         obj2.setNtOwfPassword(ntOwfPassword);
@@ -581,14 +584,14 @@ public class Test_SAMPRUserAllInformation {
         obj2.setPrivateData(privateData);
         assertEquals(obj1, obj2);
         SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
-        securityDescriptor.setSecurityDescriptor(new byte[]{5, 6, 7});
+        securityDescriptor.setSecurityDescriptor(new byte[] { 5, 6, 7 });
         obj1.setSecurityDescriptor(securityDescriptor);
         assertNotEquals(obj1, obj2);
         obj2.setSecurityDescriptor(securityDescriptor);
         assertEquals(obj1, obj2);
-        obj1.setUserId(7L);
+        obj1.setRid(7L);
         assertNotEquals(obj1, obj2);
-        obj2.setUserId(7L);
+        obj2.setRid(7L);
         assertEquals(obj1, obj2);
         obj1.setPrimaryGroupId(8L);
         assertNotEquals(obj1, obj2);
@@ -645,17 +648,19 @@ public class Test_SAMPRUserAllInformation {
 
     @Test
     public void test_toString_defaults() {
-        assertEquals(new SAMPRUserAllInformation().toString(), "SAMPR_USER_ALL_INFORMATION{UserId:0, PrimaryGroupId:0, UserName:null, FullName:null}");
+        assertEquals(new SAMPRUserAllInformation().toString(),
+            "SAMPR_USER_ALL_INFORMATION{UserId:0, PrimaryGroupId:0, UserName:null, FullName:null}");
     }
 
     @Test
     public void test_toString() {
         SAMPRUserAllInformation obj = new SAMPRUserAllInformation();
-        obj.setUserId(50L);
+        obj.setRid(50L);
         obj.setPrimaryGroupId(100L);
         obj.setUserName(RPCUnicodeString.NonNullTerminated.of("UserName1"));
         obj.setFullName(RPCUnicodeString.NonNullTerminated.of("FullName1"));
-        assertEquals(obj.toString(), "SAMPR_USER_ALL_INFORMATION{UserId:50, PrimaryGroupId:100, UserName:\"UserName1\", FullName:\"FullName1\"}");
+        assertEquals(obj.toString(),
+            "SAMPR_USER_ALL_INFORMATION{UserId:50, PrimaryGroupId:100, UserName:\"UserName1\", FullName:\"FullName1\"}");
     }
 
     private SAMPRUserAllInformation createEntity() {
@@ -686,7 +691,7 @@ public class Test_SAMPRUserAllInformation {
         SAMPRSRSecurityDescriptor securityDescriptor = new SAMPRSRSecurityDescriptor();
         securityDescriptor.setSecurityDescriptor(new byte[2]);
         obj.setSecurityDescriptor(securityDescriptor);
-        obj.setUserId(7L);
+        obj.setRid(7L);
         obj.setPrimaryGroupId(8L);
         obj.setUserAccountControl(9L);
         obj.setWhichFields(10L);

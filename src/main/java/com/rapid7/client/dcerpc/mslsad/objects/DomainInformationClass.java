@@ -18,12 +18,25 @@
  */
 package com.rapid7.client.dcerpc.mslsad.objects;
 
+/*
+ * @see <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-samr/3e8738b2-5df6-499f-907d-ac2471bf0281">DOMAIN_INFORMATION_CLASS</a>
+ */
 public enum DomainInformationClass {
     DOMAIN_PASSWORD_INFORMATION(1),
+    DOMAIN_GENERAL_INFORMATION(2),
     DOMAIN_LOGOFF_INFORMATION(3),
-    DOMAIN_LOCKOUT_INFORMATION(12);
+    DOMAIN_OEM_INFORMATION (4),
+    DOMAIN_NAME_INFORMATION (5),
+    DOMAIN_REPLICATION_INFORMATION (6),
+    DOMAIN_SERVERROLE_INFORMATION (7),
+    DOMAIN_MODIFIED_INFORMATION (8),
+    DOMAIN_STATE_INFORMATION (9),
+    DOMAIN_GENERAL_INFORMATION2 (11),
+    DOMAIN_LOCKOUT_INFORMATION(12),
+    DOMAIN_MODIFIED_INFORMATION2 (13),
+    ;
 
-    DomainInformationClass(final int infoLevel) {
+	DomainInformationClass(final int infoLevel) {
         this.infoLevel = infoLevel;
     }
 

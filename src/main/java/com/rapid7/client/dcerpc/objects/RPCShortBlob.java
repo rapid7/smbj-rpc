@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
@@ -15,10 +15,7 @@
  *  Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *
- *
  */
-
 package com.rapid7.client.dcerpc.objects;
 
 import java.io.IOException;
@@ -31,12 +28,20 @@ import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
- * <b>Alignment: 4</b><pre>
+ * <b>Alignment: 4</b>
+ *
+ * <pre>
  *     unsigned short Length;: 2
  *     unsigned short MaximumLength;: 2
- *     [size_is(MaximumLength/2), length_is(Length/2)] unsigned short* Buffer;: 4</pre>
- * <a href="https://msdn.microsoft.com/en-us/library/dd304035.aspx">RPC_SHORT_BLOB</a>
- * <blockquote><pre>The RPC_SHORT_BLOB structure holds a counted array of unsigned short values.
+ *     [size_is(MaximumLength/2), length_is(Length/2)] unsigned short* Buffer;: 4
+ * </pre>
+ *
+ * <a href=
+ * "https://msdn.microsoft.com/en-us/library/dd304035.aspx">RPC_SHORT_BLOB</a>
+ * <blockquote>
+ *
+ * <pre>
+ * The RPC_SHORT_BLOB structure holds a counted array of unsigned short values.
  *      typedef struct _RPC_SHORT_BLOB {
  *          unsigned short Length;
  *          unsigned short MaximumLength;
@@ -45,10 +50,14 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *      *PRPC_SHORT_BLOB;
  *  Length: The number of bytes of data contained in the Buffer member.
  *  MaximumLength: The length, in bytes, of the Buffer member.
- *  Buffer: A buffer containing Length/2 unsigned short values.</pre></blockquote>
+ *  Buffer: A buffer containing Length/2 unsigned short values.
+ * </pre>
+ *
+ * </blockquote>
  */
 public class RPCShortBlob implements Marshallable, Unmarshallable {
-    // <NDR: conformant varying array> [size_is(MaximumLength/2), length_is(Length/2)] unsigned short* Buffer;
+    // <NDR: conformant varying array> [size_is(MaximumLength/2),
+    // length_is(Length/2)] unsigned short* Buffer;
     private int[] buffer;
 
     public int[] getBuffer() {
@@ -61,7 +70,8 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
 
     @Override
     public void marshalPreamble(PacketOutput out) throws IOException {
-        // No preamble. Conformant varying array of `unsigned short* Buffer` is a reference, and so preamble is not required.
+        // No preamble. Conformant varying array of `unsigned short* Buffer` is
+        // a reference, and so preamble is not required.
     }
 
     @Override
@@ -75,17 +85,19 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
             out.writeShort(0);
-            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] unsigned short* Buffer;
+            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)]
+            // unsigned short* Buffer;
             // Alignment 4 - Already aligned
             out.writeNull();
         } else {
             // <NDR: unsigned short> unsigned short Length;
             // Alignment 2 - Already aligned
-            out.writeShort(buffer.length);
+            out.writeShort(buffer.length * 2); // should be buffer.length IN BYTES. Since buffer consists of shorts, we need buffer.length*2
             // <NDR: unsigned short> unsigned short MaximumLength;
             // Alignment 2 - Already aligned
-            out.writeShort(buffer.length);
-            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] unsigned short* Buffer;
+            out.writeShort(buffer.length * 2);
+            // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)]
+            // unsigned short* Buffer;
             // Alignment 4 - Already aligned
             out.writeReferentID();
         }
@@ -96,7 +108,7 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
         if (buffer != null) {
             // MaximumCount for conformant array
             out.align(Alignment.FOUR);
-            out.writeInt(buffer.length);
+            out.writeInt(buffer.length); // should be buffer.length IN BYTES. Since buffer consists of shorts, we need buffer.length*2
             // Offset for varying array
             // Alignment 4 - Already aligned
             out.writeInt(0);
@@ -113,7 +125,8 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
-        // No preamble. Conformant array of `WCHAR*` is a reference, and so preamble is not required.
+        // No preamble. Conformant array of `WCHAR*` is a reference, and so
+        // preamble is not required.
     }
 
     @Override
@@ -126,7 +139,8 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
         // <NDR: unsigned short> unsigned short MaximumLength;
         // Alignment: 2 - Already aligned
         in.fullySkipBytes(2);
-        // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)] unsigned short* Buffer;
+        // <NDR: pointer> [size_is(MaximumLength/2), length_is(Length/2)]
+        // unsigned short* Buffer;
         // Alignment: 4 - Already aligned
         if (in.readReferentID() != 0)
             buffer = new int[length];
@@ -135,12 +149,12 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
     @Override
     public void unmarshalDeferrals(PacketInput in) throws IOException {
         if (buffer != null) {
-            //Preamble
-            // <NDR: unsigned long> MaximumCount for conformant array - This is *not* the size of the array, so is not useful to us
+            // Preamble
+            // <NDR: unsigned long> MaximumCount for conformant array - This is
+            // *not* the size of the array, so is not useful to us
             in.align(Alignment.FOUR);
             in.fullySkipBytes(4);
-
-            //Entity
+            // Entity
             // <NDR: unsigned long> Offset for varying array
             // Alignment: 4 - Already aligned
             final int offset = readIndex("Offset", in);
@@ -148,9 +162,10 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
             // Alignment: 4 - Already aligned
             final int actualCount = readIndex("ActualCount", in);
             if (actualCount != buffer.length) {
-                throw new UnmarshalException(String.format("Expected Length == Buffer.ActualCount: %d != %d", actualCount, buffer.length));
+                throw new UnmarshalException(
+                    String.format("Expected Length == Buffer.ActualCount: %d != %d", actualCount, buffer.length));
             }
-            //Deferrals
+            // Deferrals
             // Entities for conformant array
             // Read prefix (if any)
             // Alignment: 2 - Already aligned
@@ -173,7 +188,7 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (! (obj instanceof RPCShortBlob)) {
+        } else if (!(obj instanceof RPCShortBlob)) {
             return false;
         }
         return Arrays.equals(getBuffer(), ((RPCShortBlob) obj).getBuffer());
@@ -181,8 +196,7 @@ public class RPCShortBlob implements Marshallable, Unmarshallable {
 
     @Override
     public String toString() {
-        return String.format("RPC_SHORT_BLOB{size(Buffer):%s}",
-                (this.buffer == null ? "null" : this.buffer.length));
+        return String.format("RPC_SHORT_BLOB{size(Buffer):%s}", (this.buffer == null ? "null" : this.buffer.length));
     }
 
     private int readIndex(String name, PacketInput in) throws IOException {

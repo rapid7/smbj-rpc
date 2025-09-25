@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
@@ -18,14 +18,17 @@
  *
  *
  */
-
 package com.rapid7.client.dcerpc.mssamr.objects;
 
-/** *
- * <b>Alignment: 2</b>
- * <br>
- * <a href="https://msdn.microsoft.com/en-us/library/cc245593.aspx">ALIAS_INFORMATION_CLASS</a>
- * <blockquote><pre>The ALIAS_INFORMATION_CLASS enumeration indicates how to interpret the Buffer parameter for SamrQueryInformationAlias and SamrSetInformationAlias. For a list of the structures associated with each enumeration, see section 2.2.6.6.
+/**
+ * The ALIAS_INFORMATION_CLASS enumeration indicates how to interpret the Buffer
+ * parameter for SamrQueryInformationAlias and SamrSetInformationAlias. For a
+ * list of the structures associated with each enumeration, see section 2.2.5.6.
+ *
+ * <blockquote>
+ *
+ * <pre>
+ * The ALIAS_INFORMATION_CLASS enumeration indicates how to interpret the Buffer parameter for SamrQueryInformationAlias and SamrSetInformationAlias. For a list of the structures associated with each enumeration, see section 2.2.6.6.
  *      typedef  enum _ALIAS_INFORMATION_CLASS
  *      {
  *          AliasGeneralInformation = 1,
@@ -34,10 +37,16 @@ package com.rapid7.client.dcerpc.mssamr.objects;
  *      } ALIAS_INFORMATION_CLASS;
  *  AliasGeneralInformation:  Indicates the Buffer parameter is to be interpreted as a SAMPR_ALIAS_GENERAL_INFORMATION structure (see section 2.2.6.2).
  *  AliasNameInformation:  Indicates the Buffer parameter is to be interpreted as a SAMPR_ALIAS_NAME_INFORMATION structure (see section 2.2.6.3).
- *  AliasAdminCommentInformation:  Indicates the Buffer parameter is to be interpreted as a SAMPR_ALIAS_ADM_COMMENT_INFORMATION structure (see section 2.2.6.4).</pre></blockquote>
+ *  AliasAdminCommentInformation:  Indicates the Buffer parameter is to be interpreted as a SAMPR_ALIAS_ADM_COMMENT_INFORMATION structure (see section 2.2.6.4).
+ * </pre>
+ *
+ * </blockquote>
+ *
+ * @see <a href=
+ *      "https://msdn.microsoft.com/en-us/library/cc245593.aspx">ALIAS_INFORMATION_CLASS</a>
  */
 public enum AliasInformationClass {
-    ALIAS_GENERALINFORMATION(1);
+    ALIAS_GENERAL_INFORMATION(1), ALIAS_NAME_INFORMATION(2), ALIAS_ADMINCOMMENT_INFORMATION(3);
 
     private final int infoLevel;
 
@@ -53,5 +62,4 @@ public enum AliasInformationClass {
     public String toString() {
         return String.format("ALIAS_INFORMATION_CLASS{name:%s, infoLevel:%d}", name(), getInfoLevel());
     }
-
 }

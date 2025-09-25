@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
@@ -15,17 +15,17 @@
  *  Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *
- *
  */
-
 package com.rapid7.client.dcerpc.mssamr.objects;
 
 /**
- * <b>Alignment: 2</b>
- * <br>
- * <a href="https://msdn.microsoft.com/en-us/library/cc245617.aspx">USER_INFORMATION_CLASS</a>
- * <blockquote><pre>The USER_INFORMATION_CLASS enumeration indicates how to interpret the Buffer parameter for SamrSetInformationUser, SamrQueryInformationUser, SamrSetInformationUser2, and SamrQueryInformationUser2. For a list of associated structures, see section 2.2.7.29.
+ * <b>Alignment: 2</b> <br>
+ * <a href=
+ * "https://msdn.microsoft.com/en-us/library/cc245617.aspx">USER_INFORMATION_CLASS</a>
+ * <blockquote>
+ * 
+ * <pre>
+ * The USER_INFORMATION_CLASS enumeration indicates how to interpret the Buffer parameter for SamrSetInformationUser, SamrQueryInformationUser, SamrSetInformationUser2, and SamrQueryInformationUser2. For a list of associated structures, see section 2.2.7.29.
  *      typedef  enum _USER_INFORMATION_CLASS
  *      {
  *          UserGeneralInformation = 1,
@@ -75,10 +75,35 @@ package com.rapid7.client.dcerpc.mssamr.objects;
  *  UserInternal4Information:  Indicates the Buffer parameter is to be interpreted as a SAMPR_USER_INTERNAL4_INFORMATION structure (see section 2.2.7.24).
  *  UserInternal5Information:  Indicates the Buffer parameter is to be interpreted as a SAMPR_USER_INTERNAL5_INFORMATION structure (see section 2.2.7.26).
  *  UserInternal4InformationNew:  Indicates the Buffer parameter is to be interpreted as a SAMPR_USER_INTERNAL4_INFORMATION_NEW structure (see section 2.2.7.25).
- *  UserInternal5InformationNew:  Indicates the Buffer parameter is to be interpreted as a SAMPR_USER_INTERNAL5_INFORMATION_NEW structure (see section 2.2.7.27).</pre></blockquote>
+ *  UserInternal5InformationNew:  Indicates the Buffer parameter is to be interpreted as a SAMPR_USER_INTERNAL5_INFORMATION_NEW structure (see section 2.2.7.27).
+ * </pre>
+ * 
+ * </blockquote>
  */
 public enum UserInformationClass {
-    USER_ALL_INFORMATION(21);
+    USER_GENERAL_INFORMATION(1),
+    USER_PREFERENCES_INFORMATION(2),
+    USER_LOGON_INFORMATION(3),
+    USER_LOGONHOURS_INFORMATION(4),
+    USER_ACCOUNT_INFORMATION(5),
+    USER_NAME_INFORMATION(6),
+    USER_ACCOUNTNAME_INFORMATION(7),
+    USER_FULLNAME_INFORMATION(8),
+    USER_PRIMARYGROUP_INFORMATION(9),
+    USER_HOME_INFORMATION(10),
+    USER_SCRIPT_INFORMATION(11),
+    USER_PROFILE_INFORMATION(12),
+    USER_ADMINCOMMENT_INFORMATION(13),
+    USER_WORKSTATIONS_INFORMATION(14),
+    USER_CONTROL_INFORMATION(16),
+    USER_EXPIRES_INFORMATION(17),
+    USER_INTERNAL1_INFORMATION(18),
+    USER_PARAMETERS_INFORMATION(20),
+    USER_ALL_INFORMATION(21),
+    USER_INTERNAL4_INFORMATION(23),
+    USER_INTERNAL5_INFORMATION(24),
+    USER_INTERNAL4_INFORMATION_NEW(25),
+    USER_INTERNAL5_INFORMATION_NEW(26);
 
     private final int infoLevel;
 
