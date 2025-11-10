@@ -32,17 +32,6 @@
       </license>
    </licenses>
 
-   <distributionManagement>
-      <snapshotRepository>
-         <id>ossrh</id>
-         <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots</url>
-      </snapshotRepository>
-      <repository>
-         <id>ossrh</id>
-         <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
-      </repository>
-   </distributionManagement>
-
    <properties>
       <thirdparty.bouncycastle.version>1.81</thirdparty.bouncycastle.version>
       <thirdparty.commons-io.version>2.20.0</thirdparty.commons-io.version>
@@ -155,6 +144,15 @@
 
    <build>
       <plugins>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.9.0</version>
+          <extensions>true</extensions>
+          <configuration>
+            <publishingServerId>ossrh</publishingServerId>
+          </configuration>
+        </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -230,17 +228,7 @@
             </activation>
 
             <build>
-                <plugins>
-                    <plugin>
-                      <groupId>org.sonatype.central</groupId>
-                      <artifactId>central-publishing-maven-plugin</artifactId>
-                      <version>0.9.0</version>
-                      <extensions>true</extensions>
-                      <configuration>
-                        <publishingServerId>ossrh</publishingServerId>
-                      </configuration>
-                    </plugin>
-                   
+                <plugins>                   
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
