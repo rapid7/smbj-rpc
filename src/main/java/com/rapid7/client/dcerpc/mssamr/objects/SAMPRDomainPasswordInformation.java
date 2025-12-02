@@ -24,7 +24,9 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 import java.io.IOException;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
@@ -37,7 +39,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
     LARGE_INTEGER MinPasswordAge;
   } DOMAIN_PASSWORD_INFORMATION, *PDOMAIN_PASSWORD_INFORMATION;
   */
-public class SAMPRDomainPasswordInfo implements Unmarshallable {
+public class SAMPRDomainPasswordInformation implements Unmarshallable, Marshallable {
 
     // <NDR: unsigned short> USHORT MinPasswordLength;
     private int minPasswordLength;
@@ -70,6 +72,27 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
     public long getMinPasswordAge() {
         return minPasswordAge;
     }
+    
+	public void setMinPasswordLength(int minPasswordLength) { 
+		this.minPasswordLength = minPasswordLength;
+	}
+
+	public void setPasswordHistoryLength(int passwordHistoryLength) { 
+		this.passwordHistoryLength = passwordHistoryLength; 
+	}
+
+	public void setPasswordProperties(int passwordProperties) { 
+		this.passwordProperties = passwordProperties;
+	}
+
+	public void setMaxPasswordAge(long maxPasswordAge) { 
+		this.maxPasswordAge = maxPasswordAge; 
+	}
+
+	public void setMinPasswordAge(long minPasswordAge) { 
+		this.minPasswordAge = minPasswordAge; 
+	}
+
 
     @Override
     public void unmarshalPreamble(PacketInput in) throws IOException {
@@ -112,10 +135,10 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof SAMPRDomainPasswordInfo)) {
+        } else if (!(obj instanceof SAMPRDomainPasswordInformation)) {
             return false;
         }
-        SAMPRDomainPasswordInfo other = (SAMPRDomainPasswordInfo) obj;
+        SAMPRDomainPasswordInformation other = (SAMPRDomainPasswordInformation) obj;
         return Objects.equals(getMinPasswordLength(), other.getMinPasswordLength())
             && Objects.equals(getPasswordHistoryLength(), other.getPasswordHistoryLength())
             && Objects.equals(getPasswordProperties(), other.getPasswordProperties())
@@ -126,9 +149,40 @@ public class SAMPRDomainPasswordInfo implements Unmarshallable {
     @Override
     public String toString() {
         return String.format(
-            "SAMPRDomainPasswordInfo{minimumPasswordLength:%s, passwordHistoryLength:%s,passwordProperties:%s, "
+            "SAMPRDomainPasswordInfo {minimumPasswordLength:%s, passwordHistoryLength:%s, passwordProperties:%d (%s), "
                 + "maximumPasswordAge:%s, minimumPasswordAge:%s}",
-            getMinPasswordLength(), getPasswordHistoryLength(), getPasswordProperties(), getMaxPasswordAge(),
+            getMinPasswordLength(), getPasswordHistoryLength(), getPasswordProperties(), PasswordProperties.toString(getPasswordProperties()), getMaxPasswordAge(),
             getMinPasswordAge());
     }
+
+	@Override
+	public void marshalPreamble(PacketOutput out) throws IOException { 
+        // No deferrals
+	 }
+
+	@Override
+	public void marshalEntity(PacketOutput out) throws IOException { 
+        // Structure Alignment: 8
+        out.align(Alignment.EIGHT);
+        // <NDR: unsigned short> MinPasswordLength;
+        // Alignment: 2 - Already aligned
+        out.writeShort(this.minPasswordLength);
+        // <NDR: unsigned short> PasswordHistoryLength;
+        // Alignment: 2 - Already aligned
+        out.writeShort(this.passwordHistoryLength);
+        // <NDR: unsigned long> unsigned long PasswordProperties;
+        // Alignment: 4 - Already aligned
+        out.writeInt(this.passwordProperties);
+        // <NDR: hyper> OLD_LARGE_INTEGER MaxPasswordAge;
+        // Alignment: 8 - Already aligned
+        out.writeLong(this.maxPasswordAge);
+        // <NDR: hyper> OLD_LARGE_INTEGER MinPasswordAge;
+        // Alignment: 8 - Already aligned
+        out.writeLong(this.minPasswordAge);
+	 }
+
+	@Override
+	public void marshalDeferrals(PacketOutput out) throws IOException { 
+		// No deferrals
+	 }
 }
