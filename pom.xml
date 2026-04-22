@@ -33,7 +33,7 @@
    </licenses>
 
    <properties>
-      <thirdparty.bouncycastle.version>1.81</thirdparty.bouncycastle.version>
+      <thirdparty.bouncycastle.version>1.84</thirdparty.bouncycastle.version>
       <thirdparty.commons-io.version>2.20.0</thirdparty.commons-io.version>
       <thirdparty.commons-lang3.version>3.18.0</thirdparty.commons-lang3.version>
       <thirdparty.guava.version>33.4.0-jre</thirdparty.guava.version>
