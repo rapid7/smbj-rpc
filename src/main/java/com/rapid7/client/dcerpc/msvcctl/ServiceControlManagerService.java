@@ -33,21 +33,11 @@ import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStartType;
 import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceStatusType;
 import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServiceType;
 import com.rapid7.client.dcerpc.msvcctl.dto.enums.ServicesAcceptedControls;
-import com.rapid7.client.dcerpc.msvcctl.messages.RChangeServiceConfigWRequest;
-import com.rapid7.client.dcerpc.msvcctl.messages.RCloseServiceHandleRequest;
-import com.rapid7.client.dcerpc.msvcctl.messages.RControlServiceRequest;
-import com.rapid7.client.dcerpc.msvcctl.messages.ROpenSCManagerWRequest;
-import com.rapid7.client.dcerpc.msvcctl.messages.ROpenServiceWRequest;
-import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWRequest;
-import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceConfigWResponse;
-import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusRequest;
-import com.rapid7.client.dcerpc.msvcctl.messages.RQueryServiceStatusResponse;
-import com.rapid7.client.dcerpc.msvcctl.messages.RStartServiceWRequest;
+import com.rapid7.client.dcerpc.msvcctl.messages.*;
 import com.rapid7.client.dcerpc.msvcctl.dto.IServiceConfigInfo;
 import com.rapid7.client.dcerpc.msvcctl.dto.IServiceStatusInfo;
 import com.rapid7.client.dcerpc.msvcctl.objects.LPQueryServiceConfigW;
 import com.rapid7.client.dcerpc.msvcctl.objects.LPServiceStatus;
-import com.rapid7.client.dcerpc.objects.WChar;
 import com.rapid7.client.dcerpc.service.Service;
 import com.rapid7.client.dcerpc.transport.RPCTransport;
 
@@ -102,6 +92,11 @@ public class ServiceControlManagerService extends Service {
         callExpectSuccess(request, "RStartServiceW");
     }
 
+    public void deleteService(final ServiceHandle serviceHandle) throws IOException {
+        final RDeleteServiceWRequest request = new RDeleteServiceWRequest(serviceHandle.getBytes());
+        callExpectSuccess(request, "RDeleteServiceW");
+    }
+
     public IServiceStatusInfo stopService(final ServiceHandle serviceHandle) throws IOException {
         return controlService(serviceHandle, ServiceControl.STOP);
     }
@@ -125,6 +120,34 @@ public class ServiceControlManagerService extends Service {
                 serviceConfigInfo.getPassword(),
                 parseWCharNT(serviceConfigInfo.getDisplayName()));
         callExpectSuccess(request, "RChangeServiceConfigW");
+    }
+
+    public ServiceHandle createService(final ServiceManagerHandle serviceManagerHandle,
+                                       final String serviceName,
+                                       final String displayName,
+                                       final ServiceType serviceType,
+                                       final ServiceStartType serviceStartType,
+                                       final ServiceError errorControl,
+                                       final String binaryPathName,
+                                       final String loadOrderGroup,
+                                       final int tagId,
+                                       final String[] dependencies,
+                                       final String serviceStartName,
+                                       final String password) throws IOException {
+        final RCreateServiceWRequest request = new RCreateServiceWRequest(serviceManagerHandle.getBytes(),
+                parseWCharNT(serviceName),
+                parseWCharNT(displayName),
+                FULL_ACCESS,
+                serviceType.getValue(),
+                serviceStartType.getValue(),
+                errorControl.getValue(),
+                parseWCharNT(binaryPathName),
+                parseWCharNT(loadOrderGroup),
+                tagId,
+                dependencies,
+                parseWCharNT(serviceStartName),
+                password);
+         return new ServiceHandle(callExpectSuccess(request, "RCreateServiceW").getHandle());
     }
 
     public IServiceConfigInfo queryServiceConfig(final ServiceHandle serviceHandle) throws IOException {
