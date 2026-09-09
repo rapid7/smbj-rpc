@@ -43,6 +43,7 @@ public class SID {
     private final byte revision;
     private final byte[] identifierAuthority;
     private final long[] subAuthorities;
+    private int type;
 
     public SID(final byte revision, final byte[] identifierAuthority, final long[] subAuthorities) {
         if (identifierAuthority == null) {
@@ -85,6 +86,14 @@ public class SID {
         if (subAuthorities.length == 0)
             return null;
         return subAuthorities[subAuthorities.length-1];
+    }
+
+    public int getType() {
+        return this.type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     /**
