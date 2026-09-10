@@ -23,9 +23,10 @@ package com.rapid7.client.dcerpc.mssamr.dto;
 import com.rapid7.client.dcerpc.dto.ContextHandle;
 
 /**
- * A typed RPC context handle for groups.
+ * A typed RPC context handle for users.
  *
- * @see <a href= "https://msdn.microsoft.com/en-us/library/cc245544.aspx">SAMPR_HANDLE</a>
+ * @see <a href=
+ *      "https://msdn.microsoft.com/en-us/library/cc245544.aspx">SAMPR_HANDLE</a>
  */
 public class UserHandle extends ContextHandle {
 

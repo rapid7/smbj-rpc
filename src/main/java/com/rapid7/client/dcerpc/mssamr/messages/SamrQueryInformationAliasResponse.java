@@ -59,7 +59,7 @@ public abstract class SamrQueryInformationAliasResponse<T extends Unmarshallable
     public static class AliasGeneralInformation extends SamrQueryInformationAliasResponse<SAMPRAliasGeneralInformation> {
         @Override
         public AliasInformationClass getAliasInformationClass() {
-            return AliasInformationClass.ALIAS_GENERALINFORMATION;
+            return AliasInformationClass.ALIAS_GENERAL_INFORMATION;
         }
 
         @Override

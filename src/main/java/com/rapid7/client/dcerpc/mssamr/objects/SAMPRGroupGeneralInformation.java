@@ -24,7 +24,9 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 import java.io.IOException;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
 
@@ -45,7 +47,8 @@ import com.rapid7.client.dcerpc.objects.RPCUnicodeString;
  *      *PSAMPR_GROUP_GENERAL_INFORMATION;
  *  For information on each field, see section 2.2.5.1.</pre></blockquote>
  */
-public class SAMPRGroupGeneralInformation implements Unmarshallable {
+
+public class SAMPRGroupGeneralInformation implements Unmarshallable, Marshallable {
     // <NDR: struct> RPC_UNICODE_STRING Name;
     private RPCUnicodeString.NonNullTerminated name;
     // <NDR: unsigned long> unsigned long Attributes;
@@ -143,7 +146,39 @@ public class SAMPRGroupGeneralInformation implements Unmarshallable {
 
     @Override
     public String toString() {
-        return String.format("SAMPR_GROUP_GENERAL_INFORMATION{Name:%s,Attributes:%d,MemberCount:%d,AdminComment:%s}",
+        return String.format("SAMPR_GROUP_GENERAL_INFORMATION {Name:%s,Attributes:%d,MemberCount:%d,AdminComment:%s}",
                 getName(), getAttributes(), getMemberCount(), getAdminComment());
     }
+
+	@Override 
+	public void marshalPreamble(PacketOutput out) throws IOException {
+        // <NDR: struct> RPC_UNICODE_STRING Name;
+        name.marshalPreamble(out);
+        // <NDR: struct> RPC_UNICODE_STRING Admincomment;
+        adminComment.marshalPreamble(out);
+	}
+
+	@Override
+	public void marshalEntity(PacketOutput out) throws IOException {
+        // Structure Alignment: 4
+        out.align(Alignment.FOUR);
+        // <NDR: struct> RPC_UNICODE_STRING Name;
+        name.marshalEntity(out);
+        // <NDR: unsigned long> unsigned long Attributes;
+        out.align(Alignment.FOUR);
+        out.writeInt(attributes);
+        // <NDR: unsigned long> unsigned long MemberCount;
+        // Alignment: 4 - Already aligned
+        out.writeInt(attributes);
+        // <NDR: struct> RPC_UNICODE_STRING Admincomment;
+        adminComment.marshalEntity(out);
+	}
+	
+	@Override
+	public void marshalDeferrals(PacketOutput out) throws IOException {
+        // <NDR: struct> RPC_UNICODE_STRING Name;
+        name.marshalDeferrals(out);
+        // <NDR: struct> RPC_UNICODE_STRING Admincomment;
+        adminComment.marshalDeferrals(out);
+	}
 }

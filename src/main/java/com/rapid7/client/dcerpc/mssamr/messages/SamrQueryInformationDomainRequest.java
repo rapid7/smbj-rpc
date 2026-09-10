@@ -19,12 +19,23 @@
 package com.rapid7.client.dcerpc.mssamr.messages;
 
 import java.io.IOException;
+
 import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogoffInfo;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainGeneralInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainGeneralInformation2;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLogoffInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainModifiedInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainModifiedInformation2;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainNameInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainOemInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainPasswordInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainReplicationInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainServerRoleInformation;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainStateInformation;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc245779.aspx">SamrQueryInformationDomain</a>
@@ -80,7 +91,7 @@ public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable
         packetOut.writeShort(getDomainInformationClass().getInfoLevel());
     }
 
-    public static class DomainPasswordInformation extends SamrQueryInformationDomainRequest<SAMPRDomainPasswordInfo> {
+    public static class DomainPasswordInformation extends SamrQueryInformationDomainRequest<SAMPRDomainPasswordInformation> {
         public DomainPasswordInformation(final byte[] domainHandle) {
             super(domainHandle);
         }
@@ -96,7 +107,23 @@ public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable
         }
     }
 
-    public static class DomainLogOffInformation extends SamrQueryInformationDomainRequest<SAMPRDomainLogoffInfo> {
+    public static class DomainGeneralInformation extends SamrQueryInformationDomainRequest<SAMPRDomainGeneralInformation> {
+		public DomainGeneralInformation(final byte[] domainHandle) {
+            super(domainHandle);
+        }
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_GENERAL_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainGeneralInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainGeneralInformation();
+        }
+    }
+
+    public static class DomainLogOffInformation extends SamrQueryInformationDomainRequest<SAMPRDomainLogoffInformation> {
         public DomainLogOffInformation(final byte[] domainHandle) {
             super(domainHandle);
         }
@@ -109,6 +136,150 @@ public abstract class SamrQueryInformationDomainRequest<T extends Unmarshallable
         @Override
         public SamrQueryInformationDomainResponse.DomainLogOffInformation getResponseObject() {
             return new SamrQueryInformationDomainResponse.DomainLogOffInformation();
+        }
+    }
+
+    public static class DomainOemInformation extends SamrQueryInformationDomainRequest<SAMPRDomainOemInformation> {
+		public DomainOemInformation(final byte[] domainHandle) {
+            super(domainHandle);
+        }
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_OEM_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainOemInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainOemInformation();
+        }
+    }
+
+    public static class DomainNameInformation extends SamrQueryInformationDomainRequest<SAMPRDomainNameInformation> {
+		public DomainNameInformation(final byte[] domainHandle) {
+            super(domainHandle);
+        }
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_NAME_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainNameInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainNameInformation();
+        }
+    }
+
+    public static class DomainReplicationInformation extends SamrQueryInformationDomainRequest<SAMPRDomainReplicationInformation> {
+		public DomainReplicationInformation(final byte[] domainHandle) {
+            super(domainHandle);
+        }
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_REPLICATION_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainReplicationInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainReplicationInformation();
+        }
+    }
+
+    public static class DomainServerRoleInformation extends SamrQueryInformationDomainRequest<SAMPRDomainServerRoleInformation> {
+		public DomainServerRoleInformation(final byte[] domainHandle) {
+            super(domainHandle);
+        }
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_SERVERROLE_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainServerRoleInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainServerRoleInformation();
+        }
+    }
+
+    public static class DomainModifiedInformation extends SamrQueryInformationDomainRequest<SAMPRDomainModifiedInformation> {
+		public DomainModifiedInformation(final byte[] domainHandle) {
+            super(domainHandle);
+        }
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_MODIFIED_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainModifiedInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainModifiedInformation();
+        }
+    }
+
+    public static class DomainStateInformation extends SamrQueryInformationDomainRequest<SAMPRDomainStateInformation> {
+		public DomainStateInformation(final byte[] domainHandle) {
+            super(domainHandle);
+        }
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_STATE_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainStateInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainStateInformation();
+        }
+    }
+
+    public static class DomainGeneralInformation2 extends SamrQueryInformationDomainRequest<SAMPRDomainGeneralInformation2> {
+		public DomainGeneralInformation2(final byte[] domainHandle) {
+            super(domainHandle);
+        }
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_GENERAL_INFORMATION2;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainGeneralInformation2 getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainGeneralInformation2();
+        }
+    }
+
+    public static class DomainLockoutInformation extends SamrQueryInformationDomainRequest<SAMPRDomainLockoutInformation> {
+		public DomainLockoutInformation(final byte[] domainHandle) {
+            super(domainHandle);
+        }
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_LOCKOUT_INFORMATION;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainLockoutInformation getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainLockoutInformation();
+        }
+    }
+
+    public static class DomainModifiedInformation2 extends SamrQueryInformationDomainRequest<SAMPRDomainModifiedInformation2> {
+		public DomainModifiedInformation2(final byte[] domainHandle) {
+            super(domainHandle);
+        }
+
+        @Override
+        public DomainInformationClass getDomainInformationClass() {
+            return DomainInformationClass.DOMAIN_MODIFIED_INFORMATION2;
+        }
+
+        @Override
+        public SamrQueryInformationDomainResponse.DomainModifiedInformation2 getResponseObject() {
+            return new SamrQueryInformationDomainResponse.DomainModifiedInformation2();
         }
     }
 }
