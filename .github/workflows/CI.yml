@@ -8,7 +8,7 @@ on: [push, pull_request]
 jobs:
   test:
     name: 'Java: ${{ matrix.java }} (${{ matrix.distribution }})'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
