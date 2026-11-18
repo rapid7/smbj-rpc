@@ -321,6 +321,34 @@ public class LocalSecurityAuthorityService extends Service {
         }
         return mappedNames;
     }
+	
+	/**
+     * @param policyHandle A valid policy handle obtained from {@link #openPolicyHandle()}.
+     * @param lookupLevel Look up level as defined in {@link LSAPLookupLevel}.
+     * @param sids Array of {@link SID}s to lookup
+     * @return An array of domain names. Each entry index in this list corresponds to the same entry index in
+     *         the provided sids array. The original SID would be returned as a string if the given
+     *         {@link SID} was not mapped.
+     * @throws IOException Thrown if either a communication failure is encountered, or the call
+     * returns an unsuccessful response.
+     */
+	public String[] lookupDomainNamesForSIDs(final PolicyHandle policyHandle, final LSAPLookupLevel lookupLevel, SID ... sids)
+            throws IOException {
+        final LsarLookupSIDsRequest request = new LsarLookupSIDsRequest(parseHandle(policyHandle), parseSIDs(sids),
+                lookupLevel.getValue());
+        final LsarLookupSIDsResponse lsarLookupSIDsResponse = callExpect(request, "LsarLookupSIDs",
+                SystemErrorCode.ERROR_SUCCESS,
+                SystemErrorCode.STATUS_SOME_NOT_MAPPED,
+                SystemErrorCode.STATUS_NONE_MAPPED);
+        LSAPRTrustInformation[] domainNameArray = lsarLookupSIDsResponse.getReferencedDomains().getDomains();
+        if (domainNameArray == null)
+            domainNameArray = new LSAPRTrustInformation[0];
+        final String[] mappedDomainNames = new String[domainNameArray.length];
+        for (int i = 0; i < domainNameArray.length; i++) {
+            mappedDomainNames[i] = domainNameArray[i].getName().getValue();
+        }
+        return mappedDomainNames;
+    }
 
     private PolicyHandle parsePolicyHandle(final byte[] handle) {
         return new PolicyHandle(handle);
