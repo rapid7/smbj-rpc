@@ -277,6 +277,8 @@ public class LocalSecurityAuthorityService extends Service {
             final SID dtoSID = parseRPCSID(sid, false);
             //add RID to SID
             sids[i] = dtoSID.resolveRelativeID(translatedSID.getRelativeId());
+            // add type
+            sids[i].setType(translatedSID.getUse());
         }
         return sids;
     }
