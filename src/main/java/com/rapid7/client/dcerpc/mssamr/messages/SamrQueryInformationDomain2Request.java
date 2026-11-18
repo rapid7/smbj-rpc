@@ -23,7 +23,7 @@ import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 import com.rapid7.client.dcerpc.messages.RequestCall;
 import com.rapid7.client.dcerpc.mslsad.objects.DomainInformationClass;
-import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInfo;
+import com.rapid7.client.dcerpc.mssamr.objects.SAMPRDomainLockoutInformation;
 
 /**
  * <a href="https://msdn.microsoft.com/en-us/library/cc245773.aspx">SamrQueryInformationDomain2</a>
@@ -80,7 +80,7 @@ public abstract class SamrQueryInformationDomain2Request<T extends Unmarshallabl
         packetOut.writeShort(getDomainInformationClass().getInfoLevel());
     }
 
-    public static class DomainLockoutInformation extends SamrQueryInformationDomain2Request<SAMPRDomainLockoutInfo> {
+    public static class DomainLockoutInformation extends SamrQueryInformationDomain2Request<SAMPRDomainLockoutInformation> {
         public DomainLockoutInformation(byte[] handle) {
             super(handle);
         }

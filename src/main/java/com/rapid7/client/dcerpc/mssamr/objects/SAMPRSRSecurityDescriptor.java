@@ -25,7 +25,9 @@ import java.io.IOException;
 import java.rmi.UnmarshalException;
 import java.util.Arrays;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /**
@@ -42,7 +44,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  *  Length: The size, in bytes, of SecurityDescriptor. If zero, SecurityDescriptor MUST be ignored. The maximum size of 256 * 1024 is an arbitrary value chosen to limit the amount of memory a client can force the server to allocate.
  *  SecurityDescriptor: A binary format per the SECURITY_DESCRIPTOR format in [MS-DTYP] section 2.4.6.</pre></blockquote>
  */
-public class SAMPRSRSecurityDescriptor implements Unmarshallable {
+public class SAMPRSRSecurityDescriptor implements Unmarshallable, Marshallable {
     // [size_is(Length)] unsigned char* SecurityDescriptor;
     // Despite being an unsigned char (char[]), store as byte[] for parsing convenience
     private byte[] securityDescriptor;
@@ -121,4 +123,39 @@ public class SAMPRSRSecurityDescriptor implements Unmarshallable {
         }
         return (int) ret;
     }
+
+	@Override
+	public void marshalPreamble(PacketOutput out) throws IOException { 
+		// No Preamble
+	 }
+
+	@Override
+	public void marshalEntity(PacketOutput out) throws IOException { 
+        // Structure Alignment: 4
+        out.align(Alignment.FOUR);
+        // [range(0, 256 * 1024)] unsigned long Length;
+        // Alignment: 4 - Already aligned
+        if (securityDescriptor != null)
+        	out.writeInt(securityDescriptor.length);
+        else
+        	out.writeInt(0);
+        // <NDR: unsigned long> [size_is(Length)] unsigned char* SecurityDescriptor;
+        // Alignment: 4 - Already aligned
+    	out.writeReferentID(securityDescriptor); //TODO: maybe write 0 for null descriptor
+	 }
+
+	@Override
+	public void marshalDeferrals(PacketOutput out) throws IOException { 
+        if (securityDescriptor != null) {
+            // <NDR: unsigned long> [size_is(Length)] unsigned char* SecurityDescriptor;
+            out.align(Alignment.FOUR);
+            // MaximumCount
+            out.writeInt(0); 		//.fullySkipBytes(4);
+            for (int i = 0; i < securityDescriptor.length; i++) {
+                // <NDR: unsigned char>
+                // Alignment: 1 - Already aligned
+            	out.writeByte(securityDescriptor[i]);
+            }
+        }
+	 }
 }

@@ -24,7 +24,9 @@ package com.rapid7.client.dcerpc.mssamr.objects;
 import java.io.IOException;
 import java.util.Objects;
 import com.rapid7.client.dcerpc.io.PacketInput;
+import com.rapid7.client.dcerpc.io.PacketOutput;
 import com.rapid7.client.dcerpc.io.ndr.Alignment;
+import com.rapid7.client.dcerpc.io.ndr.Marshallable;
 import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
 
 /* Alignment: 8
@@ -33,7 +35,7 @@ import com.rapid7.client.dcerpc.io.ndr.Unmarshallable;
  * } DOMAIN_LOGOFF_INFORMATION,
  *  *PDOMAIN_LOGOFF_INFORMATION;
  */
-public class SAMPRDomainLogoffInfo implements Unmarshallable {
+public class SAMPRDomainLogoffInformation implements Marshallable, Unmarshallable {
 
     private long forceLogoff;
 
@@ -41,7 +43,7 @@ public class SAMPRDomainLogoffInfo implements Unmarshallable {
         return forceLogoff;
     }
 
-    public void setForceLogoff(int forceLogoff) {
+    public void setForceLogoff(long forceLogoff) {
         this.forceLogoff = forceLogoff;
     }
 
@@ -71,10 +73,10 @@ public class SAMPRDomainLogoffInfo implements Unmarshallable {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof SAMPRDomainLogoffInfo)) {
+        } else if (!(obj instanceof SAMPRDomainLogoffInformation)) {
             return false;
         }
-        SAMPRDomainLogoffInfo other = (SAMPRDomainLogoffInfo) obj;
+        SAMPRDomainLogoffInformation other = (SAMPRDomainLogoffInformation) obj;
         return Objects.equals(getForceLogoff(), other.getForceLogoff());
     }
 
@@ -82,4 +84,21 @@ public class SAMPRDomainLogoffInfo implements Unmarshallable {
     public String toString() {
         return String.format("SAMPRDomainLogOffInfo{forceLogoff:%s}", getForceLogoff());
     }
+
+	@Override
+	public void marshalPreamble(PacketOutput out) throws IOException { 
+	 }
+
+	@Override
+	public void marshalEntity(PacketOutput out) throws IOException { 
+		// Structure Alignment: 4
+		out.align(Alignment.EIGHT);
+		// <NDR: hyper> OLD_LARGE_INTEGER ForceLogoff;
+		// Alignment: 8 - Already aligned
+		out.writeLong(forceLogoff);
+	 }
+
+	@Override
+	public void marshalDeferrals(PacketOutput out) throws IOException { 
+	 }
 }

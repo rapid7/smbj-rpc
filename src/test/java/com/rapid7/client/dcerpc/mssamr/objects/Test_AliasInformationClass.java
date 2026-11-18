@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2017, Rapid7, Inc.
  *
  * License: BSD-3-clause
@@ -15,23 +15,17 @@
  *  Neither the name of the copyright holder nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *
- *
  */
-
 package com.rapid7.client.dcerpc.mssamr.objects;
 
+import static org.testng.Assert.assertEquals;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
 
 public class Test_AliasInformationClass {
     @DataProvider
     public Object[][] data_getInfoLevel() {
-        return new Object[][] {
-                {AliasInformationClass.ALIAS_GENERALINFORMATION, 1}
-        };
+        return new Object[][] { { AliasInformationClass.ALIAS_GENERAL_INFORMATION, 1 } };
     }
 
     @Test(dataProvider = "data_getInfoLevel")

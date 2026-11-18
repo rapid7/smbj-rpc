@@ -82,7 +82,7 @@ public abstract class SamrQueryInformationAliasRequest<T extends Unmarshallable>
 
         @Override
         public AliasInformationClass getAliasInformationClass() {
-            return AliasInformationClass.ALIAS_GENERALINFORMATION;
+            return AliasInformationClass.ALIAS_GENERAL_INFORMATION;
         }
 
         @Override
